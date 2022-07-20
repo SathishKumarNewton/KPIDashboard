@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>rsg</title>
+<!-- <link rel="icon" href="../assets/images/titleicon.png"
+	type="image/icon-type"> -->
+<link rel="stylesheet" href="../plugins_cr/bootstrap/bootstrap.min.css">
+<link rel="stylesheet"
+	href="../plugins_cr/font-awesome-4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="../plugins_cr/select2/selec2.min.css">
+<link rel="stylesheet" href="../styles/rsg.css">
+<!-- Selectize -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" />
+<!-- DataTable select -->
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css">
+</head>
+<body>
+	<div class="page-master-container">
+		<!-- Main Header -->
+		<div id="header">
+			<nav class="fixed-top">
+				<div
+					class="nav-header d-flex flex-row justify-content-between align-content-center">
+					<div>
+						<btn class="mr-2 d-md-inline d-lg-none d-xl-none"
+							id="mobile-view-toggler-off"> <span class="fa fa-bars"></span>
+						</btn>
+						<a class="navbar-brand" href=""> <img
+							src="../assets/images/Logo_Innerpage.png" alt="CompanyLogo"
+							id="logo">
+						</a>
+					</div>
+					<div class="d-flex">
+						<div class="navbar-icons d-none d-md-block pr-2">
+							<a> <span id="settings" class="fa fa-cog"></span>
+							</a>
+						</div>
+						<div
+							class="navbar-icons d-inline-flex align-items-center pt-2 pr-2">
+							<div>
+								<a> <span id="notifications" class="fa fa-bell"></span>
+								</a>
+							</div>
+							<div
+								class="notificationCounter d-flex justify-content-center align-items-center">
+								<span>d</span>
+							</div>
+						</div>
+						<div class="navbar-icons p-0">
+							<a> <img id="userPic" class="img-fluid"
+								src="../assets/images/profile.jpeg" alt="profile picture">
+							</a>
+						</div>					
+						<div class="navbar-icons  d-none d-md-block pr-2">
+							<form action="/logout" method="get">
+								<button style="float: none;" 
+								class="btn btn-block btn-danger btn-sm" name="registration" type="submit">Logout</button>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div
+					class="navbar-operations d-flex flex-row justify-content-between align-content-center">
+					<div class="title">RSG | RMS</div>
+					<div class="my-auto">
+						<button class="btn mr-0 mr-md-1">
+							<span>Share</span> <i class="fa fa-share-square-o"></i>
+						</button>
+						<button class="btn btn-outline-white ml-0 ml-md-1">
+							<span>Download</span> <i class="fa fa-download"></i>
+						</button>
+					</div>
+				</div>
+			</nav>
+		</div>
+		<!--Main Header End-->
+		<!-- pre-loader -->
+		<section id="pre-loader">
+			<img src="../assets/images/Logo_Innerpage.png" alt="CompanyLogo"
+				id="logo">
+		</section>
+		<!-- end -->
+		<!-- sidebar mobile starts-->
+		<div id="sidebar-mobile">
+			<ul class="list-group">
+				<li
+					class="list-group-item d-flex justify-content-between align-items-center">
+					<span> <span class="fa fa-home"></span> <a
+						href="/admin/home">Home</a>
+				</span>
+				</li>
+				<li
+					class="list-group-item submenu d-flex justify-content-between align-items-center">
+					<span> <span class="fa fa-user"></span> <a
+						href="/admin/userDashboardMapping">Admin</a>
+				</span> <span class="badge badge-pill"> <span
+						class="fa fa-angle-down" id="sidebar-list-toggle"></span>
+				</span>
+				</li>
+				<div class="sub-list">
+					<a href="/admin/userDashboardMapping"><li class="list-group-item">User
+							Dashboard</li></a> <a href="#"><li class="list-group-item">User
+							Mapping Dashboard 2</li></a> <a href="#"><li class="list-group-item">User
+							Mapping Dashboard 3</li></a>
+				</div>
+				<li
+					class="list-group-item d-flex justify-content-between align-items-center">
+					<span> <span class="fa fa-cogs"></span> <a
+						href="/admin/sqoopConfig">Sqoop Configuration</a>
+				</span>
+				</li>
+				<li
+					class="list-group-item d-flex justify-content-between align-items-center">
+					<span> <span class="fa fa-users"></span> <a
+						href="/admin/userMatrix">User Matrix</a>
+				</span>
+				</li>
+			</ul>
+		</div>
+		<!-- sidebar mobile ends-->
+		<!--Side Bar Starts-->
+		<div id="sidebar">
+			<div class="sidebar-wrapper">
+				<a href="/admin/home">
+					<div class="tab text-center">
+						<span class="fa fa-home"></span>
+						<h3 class="h2">Home</h3>
+					</div>
+				</a> <a id="defaultLink">
+					<div class="tab text-center">
+						<span class="fa fa-user"></span>
+						<h3 class="h2">Admin</h3>
+						<select class="btn form-control dropdown custom-select"
+							id="selectTab">
+							<option></option>
+							<option value="/admin/userDashboardMapping">User Dashboard</option>
+						</select>
+					</div>
+				</a> <a href="/admin/sqoopConfig">
+					<div class="tab text-center">
+						<span class="fa fa-cogs"></span>
+						<h3 class="h2">Sqoop</h3>
+						<h3 class="h2">Configuration</h3>
+					</div>
+				</a> <a href="/admin/userMatrix">
+					<div class="tab tab-default text-center">
+						<span class="fa fa-users"></span>
+						<h3 class="h2">User Matrix</h3>
+					</div>
+				</a>
+			</div>
+		</div>
+		<!--Side bar ends-->
+		<div class="page-base-container container-fluid pl-2 pr-2">
+			<!-- Inner Container-->
+			<div class="container-fluid view">
+				<!-- Report card-->
+				<div class="row cards Reports">
+					<div class="col-12">
+						<form id="userMatrixForm"
+									th:action="@{/admin/saveUserMatrixMaster}"
+									th:object="${userMatrixRequest}" method="post">
+						<div class="row card-layout">							
+							<!--Card -header-->
+							<div
+								class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+								<div>
+									<span class="h2">Assign User Role</span>
+								</div>
+							</div>
+							<!--Card header-->
+							<!--Card Body-->
+							
+							<div class="col-12 card-body report-card" id="userMatrixFormDiv">								
+								<div class="row" >
+									<div class="col-sm-12 col-md-6 form-group">
+										<h6>Report</h6>
+										<select id="reportType" name="dashboardId"
+											class="btn form-control dropdown custom-select selectCard">
+											<option value="">Select Report...</option>
+											<option th:each="item : ${dashboardList}"
+												th:value="${item.id}" th:text="${item.dashboardName}"></option>
+										</select>
+									</div>
+									<div class="col-sm-12 col-md-6 form-group">
+										<h6>User</h6>
+										<select id="userIds" name="userIds" multiple="multiple"
+											class="btn form-control dropdown custom-select selectCard">
+											<option value="">Select User...</option>
+											<option th:each="user : ${users}" th:value="${user.id}"
+												th:text="${user.userName}"></option>
+										</select>
+									</div>
+									
+									<div id="gwpDiv" class="col-12">
+										<div class="form-group row">
+										<h6 class="col-sm-2 col-form-label">
+										<label for="user" class="col-sm-2 col-form-label">Role</label>
+										</h6>
+										<div class="col-sm-2">
+											<select class="form-control select2 full-width" id="roleIds"
+												name="userMatrixRoleName">
+												<option value="">Select Role...</option>
+												<option th:each="role : ${roles}"
+													th:value="${role.roleName}" th:text="${role.roleName}"></option>
+											</select>
+										</div>
+										<div class="col-sm-2">
+											<select class="form-control select2 full-width" id="zoneIds"
+												name="zones" multiple="multiple">
+												<option value="">Select Zone...</option>
+												<option value="All">All</option>
+												<option th:each="zone : ${zones}"
+													th:value="${zone}" th:text="${zone}"></option>
+											</select>
+										</div>
+										<div class="col-sm-2">
+											<select class="form-control select2 full-width"
+												id="clusters" name="clusters" multiple="multiple">
+												<option value="">Select Cluster...</option>
+												<option value="All">All</option>
+												<option th:each="cluster : ${clusters}"
+													th:value="${cluster}"
+													th:text="${cluster}"></option>
+											</select>
+										</div>
+										<div class="col-sm-2">
+											<select class="form-control select2 full-width" id="states"
+												name="states" multiple="multiple">
+												<option value="">Select State...</option>
+												<option value="All">All</option>
+												<option th:each="state : ${states}"
+													th:value="${state}" th:text="${state}"></option>
+											</select>
+										</div>
+										<div class="col-sm-2">
+											<select class="form-control select2 full-width"
+												id="branchCodes" name="branchCodes" multiple="multiple">
+												<option value="">Select Branch...</option>
+												<option value="All">All</option>
+												<option th:each="branch : ${branches}"
+													th:value="${branch.branchCode}"
+													th:text="|${branch.revisedBranchName} (${branch.branchCode})|"></option>
+											</select>
+										</div>
+									</div>
+									<div class="form-group row">
+										<h6 class="col-sm-2 col-form-label">
+										<label for="user" class="col-sm-2 col-form-label">Dimensions</label>
+										</h6>
+										<div class="col-sm-4">
+											<select class="form-control select2 full-width"
+												multiple="multiple" name="products" id="products">
+												<option value="">Select Product...</option>
+												<option value="All">All</option>
+												<option th:each="product : ${products}"
+													th:value="${product.productCode}"
+													th:text="|${product.productDescription} (${product.productCode})|"></option>
+											</select>
+										</div>
+										<div class="col-sm-2" style="display: none;">
+											<select class="form-control select2 full-width"
+												multiple="multiple" name="businessTypes" id="businessTypes">
+												<option value="">Select BusinessType...</option>
+												<option value="All">All</option>
+												<option th:each="businessType : ${businessTypes}"
+													th:value="${businessType.businessType}"
+													th:text="${businessType.businessType}"></option>
+											</select>
+										</div>
+										<div class="col-sm-2">
+											<select class="form-control select2 full-width"
+												multiple="multiple" name="lobs" id="lobs">
+												<option value="">Select LOB...</option>
+												<option value="All">All</option>
+												<option th:each="lob : ${lobs}"
+													th:value="${lob}" th:text="${lob}"></option>
+											</select>
+										</div>
+										<div class="col-sm-2">
+											<select class="form-control select2 full-width"
+												multiple="multiple" name="channels" id="channels">
+												<option value="">Select Channel...</option>
+												<option value="All">All</option>
+												<option th:each="channel : ${channels}"
+													th:value="${channel.channelName}"
+													th:text="${channel.channelName}"></option>
+											</select>
+										</div>
+										<div class="col-sm-2">
+											<select class="form-control select2 full-width"
+												multiple="multiple" name="subChannels" id="subChannels">
+												<option value="">Select SubChannel...</option>
+												<option value="All">All</option>
+												<option th:each="subChannel : ${subChannels}"
+													th:value="${subChannel.subChannel}"
+													th:text="${subChannel.subChannel}"></option>
+											</select>
+										</div>
+									</div>
+									<div class="form-group row">
+										<div class="col-sm-2"></div>
+										<div class="col-sm-4">
+											<select class="form-control select2 full-width"
+												multiple="multiple" name="makes" id="makes">
+												<option value="">Select Make...</option>
+												<option value="All">All</option>
+												<option th:each="make : ${makes}"
+													th:value="${make}" th:text="${make}"></option>
+											</select>
+										</div>
+										<div class="col-sm-6">
+											<select class="form-control select2 full-width"
+												name="models" multiple="multiple" id="gwpModels">
+												<option value="">Select Model...</option>
+												<option value="All">All</option>
+												<!-- <option th:each="item : ${models}"
+													th:text="${item}"  th:value="${item}"> -->
+											</select>
+										</div>
+									</div>
+									</div>
+									<div id="motorDiv" class="col-12">
+										<div class="row">
+											<h6 class="col-sm-2 col-form-label">
+											<label for="region" class="col-sm-2 col-form-label">Region</label>
+											</h6>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width" id="regionIds"
+													name="regions" multiple="multiple">
+													<option value="">Region...</option>
+													<option value="All">All</option>
+													<option th:each="branch : ${branches}"
+														th:value="${branch.region}"
+														th:text="|${branch.region}|"></option>
+												</select>
+											</div>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width" id="motorZoneIds"
+													name="zones" multiple="multiple">
+													<option value="">Zone...</option>
+													<option value="All">All</option>
+													<option th:each="zone : ${zones}"
+														th:value="${zone}" th:text="${zone}"></option>
+												</select>
+											</div>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													id="motorClusters" name="clusters" multiple="multiple">
+													<option value="">Cluster...</option>
+													<option value="All">All</option>
+													<option th:each="cluster : ${clusters}"
+														th:value="${cluster}"
+														th:text="${cluster}"></option>
+												</select>
+											</div>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width" id="states"
+													name="states" multiple="multiple">
+													<option value="">State...</option>
+													<option value="All">All</option>
+													<option th:each="state : ${states}"
+														th:value="${state}" th:text="${state}"></option>
+												</select>
+											</div>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													id="branchCodes" name="branchCodes" multiple="multiple">
+													<option value="">Branch...</option>
+													<option value="All">All</option>
+													<option th:each="branch : ${branches}"
+														th:value="${branch.branchCode}"
+														th:text="|${branch.revisedBranchName} (${branch.branchCode})|"></option>
+												</select>
+											</div>
+											<div class="col-sm-2"></div>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													id="motorCities" name="cities" multiple="multiple">
+													<option value="">City...</option>
+													<option value="All">All</option>	
+													<option th:each="item : ${cities}"
+														th:text="${item}" th:value="${item}">													
+												</select>
+											</div>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													id="t20Locations" name="t20Locations" multiple="multiple">
+													<option value="">T20 Location...</option>
+													<option value="All">All</option>														
+												</select>
+											</div>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													id="pincodes" name="pincodes" multiple="multiple">
+													<option value="">PinCode...</option>
+													<option value="All">All</option>														
+												</select>
+											</div>
+										</div>
+										<div class="row">
+											<h6 class="col-sm-2 col-form-label">
+											<label for="channelType" class="col-sm-2 col-form-label">Channel Type</label>
+											</h6>
+											<div class="col-sm-4">
+												<select class="form-control select2 full-width"
+													multiple="multiple" name="channels" id="channels">
+													<option value="">Channel...</option>
+													<option value="All">All</option>
+													<option th:each="channel : ${channels}"
+														th:value="${channel.channelName}"
+														th:text="${channel.channelName}"></option>
+												</select>
+											</div>
+											<div class="col-sm-4">
+												<select class="form-control select2 full-width"
+													multiple="multiple" name="subChannels" id="subChannels">
+													<option value="">SubChannel...</option>
+													<option value="All">All</option>
+													<option th:each="subChannel : ${subChannels}"
+														th:value="${subChannel.subChannel}"
+														th:text="${subChannel.subChannel}"></option>
+												</select>
+											</div>
+										</div>
+										<div class="row">
+											<h6 class="col-sm-2 col-form-label">
+											<label for="motorParameters" class="col-sm-2 col-form-label">Motor Parameters</label>
+											</h6>
+											<div class="col-sm-4">
+												<select class="form-control select2 full-width"
+													multiple="multiple" name="makes" id="makes">
+													<option value="">Make...</option>
+													<option value="All">All</option>
+													<option th:each="make : ${makes}"
+														th:value="${make}" th:text="${make}"></option>
+												</select>
+											</div>
+											<div class="col-sm-4">
+												<select class="form-control select2 full-width"
+													name="models" multiple="multiple" id="motorModels">
+													<option value="">Model...</option>
+													<option value="All">All</option>
+													<!-- <option th:each="item : ${models}"
+														th:text="${item}"  th:value="${item}"> -->
+												</select>
+											</div>
+										<!-- </div> -->
+										<!-- <div class="row">	 -->
+											<div class="col-sm-2"></div>
+											<div class="col-sm-2"></div>
+											<div class="col-sm-3">
+												<select class="form-control select2 full-width"
+													id="modelGroups" name="modelGroups" multiple="multiple">
+													<option value="">ModelGroup...</option>
+													<option value="All">All</option>	
+													<option th:each="item : ${modelGroups}"
+														th:text="${item}" th:value="${item}">													
+												</select>
+											</div>
+											<div class="col-sm-3">
+												<select class="form-control select2 full-width"
+													id="modelClassifications" name="modelClassifications" multiple="multiple">
+													<option value="">ModelClassification...</option>
+													<option value="All">All</option>	
+													<option th:each="item : ${modelClassifications}"
+														th:text="${item}" th:value="${item}">													
+												</select>
+											</div>
+											<!-- <div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													id="vehicleAges" name="vehicleAges" multiple="multiple">
+													<option value="">Vehicle Age...</option>
+													<option value="All">All</option>														
+												</select>
+											</div> -->
+											<!-- <div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													id="noOfAgeWithRs" name="noOfAgeWithRs" multiple="multiple">
+													<option value="">Age with RS...</option>
+													<option value="All">All</option>														
+												</select>
+											</div> -->
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													id="addOns" name="addOns" multiple="multiple">
+													<option value="">Add Ons...</option>
+													<option value="All">All</option>	
+													<option value="YES">Yes</option>	
+													<option value="NO">NO</option>																
+												</select>
+											</div>
+										</div>
+										<div class="row">
+											<h6 class="col-sm-2 col-form-label">
+											<label for="intermediary" class="col-sm-2 col-form-label">Intermediary</label>
+											</h6>
+											<div class="col-sm-3">
+												<select class="form-control select2 full-width"
+													id="intermediaryCodes" name="intermediaryCodes" multiple="multiple">
+													<option value="">Intermediary Code...</option>
+													<option value="All">All</option>														
+												</select>
+											</div>
+											<div class="col-sm-3">
+												<select class="form-control select2 full-width"
+													id="intermediaryNames" name="intermediaryNames" multiple="multiple">
+													<option value="">Intermediary Name...</option>
+													<option value="All">All</option>														
+												</select>
+											</div>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													id="oaCodes" name="oaCodes" multiple="multiple">
+													<option value="">OA Code...</option>
+													<option value="All">All</option>	
+													<option th:each="item : ${oas}"
+														th:text="${item.oaCode}" th:value="${item.oaCode}">													
+												</select>
+											</div>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													id="oaNames" name="oaNames" multiple="multiple">
+													<option value="">OA Name...</option>
+													<option value="All">All</option>	
+													<option th:each="item : ${oas}"
+														th:text="${item.oaName}" th:value="${item.oaName}">													
+												</select>
+											</div>
+										</div>
+										<div class="form-group row">
+											<h6 class="col-sm-2 col-form-label">
+											<label for="businessType" class="col-sm-2 col-form-label">BusinessType</label>
+											</h6>
+											<div class="col-sm-10">
+												<select class="form-control select2 full-width"
+													multiple="multiple" name="businessTypes"
+													id="businessTypes">
+													<option value="">Select Business Type...</option>
+													<option value="All">All</option>
+													<option th:each="businessType : ${businessTypes}"
+														th:value="${businessType.businessType}"
+														th:text="${businessType.businessType}"></option>
+												</select>
+											</div>
+										</div>
+										<div class="row">
+											<h6 class="col-sm-2 col-form-label">
+											<label for="product" class="col-sm-2 col-form-label">Product</label>
+											</h6>
+											<div class="col-sm-10">
+												<select class="form-control select2 full-width"
+													multiple="multiple" name="products" id="products">
+													<option value="">Select Product...</option>
+													<option value="All">All</option>
+													<option th:each="product : ${products}"
+														th:value="${product.productCode}"
+														th:text="|${product.productDescription} (${product.productCode})|"></option>
+												</select>
+											</div>
+										</div>
+									</div>
+									<div id="healthDiv"  class="col-12">
+										<div class="row">
+											<h6 class="col-sm-2 col-form-label">
+											<label for="channelType" class="col-sm-2 col-form-label">Channel Type</label>
+											</h6>
+											<div class="col-sm-4">
+												<select class="form-control select2 full-width"
+													multiple="multiple" name="channels" id="healthChannels">
+													<option value="">Channel...</option>
+													<option value="All">All</option>
+													<option th:each="channel : ${channels}"
+														th:value="${channel.channelName}"
+														th:text="${channel.channelName}"></option>
+												</select>
+											</div>
+											<div class="col-sm-4">
+												<select class="form-control select2 full-width"
+													multiple="multiple" name="subChannels" id="healthSubChannels">
+													<option value="">SubChannel...</option>
+													<option value="All">All</option>
+													<option th:each="subChannel : ${subChannels}"
+														th:value="${subChannel.subChannel}"
+														th:text="${subChannel.subChannel}"></option>
+												</select>
+											</div>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													multiple="multiple" name="intermediary" id="healthIntermediary">
+													<option value="">Intermediary...</option>
+													<option value="All">All</option>
+												</select>
+											</div>
+										</div>
+										<div class="row">
+											<h6 class="col-sm-2 col-form-label">
+											<label for="region" class="col-sm-2 col-form-label">Region</label>
+											</h6>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width" id="healthRegions"
+													name="regions" multiple="multiple">
+													<option value="">Region...</option>
+													<option value="All">All</option>
+													<option th:each="branch : ${branches}"
+														th:value="${branch.region}"
+														th:text="|${branch.region}|"></option>
+												</select>
+											</div>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width" id="healthStates"
+													name="states" multiple="multiple">
+													<option value="">State...</option>
+													<option value="All">All</option>
+													<option th:each="state : ${states}"
+														th:value="${state}" th:text="${state}"></option>
+												</select>
+											</div>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													id="healthCities" name="cities" multiple="multiple">
+													<option value="">City...</option>
+													<option value="All">All</option>	
+													<option th:each="item : ${cities}"
+														th:text="${item}" th:value="${item}">													
+												</select>
+											</div>												
+										</div>
+										<div class="row">
+											<h6 class="col-sm-2 col-form-label">
+											<label for="policyParameters" class="col-sm-2 col-form-label">Policy Parameters</label>
+											</h6>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													id="healthPolicyTypes" name="policyTypes" multiple="multiple">
+													<option value="">Policy Type...</option>
+													<option value="All">All</option>
+													<option th:each="item : ${policyTypes}"
+														th:text="|${item.policyType}|" th:value="|${item.policyType})|">														
+												</select>
+											</div>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													id="healthPolicyCategories" name="policyCategories" multiple="multiple">
+													<option value="">Policy Category...</option>
+													<option value="All">All</option>		
+													<option th:each="item : ${policyCategories}"
+														th:text="|${item.policyCategory}|" th:value="|${item.policyCategory})|">												
+												</select>
+											</div>
+											<!-- <div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													id="healthSumInsured" name="sumInsured" multiple="multiple">
+													<option value="">Sum Insured...</option>
+													<option value="All">All</option>														
+												</select>
+											</div> -->
+											<!-- <div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													id="healthMaxAges" name="maxAges" multiple="multiple">
+													<option value="">Max Age...</option>
+													<option value="All">All</option>														
+												</select>
+											</div> -->
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													id="healthAddOns" name="addOns" multiple="multiple">
+													<option value="">Add Ons...</option>
+													<option value="All">All</option>	
+													<option value="YES">Yes</option>	
+													<option value="NO">NO</option>															
+												</select>
+											</div>
+										</div>
+									</div>										
+									<div id="generalDiv" class="col-12">
+											<div class="row">
+												<h6 class="col-sm-2 col-form-label">
+												<label for="channelType" >Channel Type</label>
+												</h6>
+												<div class="col-sm-4">
+													<select class="form-control select2 full-width"
+														multiple="multiple" name="channels" id="channels">
+														<option value="">Channel...</option>
+														<option value="All">All</option>
+														<option th:each="channel : ${channels}"
+															th:value="${channel.channelName}"
+															th:text="${channel.channelName}"></option>
+													</select>
+												</div>
+												<div class="col-sm-4">
+													<select class="form-control select2 full-width"
+														multiple="multiple" name="subChannels" id="subChannels">
+														<option value="">SubChannel...</option>
+														<option value="All">All</option>
+														<option th:each="subChannel : ${subChannels}"
+															th:value="${subChannel.subChannel}"
+															th:text="${subChannel.subChannel}"></option>
+													</select>
+												</div>
+											</div>
+											<div class="row">
+												<h6 class="col-sm-2 col-form-label">
+												<label for="region">Region</label>
+												</h6>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width" id="regionIds"
+														name="regions" multiple="multiple">
+														<option value="">Region...</option>
+														<option th:each="branch : ${branches}"
+															th:value="${branch.region}"
+															th:text="|${branch.region}|"></option>
+														<option value="All">All</option>
+													</select>
+												</div>
+												
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width" id="states"
+														name="states" multiple="multiple">
+														<option value="">State...</option>
+														<option value="All">All</option>
+														<option th:each="state : ${states}"
+															th:value="${state}" th:text="${state}"></option>
+													</select>
+												</div>
+												
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="motorCities" name="cities" multiple="multiple">
+														<option value="">City...</option>
+														<option value="All">All</option>
+														<option th:each="item : ${cities}"
+															th:text="${item}" th:value="${item}">														
+													</select>
+												</div>
+												
+											</div>
+											<div class="row">
+												<h6 class="col-sm-2 col-form-label">
+												<label for="policyParameters">Policy Parameters</label>
+												</h6>
+												<!-- <div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="healthMaxAges" name="maxAges" multiple="multiple">
+														<option value="">Age with Rs...</option>
+														<option value="All">All</option>														
+													</select>
+												</div> -->
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="healthAddOns" name="addOns" multiple="multiple">
+														<option value="">Add Ons...</option>
+														<option value="All">All</option>	
+														<option value="YES">Yes</option>	
+														<option value="NO">NO</option>														
+													</select>
+												</div>
+											</div>
+										</div>		
+									
+								</div>
+								
+							</div>
+							<div class="col-12 card-footer report-card">
+								<div class="col-12">
+									<button class="resetText btn-dark float-right" type="submit">
+										<span class="plusIcon">+</span> ADD
+									</button>
+								</div>
+							</div>
+							
+							<!--Card Body-->
+							
+						</div>
+						</form>
+					</div>
+				</div>
+				<!--Reports-->
+				<!--Table Normal-->
+				<div class="explorer-enabled pt-4">
+					<div class="row cards  modal-base table-jqwidget">
+						<div class="col-12 modal-master">
+							<div class="row card-layout">
+								<!--Card -header-->
+								<div
+									class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+									<div>
+										<span class="h2">User Matrix List</span>
+									</div>
+									<button class="resetText btn-light btn-light-table" id="">
+										DELETE <!-- <span id="selectedCheckbox">0</span> -->
+									</button>
+									<!-- <button class="resetText btn-light btn-light-table l-100"
+										onclick="toggleMasterCheckboxOff(1)">DESELECT All</button> -->
+									<div>
+										<!-- <btn class="explore_fullview_on"><span class="explore-icon fa fa-arrows-alt"></span></btn>
+                                         <btn class="explore_fullview_off"><span class="explore-icon fa fa-close"></span></btn> -->
+										<!-- <button class="resetText btn-dark float-right">
+											<span class="plusIcon">+</span> ADD
+										</button> -->
+									</div>
+								</div>
+								<!--Card header-->
+								<!--Card Body-->
+								<div class="col-12" id="pivot">
+									<table class="bootstrapDataTable table-striped"
+										id="userMatrixListDT">
+										<thead>
+											<tr>
+												<th><input type="checkbox" id="checkbox-group1-parent"
+													onclick="toggleMasterCheckbox(1)"></th>
+												<th>User ID</th>
+												<th>Username</th>
+												<th>Report</th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="item : ${userMatrixResponseList}">
+												<td></td>
+												<!-- <td></td> -->
+												<td class="text-center" th:text="${item.userId}"></td>
+												<td class="text-center" th:text="${item.userName}"></td>
+												<!-- <td class="text-center" th:text="${item.userMatrixRole}"></td> -->
+												<td class="text-center" th:text="${item.dashboardName}"></td>
+												<td class="text-center"><button data-toggle="modal"
+														id="userMatrixEditButton"
+														data-target="#editUserMatrixModal"
+														class="btn btn-outline btn-sm">
+														<i class="fas fa-edit"></i>
+													</button></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<!--Card Body-->
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--Table Normal-->
+			</div>
+		</div>
+		<!-- Main Header END-->
+	</div>
+	<script src="../plugins_cr/jquery/jquery.min.js"></script>
+	<script src="../plugins_cr/bootstrap/bootstrap.min.js"></script>
+	<!-- <script src="../plugins_cr/select2/select.min.js"></script> -->
+	<script src="../plugins_cr/jquery/moment.min.js"></script>
+	<script type="text/javascript"
+		src="../plugins_cr/datatable/datatables.min.js"></script>
+	 <!-- Selectize -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>		
+	<!-- jquery-validation -->
+	<script src="../../plugins/jquery-validation/jquery.validate.min.js"></script>
+	<script src="../../plugins/jquery-validation/additional-methods.min.js"></script>
+	<!-- DataTable select -->
+	<script
+		src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+		
+	<script type="text/Javascript"
+		src="../common/js/sampledatatable-new.js"></script>
+	<script type="text/Javascript"
+		src="../common/js/matrix.js"></script>
+	<script>
+	
+	jQuery("body").prepend('<div id="preloader">Loading...</div>');
+    jQuery(document).ready(function() {
+    	console.log('loader')
+    	//setTimeout(function() {
+    		console.log('loader.....')
+    		jQuery("#pre-loader").remove();
+    	//},5000);
+        
+    });
+	
+		$(document).ready(function() {
+			//window.addEventListener("load", function() {
+			//	setTimeout(function() {
+			//		$('#pre-loader').fadeOut(0)
+			//	}, 0);
+			//});
+			/*$("#selectTab").select2({
+				dropdownParent : $('#sidebar'),
+				placeholder : 'select'
+			});
+			$(".selectCard").select2({
+				dropdownParent : $('.card-body')
+			});*/
+		});
+		//sidebar mobile toggle
+		$('#mobile-view-toggler-off').click(function(event) {
+			menuToggleOn();
+		})
+		//close on outside click
+		$(".page-base-container").click(function() {
+			var width = $(window).width();
+			//error causing on modal !couldn't find quick fix
+			var Sidebarstatus = $('#sidebar-mobile').css('display');
+			if (width < 993 && Sidebarstatus == 'block') {
+				menuToggleOff();
+			}
+		});
+		function menuToggleOn() {
+			$('#sidebar-mobile').fadeIn().animate({
+				left : `0px`
+			});
+			$(".page-base-container").css("filter", "blur(.5px)");
+			$(".page-base-container").css("opacity", ".5");
+		}
+		function menuToggleOff() {
+			$('#sidebar-mobile').fadeOut();
+			$(".page-base-container").css("filter", "blur(0px)");
+			$(".page-base-container").css("opacity", "1");
+		}
+		//sidebar list toggler
+		$('.submenu').click(function() {
+			$('#sidebar-list-toggle').toggleClass('fa-angle-down fa-angle-up');
+			$('.sub-list').toggle();
+		})
+		///Full Screen Toggler 
+		///ON
+		$(".explore_fullview_on").click(
+				function(event) {
+					var index = $('.explore_fullview_on').index(this);
+					var ele = document
+							.getElementsByClassName('explorer-enabled')[index];
+					ele.id = "modal-fullscreen";
+					$(".explore_fullview_on").hide();
+					$(".explore_fullview_off").show();
+					///redraw table on modal popup  --no reload required
+					var table = $('#bootstrapDataTable').DataTable();
+					table.columns.adjust();
+				});
+		///OFF
+		$(".explore_fullview_off").click(
+				function(event) {
+					var index = $('.explore_fullview_off').index(this);
+					var ele = document
+							.getElementsByClassName('explorer-enabled')[index];
+					ele.id = "";
+					$(".explore_fullview_on").show();
+					$(".explore_fullview_off").hide();
+					///redraw table on modal popup  --no reload required
+					var table = $('#bootstrapDataTable').DataTable();
+					table.columns.adjust();
+				});
+
+		///select2 tab linksss onselect
+		var test = $('#selectTab');
+		test.on("select2:select", function(event) {
+			var value = $(event.currentTarget).find("option:selected").val();
+			window.location.href = value;
+		});
+
+		//handle default tab admin link
+		$('#defaultLink')
+				.on(
+						'click',
+						function(e) {
+							if (e.target.className == 'select2-selection__rendered'
+									|| e.target.className == 'select2-selection select2-selection--single'
+									|| e.target.className == 'select2-selection__arrow'
+									|| e.target.className == 'select2-selection__placeholder')
+								return
+
+							else {
+								$('#selectTab')
+										.val('/admin/userDashboardMapping')
+										.trigger('change');
+								window.location.href = "/admin/userDashboardMapping"
+							}
+						});
+
+		/*
+		from index.html
+		toggle table checkbox ---works for 
+		multiple set name accordingly and pass onchange event function with index*/
+		function toggleMasterCheckbox(index) {
+			var parent = `#checkbox-group${index}-parent`;
+			var child = `.checkbox-group${index}-child`
+			if ($(parent).prop('checked')) {
+				$(child).prop('checked', true)
+				var table = $(`#matrix_Table`).DataTable();
+				$('#selectedCheckbox').html(String(table.data().count()))
+			} else {
+				$('#selectedCheckbox').prop('checked', false)
+				$('#selectedCheckbox').html(0)
+			}
+		}
+		function toggleMasterCheckboxOff(index) {
+			//force selected using button
+			var child = `.checkbox-group${index}-child`;
+			$(child).prop('checked', false)
+			$('#selectedCheckbox').html('0')
+		}
+		$('.checkbox-group1-child').on("click", function() {
+			var index = $('.checkbox-group1-child').index(this);
+			var count = parseInt($('#selectedCheckbox').html());
+			//alert(count+1)
+			if ($('.checkbox-group1-child').eq(index).prop('checked'))
+				$('#selectedCheckbox').html('' + (count + 1));
+			else
+				$('#selectedCheckbox').html('' + (count - 1))
+		});
+	</script>
+</body>
+</html>

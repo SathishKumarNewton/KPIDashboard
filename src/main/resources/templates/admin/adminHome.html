@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>rsg</title>
+<!-- <link rel="icon" href="../assets/images/titleicon.png"
+	type="image/icon-type"> -->
+<link rel="stylesheet" href="../plugins_cr/bootstrap/bootstrap.min.css">
+<link rel="stylesheet"
+	href="../plugins_cr/font-awesome-4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="../plugins_cr/select2/selec2.min.css">
+<link rel="stylesheet" href="../styles/rsg.css">
+</head>
+<body>
+	<div class="page-master-container">
+		<!-- Main Header -->
+		<div id="header">
+			<nav class="fixed-top">
+				<div
+					class="nav-header d-flex flex-row justify-content-between align-content-center">
+					<div>
+						<btn class="mr-2 d-md-inline d-lg-none d-xl-none"
+							id="mobile-view-toggler-off"> <span class="fa fa-bars"></span>
+						</btn>
+						<a class="navbar-brand" href=""> <img
+							src="../assets/images/Logo_Innerpage.png" alt="CompanyLogo"
+							id="logo">
+						</a>
+					</div>
+					<div class="d-flex">
+						<div class="navbar-icons d-none d-md-block pr-2">
+							<a> <span id="settings" class="fa fa-cog"></span>
+							</a>
+						</div>
+						<div
+							class="navbar-icons d-inline-flex align-items-center pt-2 pr-2">
+							<div>
+								<a> <span id="notifications" class="fa fa-bell"></span>
+								</a>
+							</div>
+							<div
+								class="notificationCounter d-flex justify-content-center align-items-center">
+								<span>d</span>
+							</div>
+						</div>
+						<div class="navbar-icons p-0">
+							<a> <img id="userPic" class="img-fluid"
+								src="../assets/images/profile.jpeg" alt="profile picture">
+							</a>
+						</div>
+						<div class="navbar-icons  d-none d-md-block pr-2">
+							<form action="/logout" method="get">
+								<button style="float: none;" 
+								class="btn btn-block btn-danger btn-sm" name="registration" type="submit">Logout</button>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div
+					class="navbar-operations d-flex flex-row justify-content-between align-content-center">
+					<div class="title">RSG | RMS</div>
+					<div class="my-auto">
+						<button class="btn mr-0 mr-md-1">
+							<span>Share</span> <i class="fa fa-share-square-o"></i>
+						</button>
+						<button class="btn btn-outline-white ml-0 ml-md-1">
+							<span>Download</span> <i class="fa fa-download"></i>
+						</button>
+					</div>
+				</div>
+			</nav>
+		</div>
+		<!--Main Header End-->
+		<!-- pre-loader -->
+		<section id="pre-loader">
+			<img src="../assets/images/Logo_Innerpage.png" alt="CompanyLogo"
+				id="logo">
+		</section>
+		<!-- end -->
+		<!-- sidebar mobile starts-->
+		<div id="sidebar-mobile">
+			<ul class="list-group">
+				<li
+					class="list-group-item d-flex justify-content-between align-items-center">
+					<span> <span class="fa fa-home"></span> <a
+						href="/admin/home">Home</a>
+				</span>
+				</li>
+				<li
+					class="list-group-item submenu d-flex justify-content-between align-items-center">
+					<span> <span class="fa fa-user"></span> <a
+						href="/admin/userDashboardMapping">Admin</a>
+				</span> <span class="badge badge-pill"> <span
+						class="fa fa-angle-down" id="sidebar-list-toggle"></span>
+				</span>
+				</li>
+				<div class="sub-list">
+					<a href="/admin/userDashboardMapping"><li
+						class="list-group-item">User Dashboard</li></a> <a href="#"><li
+						class="list-group-item">User Mapping Dashboard 2</li></a> <a href="#"><li
+						class="list-group-item">User Mapping Dashboard 3</li></a>
+				</div>
+				<li
+					class="list-group-item d-flex justify-content-between align-items-center">
+					<span> <span class="fa fa-cogs"></span> <a
+						href="/admin/sqoopConfig">Sqoop Configuration</a>
+				</span>
+				</li>
+				<li
+					class="list-group-item d-flex justify-content-between align-items-center">
+					<span> <span class="fa fa-users"></span> <a
+						href="/admin/userMatrix">User Matrix</a>
+				</span>
+				</li>
+			</ul>
+		</div>
+		<!-- sidebar mobile ends-->
+		<!--Side Bar Starts-->
+		<div id="sidebar">
+			<div class="sidebar-wrapper">
+				<a href="/admin/home">
+					<div class="tab tab-default text-center">
+						<span class="fa fa-home"></span>
+						<h3 class="h2">Home</h3>
+					</div>
+				</a> <a id="defaultLink">
+					<div class="tab text-center">
+						<span class="fa fa-user"></span>
+						<h3 class="h2">Admin</h3>
+						<select class="btn form-control dropdown custom-select"
+							id="selectTab">
+							<option></option>
+							<option value="/admin/userDashboardMapping">User
+								Dashboard</option>
+						</select>
+					</div>
+				</a> <a href="/admin/sqoopConfig">
+					<div class="tab text-center">
+						<span class="fa fa-cogs"></span>
+						<h3 class="h2">Sqoop</h3>
+						<h3 class="h2">Configuration</h3>
+					</div>
+				</a> <a href="/admin/userMatrix">
+					<div class="tab text-center">
+						<span class="fa fa-users"></span>
+						<h3 class="h2">User Matrix</h3>
+					</div>
+				</a>
+			</div>
+		</div>
+		<!--Side bar ends-->
+		<div class="page-base-container container-fluid pl-2 pr-2">
+			<!-- Inner Container-->
+			<div class="container-fluid view">
+				<!--Table Normal-->
+				<div class="explorer-enabled pb-4">
+					<div class="row cards  modal-base table-jqwidget">
+						<div class="col-12 modal-master">
+							<div class="row card-layout">
+								<!--Card -header-->
+								<div
+									class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+									<div>
+										<span class="h2">List of Users</span>
+									</div>
+									<button class="resetText btn-light btn-light-table" id="userDel">
+										DELETE <!-- <span id="selectedCheckbox1">0</span> -->
+									</button>
+									<!-- <button class="resetText btn-light btn-light-table l-100" onclick="toggleMasterCheckboxOff(1)">
+                                        DESELECT All
+                                    </button> -->
+									<div>
+										<!-- <btn class="explore_fullview_on"><span class="explore-icon fa fa-arrows-alt"></span></btn>
+                                        <btn class="explore_fullview_off"><span class="explore-icon fa fa-close"></span></btn> -->
+										<button
+											class="resetText btn-dark float-right explore_fullview_on" 
+											data-toggle="modal"
+											data-target="#addUserModal"
+											id="addUserButton">
+											<span class="plusIcon">+</span> ADD
+										</button>
+									</div>
+								</div>
+								<!--Card header-->
+								<!--Card Body-->
+								<div class="col-12" id="pivot">
+									<table class="bootstrapDataTable table-striped" id="userList">
+										<thead>
+											<tr>
+												<th></th>
+												<th>UserId</th>
+												<th>UserName</th>
+												<th>FirstName</th>
+												<th>LastName</th>
+												<th>Email</th>
+												<th>Status</th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="user : ${userList}">
+												<td></td>
+												<td class="text-center" th:text="${user.id}"></td>
+												<td class="text-center" th:text="${user.userName}"></td>
+												<td class="text-center" th:text="${user.name}"></td>
+												<td class="text-center" th:text="${user.lastName}"></td>
+												<td class="text-center" th:text="${user.email}"></td>
+												<td class="text-center" th:if="${user.active}">Active</td>
+												<td class="text-center" th:unless="${user.active}">InActive</td>
+												<td class="text-center"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<!--Card Body-->
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--Table Normal-->
+				<!--Table Normal-->
+				<div class="explorer-enabled">
+					<div class="row cards  modal-base table-jqwidget">
+						<div class="col-12 modal-master">
+							<div class="row card-layout">
+								<!--Card -header-->
+								<div
+									class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+									<div>
+										<span class="h2">List of Dashboard</span>
+									</div>
+									<button class="resetText btn-light btn-light-table" id="dashDel">
+										DELETE <!-- <span id="selectedCheckbox2">0</span> -->
+									</button>
+									<!--  <button class="resetText btn-light btn-light-table l-100" onclick="toggleMasterCheckboxOff(2)">
+                                        DESELECT All
+                                    </button> -->
+									<div>
+										<!-- <btn class="explore_fullview_on"><span class="explore-icon fa fa-arrows-alt"></span></btn>
+                                         <btn class="explore_fullview_off"><span class="explore-icon fa fa-close"></span></btn> -->
+										<button
+											class="resetText btn-dark float-right explore_fullview_on"
+											data-toggle="modal"
+											id="dashboardAddButton" data-target="#addDashboardModal">
+											<span class="plusIcon">+</span> ADD
+										</button>
+									</div>
+								</div>
+								<!--Card header-->
+								<!--Card Body-->
+								<div class="col-12" id="pivot">
+									<table class="bootstrapDataTable table-striped"
+										id="dashboardList">
+										<thead>
+											<tr>
+												<th><!-- <input type="checkbox" id="checkbox-group2-parent"
+													onchange="toggleMasterCheckbox(2)"> --></th>
+												<th>Dashboard ID</th>
+												<th>Dashboard NAME</th>
+												<th>Dashboard URL</th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="item : ${dashboardList}">
+												<td></td>
+												<td class="text-center" th:text="${item.id}"></td>
+												<td class="text-center" th:text="${item.dashboardName}"></td>
+												<td class="text-center small text-muted"
+													th:text="${item.dashboardURL}"></td>
+												<td class="text-center"><button data-toggle="modal"
+														id="dashboardEditButton" data-target="#editDashboardModal"
+														class="btn btn-outline btn-sm">
+														<i class="fas fa-edit"></i>
+													</button></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<!--Card Body-->
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--Table Normal-->
+				<!-- Component Modal-->
+				<!-- Add User Modal -->
+				<!-- <div
+					class="col-sm-12 col-md-6 col-lg-6 explorer-enabled component-popup">
+					<div class="col-12 cards " id="addUserModal">
+						<div class="row modal-base ">
+							<div
+								class="col-12 d-flex flex-column card-layout p-0 modal-master">
+								Card -header
+								<form action="/admin/addUser" method="post" id="addUserForm"
+									autocomplete="off" th:object="${user}">
+									<div
+										class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+										<div>
+											<span class="h2">Add User</span>
+										</div>
+										<div>
+											<btn class="explore_fullview_off">
+											<span class="explore-icon fa fa-close"></span></btn>
+										</div>
+									</div>
+									Card header
+									Card body
+									<div class="card-body">
+										<div class="form-group row">
+											<div class="col-12">
+												<div class="col-12 form-group">
+													<h6>UserName</h6>
+													<input type="text" class="form-control SourceTableName"
+														name="userName"
+														id="userModalUserName" placeholder="Username">
+												</div>
+												<div class="col-12 form-group">
+													<h6>Password</h6>
+													<input type="password" class="form-control SourceTableName"
+														name="password"
+														id="userModalPassword" placeholder="Password">
+												</div>
+												<div class="col-12 form-group">
+													<h6>First Name</h6>
+													<input type="text" class="form-control SourceTableName"
+														name="name"
+														id="userModalName" placeholder="First Name">
+												</div>
+												<div class="col-12 form-group">
+													<h6>Last Name</h6>
+													<input type="text" class="form-control SourceTableName"
+														name="lastName"
+														id="userModallastName" placeholder="Last Name">
+												</div>
+												<div class="col-12 form-group">
+													<h6>Email</h6>
+													<input type="text" class="form-control SourceTableName"
+														name="email"
+														id="userModalEmail" placeholder="Email">
+												</div>
+											</div>
+											
+										</div>
+									</div>
+									<div class="card-footer">
+										<button class="resetText btn-dark explore_fullview_off"
+											id="addUserButton" type="submit">
+											<span class="plusIcon">+</span> ADD
+										</button>
+										<button type="button"
+											class="resetText btn-light explore_fullview_off"
+											>Cancel</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div> -->
+				<!-- Add User Modal -->
+				<div id="addUserModal" class="modal fade" role="dialog"
+					data-backdrop="static" data-keyboard="false">
+					<div class="modal-dialog modal-lg">
+						<form action="/admin/addUser" method="post" id="addUserForm"
+							autocomplete="off" th:object="${user}">
+							<div class="modal-content border-radius">
+								<div class="modal-header"><span class="h2">Add User</span>
+								<span class="explore-icon fa fa-close" data-dismiss="modal"></span></div>
+								<div class="modal-body">
+									<div class="form-group row">
+									<div class="col-12">
+										<div class="col-12 form-group">
+											<h6>UserName</h6>
+											<input type="text" class="form-control SourceTableName"
+												name="userName"
+												id="userModalUserName" placeholder="Username">
+										</div>
+										<div class="col-12 form-group">
+											<h6>Password</h6>
+											<input type="password" class="form-control SourceTableName"
+												name="password"
+												id="userModalPassword" placeholder="Password">
+										</div>
+										<div class="col-12 form-group">
+											<h6>First Name</h6>
+											<input type="text" class="form-control SourceTableName"
+												name="name"
+												id="userModalName" placeholder="First Name">
+										</div>
+										<div class="col-12 form-group">
+											<h6>Last Name</h6>
+											<input type="text" class="form-control SourceTableName"
+												name="lastName"
+												id="userModallastName" placeholder="Last Name">
+										</div>
+										<div class="col-12 form-group">
+											<h6>Email</h6>
+											<input type="text" class="form-control SourceTableName"
+												name="email"
+												id="userModalEmail" placeholder="Email">
+										</div>
+									</div>
+								</div>
+								</div>
+								<div class="modal-footer">
+									<button type="submit" class="btn dark"><span class="plusIcon">+</span> ADD</button>
+									<button type="button" class="btn btn-default"
+										data-dismiss="modal">Close</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+				<!-- Edit User Modal -->
+				<div id="editUserModal" class="modal fade" role="dialog"
+					data-backdrop="static" data-keyboard="false">
+					<div class="modal-dialog modal-lg">
+						<form action="/admin/editUser" method="post" id="editUserForm"
+									autocomplete="off" th:object="${user}">
+							<div class="modal-content border-radius">
+								<div class="modal-header"><span class="h2">Edit User</span>
+								<span class="explore-icon fa fa-close" data-dismiss="modal"></span></div>
+								<div class="modal-body">
+									<div class="form-group row">
+									<div class="col-12">
+										<div class="col-12 form-group">
+											<h6>UserId</h6>
+											<input type="text" class="form-control SourceTableName" required="required"
+												name="id" th:field="*{id}" id="editUserModalId" placeholder="Id"
+													readonly="readonly">
+										</div>
+										<div class="col-12 form-group">
+											<h6>User Name</h6>
+											<input type="text" class="form-control SourceTableName"
+												th:field="*{userName}" name="userName" required="required"
+														id="editUserModalUserName" placeholder="Username">
+										</div>
+										<div class="col-12 form-group">
+											<h6>First Name</h6>
+											<input type="text" class="form-control SourceTableName" required="required"
+												th:field="*{name}" name="name" id="editUserModalFirstName"
+														placeholder="First Name">
+										</div>
+										<div class="col-12 form-group">
+											<h6>Last Name</h6>
+											<input type="text" class="form-control SourceTableName"
+												name="lastName" required="required"
+												id="editUserModallastName" placeholder="Last Name">
+										</div>
+										<div class="col-12 form-group">
+											<h6>Email</h6>
+											<input type="text" class="form-control SourceTableName"
+												th:field="*{email}" name="email" required="required"
+														id="editUserModalEmail" placeholder="Email">
+										</div>
+										<div class="col-12 form-group">
+											<h6>Status</h6>
+											<select class="form-control" id="editUserModalStatus"
+												name="active" required="required">
+												<option value="true">Active</option>
+												<option value="false">InActive</option>
+											</select>
+										</div>
+									</div>
+								</div>
+								</div>
+								<div class="modal-footer">
+									<button type="submit" class="btn dark"><span class="plusIcon">+</span> ADD</button>
+									<button type="button" class="btn btn-default"
+										data-dismiss="modal">Close</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+				<!-- Add Dashboard Modal -->
+				<!--<div id="addDashboardModal" class="modal fade" role="dialog"
+					data-backdrop="static" data-keyboard="false">
+					<div class="modal-dialog modal-lg">
+
+						Modal content
+						<form action="/admin/addDashboard" method="post"
+							id="addDashboardForm" autocomplete="off"
+							th:object="${dashboard}">
+							<div class="modal-content">
+								<div class="modal-header bg-info">
+									<h4 class="modal-title">Add DashBoard</h4>
+									<button type="button" class="close btn-danger"
+										data-dismiss="modal">&times;</button>
+								</div>
+								<div class="modal-body">
+									<div class="form-group row">
+										<label for="dashboardModalName"
+											class="col-sm-2 col-form-label">DashBoard Name</label>
+										<div class="col-sm-10">
+											<input type="text" required="required" class="form-control"
+												th:field="*{dashboardName}" name="dashboardName"
+												id="dashboardModalName" placeholder="Name">
+										</div>
+									</div>
+									<div class="form-group row">
+										<label for="dashboardModalURL"
+											class="col-sm-2 col-form-label">DashBoard URL</label>
+										<div class="col-sm-10">
+											<input type="url" required="required" class="form-control"
+												th:field="*{dashboardURL}" name="dashboardURL"
+												id="dashboardModalURL" placeholder="URL">
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="submit" class="btn btn-success">Add</button>
+									<button type="button" class="btn btn-default"
+										data-dismiss="modal">Close</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div> -->
+				<!-- Add dashboard -->
+				<div id="addDashboardModal" class="modal fade" role="dialog"
+					data-backdrop="static" data-keyboard="false">
+					<div class="modal-dialog modal-lg">
+						<form action="/admin/addDashboard" method="post"
+							id="addDashboardForm" autocomplete="off"
+							th:object="${dashboard}">
+							<div class="modal-content border-radius">
+								<div class="modal-header"><span class="h2">Add DashBoard</span>
+								<span class="explore-icon fa fa-close" data-dismiss="modal"></span></div>
+								<div class="modal-body">
+									<div class="form-group row">
+									<div class="col-12">
+										<div class="col-12 form-group">
+											<h6>DashBoard Name</h6>
+											<input type="text" class="form-control SourceTableName"
+												th:field="*{dashboardName}" name="dashboardName"
+												id="dashboardModalName" placeholder="Name">
+										</div>
+										<div class="col-12 form-group">
+											<h6>DashBoard URL</h6>
+											<input type="url" class="form-control SourceTableName"
+												th:field="*{dashboardURL}" name="dashboardURL"
+												id="dashboardModalURL" placeholder="URL">
+										</div>
+									</div>
+								</div>
+								</div>
+								<div class="modal-footer">
+									<button type="submit" class="btn dark"><span class="plusIcon">+</span> ADD</button>
+									<button type="button" class="btn btn-default"
+										data-dismiss="modal">Close</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+				<!-- Edit Dashboard -->
+				<div id="editDashboardModal" class="modal fade" role="dialog"
+					data-backdrop="static" data-keyboard="false">
+					<div class="modal-dialog modal-lg">
+						<form action="/admin/editDashboard" method="post" id="editDashboardForm"
+									autocomplete="off" th:object="${dashboard}">
+							<div class="modal-content border-radius">
+								<div class="modal-header"><span class="h2">Edit DashBoard</span>
+								<span class="explore-icon fa fa-close" data-dismiss="modal"></span></div>
+								<div class="modal-body">
+									<div class="form-group row">
+									<div class="col-12">
+										<div class="col-12 form-group">
+											<h6>DashBoard Id</h6>
+											<input type="text" class="form-control SourceTableName" readonly="readonly"
+												name="id" th:field="*{id}" id="editDashboardModalId" placeholder="Id">
+										</div>
+										<div class="col-12 form-group">
+											<h6>DashBoard Name</h6>
+											<input type="text" class="form-control SourceTableName"
+												th:field="*{dashboardName}" name="dashboardName"
+												id="editDashboardModalName" placeholder="Name">
+										</div>
+										<div class="col-12 form-group">
+											<h6>DashBoard URL</h6>
+											<input type="url" class="form-control SourceTableName"
+												th:field="*{dashboardURL}" name="dashboardURL"
+												id="editDashboardModalURL" placeholder="URL">
+										</div>
+									</div>
+								</div>
+								</div>
+								<div class="modal-footer">
+									<button type="submit" class="btn dark"><span class="plusIcon">+</span> ADD</button>
+									<button type="button" class="btn btn-default"
+										data-dismiss="modal">Close</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Main Header END-->
+	</div>
+
+	<script src="../plugins_cr/jquery/jquery.min.js"></script>
+	<script src="../plugins_cr/bootstrap/bootstrap.min.js"></script>
+	<script src="../plugins_cr/select2/select.min.js"></script>
+	<script src="../plugins_cr/jquery/moment.min.js"></script>
+	<script type="text/javascript"
+		src="../plugins_cr/datatable/datatables.min.js"></script>
+	<script type="text/Javascript"
+		src="../common/js/sampledatatable-new.js"></script>
+	<script type="text/Javascript"
+		src="../common/js/home.js"></script>
+	<!-- jquery-validation -->
+	<script src="../../plugins/jquery-validation/jquery.validate.min.js"></script>
+	<script src="../../plugins/jquery-validation/additional-methods.min.js"></script>
+	<!-- DataTable select -->
+	<script
+		src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+	<script>
+	//jQuery("body").prepend('<div id="preloader">Loading...</div>');
+    jQuery(document).ready(function() {
+    	console.log('loader')
+    	//setTimeout(function() {
+    		console.log('loader.....')
+    		jQuery("#pre-loader").remove();
+    	//},5000);
+        
+    });
+		$(document).ready(function() {
+			//window.addEventListener("load", function() {
+			//	setTimeout(function() {
+			//		$('#pre-loader').fadeOut(0)
+			//	}, 0);
+			//});
+			/* window.addEventListener('DOMContentLoaded', (event) => {
+			    console.log('DOM fully loaded and parsed');
+			});
+			
+			$(window).load(function() {
+				 // executes when complete page is fully loaded, including all frames, objects and images
+				 alert("window is loaded");
+				}); */
+
+
+			$("#selectTab").select2({
+				dropdownParent : $('#sidebar'),
+				placeholder : 'search'
+			});
+			var table = $('#home_Table1').DataTable();
+			var info = table.page.info();
+			//alert(info.page+1)
+		});
+		///Component Full Screen Toggler 
+		///ON
+		/* $(".explore_fullview_on").click(function(event){
+		    $("#modal-fullscreen").css('visibility', 'visible');
+		    $('.explore_fullview_off').show();
+		}); */
+		$("#addUserButton").click(function(event) {
+			$("#addUserModal").css('visibility', 'visible');
+			$('.explore_fullview_off').show();
+		});
+		$("#userEditButton").click(function(event) {
+			console.log('edii')
+			$("#editUserModal").css('visibility', 'visible');
+			$('.explore_fullview_off').show();
+		});
+		$("#dashboardAddButton").click(function(event) {
+			$("#addDashboardModal").css('visibility', 'visible');
+			$('.explore_fullview_off').show();
+		});
+		///OFF
+		$(".explore_fullview_off").click(function(event) {
+			$('.explore_fullview_off').hide();
+		});
+		//sidebar mobile toggle
+		$('#mobile-view-toggler-off').click(function(event) {
+			menuToggleOn();
+		})
+		//close on outside click
+		$(".page-base-container").click(function() {
+			var width = $(window).width();
+			//error causing on modal !couldn't find quick fix
+			var Sidebarstatus = $('#sidebar-mobile').css('display');
+			if (width < 993 && Sidebarstatus == 'block') {
+				menuToggleOff();
+			}
+		});
+		function menuToggleOn() {
+			$('#sidebar-mobile').fadeIn().animate({
+				left : `0px`
+			});
+			$(".page-base-container").css("filter", "blur(.5px)");
+			$(".page-base-container").css("opacity", ".5");
+		}
+		function menuToggleOff() {
+			$('#sidebar-mobile').fadeOut();
+			$(".page-base-container").css("filter", "blur(0px)");
+			$(".page-base-container").css("opacity", "1");
+		}
+		//sidebar list toggler
+		$('.submenu').click(function() {
+			$('#sidebar-list-toggle').toggleClass('fa-angle-down fa-angle-up');
+			$('.sub-list').toggle();
+		})
+
+		///select2 tab linksss onselect
+		var test = $('#selectTab');
+		test.on("select2:select", function(event) {
+			var value = $(event.currentTarget).find("option:selected").val();
+			window.location.href = value;
+		});
+
+		//handle default tab admin link
+		$('#defaultLink')
+				.on(
+						'click',
+						function(e) {
+							if (e.target.className == 'select2-selection__rendered'
+									|| e.target.className == 'select2-selection select2-selection--single'
+									|| e.target.className == 'select2-selection__arrow'
+									|| e.target.className == 'select2-selection__placeholder')
+								return
+
+							else {
+								$('#selectTab').val(
+										'/admin/userDashboardMapping').trigger(
+										'change');
+								window.location.href = "/admin/userDashboardMapping"
+							}
+						});
+
+		/*
+		from index.html
+		toggle table checkbox ---works for 
+		multiple set name accordingly and pass onchange event function with index*/
+		function toggleMasterCheckbox(index) {
+			var parent = `#checkbox-group${index}-parent`;
+			var parentCount = `#selectedCheckbox${index}`;
+			var child = `.checkbox-group${index}-child`
+			if ($(parent).prop('checked')) {
+				$(child).prop('checked', true)
+				var table = $(`#home_Table${index}`).DataTable();
+				$(parentCount).html(String(table.data().count()))
+			} else {
+				$(child).prop('checked', false)
+				$(parentCount).html('0')
+			}
+		}
+		function toggleMasterCheckboxOff(index) {
+			//force selected using button
+			var child = `.checkbox-group${index}-child`;
+			var parentCount = `#selectedCheckbox${index}`;
+			$(child).prop('checked', false)
+			$(parentCount).html('0')
+		}
+
+		$('.checkbox-group1-child').on("click", function() {
+			var index = $('.checkbox-group1-child').index(this);
+			var count = parseInt($('#selectedCheckbox1').html());
+			if ($('.checkbox-group1-child').eq(index).prop('checked'))
+				$('#selectedCheckbox1').html('' + (count + 1));
+			else
+				$('#selectedCheckbox1').html('' + (count - 1))
+		});
+		$('.checkbox-group2-child').on("click", function() {
+			var index = $('.checkbox-group2-child').index(this);
+			var count = parseInt($('#selectedCheckbox2').html());
+
+			if ($('.checkbox-group2-child').eq(index).prop('checked'))
+				$('#selectedCheckbox2').html('' + (count + 1));
+			else
+				$('#selectedCheckbox2').html('' + (count - 1))
+		});
+	</script>
+</body>
+</html>

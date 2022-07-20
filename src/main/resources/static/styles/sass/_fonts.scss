@@ -1,0 +1,32 @@
+///consist of all font imports and header fonts
+@font-face {
+    font-family: "robotoLight";
+    src: url("../assets/fonts/Roboto-Light.ttf");
+  }
+@font-face{
+    font-family: "robotoRegular";
+    src: url("../assets/fonts/Roboto-Regular.ttf");
+}
+@font-face{
+    font-family: "robotoBold";
+    src: url('../assets/fonts/Roboto-Bold.ttf');
+}
+@font-face{
+    font-family: "robotoMedium";
+    src: url('../assets/fonts/Roboto-Medium.ttf');
+}
+
+///common font styles
+.h2{
+    font-family: "robotoBold";
+    font-size: 14px;
+    color: #2A2A2A;
+}
+
+.resetText{
+    font-family: robotoBold;
+    font-size: 12px;
+    color: $hightlightColor;
+    cursor: pointer;
+    text-decoration:none;
+}

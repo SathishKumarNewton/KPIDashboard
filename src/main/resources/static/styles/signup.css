@@ -1,0 +1,289 @@
+@font-face {
+  font-family: "robotoLight";
+  src: url("../assets/fonts/Roboto-Light.ttf");
+}
+
+@font-face {
+  font-family: "robotoRegular";
+  src: url("../assets/fonts/Roboto-Regular.ttf");
+}
+
+@font-face {
+  font-family: "robotoBold";
+  src: url("../assets/fonts/Roboto-Bold.ttf");
+}
+
+@font-face {
+  font-family: "robotoMedium";
+  src: url("../assets/fonts/Roboto-Medium.ttf");
+}
+
+.h2 {
+  font-family: "robotoBold";
+  font-size: 14px;
+  color: #2A2A2A;
+}
+
+.resetText {
+  font-family: robotoBold;
+  font-size: 12px;
+  color: #004990;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.signup {
+  min-height: 100vh;
+  max-height: 100vh;
+  overflow-x: hidden;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  background-color: #F4F5F8;
+}
+
+.signup .container {
+  background-color: white;
+  border-radius: 20px;
+  padding: 25px 30px;
+  -webkit-box-shadow: 0px 35px 50px #70707028;
+          box-shadow: 0px 35px 50px #70707028;
+  border: solid 1px #EAEAEA;
+}
+
+@media (max-width: 525px) {
+  .signup .container {
+    border-radius: 0px;
+    min-height: 100vh;
+  }
+}
+
+.signup .header #logo {
+  width: 140px;
+}
+
+.signup .content {
+  padding-bottom: 40px;
+}
+
+@media (max-width: 525px) {
+  .signup .content {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+}
+
+.signup .content .img-fluid {
+  width: 70%;
+  margin: auto;
+}
+
+.signup .content .img-fluid img {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.signup .content .border-right {
+  border-color: #EAEAEA !important;
+}
+
+.signup .content .form form {
+  padding: 0px 10%;
+}
+
+.signup .content .form form h3, .signup .content .form form h4 {
+  padding-bottom: 40px;
+  font-family: robotoMedium;
+  color: #2A2A2A;
+}
+
+@media (max-width: 1024px) {
+  .signup .content .form form {
+    padding: 0px 2%;
+  }
+  .signup .content .form form h3 {
+    padding: 20px 0px;
+  }
+}
+
+.signup .content .form form .form-text {
+  font-size: 14px;
+}
+
+.signup .content .form form .form-group {
+  margin-bottom: 1.2rem;
+  position: relative;
+}
+
+.signup .content .form form .form-group input {
+  padding-left: 20px;
+  font-size: 14px;
+  font-weight: 750;
+  border-radius: 9px;
+  border-color: #EAEAEA;
+  border-width: 1px;
+}
+
+.signup .content .form form .form-group input:focus {
+  outline: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  border-color: #004990;
+}
+
+.signup .content .form form .form-group input:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.signup .content .form form .form-group input:focus:-ms-input-placeholder {
+  color: transparent;
+}
+
+.signup .content .form form .form-group input:focus::-ms-input-placeholder {
+  color: transparent;
+}
+
+.signup .content .form form .form-group input:focus::placeholder {
+  color: transparent;
+}
+
+.signup .content .form form .form-group input::-webkit-input-placeholder {
+  font-size: 13px;
+  font-family: robotoLight;
+  font-weight: 400;
+}
+
+.signup .content .form form .form-group input:-ms-input-placeholder {
+  font-size: 13px;
+  font-family: robotoLight;
+  font-weight: 400;
+}
+
+.signup .content .form form .form-group input::-ms-input-placeholder {
+  font-size: 13px;
+  font-family: robotoLight;
+  font-weight: 400;
+}
+
+.signup .content .form form .form-group input::placeholder {
+  font-size: 13px;
+  font-family: robotoLight;
+  font-weight: 400;
+}
+
+.signup .content .form form .form-group input[type="text"], .signup .content .form form .form-group input[type="password"], .signup .content .form form .form-group input[type="submit"] {
+  height: 54px;
+}
+
+.signup .content .form form .form-group .form-text {
+  font-size: 12px;
+}
+
+.signup .content .form form .form-group .floating-label {
+  position: absolute;
+  background-color: white;
+  margin-left: 14px;
+  padding: 0px 6px;
+  padding-top: 0.5em;
+  color: #004990;
+  cursor: pointer;
+  display: none;
+  font-family: robotoRegular;
+}
+
+.signup .content .form form .form-group .passwordToggle {
+  position: absolute;
+  right: 10px;
+  bottom: 20px;
+  color: #848484;
+  cursor: pointer;
+}
+
+.signup .content .form form .form-group .form-submit {
+  background-color: #004990;
+  color: white;
+  border-radius: 5px;
+  padding-left: 0px;
+  font-size: 16px;
+  cursor: pointer;
+  -webkit-box-shadow: 0px 10px 15px #70707028;
+          box-shadow: 0px 10px 15px #70707028;
+}
+
+.signup .content .form form .storage-access {
+  font-size: 14px;
+  padding-bottom: 4px;
+}
+
+.signup .content .form form .storage-access #Remember {
+  position: absolute;
+  margin-top: 3.9px;
+}
+
+.signup .content .form form .storage-access .form-check-label {
+  margin-left: 20px;
+}
+
+.signup .content .form form h6 {
+  font-size: 14px;
+  font-weight: robotoRegular;
+}
+
+.signup .content .form form h6 a {
+  font-size: inherit;
+}
+
+.entry-no-alert .error-info {
+  display: none;
+}
+
+.entry-no-alert .error-text {
+  display: none;
+}
+
+.entry-alert .floating-label {
+  color: #f4053b !important;
+}
+
+.entry-alert .form-control {
+  border-color: #f4053b !important;
+}
+
+.entry-alert .passwordToggle {
+  right: 34px !important;
+  bottom: 42px !important;
+}
+
+.entry-alert .error-info {
+  position: absolute;
+  right: 10px;
+  bottom: 42px;
+  color: #b7b7b7;
+  cursor: pointer;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: white;
+  padding: 0px;
+  font-size: 10px;
+  border: solid 1px #f4053b;
+  color: #f4053b;
+  cursor: pointer;
+  outline: none;
+}
+
+.entry-alert .error-text {
+  color: #f4053b;
+  font-size: 13px;
+  padding-left: 6px;
+  font-family: robotoRegular;
+}

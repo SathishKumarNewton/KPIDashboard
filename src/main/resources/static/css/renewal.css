@@ -1,0 +1,98 @@
+#motorRoleOverRateMovementTable thead,
+#rrVgcTable thead,
+#vgcCurrentMonthBreakUpTable thead,
+#twoWheelerTable thead,
+#rrPvtMotorTable thead,
+#rrPvtMotorCurrentMonthBreakUpTable thead,
+#aspTable thead,
+#aspTable2 thead,
+#lifeLineTable thead,
+#lifeLineTable2 thead,
+#riskInceptionRateTable1 thead,
+#riskInceptionRateTable2 thead,
+#tpUlrRateChangeTable thead{
+	text-align: center;
+	background-color: #004990;
+	color: white;
+}
+
+#rrVgcTable tbody tr td:nth-child(1),#rrVgcTable tbody tr td:nth-child(2),
+#twoWheelerTable tbody tr td:nth-child(1),#twoWheelerTable tbody tr td:nth-child(2),
+#rrPvtMotorTable tbody tr td:nth-child(1),#rrPvtMotorTable tbody tr td:nth-child(2),
+#aspTable tbody tr td:nth-child(1),#aspTable tbody tr td:nth-child(2),
+#lifeLineTable tbody tr td:nth-child(1),#lifeLineTable tbody tr td:nth-child(2),
+#riskInceptionRateTable1 tbody tr td:nth-child(1),#riskInceptionRateTable2 tbody tr td:nth-child(1){
+    text-align: left;
+	background: #004990;
+	color: white;
+}
+
+#rrPvtMotorTable tbody tr td:nth-child(3){
+    text-align: left;
+	background: #004990;
+	color: white;
+}
+
+#rrVgcTable tbody td:nth-child(odd),
+#twoWheelerTable tbody td:nth-child(odd),
+#rrVgcTable tbody td:nth-child(odd),
+#rrPvtMotorTable tbody td:nth-child(odd),
+#rrPvtMotorCurrentMonthBreakUpTable tbody td:nth-child(odd),
+#aspTable tbody td:nth-child(odd),
+#aspTable2 tbody td:nth-child(odd),
+#lifeLineTable tbody td:nth-child(odd),
+#lifeLineTable2 tbody td:nth-child(odd),
+#vgcCurrentMonthBreakUpTable tbody td:nth-child(odd),
+#riskInceptionRateTable1 tbody td:nth-child(odd),
+#riskInceptionRateTable2 tbody td:nth-child(odd),
+#tpUlrRateChangeTable tbody td:nth-child(odd){
+    text-align: right;
+	background: #aad2e4;
+}
+
+#rrVgcTable tbody td:nth-child(even),
+#twoWheelerTable tbody td:nth-child(even),
+#rrPvtMotorTable tbody td:nth-child(even),
+#rrPvtMotorCurrentMonthBreakUpTable tbody td:nth-child(even),
+#aspTable tbody td:nth-child(even),
+#aspTable2 tbody td:nth-child(even),
+#lifeLineTable tbody td:nth-child(even),
+#lifeLineTable2 tbody td:nth-child(even),
+#vgcCurrentMonthBreakUpTable tbody td:nth-child(even),
+#riskInceptionRateTable1 tbody td:nth-child(even),
+#riskInceptionRateTable2 tbody td:nth-child(even),
+#tpUlrRateChangeTable tbody td:nth-child(even) {
+    text-align: right;
+}
+
+#rrDiv,#motorRollOverRateDiv{
+	max-width: 100%;
+}
+
+
+
+
+
+#motorRoleOverRateMovementTable tbody tr td:nth-child(1),
+#motorRoleOverRateMovementTable tbody tr td:nth-child(2),
+#motorRoleOverRateMovementTable tbody tr td:nth-child(3),
+#motorRoleOverRateMovementTable tbody tr td:nth-child(4){
+    text-align: left;
+	background: #004990;
+	color: white;
+}
+
+#motorRoleOverRateMovementTable tbody tr td:nth-child(5){
+    text-align: left;
+	background: #004990;
+	color: white;
+}
+
+#motorRoleOverRateMovementTable tbody td:nth-child(odd){
+    text-align: right;
+	background: #aad2e4;
+}
+
+#motorRoleOverRateMovementTable tbody td:nth-child(even){
+    text-align: right;
+}

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rsg</title>
+    <link rel="icon" href="../assets/images/titleicon.png" type="image/icon-type">
+    <link rel="stylesheet" href="../plugins_cr/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../plugins_cr/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../plugins_cr/select2/selec2.min.css">
+    <link rel="stylesheet" href="../styles/rsg.css">
+    <!-- Selectize -->
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" />
+</head>
+<body>
+    <div class="page-master-container">
+        <!-- Main Header -->
+        <div id="header">
+			<nav class="fixed-top">
+				<div
+					class="nav-header d-flex flex-row justify-content-between align-content-center">
+					<div>
+						<btn class="mr-2 d-md-inline d-lg-none d-xl-none"
+							id="mobile-view-toggler-off"> <span class="fa fa-bars"></span>
+						</btn>
+						<a class="navbar-brand" href=""> <img
+							src="../assets/images/Logo_Innerpage.png" alt="CompanyLogo"
+							id="logo">
+						</a>
+					</div>
+					<div class="d-flex">
+						<div class="navbar-icons d-none d-md-block pr-2">
+							<a> <span id="settings" class="fa fa-cog"></span>
+							</a>
+						</div>
+						<div
+							class="navbar-icons d-inline-flex align-items-center pt-2 pr-2">
+							<div>
+								<a> <span id="notifications" class="fa fa-bell"></span>
+								</a>
+							</div>
+							<div
+								class="notificationCounter d-flex justify-content-center align-items-center">
+								<span>d</span>
+							</div>
+						</div>
+						<div class="navbar-icons p-0">
+							<a> <img id="userPic" class="img-fluid"
+								src="../assets/images/profile.jpeg" alt="profile picture">
+							</a>
+						</div>
+						<div class="navbar-icons  d-none d-md-block pr-2">
+							<form action="/logout" method="get">
+								<button style="float: none;" 
+								class="btn btn-block btn-danger btn-sm" name="registration" type="submit">Logout</button>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div
+					class="navbar-operations d-flex flex-row justify-content-between align-content-center">
+					<div class="title">RSG | RMS</div>
+					<div class="my-auto">
+						<button class="btn mr-0 mr-md-1">
+							<span>Share</span> <i class="fa fa-share-square-o"></i>
+						</button>
+						<button class="btn btn-outline-white ml-0 ml-md-1">
+							<span>Download</span> <i class="fa fa-download"></i>
+						</button>
+					</div>
+				</div>
+			</nav>
+		</div>
+		<!--Main Header End-->
+		<!-- pre-loader -->
+		<section id="pre-loader">
+			<img src="../assets/images/Logo_Innerpage.png" alt="CompanyLogo"
+				id="logo">
+		</section>
+		<!-- end -->
+		<!-- sidebar mobile starts-->
+		<div id="sidebar-mobile">
+			<ul class="list-group">
+				<li
+					class="list-group-item d-flex justify-content-between align-items-center">
+					<span> <span class="fa fa-home"></span> <a
+						href="/admin/home">Home</a>
+				</span>
+				</li>
+				<li
+					class="list-group-item submenu d-flex justify-content-between align-items-center">
+					<span> <span class="fa fa-user"></span> <a
+						href="/admin/userDashboardMapping">Admin</a>
+				</span> <span class="badge badge-pill"> <span
+						class="fa fa-angle-down" id="sidebar-list-toggle"></span>
+				</span>
+				</li>
+				<div class="sub-list">
+					<a href="/admin/userDashboardMapping"><li class="list-group-item">User
+							Dashboard</li></a> <a href="#"><li class="list-group-item">User
+							Mapping Dashboard 2</li></a> <a href="#"><li class="list-group-item">User
+							Mapping Dashboard 3</li></a>
+				</div>
+				<li
+					class="list-group-item d-flex justify-content-between align-items-center">
+					<span> <span class="fa fa-cogs"></span> <a
+						href="/admin/sqoopConfig">Sqoop Configuration</a>
+				</span>
+				</li>
+				<li
+					class="list-group-item d-flex justify-content-between align-items-center">
+					<span> <span class="fa fa-users"></span> <a
+						href="/admin/userMatrix">User Matrix</a>
+				</span>
+				</li>
+			</ul>
+		</div>
+		<!-- sidebar mobile ends-->
+		<!--Side Bar Starts-->
+		<div id="sidebar">
+			<div class="sidebar-wrapper">
+				<a href="/admin/home">
+					<div class="tab text-center">
+						<span class="fa fa-home"></span>
+						<h3 class="h2">Home</h3>
+					</div>
+				</a> <a id="defaultLink">
+					<div class="tab tab-default text-center">
+						<span class="fa fa-user"></span>
+						<h3 class="h2">Admin</h3>
+						<select class="btn form-control dropdown custom-select"
+							id="selectTab">
+							<option></option>
+							<option value="/admin/userDashboardMapping">User Dashboard</option>
+						</select>
+					</div>
+				</a> <a href="/admin/sqoopConfig">
+					<div class="tab text-center">
+						<span class="fa fa-cogs"></span>
+						<h3 class="h2">Sqoop</h3>
+						<h3 class="h2">Configuration</h3>
+					</div>
+				</a> <a href="/admin/userMatrix">
+					<div class="tab text-center">
+						<span class="fa fa-users"></span>
+						<h3 class="h2">User Matrix</h3>
+					</div>
+				</a>
+			</div>
+		</div>
+        <!--Side bar ends-->
+        <div class="page-base-container container-fluid pl-2 pr-2">
+            <!-- Inner Container-->
+            <div class="container-fluid view">
+                <!-- Report card-->
+                <div class="row cards Reports">
+                    <div class="col-12">
+                        <div class="row card-layout">
+                            <!--Card -header-->
+                            <div class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+                                <div><span class="h2">Add User Dashboard Mapping</span></div>
+                            </div>
+                            <!--Card header-->
+                            <!--Card Body-->
+                            <div class="col-12 card-body report-card">
+                            <form th:action="@{/admin/saveUserDashboardMapping}"
+									th:object="${multiUserDashboard}" method="post"
+									autocomplete="off" id="userDashboardMappingForm">
+                                <div class="row">
+                                	
+                                    <div class="col-sm-12 col-md-6 form-group">
+                                        <h6>User</h6>
+                                        <select class="btn form-control dropdown custom-select selectCard" id="userIds"
+													name="userIds" required="required"  multiple="multiple">
+                                            <option value="">Select User...</option>
+											<option th:each="user : ${users}" th:value="${user.id}" 
+												th:text="${user.userName}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6 form-group">
+                                        <h6>DashBoard</h6>
+                                        <select class="btn form-control dropdown custom-select2 selectCard" id="dashboardIds"
+													name="dashboardIds" required="required" multiple="multiple">
+                                           <option value="">Select DashBoard...</option>
+											<option th:each="dashboard : ${dashboardList}"
+												th:value="${dashboard.id}"
+												th:text="${dashboard.dashboardName}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12">
+                                        <button class="resetText btn-dark float-right" type="submit">
+                                            <span class="plusIcon">+</span>
+                                            ADD
+                                        </button>
+                                    </div>   
+                                   
+                                </div>
+                                 </form>
+                            </div>
+                            <!--Card Body-->
+                        </div>
+                    </div>
+                </div>
+                <!--Reports-->
+                <!--Table Normal-->
+                <div class="explorer-enabled pt-4">
+                    <div class="row cards  modal-base table-jqwidget" >
+                        <div class="col-12 modal-master" >
+                            <div class="row card-layout" >
+                                <!--Card -header-->
+                                <div class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+                                    <div><span class="h2">List of Dashboard</span></div>
+                                    <button class="resetText btn-light btn-light-table">
+                                        DELETE <span id="selectedCheckbox">0</span >
+                                    </button>
+                                    <button class="resetText btn-light btn-light-table l-100" onclick="toggleMasterCheckboxOff(1)">
+                                        DESELECT All
+                                    </button>
+                                    <!-- <div>
+                                        full view from old dashboard can be added here by adding respective fullview-explorer-on and of function
+                                         <button class="resetText btn-dark float-right">
+                                             <span class="plusIcon">+</span>
+                                             ADD
+                                         </button>
+                                     </div> -->
+                                </div>
+                                <!--Card header-->
+                                <!--Card Body-->
+                                <div class="col-12" id="pivot">
+                                    <table class="bootstrapDataTable table-striped" id="admin_Table">
+                                        <thead>
+                                           <tr>
+                                             <th><input type="checkbox" id="checkbox-group1-parent" onclick="toggleMasterCheckbox(1)"></th>
+                                             <th>User ID</th>
+                                             <th>Username</th>
+                                             <th>Dashboard ID</th>
+                                             <th>Dashboard Name</th>
+                                             <th>Dashboard URL</th>
+                                           </tr>
+                                         </thead>
+                                         <tbody>
+											<tr th:each="item : ${userDashboardList}">
+												<td></td>
+												<!-- <td class="text-center" th:text="${item.userDashboardId}"></td> -->
+												<td class="text-center" th:text="${item.userId}"></td>
+												<td class="text-center" th:text="${item.user.userName}"></td>
+												<td class="text-center" th:text="${item.dashboardId}"></td>
+												<td class="text-center" th:text="${item.dashboardName}"></td>
+												<td class="text-center" th:text="${item.dashboardURL}"></td>
+											</tr>
+										</tbody>
+                                    </table>
+                                </div>
+                                <!--Card Body-->
+                            </div>
+                        </div>
+                </div>
+                </div>
+                <!--Table Normal-->
+            </div>
+        </div>
+        <!-- Main Header END-->
+    </div>
+    <script src="../plugins_cr/jquery/jquery.min.js"></script>
+    <script src="../plugins_cr/bootstrap/bootstrap.min.js"></script>
+    <script src="../plugins_cr/select2/select.min.js"></script>
+    <script src="../plugins_cr/jquery/moment.min.js"></script>
+    <script type="text/javascript" src="../plugins_cr/datatable/datatables.min.js"></script>
+    <script type="text/Javascript" src="../common/js/sampledatatable-new.js"></script>    
+    <!-- Selectize -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+    <script>
+    jQuery(document).ready(function() {
+    	console.log('loader')
+    	//setTimeout(function() {
+    		console.log('loader.....')
+    		jQuery("#pre-loader").remove();
+    	//},5000);
+        
+    });
+        $(document).ready(function () {
+            /* window.addEventListener("load",function(){
+                setTimeout(function(){ 
+                    $('#pre-loader').fadeOut(500)
+                }, 200);
+                }); */
+            /* $("#selectTab").select2({    
+                dropdownParent: $('#sidebar'),
+                placeholder:'select'
+            });
+            $(".selectCard").select2({    
+                dropdownParent: $('.card-body')    
+            }); */
+            
+        });
+        //$('#select').click(function(event) { alert('dd'); event.preventDefault(); });
+
+        //sidebar mobile toggle
+        $('#mobile-view-toggler-off').click(function(event){
+            menuToggleOn();
+        })
+        //close on outside click
+        $(".page-base-container").click( function() {
+            var width = $(window).width();
+            //error causing on modal !couldn't find quick fix
+            var Sidebarstatus=$('#sidebar-mobile').css('display');
+            if(width<993 && Sidebarstatus=='block') {
+                menuToggleOff();
+            }
+        });
+        function menuToggleOn(){
+            $('#sidebar-mobile').fadeIn().animate({left:`0px`});
+            $(".page-base-container").css("filter","blur(.5px)");
+            $(".page-base-container").css("opacity",".5");
+        }
+        function menuToggleOff(){
+            $('#sidebar-mobile').fadeOut();
+            $(".page-base-container").css("filter","blur(0px)");
+            $(".page-base-container").css("opacity","1");
+        }
+        //sidebar list toggler
+        $('.submenu').click(function(){
+            $('#sidebar-list-toggle').toggleClass('fa-angle-down fa-angle-up');
+            $('.sub-list').toggle();
+        })
+        ///Full Screen Toggler 
+            ///ON
+            $(".explore_fullview_on").click(function(event){
+                var index = $('.explore_fullview_on').index(this);
+                var ele=document.getElementsByClassName('explorer-enabled')[index];
+                ele.id="modal-fullscreen";
+                $(".explore_fullview_on").hide();
+                $(".explore_fullview_off").show();
+                
+                ///redraw table on modal popup  --no reload required
+                $('div.dataTables_scrollBody').height( 240 );
+                var table = $('#admin_Table').DataTable();
+                table.columns.adjust().draw();
+            });
+            ///OFF
+            $(".explore_fullview_off").click(function(event){
+                var index = $('.explore_fullview_off').index(this);
+                var ele=document.getElementsByClassName('explorer-enabled')[index];
+                ele.id="";
+                $(".explore_fullview_on").show();
+                $(".explore_fullview_off").hide();
+       
+                ///redraw table on modal popup  --no reload required
+                $('div.dataTables_scrollBody').height( 400 );
+                var table = $('#admin_Table').DataTable();
+                table.columns.adjust().draw();
+            });
+
+            ///select2 tab linksss onselect
+           /*  var test=$('#selectTab'); 
+            test.on("select2:select", function(event) {
+              var value = $(event.currentTarget).find("option:selected").val();
+              window.location.href = value;
+            }); */
+
+            //handle default tab admin link
+            $('#defaultLink').on('click', function(e) {
+                if(e.target.className == 'select2-selection__rendered' 
+                    || e.target.className == 'select2-selection select2-selection--single'
+                    || e.target.className == 'select2-selection__arrow'
+                    || e.target.className == 'select2-selection__placeholder')
+                    return
+                else{
+                    $('#selectTab').val('#').trigger('change');
+                    window.location.href="/admin/userDashboardMapping"
+                }
+            });
+
+            /*
+            from index.html
+            toggle table checkbox ---works for 
+            multiple set name accordingly and pass onchange event function with index*/
+            function toggleMasterCheckbox(index){
+                var parent=`#checkbox-group${index}-parent`;
+                var child=`.checkbox-group${index}-child`
+                if($(parent).prop('checked')){
+                    $(child).prop('checked',true)   
+                    var table = $(`#admin_Table`).DataTable();
+                    $('#selectedCheckbox').html(String(table.data().count()))
+                }
+                else{
+                    $(child).prop('checked',false)
+                    $('#selectedCheckbox').html(0)
+                }
+            }
+            function toggleMasterCheckboxOff(index){
+                //force selected using button
+                var child=`.checkbox-group${index}-child`;
+                $(child).prop('checked',false)
+                $('#selectedCheckbox').html('0')
+            } 
+            $('.checkbox-group1-child').on("click",function() {
+                var index=$('.checkbox-group1-child').index(this);
+                var count=parseInt($('#selectedCheckbox').html());
+                //alert(count+1)
+                if($('.checkbox-group1-child').eq(index).prop('checked')) $('#selectedCheckbox').html(''+(count+1));
+                else $('#selectedCheckbox').html(''+(count-1))
+            });
+            
+			$('select').selectize({
+				sortField : 'text'
+			});
+			
+    </script>
+</body>
+</html>

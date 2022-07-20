@@ -1,0 +1,170 @@
+@import 'props';
+@import 'fonts.scss';
+@import 'component';
+
+//loader
+@include IncludeLoader();
+
+///Header-grouping
+@include NavbarReusable($Addon:true); 
+
+.page-base-container{
+    padding: 0px;
+    padding-top: 127px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    .view{
+        width: 100vw;
+        min-height: calc(100vh - 127px);
+        .layout{
+            min-height: calc(100vh - 127px);
+            flex-wrap: nowrap;
+            height: inherit;
+            .rep{
+                min-width: 240px;    
+                padding: 0px;
+                .welcomeNote{
+                    width: 240px;
+                    background: transparent linear-gradient(180deg, #EDAD27 0%, #D69100 100%) 0% 0%;
+                    color: white;
+                    border-top-right-radius: 40px;
+                    border-bottom-right-radius: 40px;
+                    &-bg{
+                        padding: 18px 10px 18px 0px;
+                        background-image: url(../../assets/images/curves01.svg);
+                        background-size: contain;
+                        background-repeat: no-repeat;
+                    }
+                    .title{
+                        font-family: "robotoBold";
+                        font-size: 14px;
+                    }
+                    span{
+                        font-size: 10px;
+                    }
+                }
+            }
+            .i-nav{
+                padding: 0px;
+                flex-grow: 1; 
+                background-image: url('../../assets/images/card-section-bg.svg');
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;          
+                .card-section{
+                    padding: 0px 20%;
+                    display: flex;
+                    align-items: center;
+                    .custom-card{
+                        display: flex;
+                        flex-direction: column;
+                        background-color: white;
+                        max-width: 360px;
+                        height: 180px;
+                        padding: 14px 16px;
+                        justify-content: space-between;
+                        border-radius: 10px;
+                        box-shadow:0 0px 2.4px rgba(0, 0, 0, 0.035),0 0px 19px rgba(0, 0, 0, 0.07);    
+                        margin-bottom: 20px;
+                        z-index: 1;
+                        .card-title{
+                            font-family: "robotoBold";
+                            font-size: 18px;
+                        }
+                        .card-navigation 
+                        {
+                            z-index: 1;
+                            a{
+                                font-size: 15px;
+                                color: #004990;
+                                text-decoration: none;
+                                font-family: robotoBold;
+                                span{
+                                    padding-left: 7px;
+                                }
+                            }
+                        }
+                        .card-bgImg{
+                            position: absolute; 
+                            left:2%; 
+                            top:0; 
+                            width: 100%; 
+                            height: 100%;
+                            @media (min-width:1390px){
+                                left: 5%;
+                            }
+                        }
+                    }
+                    .custom-card.lower{
+                        margin-top: 20px;
+                    }
+                    @media(max-width: 1100px){
+                        padding: 0px 10%;
+                        .custom-card{
+                            .card-bgImg{
+                                left: 0;
+                            }
+                        }
+                    }
+                    @media(max-width: 767px){
+                        padding-top: 50px;
+                        .custom-card{
+                            .card-bgImg{
+                                left: 7%;
+                            }
+                        }
+                        .custom-card.lower{
+                            margin-top: 0px;
+                        }
+                    }
+                    @media(max-width: 378px){
+                        .custom-card{
+                            .card-bgImg{
+                                left: 0px;
+                            }
+                        }
+                    }
+                }
+            }
+
+            @media (max-width:992px){
+                flex-direction: column;
+                    .rep{
+                        margin-top: 22px;
+                        margin-bottom: 40px;
+                    }
+                    .i-nav{
+                        min-width: 100vw;
+                        .card-section{
+                            padding: 0px 10%;
+                        }
+                    }
+            }
+            @media (max-width:600px){
+                .i-nav{
+                    min-width: 100vw;
+                    .card-section{
+                        padding: 0px 20px;
+                    }
+                }
+            }
+        }
+    }
+}
+.repr{
+  .cls-1, .cls-2 {
+    opacity: 0.16;
+  }
+  &-blue{
+    .cls-1 {fill: url(#linear-gradient-blue);}
+    .cls-2 {fill: #269996;}
+  }
+  &-red{
+    .cls-1 {fill: url(#linear-gradient-red);}
+    .cls-2 {fill: #ED2727;}
+  }
+  &-orange{
+    .cls-1 {fill: url(#linear-gradient-orange);}
+    .cls-2 {fill: #EDAD27;}
+  }
+}

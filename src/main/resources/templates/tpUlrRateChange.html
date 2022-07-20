@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://thymeleaf.org">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>RSD</title>
+<link rel="icon" href="../../assets/images/titleicon.png"
+	type="image/icon-type">
+<link rel="stylesheet"
+	href="../../plugins_cr/bootstrap/bootstrap.min.css">
+<link rel="stylesheet"
+	href="../../plugins_cr/font-awesome-4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../plugins_cr/select2/selec2.min.css">
+<link rel="stylesheet"
+	href="../../plugins_cr/daterangepicker/monthpicker.css">
+<link rel="stylesheet"
+	href="../../plugins_cr/jqwidgets/jqwidgets/styles/jqx.base.css" />
+<link rel="stylesheet" href="../../styles/index.css">
+<link rel="stylesheet" href="../../css/kpi.css">
+<link rel="stylesheet" href="../../css/renewal.css">
+<link rel="stylesheet"
+	href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<!-- Selectize -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" />
+</head>
+
+<body>
+	<div class="page-master-container">
+		<!-- Main Header -->
+		<div id="header">
+			<nav class="fixed-top">
+				<div
+					class="nav-header d-flex flex-row justify-content-between align-content-center">
+					<div>
+						<btn
+							class="mobile-view-toggler-off mr-2 d-md-inline d-lg-none d-xl-none">
+						<span class="fa fa-bars"></span> </btn>
+						<a class="navbar-brand" href=""> <img
+							src="../../assets/images/Logo_Innerpage.png" alt="CompanyLogo"
+							id="logo">
+						</a>
+					</div>
+					<div class="d-flex">
+						<div class="navbar-icons d-none d-md-block pr-2">
+							<a> <span id="settings" class="fa fa-cog"></span>
+							</a>
+						</div>
+						<div
+							class="navbar-icons d-inline-flex align-items-center pt-2 pr-2">
+							<div>
+								<a> <span id="notifications" class="fa fa-bell"></span>
+								</a>
+							</div>
+							<div
+								class="notificationCounter d-flex justify-content-center align-items-center">
+								<span>d</span>
+							</div>
+						</div>
+						<div class="navbar-icons p-0">
+							<a> <img id="userPic" class="img-fluid"
+								src="../../assets/images/profile.jpeg" alt="profile picture">
+							</a>
+						</div>
+						<div class="navbar-icons  d-none d-md-block pr-2">
+							<form action="/logout" method="get">
+								<button style="float: none;"
+									class="btn btn-block btn-danger btn-sm" name="registration"
+									type="submit">Logout</button>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div
+					class="navbar-operations d-flex flex-row justify-content-between align-content-center">
+					<div class="header-dashboard-select">
+						<select class="form-control dropdown" id="reports"
+							name="reportType">
+							<option selected value="TP ULR After Rate Change">TP ULR After Rate Change</option>
+							<!-- <option value="Two Wheeler">Two Wheeler</option>
+							<option value="Private Motor">Private Motor</option>
+							<option value="ASP">ASP</option>
+							<option value="Life line">Life line</option> -->
+						</select>
+					</div>
+					<div class="my-auto">
+						<button class="btn mr-0 mr-md-1">
+							<span>Share</span> <i class="fa fa-share-square-o"></i>
+						</button>
+						<button class="btn btn-outline-white ml-0 ml-md-1">
+							<span>Download</span> <i class="fa fa-download"></i>
+						</button>
+					</div>
+				</div>
+			</nav>
+		</div>
+		<!-- Main Header END-->
+		<!-- pre-loader -->
+		<section id="pre-loader">
+			<img src="../../assets/images/Logo_Innerpage.png" alt="CompanyLogo"
+				id="logo">
+		</section>
+		<!-- end -->
+		<!-- Sidebar -->
+		<div id="sidebar">
+			<!-- Sidebar OutSide Wrapper -->
+			<!-- <form class="sidebar-box" action="#"> -->
+			<div class="sidebar-box">
+				<!-- Sidebar contents -->
+				<div class="col-12  sidebar-content">
+					<div class="row">
+						<!-- Sidebar Header Box -->
+						<div class="col-12 p-0">
+							<ul
+								class="list-header d-flex justify-content-between align-items-center list-unstyled">
+								<li class="d-lg-none"><btn class="mobile-view-toggler-off">
+									<span class="fa fa-arrow-left"></span></btn></li>
+								<li class="h2 my-auto">Filters</li>
+								<li><button class="resetText btn" id="kpiFilterButton"
+										style="background-color: transparent;">APPLY</button></li>
+								<!-- <li><span class="resetText">RESET</span></li> -->
+							</ul>
+						</div>
+						<!-- Filter Form-->
+						<div class="motorRollOverRateDiv">
+							<div class="container-fluid form-wrapper p-0">
+								<div class="col-12">
+									<div class="row">
+										<!-- Filter 1 --CHannel -->
+										<div class="filters col-12">
+											<label class="h2">Channel Type</label>
+											<div class="row">
+												<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+													<div class="master-control">
+														<select class="form-control select2 full-width"
+															name="generalChannel" id="generalChannel"
+															multiple="multiple">
+															<option value="">Channel</option>
+															<option th:each="item : ${filters.generalChannel}"
+																th:text="${item}" th:value="${item}">
+														</select>
+													</div>
+												</div>
+												<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+													<div class="master-control">
+														<select class="form-control select2 full-width"
+															name="generalSubChannel" multiple="multiple">
+															<option value="">Sub Channel</option>
+															<option th:each="item : ${subChannels}"
+																th:text="${item.subChannel}"
+																th:value="${item.subChannel}">
+														</select>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- Filter 2 Region -->
+										<div class="filters col-12">
+											<label class="h2">Region</label>
+											<div class="row">
+												<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+													<div class="master-control">
+														<select class="form-control select2 full-width"
+															name="generalRegion" multiple="multiple">
+															<option value="">Region</option>
+															<option th:each="item : ${regions}" th:text="${item}"
+																th:value="${item}">
+														</select>
+													</div>
+												</div>
+												<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+													<div class="master-control">
+														<select class="form-control select2 full-width"
+															name="generalState" multiple="multiple">
+															<option value="">State</option>
+															<option th:each="item : ${states}" th:text="${item}"
+																th:value="${item}">
+														</select>
+													</div>
+												</div>
+												<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+													<div class="master-control">
+														<select class="form-control select2 full-width"
+															name="generalCity" multiple="multiple">
+															<option value="">City</option>
+															<option th:each="item : ${cities}" th:text="${item}"
+																th:value="${item}">
+														</select>
+													</div>
+												</div>
+												<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+													<div class="master-control">
+														<select class="form-control select2 full-width"
+															name="generalBranch" multiple="multiple">
+															<option value="">Branch</option>
+															<option th:each="item : ${branches}"
+																th:text="|${item.revisedBranchName} (${item.branchCode})|"
+																th:value="${item.branchCode}">
+														</select>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- Filters 5 Motor Parameters-->
+                                                <div class="filters col-12 pb-md-3 pb-lg-3">
+                                                    <label class="h2">Motor Parameters</label>
+                                                    <div class="row">
+                                                        <div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="form-control select2 full-width" name="motorMake" multiple="multiple">
+                                                                    <option value="">Make</option>
+                                                                    <option th:each="item : ${makes}"
+																		 th:text="${item}" th:value="${item}">
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="form-control select2 full-width" id="motorModel" name="motorModel" multiple="multiple">
+                                                                     <option value="">Model</option>
+                                                                     <!-- <option th:each="item : ${models}"
+																		 th:text="${item}"  th:value="${item}"> -->
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="form-control select2 full-width" name="motorModelGroup" multiple="multiple">
+                                                                    <option value="">Model Group</option>
+                                                                     <option th:each="item : ${modelGroups}"
+																		 th:text="${item}" th:value="${item}">
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="heightFiller"></div>
+                                                    </div>
+                                                </div>
+										<!-- Filter 3 Polices-->
+										<!-- <div class="filters col-12">
+											<label class="h2">Policy Parameters</label>
+											<div class="row">
+												<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+
+												</div>
+
+												<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+													<div class="master-control">
+														<select class="form-control select2 full-width"
+															name="generalAddOn" multiple="multiple">
+															<option value="">Add On</option>
+															<option value="YES">YES</option>
+															<option value="NO">NO</option>
+														</select>
+													</div>
+												</div>
+												<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+													<label class="h2" for="number">NoOfYearsWith Rs</label> <input
+														type="text" id="rangeValue" readonly
+														style="border: 0; color: #f6931f; font-weight: bold;"
+														name="generalNoOfYearsWithRs">
+													<div class="master-control" id="range-slider"></div>
+												</div>
+											</div>
+										</div>
+										<div class="filters col-12 pb-md-3 pb-lg-3">
+											<div class="row form-group">
+												<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12"
+													style="margin-left: 2em;">
+													<div class="master-control">
+														<input class="form-check-input" type="radio"
+															name="generalBusinessType" value="New Business"><label
+															class="form-check-label">New Business</label>
+													</div>
+													<div class="master-control">
+														<input class="form-check-input" type="radio"
+															name="generalBusinessType" value="Renewal"><label
+															class="form-check-label">Renewal</label>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+											<div class="master-control">
+												<select class="form-control select2 full-width"
+													name="generalProduct" multiple="multiple">
+													<option value="">Product</option>
+													<option th:each="item : ${products}"
+														th:text="|${item.productDescription} (${item.productCode})|"
+														th:value="${item.productCode}">
+												</select>
+											</div>
+										</div>
+										<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+											<div class="master-control">
+												<select class="form-control select2 full-width"
+													name="generalCampaign" multiple="multiple">
+													<option value="">Campaign</option>
+													<option th:each="item : ${campaigns}"
+														th:text="|${item.campaignDescription} (${item.campaignCode})|"
+														th:value="${item.campaignCode}">
+												</select>
+											</div>
+										</div> -->
+										
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="ApplyFilters">
+							<div class="d-flex h-100 p-3 align-items-center">
+								<button class="btn w-100">APPLY FILTERS</button>
+							</div>
+						</div>
+						<!--Filter Form End-->
+					</div>
+				</div>
+				<!-- Sidebar Contents End-->
+				<!-- </form> -->
+			</div>
+			<!--Sidebar Outside Wrapper End-->
+		</div>
+		<!-- SideBar End-->
+		<div class="page-base-container container-fluid pl-2 pr-2">
+			<!-- Inner Container-->
+			<div class="container-fluid view">
+				<!-- Layer 1-->
+				<div class="row first-layer">
+					<div class="col-12 col-sm-7 d-flex col-md-8 col-lg-8 col-xl-8 p-2"
+						style="min-height: 120px;">
+						<div class="col-12 titlecard d-flex flex-nowrap">
+							<div class="d-flex justify-content-around align-items-center">
+								<div class="titlecard-welcome d-flex flex-column">
+									<div class="title">Welcome Back</div>
+									<div class="title-name" th:text="${userName}"></div>
+								</div>
+							</div>
+							<div>
+								<div class="position-absolute ilustrated-img">
+									<img src="../../assets/images/Illustration.png" width="100%"
+										height='100%' alt="illustration">
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- <div class="col-12 col-sm-5 col-md-4 col-lg-4 col-xl-4 p-2">
+                            <div class="col-12 card h-100">
+                                    <div class="row h-100 d-flex pl-4 justify-content-between">
+                                    <div class="leadsData">
+                                        <span class="h2"><b>Total Leads</b></span>
+                                        <span><h4><b class="leadsCount">250</b></h4></span>
+                                    </div>
+                                    <div class="piechart pr-4" >
+                                        <canvas id="LeadsChart"></canvas>
+                                    </div>
+                                    </div>
+                            </div>
+                        </div> -->
+				</div>
+				<!-- Layer 1 End-->
+				<!-- Report card-->
+				<div class="row cards Reports">
+					<div class="col-12">
+						<div class="row card-layout">
+							<!--Card -header-->
+							<div
+								class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+								<div>
+									<span class="h2" id="reportName"></span>
+								</div>
+								<div>
+									<button id="appyKpiFilter" class="resetText btn">APPLY
+										FILTER</button>
+									<button class="resetText btn">RESET</button>
+									<btn class="btn report-toggler p-0"> <span
+										class="fa fa-angle-down"></span></btn>
+								</div>
+							</div>
+							<!--Card header-->
+							<!--Card Body-->
+							<div class="col-12 card-body report-card">
+								<div class="row">
+									<div class="col-12 col-lg-12 col-xl-5 p-0 pt-md-2 ">
+										<div class="col-12">
+											<div class="h2">Report Period</div>
+										</div>
+										<div class="col-12">
+											<button class="btn mt-1 mt-sm-0 mr-2 mr-lg-0"
+												id="defaultMonthButton">Current Month</button>
+											<button class="btn mt-1 mt-sm-0 mr-2 mr-lg-0">Last
+												Month</button>
+											<button class="btn mt-1 mt-sm-0 mr-2 mr-lg-0">Current
+												Year</button>
+											<button class="btn mt-1 mt-sm-0 mr-2">Last Year</button>
+										</div>
+									</div>
+									<div class="col-12 col-lg-12 col-xl-7 pt-0 pt-md-2">
+										<div class="row">
+											<div class="col-sm-4 col-md-4 pt-4 pt-md-0">
+												<div class="row">
+													<div class="col-12">
+														<div class="h2" style="text-align: center">Period 1
+														</div>
+														<div>
+															<!-- <input type="text" id="rangeDatePicker1"  class="date-picker form-control"> -->
+															<input name="startDate1" id="startDate1"
+																class="date-picker" /> <input name="endDate1"
+																id="endDate1" class="date-picker" />
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-4 col-md-4 pt-4 pt-md-0">
+												<div class="row">
+													<div class="col-12">
+														<div class="h2" style="text-align: center">Period 2
+														</div>
+														<div>
+															<!-- <input type="text" id="rangeDatePicker2" class="date-picker form-control"> -->
+															<input name="startDate2" id="startDate2"
+																class="date-picker" /> <input name="endDate2"
+																id="endDate2" class="date-picker" />
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-4 col-md-4 pt-4 pt-md-0">
+												<div class="row">
+													<div class="col-12">
+														<div class="h2" style="text-align: center">Period 3
+														</div>
+														<div>
+															<!-- <input type="text" id="rangeDatePicker3" class="date-picker form-control"> -->
+															<input name="startDate3" id="startDate3"
+																class="date-picker" /> <input name="endDate3"
+																id="endDate3" class="date-picker" />
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!--Card Body-->
+						</div>
+					</div>
+				</div>
+				<!-- Report Card End-->
+				<!-- Table Layout Card-->
+				<div class="row cards table-jqwidget" style="display: none;">
+					<div class="col-12 explorer-enabled">
+						<div class="row card-layout modal-base">
+							<!--Card -header-->
+							<div
+								class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+								<div>
+									<span class="h2">Pivot Table</span>
+								</div>
+								<div>
+									<btn class="explore_fullview_on"> <span
+										class="explore-icon fa fa-arrows-alt"></span></btn>
+									<btn class="explore_fullview_off"> <span
+										class="explore-icon fa fa-close"></span></btn>
+								</div>
+							</div>
+							<!--Card header-->
+							<!--Card Body-->
+							<div class="col-12 card-body d-flex justify-content-center"
+								id="pivot">
+								<div class="table-wrapper p-2">
+									<div id="divPivotGrid"></div>
+								</div>
+							</div>
+							<!--Card Body-->
+							<!--Card Footer-->
+							<div
+								class="col-12 card-layout-footer  d-flex justify-content-between align-items-center">
+								<div class="d-inline-flex align-items-center">
+									<div>
+										<span>Show</span>
+									</div>
+									<div>
+										<select class="form-control dropdown">
+											<option>&nbsp;5&nbsp;</option>
+											<option>10</option>
+											<option>15</option>
+										</select>
+									</div>
+								</div>
+								<div class="d-inline-flex align-items-center">
+									<div>
+										<btn class="btn"> <span class="fa fa-angle-left"></span></btn>
+									</div>
+									<div>1 of 10</div>
+									<div>
+										<btn class="btn"> <span class="fa fa-angle-right"></span></btn>
+									</div>
+								</div>
+							</div>
+							<!--Card Footer-->
+						</div>
+					</div>
+				</div>
+				<!-- Table Layout Card Jqwidget End-->
+				<!--Table Normal-->
+				<div class="explorer-enabled">
+					<div class="row cards  modal-base table-jqwidget">
+						<div class="col-12 modal-master">
+							<div class="row card-layout" id="tpUlrRateChangeDiv">
+								<div
+									class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+									<div>
+										<span class="h2">Data Table</span>
+									</div>
+									<div>
+										<btn class="explore_fullview_on"> <span
+											class="explore-icon fa fa-arrows-alt"></span></btn>
+										<btn class="explore_fullview_off"> <span
+											class="explore-icon fa fa-close"></span></btn>
+
+									</div>
+								</div>
+								<div class="col-12" style="overflow-x: scroll">
+									<table id="tpUlrRateChangeTable">
+										<thead>
+											<tr>
+												<th>Product</th>
+												<th>State</th>
+												<th>City</th>
+												<th>SBU</th>
+												<th>Business Type</th>
+												<th>Tonnage</th>
+												<th>Seating Capacity</th>
+												<th>Vehicle Type</th>
+												<th>Region</th>
+												<th>TP ULR</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											
+										</tbody>
+									</table>
+								</div>
+							</div>							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!--Table Normal-->
+		<div class="explorer-enabled" style="margin-top: 2%">
+			<div class="row cards  modal-base table-jqwidget">
+				<div class="col-12 modal-master">
+					<div class="row card-layout" style="">
+						<div class="col-12" id="pivot">
+							<div style="float: left; padding-right: 10%;">Add Measure
+								in report</div>
+							<div style="float: left;">
+								Quick View
+								<button>Top5 Cities</button>
+								<button>Top5 States</button>
+								<button>Top5 Branches</button>
+							</div>
+							<div style="float: right;">Export to Excel</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Chart Group 1-->
+		<div class="row cards" style="display: none;">
+			<div class="container-fluid p-0">
+				<div class="row">
+					<!--Char column 1-->
+					<div class="col-sm-12 col-md-6 col-lg-6">
+						<div class="col-12 card-layout p-0 explorer-enabled">
+							<div class="row modal-base">
+								<div class="col-12 modal-master">
+									<!--Card -header-->
+									<div
+										class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+										<div>
+											<span class="h2">Time Scale</span>
+										</div>
+										<div>
+											<btn class="explore_fullview_on"> <span
+												class="explore-icon fa fa-arrows-alt"></span></btn>
+											<btn class="explore_fullview_off"> <span
+												class="explore-icon fa fa-close"></span></btn>
+										</div>
+									</div>
+									<!--Card header-->
+									<!--Card Body-->
+									<div class="col-12 card-body-charts">
+										<div class="charts">
+											<canvas id="chart1"></canvas>
+										</div>
+									</div>
+									<!--Card Body-->
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Chart Column 1 End-->
+					<!-- Chart Column 2 -->
+					<div class="col-sm-12 pt-3 pt-sm-3 pt-md-0 col-md-6 col-lg-6">
+						<div class="col-12 card-layout p-0 explorer-enabled">
+							<div class="row modal-base">
+								<div class="col-12 modal-master">
+									<!--Card -header-->
+									<div
+										class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+										<div>
+											<span class="h2">Line Chart</span>
+										</div>
+										<div>
+											<btn class="explore_fullview_on"> <span
+												class="explore-icon fa fa-arrows-alt"></span></btn>
+											<btn class="explore_fullview_off"> <span
+												class="explore-icon fa fa-close"></span></btn>
+										</div>
+									</div>
+									<!--Card header-->
+									<!--Card Body-->
+									<div class="col-12 card-body-charts">
+										<div class="charts">
+											<canvas id="lineChart"></canvas>
+										</div>
+									</div>
+									<!--Card Body-->
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Chart Column 2 -->
+				</div>
+			</div>
+		</div>
+		<!-- Chart Group 1 End-->
+		<!-- Chart Group 2-->
+		<div class="row cards" style="display: none;">
+			<div class="container-fluid p-0">
+				<div class="row">
+					<!--Char column 3-->
+					<div class="col-sm-12 col-md-6 col-lg-6">
+						<div class="col-12 card-layout p-0 explorer-enabled ">
+							<div class="row modal-base">
+								<div class="col-12 modal-master">
+									<!--Card -header-->
+									<div
+										class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+										<div>
+											<span class="h2">Bar Chart</span>
+										</div>
+										<div>
+											<btn class="explore_fullview_on"> <span
+												class="explore-icon fa fa-arrows-alt"></span></btn>
+											<btn class="explore_fullview_off"> <span
+												class="explore-icon fa fa-close"></span></btn>
+										</div>
+									</div>
+									<!--Card header-->
+									<!--Card Body-->
+									<div class="col-12 card-body-charts">
+										<div class="charts">
+											<canvas id="barChart"></canvas>
+										</div>
+									</div>
+									<!--Card Body-->
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Chart Column 1 End-->
+					<!-- Chart Column 4 -->
+					<div class="col-sm-12 pt-3 pt-sm-3 pt-md-0 col-md-6 col-lg-6">
+						<div class="col-12 card-layout p-0 explorer-enabled">
+							<div class="row modal-base">
+								<div class="col-12 modal-master">
+									<!--Card -header-->
+									<div
+										class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+										<div>
+											<span class="h2">Map</span>
+										</div>
+										<div>
+											<btn class="explore_fullview_on"> <span
+												class="explore-icon fa fa-arrows-alt"></span></btn>
+											<btn class="explore_fullview_off"> <span
+												class="explore-icon fa fa-close"></span></btn>
+										</div>
+									</div>
+									<!--Card header-->
+									<!--Card Body-->
+									<div
+										class="col-12 card-body-charts d-flex justify-content-center ">
+										<div class="charts d-flex">
+											<div id="map-chart" style="min-width: 100%;"></div>
+										</div>
+									</div>
+									<!--Card Body-->
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Chart Column 4 End -->
+				</div>
+			</div>
+		</div>
+		<!-- Chart Group 2 End-->
+
+	</div>
+	<!-- Inner Container End-->
+	</div>
+	<!-- App Body End-->
+	<!--Mobile View Sidebar Toggler-->
+	<div class="btn position-fixed mobile-view-toggler-on">
+		<div class="icon-o position-absolute"></div>
+		<div
+			class="toggler-btn h-100 d-flex justify-content-center align-items-center">
+			<span class="fa fa-filter"></span>
+		</div>
+	</div>
+	<!--Mobile View Sidebar Toggler-->
+	</div>
+
+	<script src="../../plugins_cr/jquery/jquery.min.js"></script>
+	<script src="../../plugins_cr/bootstrap/bootstrap.min.js"></script>
+	<script src="../../plugins_cr/select2/select.min.js"></script>
+	<script src="../../plugins_cr/jquery/moment.min.js"></script>
+	<script src="../../plugins_cr/chartjs/chart.min.js"></script>
+	<script src="../../plugins_cr/googlechart/googlechart.min.js"></script>
+
+
+	<!-- Charts Import from Assets/js-->
+	<!-- <script src="../../common/js/piechart.js"></script> -->
+	<!-- <script src="../../common/js/linechart.js"></script>
+        <script src="../../common/js/barchart.js"></script>
+        <script src="../../common/js/mountainchart.js"></script>
+        <script type="text/javascript" src="../../common/js/googlemap.js"></script> -->
+	<!-- Charts Import-->
+	<script type="text/javascript"
+		src="../../plugins_cr/jquery/moment.min.js"></script>
+	<script type="text/javascript"
+		src="../../plugins_cr/daterangepicker/monthpicker.min.js"></script>
+
+	<!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script> -->
+	<!-- Datatables -->
+	<script type="text/javascript"
+		src="../../plugins_cr/datatable/datatables.min.js"></script>
+	<!--Datatables-->
+	<!-- jq widgets-->
+	<script type="text/javascript"
+		src="../../plugins_cr/jqwidgets/jqwidgets/jqxcore.js"></script>
+	<script type="text/javascript"
+		src="../../plugins_cr/jqwidgets/jqwidgets/jqxdata.js"></script>
+	<script type="text/javascript"
+		src="../../plugins_cr/jqwidgets/jqwidgets/jqxbuttons.js"></script>
+	<script type="text/javascript"
+		src="../../plugins_cr/jqwidgets/jqwidgets/jqxscrollbar.js"></script>
+	<script type="text/javascript"
+		src="../../plugins_cr/jqwidgets/jqwidgets/jqxmenu.js"></script>
+	<script type="text/javascript"
+		src="../../plugins_cr/jqwidgets/jqwidgets/jqxpivot.js"></script>
+	<script type="text/javascript"
+		src="../../plugins_cr/jqwidgets/jqwidgets/jqxpivotgrid.js"></script>
+	<script type="text/Javascript" src="../../common/js/jqwidgets.js"></script>
+	<!-- jq widgets-->
+	<!-- Selectize -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script>
+		///Common Header and sidebar loaded dynamically
+		jQuery(document).ready(function() {
+			console.log('loader')
+			//setTimeout(function() {
+			console.log('loader.....')
+			jQuery("#pre-loader").remove();
+			//},5000);
+
+		});
+		$(document).ready(function() {
+			/* window.addEventListener("load",function(){
+			    // $("#loading1").hide(1000)
+			    $('#pre-loader').fadeOut(500)
+			}); */
+			/* $(".custom-select").select2({
+			    dropdownParent: $('.sidebar-box')
+			});
+			$(".dashboard-selector").select2({
+			    dropdownParent: $('.sidebar-box'),
+			    // minimumResultsForSearch: -1
+			}); */
+
+			$('#startDate1').Monthpicker({
+				onSelect : function() {
+					$('#endDate1').Monthpicker('option', {
+						minValue : $('#startDate1').val()
+					});
+				}
+			});
+			$('#endDate1').Monthpicker({
+				onSelect : function() {
+					$('#startDate1').Monthpicker('option', {
+						maxValue : $('#endDate1').val()
+					});
+				}
+			});
+
+			$('#startDate2').Monthpicker({
+				onSelect : function() {
+					$('#endDate2').Monthpicker('option', {
+						minValue : $('#startDate2').val()
+					});
+				}
+			});
+			$('#endDate2').Monthpicker({
+				onSelect : function() {
+					$('#startDate2').Monthpicker('option', {
+						maxValue : $('#endDate2').val()
+					});
+				}
+			});
+
+			$('#startDate3').Monthpicker({
+				onSelect : function() {
+					$('#endDate3').Monthpicker('option', {
+						minValue : $('#startDate3').val()
+					});
+				}
+			});
+			$('#endDate3').Monthpicker({
+				onSelect : function() {
+					$('#startDate3').Monthpicker('option', {
+						maxValue : $('#endDate3').val()
+					});
+				}
+			});
+
+			/* $('#startDate').datepicker( {
+			    changeMonth: true,
+			    changeYear: true,
+			    showButtonPanel: true,
+			    dateFormat: 'MM yy',
+			    onClose: function(dateText, inst) { 
+			        $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+				}
+			});*/
+
+			$('#defaultMonthButton').focus();
+		});
+
+		///Toggle Filter ON Mobile View
+		$(".mobile-view-toggler-on").click(function(event) {
+			$('#sidebar').animate({
+				'opacity' : 'show',
+				'paddingTop' : 0
+			});
+			$(".mobile-view-toggler-on").hide();
+		});
+		///Toggle Filter OF Mobile View
+		$(".mobile-view-toggler-off").click(function(event) {
+			$('#sidebar').fadeOut();
+			$(".mobile-view-toggler-on").show();
+		});
+
+		///Report Toggle < 968px
+		$(".report-toggler").click(function() {
+			$(".report-card").toggle();
+		})
+
+		///Full Screen Toggler 
+		///ON
+		$(".explore_fullview_on").click(
+				function(event) {
+					var index = $('.explore_fullview_on').index(this);
+					var ele = document
+							.getElementsByClassName('explorer-enabled')[index];
+					ele.id = "modal-fullscreen";
+					$(".explore_fullview_on").hide();
+					$(".explore_fullview_off").show();
+					//drawRegionsMap(); ///Call invoked only for gooogleChartMap
+
+					///redraw table on modal popup  --no reload required
+					var table = $('#bootstrapDataTable').DataTable();
+					table.columns.adjust();
+				});
+		///OFF
+		$(".explore_fullview_off").click(
+				function(event) {
+					var index = $('.explore_fullview_off').index(this);
+					var ele = document
+							.getElementsByClassName('explorer-enabled')[index];
+					ele.id = "";
+					$(".explore_fullview_on").show();
+					$(".explore_fullview_off").hide();
+					//drawRegionsMap();  ///Call invoked only for googlChartMap
+					///redraw table on modal popup  --no reload required
+					var table = $('#bootstrapDataTable').DataTable();
+					table.columns.adjust();
+				});
+
+		///Not Required only for switching Screens on same device 
+		$(window).resize(function() {
+			//Resizing Google Chart Map Based on screen width 
+			//setTimeout(drawRegionsMap(), 3000);
+		});
+
+		/*$.ajax({
+		      type: "GET",
+		      contentType: "application/json",
+		      url: "/getKpiFilters",  
+		      dataType: 'json',
+		      cache: false,
+		      timeout: 600000,
+		      success: function (data) {
+		          responseJSON = data;
+		          console.log(responseJSON);
+		          //populateFilter(responseJSON);
+		      },
+		      error: function (e) {
+		      	alert(e);
+		      }
+		  });*/
+
+		$('#appyKpiFilter').click(function() {
+
+			//clear table data before apply				
+			$('#generalTable  tbody tr td:not("td:nth-child(1)")').empty();
+			$('#motorTable  tbody tr td:not("td:nth-child(1)")').empty();
+			$('#healthTable  tbody tr td:not("td:nth-child(1)")').empty();
+
+			var from1 = $("#startDate1").val();
+			var to1 = $("#endDate1").val();
+
+			if (from1 != "") {
+				if (to1 == "") {
+					alert("Period 1 Range cannot be empty");
+					$("#monthRange1").text("Month Range 1");
+					return false;
+				}
+				// 	$("#monthRange1").text(from1+" - "+to1);
+			}
+
+			var from2 = $("#startDate2").val();
+			var to2 = $("#endDate2").val();
+
+			if (from2 != "") {
+				if (to2 == "") {
+					alert("Period 2 Range cannot be empty");
+					$("#monthRange2").text("Month Range 2");
+					return false;
+				}
+				//$("#monthRange2").text(from2+" - "+to2);
+			}
+
+			var from3 = $("#startDate3").val();
+			var to3 = $("#endDate3").val();
+
+			if (from3 != "") {
+				if (to3 == "") {
+					alert("Period 3 Range cannot be empty");
+					$("#monthRange3").text("Month Range 3");
+					return false;
+				}
+				//$("#monthRange3").text(from3+" - "+to3);
+			}
+
+			/* var range1 = $("#rangeDatePicker1").val();
+			 var from1 = range1.split("-")[0];
+			 var to1 = range1.split("-")[1];
+			 var range2 = $("#rangeDatePicker2").val();
+			 var from2 = range2.split("-")[0];
+			 var to2 = range2.split("-")[1];
+			 var range3 = $("#rangeDatePicker3").val();
+			 var from3 = range3.split("-")[0];
+			 var to3 = range3.split("-")[1];
+			 
+			var fromFormattedOne =  moment(from1, "MM.DD.YYYY").format('YYYY-MM-DD');
+			var fromFormattedTwo =  moment(from2, "MM.DD.YYYY").format('YYYY-MM-DD');
+			var fromFormattedThree =  moment(from3, "MM.DD.YYYY").format('YYYY-MM-DD');
+			
+			var toFormattedOne =  moment(to1, "MM.DD.YYYY").format('YYYY-MM-DD');
+			var toFormattedTwo =  moment(to2, "MM.DD.YYYY").format('YYYY-MM-DD');
+			var toFormattedThree =  moment(to3, "MM.DD.YYYY").format('YYYY-MM-DD');*/
+
+			if (from1 != "" && to1 != "") {
+				getCubeAData(1, from1, to1);
+				getCubeBData(1, from1, to1);
+				getCubeCData(1, from1, to1);
+				getCubeDData(1, from1, to1);
+			}
+			if (from2 != "" && to2 != "") {
+				getCubeAData(2, from2, to2);
+				getCubeBData(2, from2, to2);
+				getCubeCData(2, from2, to2);
+				getCubeDData(2, from2, to2);
+			}
+			if (from3 != "" && to3 != "") {
+				getCubeAData(3, from3, to3);
+				getCubeBData(3, from3, to3);
+				getCubeCData(3, from3, to3);
+				getCubeDData(3, from3, to3);
+			}
+
+		});
+
+		var paid = "";
+		function getCubeAData(period, fromDate, toDate) {
+			var report = $('#reports option:selected').val();
+			console.log($('#reports option:selected').val());
+			var myInput;
+			if (report == 'GENERAL') {
+				myInputs = $('#generalDiv').clone();
+			} else if (report == 'MOTOR') {
+				myInputs = $('#motorDiv').clone();
+			} else if (report == 'HEALTH') {
+				myInputs = $('#healthDiv').clone();
+			}
+			var genDiv = $('<form>').append(myInputs).serializeArray();
+			genDiv.push({
+				name : 'fromDate',
+				value : fromDate
+			});
+			genDiv.push({
+				name : 'toDate',
+				value : toDate
+			});
+			genDiv.push({
+				name : 'reportType',
+				value : report
+			});
+			$
+					.ajax({
+						type : "GET",
+						contentType : "application/json",
+						/*  url: "/getChart",    */
+						url : "/getKpiCubeAData",
+						/* url: "/getChartObjectList", */
+						dataType : 'json',
+						cache : false,
+						timeout : 600000,
+						//data:{fromDate: fromDate,toDate:toDate, filterRequest:genDiv},
+						/* data:{
+						   filterRequest: function(){
+							   return req;
+						   },
+						}, */
+						data : genDiv,
+						success : function(data) {
+							responseJSON = data;
+							console.log(responseJSON);
+							$
+									.each(
+											data,
+											function(ind, obj) {
+												$(".gwp_r" + period).text(
+														(obj.gwp).toFixed(2));
+												$(".nwp_r" + period).text(
+														(obj.nwp).toFixed(2));
+												$("#livesCount_r" + period)
+														.text(obj.livesCovered);
+												$(".wp_r" + period).text(
+														obj.writtenPolicies);
+												$(".avgGwp_r" + period)
+														.text(
+																(obj.avgGwp)
+																		.toFixed(2));
+
+												if (paid != "") {
+													$(
+															".expenseRatio_r"
+																	+ period)
+															.text(
+																	((parseFloat(paid) / parseFloat(obj.gwp)) * 100)
+																			.toFixed(2));
+													$(".acr_r" + period)
+															.text(
+																	((parseFloat(paid) / parseFloat(obj.gwp)) * 100)
+																			.toFixed(2));
+													/*claims ratio -  gic/gwp here gic is missing now*/
+													$(".cor_r" + period)
+															.text(
+																	(parseFloat($(
+																			".expenseRatio_r"
+																					+ period
+																					+ ":first")
+																			.text()) + parseFloat($(
+																			".acr_r"
+																					+ period
+																					+ ":first")
+																			.text()))
+																			.toFixed(2));
+												}
+
+											});
+
+						},
+						error : function(e) {
+							alert(e);
+						}
+					});
+
+		}
+
+		function getCubeBData(period, fromDate, toDate) {
+			var report = $('#reports').val();
+			var myInput;
+			if (report == 'GENERAL') {
+				myInputs = $('#generalDiv').clone();
+			} else if (report == 'MOTOR') {
+				myInputs = $('#motorDiv').clone();
+			} else if (report == 'HEALTH') {
+				myInputs = $('#healthDiv').clone();
+			}
+			var genDiv = $('<form>').append(myInputs).serializeArray();
+			genDiv.push({
+				name : 'fromDate',
+				value : fromDate
+			});
+			genDiv.push({
+				name : 'toDate',
+				value : toDate
+			});
+			genDiv.push({
+				name : 'reportType',
+				value : report
+			});
+			$.ajax({
+				type : "GET",
+				contentType : "application/json",
+				/*  url: "/getChart",    */
+				url : "/getKpiCubeBData",
+				/* url: "/getChartObjectList", */
+				dataType : 'json',
+				cache : false,
+				timeout : 600000,
+				//data:{fromDate: fromDate,toDate:toDate},
+				data : genDiv,
+				success : function(data) {
+					responseJSON = data;
+					console.log(responseJSON);
+					$.each(data, function(ind, obj) {
+						$("#gwpOd_r" + period).text((obj.gwpOd).toFixed(2));
+						$("#gwpTp_r" + period).text((obj.gwpTp).toFixed(2));
+						$("#nwpOd_r" + period).text((obj.nwpOd).toFixed(2));
+						$("#nwpTp_r" + period).text((obj.nwpTp).toFixed(2));
+						$("#discGwpOd_r" + period).text(
+								(obj.discountGwpOd).toFixed(2));
+						$("#discNwpOd_r" + period).text(
+								(obj.discountNwpOd).toFixed(2));
+
+					});
+
+				},
+				error : function(e) {
+					alert(e);
+				}
+			});
+
+		}
+
+		function getCubeCData(period, fromDate, toDate) {
+			var report = $('#reports').val();
+			var myInput;
+			if (report == 'GENERAL') {
+				myInputs = $('#generalDiv').clone();
+			} else if (report == 'MOTOR') {
+				myInputs = $('#motorDiv').clone();
+			} else if (report == 'HEALTH') {
+				myInputs = $('#healthDiv').clone();
+			}
+			var genDiv = $('<form>').append(myInputs).serializeArray();
+			genDiv.push({
+				name : 'fromDate',
+				value : fromDate
+			});
+			genDiv.push({
+				name : 'toDate',
+				value : toDate
+			});
+			genDiv.push({
+				name : 'reportType',
+				value : report
+			});
+			$
+					.ajax({
+						type : "GET",
+						contentType : "application/json",
+						/*  url: "/getChart",    */
+						url : "/getKpiCubeCData",
+						/* url: "/getChartObjectList", */
+						dataType : 'json',
+						cache : false,
+						timeout : 600000,
+						//data:{fromDate: fromDate,toDate:toDate},
+						data : genDiv,
+						success : function(data) {
+							responseJSON = data;
+							console.log(responseJSON);
+							$
+									.each(
+											data,
+											function(ind, obj) {
+												$(".gep_r" + period).text(
+														(obj.gep).toFixed(2));
+												$(".nep_r" + period).text(
+														(obj.nep).toFixed(2));
+												$("#gepOd_r" + period).text(
+														(obj.gepOd).toFixed(2));
+												$("#nepOd_r" + period).text(
+														(obj.nepOd).toFixed(2));
+												$(".gepTp_r" + period).text(
+														(obj.gepTp).toFixed(2));
+												$(".nepTp_r" + period).text(
+														(obj.nepTp).toFixed(2));
+												$("#discGepOd_r" + period)
+														.text(
+																(obj.discountGepOd)
+																		.toFixed(2));
+												$("#dscNepOd_r" + period).text(
+														(obj.discountNepOd)
+																.toFixed(2));
+												$("#ibnrGicOd_r" + period)
+														.text(
+																(obj.ibnrGicOd)
+																		.toFixed(2));
+												$("#nbnrGicOd_r" + period)
+														.text(
+																(obj.nbnrGicOd)
+																		.toFixed(2));
+												$("#ibnrNicOd_r" + period)
+														.text(
+																(obj.ibnrNicOd)
+																		.toFixed(2));
+												$("#nbnrGicOd_r" + period)
+														.text(
+																(obj.nbnrNicOd)
+																		.toFixed(2));
+												$("#ibnrGicHealth_r" + period)
+														.text(
+																(obj.ibnrGicHealth)
+																		.toFixed(2));
+												$("#nbnrGicHealth_r" + period)
+														.text(
+																(obj.nbnrGicHealth)
+																		.toFixed(2));
+
+												$(".avgGep_r" + period).text(
+														(obj.averageGep)
+																.toFixed(2));
+												$(".avgNep_r" + period).text(
+														(obj.averageNep)
+																.toFixed(2));
+												$(".earnedPolicies_r" + period)
+														.text(
+																(obj.earnedPolicies)
+																		.toFixed(2));
+												$(".NACCost_r" + period).text(
+														(obj.nac).toFixed(2));
+												$(".expense_r" + period).text(
+														(obj.expenses)
+																.toFixed(2));
+												$(".ulrGicTp_r" + period).text(
+														(obj.ulrGicTp)
+																.toFixed(2));
+												$(".ibnerGicTp_r" + period)
+														.text(
+																(obj.ibnerGicTp)
+																		.toFixed(2));
+
+												$("#ibnrNicHealth_r" + period)
+														.text(
+																(obj.ibnrNicHealth)
+																		.toFixed(2));
+												$("#nbnrNicHealth_r" + period)
+														.text(
+																(obj.nbnrNicHealth)
+																		.toFixed(2));
+												if ($(
+														".nic_r" + period
+																+ ":first")
+														.text() != "") {
+													$("#nicNepRatio_r" + period)
+															.text(
+																	((parseFloat($(
+																			".nic_r"
+																					+ period
+																					+ ":first")
+																			.text()) / parseFloat(obj.nep)) * 100)
+																			.toFixed(2));
+												}
+												/* private double ibnrGicTp;
+												private double ibnrNicTp; */
+												/* private double nbnrGicTp;
+												private double nbnrNicTp; */
+											});
+
+						},
+						error : function(e) {
+							alert(e);
+						}
+					});
+
+		}
+
+		function getCubeDData(period, fromDate, toDate) {
+			var report = $('#reports').val();
+			var myInput;
+			if (report == 'GENERAL') {
+				myInputs = $('#generalDiv').clone();
+			} else if (report == 'MOTOR') {
+				myInputs = $('#motorDiv').clone();
+			} else if (report == 'HEALTH') {
+				myInputs = $('#healthDiv').clone();
+			}
+			var genDiv = $('<form>').append(myInputs).serializeArray();
+			genDiv.push({
+				name : 'fromDate',
+				value : fromDate
+			});
+			genDiv.push({
+				name : 'toDate',
+				value : toDate
+			});
+			genDiv.push({
+				name : 'reportType',
+				value : report
+			});
+			$
+					.ajax({
+						type : "GET",
+						contentType : "application/json",
+						/*  url: "/getChart",    */
+						url : "/getKpiCubeDData",
+						/* url: "/getChartObjectList", */
+						dataType : 'json',
+						cache : false,
+						timeout : 600000,
+						//data:{fromDate: fromDate,toDate:toDate},
+						data : genDiv,
+						success : function(data) {
+							responseJSON = data;
+							console.log(responseJSON);
+							$
+									.each(
+											data,
+											function(ind, obj) {
+
+												//$(".repudiatedClaimsPerc_r"+period).text((obj.repdiatedClaimsPerc).toFixed(2));
+												//$(".sev_r"+period).text((obj.severityPerc).toFixed(2));
+												$(".nic_r" + period).text(
+														(obj.nic).toFixed(2));
+												$(".sev_r" + period)
+														.text(
+																((parseFloat(obj.nic) / parseFloat(obj.registeredClaims)) * 100)
+																		.toFixed(2));
+												$(
+														".repudiatedClaimsPerc_r"
+																+ period)
+														.text(
+																((parseFloat(obj.repudiatedClaims) / parseFloat(obj.registeredClaims)) * 100)
+																		.toFixed(2));
+												//$(".nicNepRatio_r"+period).text(((parseFloat(obj.nic)/parseFloat($(".nep_r"+period+":first").text())))*100)).toFixed(2);
+												if ($(
+														".nep_r" + period
+																+ ":first")
+														.text() != "") {
+													$("#nicNepRatio_r" + period)
+															.text(
+																	((parseFloat(obj.nic) / parseFloat($(
+																			".nep_r"
+																					+ period
+																					+ ":first")
+																			.text())) * 100)
+																			.toFixed(2));
+												}
+												/*   $(".claimRatio_r"+period).text(obj.claimRatio);
+												$(".expenseRatio_r"+period).text(obj.expenseRatio); */
+												$(".actualGicOd_r" + period)
+														.text(
+																(obj.actualGicOd)
+																		.toFixed(2));
+												$(".actualGicTp_r" + period)
+														.text(
+																(obj.actualGicTp)
+																		.toFixed(2));
+												$(".actualNicOd_r" + period)
+														.text(
+																(obj.actualNicOd)
+																		.toFixed(2));
+												$(".actualNicTp_r1" + period)
+														.text(
+																(obj.actualNicTp)
+																		.toFixed(2));
+												/* $(".acr_r"+period).text(obj.acr); */
+												$(
+														".repudiatedClaims_r"
+																+ period).text(
+														(obj.repudiatedClaims)
+																.toFixed(2));
+												/*  $(".cor_r"+period).text(obj.cor); */
+												$(
+														".registeredClaims_r"
+																+ period).text(
+														(obj.registeredClaims)
+																.toFixed(2));
+
+												$(".claimFreq_r" + period)
+														.text(
+																(obj.claimFrequency)
+																		.toFixed(2));
+												paid = obj.paid;
+												if ($(
+														".gwp_r" + period
+																+ ":first")
+														.text() != "") {
+													$(
+															".expenseRatio_r"
+																	+ period)
+															.text(
+																	((parseFloat(obj.paid) / parseFloat($(
+																			".gwp_r"
+																					+ period
+																					+ ":first")
+																			.text())) * 100)
+																			.toFixed(2));
+													$(".acr_r" + period)
+															.text(
+																	((parseFloat(obj.paid) / parseFloat($(
+																			".gwp_r"
+																					+ period
+																					+ ":first")
+																			.text())) * 100)
+																			.toFixed(2));
+													/*claims ratio -  gic/gwp here gic is missing now*/
+													$(".cor_r" + period)
+															.text(
+																	(parseFloat($(
+																			".expenseRatio_r"
+																					+ period
+																					+ ":first")
+																			.text()) + parseFloat($(
+																			".acr_r"
+																					+ period
+																					+ ":first")
+																			.text()))
+																			.toFixed(2));
+												}
+
+												/* $(".claimFreq_r"+period).text(obj.claimFrequency).toFixed(2));
+												$(".claimFreq_r"+period).text(obj.claimFrequency).toFixed(2));
+												$(".claimFreq_r"+period).text(obj.claimFrequency).toFixed(2)); */
+
+											});
+
+						},
+						error : function(e) {
+							alert(e);
+						}
+					});
+
+		}
+
+		$('select:not("#reports")').selectize({
+			sortField : 'text'
+		});
+
+		
+
+		$('#reportName').text($('#reports').val());
+
+		$('#reports').change(function(e) {
+			$('#reportName').text($('#reports').val());
+			
+			//clear table data			
+			/* $('#generalTable  tbody tr td:not("td:nth-child(1)")').empty();
+			$('#motorTable  tbody tr td:not("td:nth-child(1)")').empty();
+			$('#healthTable  tbody tr td:not("td:nth-child(1)")').empty();
+
+			var selectSelectize = $('select:not("#reports")').selectize();
+			console.log(selectSelectize.length);
+			for (var i = 0; i < selectSelectize.length; i++) {
+				var selectSelectizeVals = selectSelectize[i].selectize;
+				selectSelectizeVals.clear();
+			} */
+		});
+		$(function() {
+			$("#range-slider").slider({
+				range : true,
+				min : 0,
+				max : 100,
+				values : [ 0, 100 ],
+				slide : function(event, ui) {
+					$("#rangeValue").val(ui.values[0] + " - " + ui.values[1]);
+				}
+			});
+			$("#rangeValue").val(
+					$("#range-slider").slider("values", 0) + " - " + 100);
+		});
+
+		$(function() {
+			$("#range-slider1").slider({
+				range : true,
+				min : 0,
+				max : 100,
+				values : [ 0, 100 ],
+				slide : function(event, ui) {
+					$("#rangeValue1").val(ui.values[0] + " - " + ui.values[1]);
+				}
+			});
+			$("#rangeValue1").val(
+					$("#range-slider1").slider("values", 0) + " - " + 100);
+		});
+
+		$(function() {
+			$("#range-slider2").slider({
+				range : true,
+				min : 0,
+				max : 100,
+				values : [ 0, 100 ],
+				slide : function(event, ui) {
+					$("#rangeValue2").val(ui.values[0] + " - " + ui.values[1]);
+				}
+			});
+			$("#rangeValue2").val(
+					$("#range-slider2").slider("values", 0) + " - " + 100);
+		});
+
+		$(function() {
+			$("#range-slider3").slider({
+				range : true,
+				min : 0,
+				max : 100,
+				values : [ 0, 100 ],
+				slide : function(event, ui) {
+					$("#rangeValue3").val(ui.values[0] + " - " + ui.values[1]);
+				}
+			});
+			$("#rangeValue3").val(
+					$("#range-slider3").slider("values", 0) + " - " + 100);
+		});
+
+		$(function() {
+			$("#range-slider4").slider({
+				range : true,
+				min : 0,
+				max : 100,
+				values : [ 0, 100 ],
+				slide : function(event, ui) {
+					$("#rangeValue4").val(ui.values[0] + " - " + ui.values[1]);
+				}
+			});
+			$("#rangeValue4").val(
+					$("#range-slider4").slider("values", 0) + " - " + 100);
+		});
+
+		$(function() {
+			$("#range-slider5").slider({
+				range : true,
+				min : 0,
+				max : 100,
+				values : [ 0, 100 ],
+				slide : function(event, ui) {
+					$("#rangeValue5").val(ui.values[0] + " - " + ui.values[1]);
+				}
+			});
+			$("#rangeValue5").val(
+					$("#range-slider5").slider("values", 0) + " - " + 100);
+		});
+
+		$(function() {
+			$("#range-slider6").slider({
+				range : true,
+				min : 0,
+				max : 100,
+				values : [ 0, 100 ],
+				slide : function(event, ui) {
+					$("#rangeValue6").val(ui.values[0] + " - " + ui.values[1]);
+				}
+			});
+			$("#rangeValue6").val(
+					$("#range-slider6").slider("values", 0) + " - " + 100);
+		});
+
+		$(function() {
+			$("#range-slider7").slider({
+				range : true,
+				min : 0,
+				max : 100,
+				values : [ 0, 100 ],
+				slide : function(event, ui) {
+					$("#rangeValue7").val(ui.values[0] + " - " + ui.values[1]);
+				}
+			});
+			$("#rangeValue7").val(
+					$("#range-slider7").slider("values", 0) + " - " + 100);
+		});
+
+		$(function() {
+			$("#range-slider8").slider({
+				range : true,
+				min : 0,
+				max : 100,
+				values : [ 0, 100 ],
+				slide : function(event, ui) {
+					$("#rangeValue8").val(ui.values[0] + " - " + ui.values[1]);
+				}
+			});
+			$("#rangeValue8").val(
+					$("#range-slider8").slider("values", 0) + " - " + 100);
+		});
+
+		$(".selectize-dropdown-content").css('background-color', '#fff');
+
+		$("#kpiFilterButton").click(function(e) {
+
+			//clear table data before apply				
+			$('#generalTable  tbody tr td:not("td:nth-child(1)")').empty();
+			$('#motorTable  tbody tr td:not("td:nth-child(1)")').empty();
+			$('#healthTable  tbody tr td:not("td:nth-child(1)")').empty();
+
+			var from1 = $("#startDate1").val();
+			var to1 = $("#endDate1").val();
+
+			if (from1 != "") {
+				if (to1 == "") {
+					alert("Period 1 Range cannot be empty");
+					$("#monthRange1").text("Month Range 1");
+					return false;
+				}
+				// 	$("#monthRange1").text(from1+" - "+to1);
+			}
+
+			var from2 = $("#startDate2").val();
+			var to2 = $("#endDate2").val();
+
+			if (from2 != "") {
+				if (to2 == "") {
+					alert("Period 2 Range cannot be empty");
+					$("#monthRange2").text("Month Range 2");
+					return false;
+				}
+				//$("#monthRange2").text(from2+" - "+to2);
+			}
+
+			var from3 = $("#startDate3").val();
+			var to3 = $("#endDate3").val();
+
+			if (from3 != "") {
+				if (to3 == "") {
+					alert("Period 3 Range cannot be empty");
+					$("#monthRange3").text("Month Range 3");
+					return false;
+				}
+				//$("#monthRange3").text(from3+" - "+to3);
+			}
+
+			if (from1 != "" && to1 != "") {
+				getCubeAData(1, from1, to1);
+				getCubeBData(1, from1, to1);
+				getCubeCData(1, from1, to1);
+				getCubeDData(1, from1, to1);
+			}
+			if (from2 != "" && to2 != "") {
+				getCubeAData(2, from2, to2);
+				getCubeBData(2, from2, to2);
+				getCubeCData(2, from2, to2);
+				getCubeDData(2, from2, to2);
+			}
+			if (from3 != "" && to3 != "") {
+				getCubeAData(3, from3, to3);
+				getCubeBData(3, from3, to3);
+				getCubeCData(3, from3, to3);
+				getCubeDData(3, from3, to3);
+			}
+		});
+
+		$('#motorDiv,#healthDiv,#generalDiv').css('width', '99.9%');
+	</script>
+</body>
+</html>

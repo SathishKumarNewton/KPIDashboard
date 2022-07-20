@@ -1,0 +1,23 @@
+.full-width {
+	width: 100%;
+}
+
+.hide {
+	visibility: hidden;
+}
+
+.error {
+    color: red;
+}
+
+tbody td.details-control {
+    background: url('http://www.datatables.net/examples/resources/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url('http://www.datatables.net/examples/resources/details_close.png') no-repeat center center;
+}
+
+.small-box.bg-color {
+    background-color: #7fa8cf;
+}

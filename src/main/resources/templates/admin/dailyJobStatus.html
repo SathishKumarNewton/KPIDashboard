@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="https://thymeleaf.org">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RSGI | Report Management System</title>
+<link rel="shortcut icon" href="#" />
+<!-- <link rel="stylesheet"
+	href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> -->
+<!-- Font Awesome Icons -->
+<!-- <link rel="stylesheet"
+	href="../../plugins/fontawesome-free/css/all.min.css"> -->
+<!-- Theme style -->
+<link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+<!-- DataTables -->
+<link rel="stylesheet"
+	href="../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet"
+	href="../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" type="text/css" href="/css/dashboard.css">
+<!-- DataTable select -->
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css">
+<!-- DataTable Buttons -->
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css">
+<!-- Toastr -->
+<link rel="stylesheet" href="../../plugins/toastr/toastr.min.css">
+<!-- Selectize -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" />
+
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" />
+</head>
+<body class="hold-transition layout-top-nav">
+	<div class="wrapper">
+
+		<!-- Navbar -->
+		<!-- navbar-primary navbar-dark | navbar-light navbar-white-->
+		<nav
+			class="main-header navbar navbar-expand-md navbar-light navbar-white"
+			style="background: rgb(2, 0, 36); background-color: #e0e7ed; /* background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(113, 192, 219, 1) 32%, rgba(0, 212, 255, 0.23571426861760325) 100%); */">
+			<div class="container">
+				<a href="/admin/home" class="navbar-brand"> <img
+					src="https://www.royalsundaram.in/o/RS_Landing/images/Home_page_Logo.png" class="img-responsive center-block"
+					width="160" height="60" alt="Logo" /> <!-- <img src="../../dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8"> -->
+					<span class="brand-text font-weight-light">RSGI | RMS</span>
+				</a>
+
+				<button class="navbar-toggler order-1" type="button"
+					data-toggle="collapse" data-target="#navbarCollapse"
+					aria-controls="navbarCollapse" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse order-3" id="navbarCollapse">
+					<!-- Left navbar links -->
+					<!-- Left navbar links -->
+					<ul class="navbar-nav">
+						<li class="nav-item text-center"><a href="/admin/home"
+							class="nav-link"><i class="fas fa-home"></i></a></li>
+						<li class="nav-item dropdown"><a id="dropdownSubMenu1"
+							href="#" data-toggle="dropdown" aria-haspopup="true"
+							aria-expanded="false"
+							class="nav-link dropdown-toggle text-center">Admin</a>
+							<ul aria-labelledby="dropdownSubMenu1"
+								class="dropdown-menu border-0 shadow">
+								<!-- <li><a href="#" class="dropdown-item">List User </a></li>
+								<li><a href="/admin/userMaster" class="dropdown-item">Add
+										User</a></li> 
+								<li class="dropdown-divider"></li>-->
+								<!-- Level two dropdown-->
+								<li class="dropdown-submenu dropdown-hover"><a
+									id="dropdownSubMenu2" href="#" role="button"
+									data-toggle="dropdown" aria-haspopup="true"
+									aria-expanded="false" class="dropdown-item dropdown-toggle">DashBoard</a>
+									<ul aria-labelledby="dropdownSubMenu2"
+										class="dropdown-menu border-0 shadow">
+										<!-- <li><a href="/admin/dashboardMaster"
+											class="dropdown-item">DashBoard Master</a></li> -->
+										<li><a href="/admin/userDashboardMapping"
+											class="dropdown-item">User DashBoard Mapping</a></li>
+
+										<li class="dropdown-submenu dropdown-hover"><a
+									id="dropdownSubMenu2" href="#" role="button"
+									data-toggle="dropdown" aria-haspopup="true"
+									aria-expanded="false" class="dropdown-item dropdown-toggle">Config</a>
+									<ul aria-labelledby="dropdownSubMenu2"
+										class="dropdown-menu border-0 shadow">
+										<li><a href="/admin/cubeJobStatus"
+											class="dropdown-item">Cube Job status</a></li>
+										<li><a href="/admin/SchedulerInfoDetails"
+											class="dropdown-item">Scheduler Info</a></li>
+										<li><a href="/admin/cubeSchedulerConfig"
+											class="dropdown-item">Cube Scheduler config</a></li>
+									</ul></li>
+									</ul></li>
+								<!-- End Level two -->
+							</ul></li>
+
+
+						<li class="nav-item text-center"><a href="/admin/sqoopConfig" class="nav-link">Sqoop Configuration</a>
+						</li>
+						<li class="nav-item text-center"><a href="/admin/userMatrix"
+							class="nav-link">User Matrix</a></li>
+						<li class="nav-item text-center"><a href="/admin/runsqoopcmd" class="nav-link">Run Sqoop Job</a></li>
+
+					</ul>
+
+					<!-- SEARCH FORM -->
+					<!-- <form class="form-inline ml-0 ml-md-3">
+          <div class="input-group input-group-sm">
+            <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+            <div class="input-group-append">
+              <button class="btn btn-navbar" type="submit">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+        </form> -->
+				</div>
+
+				<!-- Right navbar links -->
+				<ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+					<!-- Messages Dropdown Menu -->
+					<!-- <li class="nav-item dropdown"> -->
+					<!--  </li> -->
+					<!-- Notifications Dropdown Menu -->
+					<li class="nav-item dropdown"></li>
+					<!-- <li class="nav-item">
+          <form th:action="@{/logout}" method="get">
+		        <button style="float:right" class="btn btn-block btn-danger btn-sm" name="registration" type="submit">Logout</button>
+		  </form>
+        </li> -->
+				</ul>
+			</div>
+			<div>
+				<form th:action="@{/logout}" method="get">
+					<button style="float: none;"
+						class="btn btn-block btn-danger btn-sm" name="registration"
+						type="submit">Logout</button>
+				</form>
+			</div>
+		</nav>
+		<!-- /.navbar -->
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container">
+					<!-- <div class="row mb-2">
+          <div class="col-sm-6">
+            <h4 class="m-0 text-dark"> Welcome Mr. Zakir <small>Welcome to RSGI Report Management System</small></h4>
+          </div> -->
+					<!-- /.col
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item"><a href="#">Layout</a></li>
+              <li class="breadcrumb-item active">Top Navigation</li>
+            </ol>
+          </div>/.col
+        </div> -->
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+
+			<!-- Main content -->
+			<div class="content">
+				<div class="container shadow p-3 mb-5 bg-white rounded">
+				<div class="card-header bg-info">
+										<h5 class="card-title m-0">Daily Job Status</h5>
+				</div>
+					<div class="row" style="background-color:#fff">
+					<div class="card-body collapse show" id="collapseExample">
+							<div class="col-sm-6">
+								<div class="form-group">
+
+									<label for="name">Build Date:</label> <input id="buildDate"
+										type="text" class="form-control" placeholder="dd/MM/yyyy" />
+										
+								</div>
+							</div>
+							
+							<div class="col-sm-6">
+								<div class="form-group">
+
+									<!-- <div class="card-block"> -->
+								<!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
+								<button id="buttonBuildFilter" type="button" class="btn btn-info">Filter</button>
+							<!-- </div> -->
+										
+								</div>
+							</div>
+					
+					
+					<table id="tableDashboard"
+						class="table table-responsive-sm table-hover table-outline mb-0 article_type" th:fragment="article_type" >
+						<thead class="thead-light">
+							<tr>
+								<th class="text-center"><i class="icon-people"></i></th>
+								<th >Cube Name</th>
+								<th class="text-center">Is Build Started</th>
+								<th class="text-center">Is Build Completed</th>
+								<!-- <th >Progress</th>
+								<th >Duration</th> -->
+								<th class="text-center">Build Triggered Time</th>
+								<th class="text-center">Status</th>
+								<th>View</th>
+							</tr>
+						</thead>
+						<tbody >
+							<tr th:each="item : ${cubeJobList}">
+								<td class="text-center">
+									<div class="avatar">
+										 <i class="fa fa-tasks" aria-hidden="true"></i>
+									</div>
+								</td>
+								<td>
+									<div th:text="${item.cubeName}"></div>
+								</td>
+								<td class="text-center">
+									<div>
+									<span
+									class="badge badge-success"
+									th:if="${item.isBuildStarted}=='Y'">Yes</span> <span
+									class="badge badge-danger"
+									th:if="${item.isBuildStarted}=='N'">No</span> 
+									</div>
+								</td>
+								<td class="text-center">
+									<div>
+									<span
+									class="badge badge-success"
+									th:if="${item.isCompleted}=='Y'" >Yes</span> <span
+									class="badge badge-danger"
+									th:if="${item.isCompleted}=='N'">No</span> 
+									</div>
+								</td>
+								<!-- <td><progress  th:value="${item.progress}" max="100" ></progress><span th:if="${item.progress != null}" th:text="${item.progress+'%'}"></span><span th:if="${item.progress == null}" >0%</span></td>
+								<td class="text-center" th:if="${item.duration != null}" th:text="${item.duration+' Mins'}">mins</td>
+								<td th:if="${item.duration == null}"></td> -->
+								<td class="text-center" th:text="${item.startTime}"></td>
+								<td class="text-center" th:text="${item.status}"></td>
+								<td>
+								 <a class='btn btn-info' data-toggle='modal' th:id='${item.schedulerId}' data-target='#currentJobStatus' style="color:#fff">View</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+			<div class="p-3">
+				<h5>Title</h5>
+				<p>Sidebar content</p>
+			</div>
+		</aside>
+		<!-- /.control-sidebar -->
+
+
+			<!-- Job status modal -->
+			<div id="currentJobStatus" class="modal fade"
+				role="dialog" data-backdrop="static" data-keyboard="false">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header bg-info">
+							<h4 class="modal-title">Job Detail Status</h4>
+							<button type="button" class="close btn-danger"
+								data-dismiss="modal">&times;</button>
+						</div>
+						<div class="modal-body">
+							<div class="form-group row">
+									<label class="col-md-3 col-form-label">Ref Key</label>
+								<div class="col-md-9">
+									<input id="job_refKey" type="text" class="form-control"
+										placeholder="" readonly="readonly"/>
+								</div>
+							</div>
+							
+							<div class="form-group row">
+									<label class="col-md-3 col-form-label">Progress</label>
+								<div class="col-md-9">
+								<progress  id="job_progress" max="100" style="width:100%;height: 3.0rem;"></progress>
+								<span id="job_progresstex"></span>
+								</div>
+							</div>
+							
+							<div class="form-group row">
+									<label class="col-md-3 col-form-label">Duration (Mins)</label>
+								<div class="col-md-9">
+									<input id="job_duration" type="text" class="form-control"
+										placeholder="" readonly="readonly"/>
+								</div>
+							</div>
+							
+							
+							<div class="form-group row">
+									<label class="col-md-3 col-form-label">Remarks</label>
+								<div class="col-md-9">
+									<input id="job_remarks" type="text" class="form-control"
+										placeholder="" readonly="readonly"/>
+								</div>
+							</div>
+							<div class="form-group row">
+									<label class="col-md-3 col-form-label">Initial Response</label>
+								<div class="col-md-9">
+									<textarea id="job_response" type="text" class="form-control"
+										placeholder="" readonly="readonly" ></textarea>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default"
+								data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+								
+		<!-- Main Footer -->
+		<footer class="main-footer">
+			<!-- To the right -->
+			<div class="float-right d-none d-sm-inline">
+				<a href="http://prodian.co.in">Powered by Prodian</a>
+			</div>
+			<!-- Default to the left -->
+			<strong>Copyright &copy; 2019-2020 <a
+				href="http://prodian.co.in">Prodian Infotech</a>.
+			</strong> All rights reserved.
+		</footer>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+
+	<!-- jQuery -->
+	<script src="../../plugins/jquery/jquery.min.js"></script>
+	<!-- AdminLTE App -->
+	<script src="../../dist/js/adminlte.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+	<!-- Bootstrap 4 -->
+	<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<!-- DataTables -->
+	<script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
+	<script
+		src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+	<script
+		src="../../plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+	<script
+		src="../../plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+	<!-- DataTable select -->
+	<script
+		src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+	<!-- DataTable Buttons -->
+	<script
+		src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>
+	<!-- Toastr -->
+	<script src="../../plugins/toastr/toastr.min.js"></script>
+	<!-- jquery-validation -->
+	<!-- <script src="../../plugins/jquery-validation/jquery.validate.min.js"></script>
+	<script src="../../plugins/jquery-validation/additional-methods.min.js"></script> -->
+	<!-- Selectize -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.28.0/moment.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+	<script>
+		$(function() {
+			
+			$("#buildDate").datetimepicker({
+				format: 'DD/MM/YYYY',
+				defaultDate:new Date(),
+				showClose:true
+				//language:"en"
+
+			}).on('dp.show dp.update', function () {
+				$(".picker-switch").css('cursor','none');
+				$(".picker-switch").removeAttr('title')
+				    //.css('cursor', 'default')  <-- this is not needed if the CSS above is used
+				    //.css('background', 'inherit')  <-- this is not needed if the CSS above is used
+				    .on('click', function (e) {
+				        e.stopPropagation();
+				    });
+				});
+			
+			
+			
+			$('#buttonBuildFilter').click(function () {
+			    var url = '/admin/cubeJobStatusByBuildDate';
+			    $.ajax({
+			        url: url,
+			        type: 'GET',
+			        data: { buildDate: $("#buildDate").val() },
+			        success: function (data) {
+			            $(".article_type").html(data);
+			        }
+			    })
+			})
+			
+			$('#currentJobStatus').on('show.bs.modal', function(e) {
+				$("#job_refKey").val('');
+				$("#job_remarks").val('');
+				$("#job_response").val('');
+				var $modal = $(this),
+				esseyId = e.relatedTarget.id;
+				$.ajax({
+					cache: false,
+					type: 'GET',
+					url: "/admin/getCurrentJobDetails",
+					data: { id: esseyId },
+					success: function(data) {
+							$("#job_refKey").val(data.refKey);
+							$("#job_remarks").val(data.remarks);
+							$("#job_response").val(data.response);
+							$("#job_progress").val(data.progress);
+							$("#job_progresstex").text(Math.round(data.progress * 100) / 100+' %');
+							$("#job_duration").val(data.duration);
+					},
+					error: function(e){
+						toastr.clear();toastr.error("Record not found.");
+					}
+				});
+			});
+
+		});
+	</script>
+</body>
+</html>

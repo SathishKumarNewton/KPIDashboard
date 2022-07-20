@@ -1,0 +1,159 @@
+#generalTable th,#motorTable th,#healthTable th,
+#uwGeneralTable th,#uwMotorTable th,#uwHealthTable th{
+	text-align: center;
+	background-color: #004990;
+	color: white;
+}
+
+#generalTable tr td:nth-child(1),#motorTable tr td:nth-child(1),#healthTable tr td:nth-child(1),
+#uwGeneralTable tr td:nth-child(1),#uwMotorTable tr td:nth-child(1),#uwHealthTable tr td:nth-child(1) {
+    text-align: left;
+	background: #004990;
+	color: white;
+}
+
+#generalTable td:nth-child(odd),#motorTable td:nth-child(odd),#healthTable td:nth-child(odd),
+#uwGeneralTable td:nth-child(odd),#uwMotorTable td:nth-child(odd),#uwHealthTable td:nth-child(odd) {
+    text-align: right;
+	background: #aad2e4;
+}
+
+#generalTable td:nth-child(even),#motorTable td:nth-child(even),#healthTable td:nth-child(even),
+#uwGeneralTable td:nth-child(even),#uwMotorTable td:nth-child(even),#uwHealthTable td:nth-child(even) {
+    text-align: right;
+}
+
+.ui-slider .ui-btn-inner {
+    padding: 4px 0 0 0 !important;
+}
+
+.ui-slider-popup {
+    position: absolute !important;
+    width: 64px;
+    height: 64px;
+    text-align: center;
+    font-size: 36px;
+    padding-top: 14px;
+    z-index: 100;
+    opacity: 0.8;
+}
+
+.selectize-input.items.full.has-options.has-items{
+	text-align: left;
+	font-size: small;
+}
+
+.selectize-dropdown.single.btn.form-control.dropdown.custom-select{
+	text-align: left;
+	font-size: small;
+	background-color: white;
+}
+
+.selectize-input.items.has-options.not-full, .selectize-input.items.not-full{
+	text-align: left;
+	font-size: small;
+}
+
+.selectize-input.items{
+	background-color: white;
+}
+
+.selectize-dropdown.multi.btn.form-control.dropdown.custom-select{
+	text-align: left;
+}
+
+
+#motorDiv,#healthDiv,#generalDiv{
+	max-width: 100%;
+}
+
+.heightFiller{
+	height: 10em;
+}
+
+.max-pop{
+	overflow: scroll;
+    height: 27em;
+}
+
+#monthlyDashDiv{
+	max-width: 100%;
+}
+
+#riskInceptionRateTable1 > tbody > tr:nth-child(odd) > td.sub,
+#riskInceptionRateTable1 > tbody > tr:nth-child(even) > td.sub,
+#riskInceptionRateTable2 > tbody > tr:nth-child(odd) > td.sub,
+#riskInceptionRateTable2 > tbody > tr:nth-child(even) > td.sub,
+#motorTable > tbody > tr:nth-child(even) > td.sub,
+#uwMotorTable > tbody > tr:nth-child(even) > td.sub {
+	background: #aad2e4;
+	color: black;
+	
+}
+
+#riskInceptionRateDiv1 > div:nth-child(2){
+	max-height: 32em;
+}
+
+#riskInceptionRateTable1 > tbody > tr:nth-child(odd) > td.sub-sub,
+#riskInceptionRateTable1 > tbody > tr:nth-child(even) > td.sub-sub{
+	background: #d7f3fffa;
+	color: black;
+}
+
+#riskInceptionRateTable2 td.sub-sub{
+	padding-left: 8em !important;
+	background: #d7f3fffa !important;
+	color: black !important;
+	font-family: inherit !important;
+}
+
+/* #uwYearBtn:focus{
+	color: white;
+	background: #004990;
+} */
+
+#extraPulatedLink{
+	font-size: 12px;
+}
+
+#currentMonth{
+	display: none;
+}
+#motorAdditionalDimensionsDiv{
+	min-width: max-content;
+}
+
+#motorTable > tbody > tr:nth-child(odd) > td.sub-sub,
+#motorTable > tbody > tr:nth-child(even) > td.sub-sub{
+	background: #d7f3fffa;
+	color: black;
+}
+
+#motorTable td.sub-sub{
+	padding-left: 8em !important;
+	background: #d7f3fffa !important;
+	color: black !important;
+	font-family: inherit !important;
+}
+
+#uwMotorTable > tbody > tr:nth-child(odd) > td.sub-sub,
+#uwMotorTable > tbody > tr:nth-child(even) > td.sub-sub{
+	background: #d7f3fffa;
+	color: black;
+}
+
+#uwMotorTable td.sub-sub{
+	padding-left: 8em !important;
+	background: #d7f3fffa !important;
+	color: black !important;
+	font-family: inherit !important;
+}
+
+#motorTableDiv > div{
+	overflow-x: scroll;
+}
+
+*{
+	//font-family: FontAwesome !important;
+}

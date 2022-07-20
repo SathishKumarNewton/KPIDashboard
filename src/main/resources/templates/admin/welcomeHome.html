@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="https://thymeleaf.org">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RSGI | Report Management System</title>
+
+<!-- Google Font: Source Sans Pro -->
+<!-- <link rel="stylesheet"
+	href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> -->
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	href="../../plugins/fontawesome-free/css/all.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+<!-- DataTables -->
+<link rel="stylesheet"
+	href="../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet"
+	href="../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" type="text/css" href="/css/dashboard.css">
+<!-- DataTable select -->
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css">
+<!-- DataTable Buttons -->
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css">
+<!-- Toastr -->
+<link rel="stylesheet" href="../../plugins/toastr/toastr.min.css">
+<!-- Selectize -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" />
+</head>
+<body class="hold-transition layout-top-nav">
+	<div class="wrapper">
+
+		<!-- Navbar -->
+		<!-- navbar-primary navbar-dark | navbar-light navbar-white-->
+		<nav
+			class="main-header navbar navbar-expand-md navbar-light navbar-white"
+			style="background: rgb(2, 0, 36); background-color: #e0e7ed; /* background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(113, 192, 219, 1) 32%, rgba(0, 212, 255, 0.23571426861760325) 100%); */">
+			<div class="container">
+				<a href="/admin/home" class="navbar-brand"> <img
+					src="https://www.royalsundaram.in/o/RS_Landing/images/Home_page_Logo.png" class="img-responsive center-block"
+					width="160" height="60" alt="Logo" /> <!-- <img src="../../dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8"> -->
+					<span class="brand-text font-weight-light">RSGI | RMS</span>
+				</a>
+
+				<button class="navbar-toggler order-1" type="button"
+					data-toggle="collapse" data-target="#navbarCollapse"
+					aria-controls="navbarCollapse" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse order-3" id="navbarCollapse">
+					<!-- Left navbar links -->
+					<ul class="navbar-nav">
+						<li class="nav-item text-center"><a href="/admin/home" class="nav-link"><i
+								class="fas fa-home"></i></a></li>
+						<li class="nav-item dropdown"><a id="dropdownSubMenu1"
+							href="#" data-toggle="dropdown" aria-haspopup="true"
+							aria-expanded="false" class="nav-link dropdown-toggle text-center">Admin</a>
+							<ul aria-labelledby="dropdownSubMenu1"
+								class="dropdown-menu border-0 shadow">
+								<!-- <li><a href="#" class="dropdown-item">List User </a></li>
+								<li><a href="/admin/userMaster" class="dropdown-item">Add
+										User</a></li> 
+								<li class="dropdown-divider"></li>-->
+								<!-- Level two dropdown-->
+								<li class="dropdown-submenu dropdown-hover"><a
+									id="dropdownSubMenu2" href="#" role="button"
+									data-toggle="dropdown" aria-haspopup="true"
+									aria-expanded="false" class="dropdown-item dropdown-toggle">DashBoard</a>
+									<ul aria-labelledby="dropdownSubMenu2"
+										class="dropdown-menu border-0 shadow">
+										<!-- <li><a href="/admin/dashboardMaster"
+											class="dropdown-item">DashBoard Master</a></li> -->
+										<li><a href="/admin/userDashboardMapping"
+											class="dropdown-item">User DashBoard Mapping</a></li>
+
+										<li class="dropdown-submenu dropdown-hover"><a
+									id="dropdownSubMenu2" href="#" role="button"
+									data-toggle="dropdown" aria-haspopup="true"
+									aria-expanded="false" class="dropdown-item dropdown-toggle">Config</a>
+									<ul aria-labelledby="dropdownSubMenu2"
+										class="dropdown-menu border-0 shadow">
+										<li><a href="/admin/cubeJobStatus"
+											class="dropdown-item">Cube Job status</a></li>
+										<li><a href="/admin/SchedulerInfoDetails"
+											class="dropdown-item">Scheduler Info</a></li>
+										<li><a href="/admin/cubeSchedulerConfig"
+											class="dropdown-item">Cube Scheduler config</a></li>
+									</ul></li>
+									</ul></li>
+								<!-- End Level two -->
+							</ul></li>
+
+
+						<li class="nav-item text-center"><a href="/admin/sqoopConfig" class="nav-link">Sqoop Configuration</a>
+						</li>
+						<li class="nav-item text-center"><a href="/admin/userMatrix" class="nav-link">User
+								Matrix</a></li>
+						<li class="nav-item text-center"><a href="/admin/runsqoopcmd" class="nav-link">Run Sqoop Job</a></li>
+					</ul>
+
+					<!-- SEARCH FORM -->
+					<!-- <form class="form-inline ml-0 ml-md-3">
+          <div class="input-group input-group-sm">
+            <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+            <div class="input-group-append">
+              <button class="btn btn-navbar" type="submit">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+        </form> -->
+				</div>
+
+				<!-- Right navbar links -->
+				<ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+					<!-- Messages Dropdown Menu -->
+					<!-- <li class="nav-item dropdown"> -->
+					<h5>
+						Welcome <span th:text="${userName}"></span>
+					</h5>
+					<!--  </li> -->
+					<!-- Notifications Dropdown Menu -->
+					<li class="nav-item dropdown"></li>
+					<!-- <li class="nav-item">
+          <form th:action="@{/logout}" method="get">
+		        <button style="float:right" class="btn btn-block btn-danger btn-sm" name="registration" type="submit">Logout</button>
+		  </form>
+        </li> -->
+				</ul>
+			</div>
+			<div>
+				<form th:action="@{/logout}" method="get">
+					<button style="float: none;"
+						class="btn btn-block btn-danger btn-sm" name="registration"
+						type="submit">Logout</button>
+				</form>
+			</div>
+		</nav>
+		<!-- /.navbar -->
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container">
+					<!-- <div class="row mb-2">
+          <div class="col-sm-6">
+            <h4 class="m-0 text-dark"> Welcome Mr. Zakir <small>Welcome to RSGI Report Management System</small></h4>
+          </div> -->
+					<!-- /.col
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item"><a href="#">Layout</a></li>
+              <li class="breadcrumb-item active">Top Navigation</li>
+            </ol>
+          </div>/.col
+        </div> -->
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+
+			<!-- Main content -->
+			<div class="content">
+				<div class="container">
+					<div class="row">
+
+						<!-- <div class="col-md-6">
+            general form elements
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title"></h3>
+              </div>
+              /.card-header
+              
+              form start
+              <form:form action="/userDashboard" method="get" modelAttribute="userDashboardForm">
+                <div class="card-body">
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Enter your user id:</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+                  </div>
+                </div>
+              </form:form>    
+             </div>
+            </div> -->
+
+						<div class="col-lg-12">
+							<!--  card-outline -->
+							<div class="card card-info full-width">
+								<div class="card-header">
+									<h5 class="card-title m-0">List of Users</h5>
+
+									<span><button type="submit" data-toggle="modal"
+											id="addUser" data-target="#addUserModal"
+											class="btn btn-outline-primary btn-sm"
+											style="color: white; float: right">Add User</button></span>
+
+								</div>
+								<div class="card-body">
+
+									<table class="table table-bordered table-striped" id="userList">
+										<thead>
+											<tr>
+												<th></th>
+												<th class="text-center" style="color: gray;">UserID</th>
+												<th class="text-center" style="color: gray;">UserName</th>
+												<th class="text-center" style="color: gray;">FirstName</th>
+												<th class="text-center" style="color: gray;">LastName</th>
+												<th class="text-center" style="color: gray;">Email</th>
+												<th class="text-center" style="color: gray;">Status</th>
+												<th class="text-center" style="color: gray;">Edit</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="user : ${userList}">
+												<td></td>
+												<td class="text-center" th:text="${user.id}"></td>
+												<td class="text-center" th:text="${user.userName}"></td>
+												<td class="text-center" th:text="${user.name}"></td>
+												<td class="text-center" th:text="${user.lastName}"></td>
+												<td class="text-center" th:text="${user.email}"></td>
+												<td class="text-center" th:if="${user.active}">Active</td>
+												<td class="text-center" th:unless="${user.active}">InActive</td>
+												<td class="text-center"><button data-toggle="modal"
+														id="userEditButton" data-target="#editUserModal"
+														class="btn btn-outline btn-sm">
+														<i class="fas fa-edit"></i>
+													</button></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-lg-12">
+							<!--  card-outline -->
+							<div class="card card-info full-width">
+								<div class="card-header">
+									<h5 class="card-title m-0">List of DashBoards</h5>
+
+									<span><button type="submit"
+											class="btn btn-outline-primary btn-sm" data-toggle="modal"
+											id="dashboardEditButton" data-target="#addDashboardModal"
+											style="color: white; float: right">Add DashBoard</button></span>
+
+								</div>
+								<div class="card-body">
+									<table class="table table-bordered table-striped"
+										id="dashboardList">
+										<thead>
+											<tr>
+												<th></th>
+												<th class="text-center" id="dashboardId"
+													style="color: gray;">Dashboard ID</th>
+												<th class="text-center" id="dashboardName"
+													style="color: gray;">Dashboard Name</th>
+												<th class="text-center" id="dashboardURL"
+													style="color: gray;">Dashboard URL</th>
+												<th class="text-center" style="color: gray;">Edit</th>
+												<!-- <th class="text-center" style="color: gray;">Delete</th> -->
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="item : ${dashboardList}">
+												<td></td>
+												<td class="text-center" th:text="${item.id}"></td>
+												<td class="text-center" th:text="${item.dashboardName}"></td>
+												<td class="text-center small text-muted"												
+													th:text="${item.dashboardURL}"></td>
+												<td class="text-center"><button data-toggle="modal"
+														id="dashboardEditButton" data-target="#editDashboardModal"
+														class="btn btn-outline btn-sm">
+														<i class="fas fa-edit"></i>
+													</button></td>
+												<!-- <td class="text-center"><button
+														class="btn btn-outline btn-sm">
+														<i class="fas fa-trash"></i>
+													</button></td> -->
+											</tr>
+										</tbody>
+									</table>
+
+
+
+								</div>
+							</div>
+						</div>
+
+						<!-- Edit DashBoard Modal -->
+						<div id="editDashboardModal" class="modal fade" role="dialog"
+							data-backdrop="static" data-keyboard="false">
+							<div class="modal-dialog modal-lg">
+
+								<!-- Modal content-->
+								<form action="/admin/editDashboard" method="post" id="editDashboardForm"
+									autocomplete="off" th:object="${dashboard}">
+									<div class="modal-content">
+										<div class="modal-header bg-info">
+											<h4 class="modal-title">Edit DashBoard</h4>
+											<button type="button" class="close btn-danger"
+												data-dismiss="modal">&times;</button>
+										</div>
+										<div class="modal-body">
+											<div class="form-group row">
+												<label for="dashboardModalId"
+													class="col-sm-2 col-form-label">Id</label>
+												<div class="col-sm-10">
+													<input type="number" class="form-control" name="id"
+														th:field="*{id}" id="dashboardModalId" placeholder="Id"
+														readonly="readonly">
+												</div>
+											</div>
+											<div class="form-group row">
+												<label for="dashboardModalName"
+													class="col-sm-2 col-form-label">DashBoard Name</label>
+												<div class="col-sm-10">
+													<input type="text" required="required" class="form-control"
+														th:field="*{dashboardName}" name="dashboardName"
+														id="dashboardModalName" placeholder="Name">
+												</div>
+											</div>
+											<div class="form-group row">
+												<label for="dashboardModalURL"
+													class="col-sm-2 col-form-label">DashBoard URL</label>
+												<div class="col-sm-10">
+													<input type="url" required="required" class="form-control"
+														th:field="*{dashboardURL}" name="dashboardURL"
+														id="dashboardModalURL" placeholder="URL">
+												</div>
+											</div>
+										</div>		
+										<div class="modal-footer">
+											<button type="submit" class="btn btn-success">Update</button>
+											<button type="button" class="btn btn-default"
+												data-dismiss="modal">Close</button>
+										</div>								
+									</div>
+								</form>
+							</div>
+						</div>
+
+						<!-- Edit User Modal -->
+						<div id="editUserModal" class="modal fade" role="dialog"
+							data-backdrop="static" data-keyboard="false">
+							<div class="modal-dialog modal-lg">
+
+								<!-- Modal content-->
+								<form action="/admin/editUser" method="post" id="editUserForm"
+									autocomplete="off" th:object="${user}">
+									<div class="modal-content">
+										<div class="modal-header bg-info">
+											<h4 class="modal-title">Edit User</h4>
+											<button type="button" class="close btn-danger"
+												data-dismiss="modal">&times;</button>
+										</div>
+										<div class="modal-body">
+											<div class="form-group row">
+												<label for="userModalId" class="col-sm-2 col-form-label">UserId</label>
+												<div class="col-sm-10">
+													<input type="number" class="form-control" name="id"
+														th:field="*{id}" id="userModalId" placeholder="Id"
+														readonly="readonly">
+												</div>
+											</div>
+											<div class="form-group row">
+												<label for="userModalUserName"
+													class="col-sm-2 col-form-label">User Name</label>
+												<div class="col-sm-10">
+													<input type="text" required="required" class="form-control"
+														th:field="*{userName}" name="userName"
+														id="userModalUserName" placeholder="Username">
+												</div>
+											</div>
+											<div class="form-group row">
+												<label for="userModalFirstName"
+													class="col-sm-2 col-form-label">First Name</label>
+												<div class="col-sm-10">
+													<input type="text" required="required" class="form-control"
+														th:field="*{name}" name="name" id="userModalFirstName"
+														placeholder="First Name">
+												</div>
+											</div>
+											<div class="form-group row">
+												<label for="userModalLastName"
+													class="col-sm-2 col-form-label">Last Name</label>
+												<div class="col-sm-10">
+													<input type="text" required="required" class="form-control"
+														th:field="*{lastName}" name="lastName"
+														id="userModalLastName" placeholder="Last Name">
+												</div>
+											</div>
+											<div class="form-group row">
+												<label for="userModalEmail" class="col-sm-2 col-form-label">Email</label>
+												<div class="col-sm-10">
+													<input type="email" required="required"
+														class="form-control" th:field="*{email}" name="email"
+														id="userModalEmail" placeholder="Email">
+												</div>
+											</div>
+											<div class="form-group row">
+												<label for="userModalStatus" class="col-sm-2 col-form-label">Status</label>
+												<div class="col-sm-10">
+													<select class="form-control" id="userModalStatus"
+														name="active" required="required">
+														<option value="true">Active</option>
+														<option value="false">InActive</option>
+													</select>
+												</div>
+											</div>
+										</div>
+										<div class="modal-footer">
+											<button type="submit" class="btn btn-success">Update</button>
+											<button type="button" class="btn btn-default"
+												data-dismiss="modal">Close</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+
+						<!-- Add User Modal -->
+						<div id="addUserModal" class="modal fade" role="dialog"
+							data-backdrop="static" data-keyboard="false">
+							<div class="modal-dialog modal-lg">
+								<form action="/admin/addUser" method="post" id="addUserForm"
+									autocomplete="off" th:object="${user}">
+									<div class="modal-content">
+										<div class="modal-header bg-info">Add User</div>
+										<div class="modal-body">
+											<div class="form-group row">
+												<label for="userModalUserName"
+													class="col-sm-2 col-form-label">UserName</label>
+												<div class="col-sm-10">
+													<input type="text" class="form-control" name="userName"
+														id="userModalUserName" placeholder="Username">
+													<label></label>
+												</div>
+											</div>
+											<div class="form-group row">
+												<label for="userModalPassword"
+													class="col-sm-2 col-form-label">Password</label>
+												<div class="col-sm-10">
+													<input type="password" class="form-control" name="password"
+														id="userModalPassword" placeholder="Password">
+												</div>
+											</div>
+											<div class="form-group row">
+												<label for="userModalName" class="col-sm-2 col-form-label">First
+													Name</label>
+												<div class="col-sm-10">
+													<input type="text" class="form-control" name="name"
+														id="userModalName" placeholder="First Name">
+												</div>
+											</div>
+											<div class="form-group row">
+												<label for="userModalLastName"
+													class="col-sm-2 col-form-label">Last Name</label>
+												<div class="col-sm-10">
+													<input type="text" class="form-control" name="lastName"
+														id="userModallastName" placeholder="Last Name">
+												</div>
+											</div>
+											<div class="form-group row">
+												<label for="userModalEmail" class="col-sm-2 col-form-label">Email</label>
+												<div class="col-sm-10">
+													<input type="email" class="form-control" name="email"
+														id="userModalEmail" placeholder="Email">
+												</div>
+											</div>
+										</div>
+										<div class="modal-footer">
+											<button type="submit" class="btn btn-success">Add</button>
+											<button type="button" class="btn btn-default"
+												data-dismiss="modal">Close</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+
+						<!-- Add Dashboard Modal -->
+						<div id="addDashboardModal" class="modal fade" role="dialog"
+							data-backdrop="static" data-keyboard="false">
+							<div class="modal-dialog modal-lg">
+
+								<!-- Modal content-->
+								<form action="/admin/addDashboard" method="post"
+									id="addDashboardForm" autocomplete="off"
+									th:object="${dashboard}">
+									<div class="modal-content">
+										<div class="modal-header bg-info">
+											<h4 class="modal-title">Add DashBoard</h4>
+											<button type="button" class="close btn-danger"
+												data-dismiss="modal">&times;</button>
+										</div>
+										<div class="modal-body">
+											<div class="form-group row">
+												<label for="dashboardModalName"
+													class="col-sm-2 col-form-label">DashBoard Name</label>
+												<div class="col-sm-10">
+													<input type="text" required="required" class="form-control"
+														th:field="*{dashboardName}" name="dashboardName"
+														id="dashboardModalName" placeholder="Name">
+												</div>
+											</div>
+											<div class="form-group row">
+												<label for="dashboardModalURL"
+													class="col-sm-2 col-form-label">DashBoard URL</label>
+												<div class="col-sm-10">
+													<input type="url" required="required" class="form-control"
+														th:field="*{dashboardURL}" name="dashboardURL"
+														id="dashboardModalURL" placeholder="URL">
+												</div>
+											</div>
+										</div>
+										<div class="modal-footer">
+											<button type="submit" class="btn btn-success">Add</button>
+											<button type="button" class="btn btn-default"
+												data-dismiss="modal">Close</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+						<!-- /.col-md-12 -->
+
+						<!-- Delete user confirmation modal -->
+						<div id="deleteConfirmUserModal" class="modal fade" role="dialog"
+							data-backdrop="static" data-keyboard="false">
+							<div class="modal-dialog modal-sm">
+								<div class="modal-content">
+									<div class="modal-header bg-danger">
+										<h4 class="modal-title">Confirmation</h4>
+										<button type="button" class="close btn-danger"
+											data-dismiss="modal">&times;</button>
+									</div>
+									<div class="modal-body">
+										<h6 id="deleteUserContent"></h6>
+									</div>
+									<div class="modal-footer">
+										<button type="button" id="confirmUserDelete"
+											class="btn btn-danger">Delete</button>
+										<button type="button" class="btn btn-default"
+											data-dismiss="modal">Close</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Delete dash board confirmation modal -->
+						<div id="deleteConfirmDashboardModal" class="modal fade"
+							role="dialog" data-backdrop="static" data-keyboard="false">
+							<div class="modal-dialog modal-sm">
+								<div class="modal-content">
+									<div class="modal-header bg-danger">
+										<h4 class="modal-title">Confirmation</h4>
+										<button type="button" class="close btn-danger"
+											data-dismiss="modal">&times;</button>
+									</div>
+									<div class="modal-body">
+										<h6 id="deleteDashboardContent"></h6>
+									</div>
+									<div class="modal-footer">
+										<button type="button" id="confirmDashboardDelete"
+											class="btn btn-danger">Delete</button>
+										<button type="button" class="btn btn-default"
+											data-dismiss="modal">Close</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+			<div class="p-3">
+				<h5>Title</h5>
+				<p>Sidebar content</p>
+			</div>
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Main Footer -->
+		<footer class="main-footer">
+			<!-- To the right -->
+			<div class="float-right d-none d-sm-inline">
+				<a href="http://prodian.co.in">Powered by Prodian</a>
+			</div>
+			<!-- Default to the left -->
+			<strong>Copyright &copy; 2019-2020 <a
+				href="http://prodian.co.in">Prodian Infotech</a>.
+			</strong> All rights reserved.
+		</footer>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+
+	<!-- jQuery -->
+	<script src="../../plugins/jquery/jquery.min.js"></script>
+	<!-- AdminLTE App -->
+	<script src="../../dist/js/adminlte.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+	<!-- Bootstrap 4 -->
+	<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<!-- DataTables -->
+	<script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
+	<script
+		src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+	<script
+		src="../../plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+	<script
+		src="../../plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+	<!-- DataTable select -->
+	<script
+		src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+	<!-- DataTable Buttons -->
+	<script
+		src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>
+	<!-- Toastr -->
+	<script src="../../plugins/toastr/toastr.min.js"></script>
+	<!-- jquery-validation -->
+	<script src="../../plugins/jquery-validation/jquery.validate.min.js"></script>
+	<script src="../../plugins/jquery-validation/additional-methods.min.js"></script>
+	<!-- Selectize -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+	<script>
+		$(function() {
+			$(document).ready(function() {
+			var seletedUserId;
+			var seletedUserName;
+			var seletedFisrtName;
+			var seletedLastName;
+			var selectedEmail;
+			var selectedStatus;			
+			
+			var userTable = $('#userList').DataTable(
+			{
+				"paging" : true,
+				"lengthChange" : true,
+				"searching" : true,
+				"ordering" : true,
+				"info" : true,
+				"autoWidth" : false,
+				"responsive" : true,
+				"order" : [ [ 1, "desc" ] ],
+				"deferRender": true,
+				"pageLength": 10,
+				"lengthMenu": [ 5, 10, 25, 50, 75, 100 ],
+				"columnDefs" : [ {
+					"orderable" : false,
+					"className" : 'select-checkbox',
+					"targets" : 0
+				} ],
+				"select" : {
+					style : 'single'
+				},
+				dom : "<'row'<'col-sm-12'B>><'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+				"<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+				buttons : [ {
+					text : 'Delete',
+					className: "btn-primary",
+					action : function(e, dt, node, config) {
+
+						var users = $.map(userTable.rows('.selected')
+								.data(), function(item) {
+							return item;
+						});
+						var userObjList = [];
+						// html table columns 9						
+						for (var i = 0; i <= users.length; i++) {
+							if (i % 8 == 0) {//checkbox//row start
+								if (i == 0) {
+									var user = new Object();
+									continue;
+								}
+								userObjList.push(user);
+								var user = new Object();
+							}
+							if (i % 8 == 1) {//id
+								user["id"] = users[i];
+							}
+							if (i % 8 == 2) {//user name
+								user["userName"] = users[i];
+							}
+							if (i % 8 == 3) {//first name
+								user["name"] = users[i];
+							}
+							if (i % 8 == 4) {//last name
+								user["lastName"] = users[i];
+							}
+							if (i % 8 == 5) {//email
+								user["email"] = users[i];
+							}
+							if (i % 8 == 6) {//status
+								if (users[i] == 'Active') {
+									user["active"] = true;
+								} else {
+									user["active"] = false;
+								}
+							}
+							if (i % 8 == 7) {//edit
+
+							}
+
+						}
+														
+						if(userObjList.length){
+							$('#deleteConfirmUserModal').modal('show');
+							$("#deleteUserContent").text('Are you sure to delete a user?');
+							$('#confirmUserDelete').click(function() {
+								$('#deleteConfirmUserModal').modal('hide');
+								$.ajax({
+									type : "POST",
+									contentType : "application/json",
+									url : '/admin/deleteUser',
+									data : JSON.stringify(userObjList),
+									success : function(data) {											
+										toastr.clear();
+										toastr.warning(userObjList.length+' User\'s Deleted Sucessfully');
+										setTimeout(() => {  
+											location.reload();
+										},1000);
+									},
+									error : function(data){
+										location.replace('/admin/home');
+									}
+								});
+							});
+						}						
+					}
+				} ]
+			});
+			var seletedDashboardId;
+			var seletedDashboardName;
+			var seletedDashboardURL;
+			var dashboardTable = $('#dashboardList').DataTable(
+			{
+				"paging" : true,
+				"lengthChange" : true,
+				"searching" : true,
+				"ordering" : true,
+				"info" : true,
+				"autoWidth" : false,
+				"responsive" : true,
+				"order" : [ [ 1, "desc" ] ],
+				"deferRender": true,
+				"pageLength": 10,
+				"lengthMenu": [ 5, 10, 25, 50, 75, 100 ],
+				"columnDefs" : [ {
+					"orderable" : false,
+					"className" : 'select-checkbox',
+					"targets" : 0
+				} ],
+				"select" : {
+					style : 'single'
+				},
+				//dom : '<"row"B><"row"l<""f>>rtip',
+				dom : "<'row'<'col-sm-12'B>><'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+				"<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+				buttons : [ {
+					text : 'Delete',
+					action : function(e, dt, node, config) {
+
+						var items = $.map(dashboardTable.rows(
+								'.selected').data(), function(item) {
+							return item
+						});
+
+						var dashboardObjList = [];
+						// html table columns 5								
+						for (var i = 0; i <= items.length; i++) {
+							if (i % 5 == 0) {//checkbox//row start
+								if (i == 0) {
+									var obj = new Object();
+									continue;
+								}
+								dashboardObjList.push(obj);
+								var obj = new Object();
+							}
+							if (i % 5 == 1) {//id
+								obj["id"] = items[i];
+							}
+							if (i % 5 == 2) {//name
+								obj["dashboardName"] = items[i];
+							}
+							if (i % 5 == 3) {//url
+								obj["dashboardURL"] = items[i];
+							}
+							if (i % 5 == 4) {//edit
+
+							}
+						}
+						if(dashboardObjList.length){
+							$('#deleteConfirmDashboardModal').modal('show');									
+							$("#deleteDashboardContent").text('Are you sure to delete a dashboard?');
+							$('#confirmDashboardDelete').click(function() {
+								$('#deleteConfirmDashboardModal').modal('hide');
+								$.ajax({
+										type : "POST",
+										contentType : "application/json",
+										url : '/admin/deleteDashboard',
+										data : JSON.stringify(dashboardObjList),
+										success : function(data) {
+											dashboardTable.rows('.selected').remove().draw(
+													false);
+											toastr.clear();
+											toastr.warning(dashboardObjList.length+' Dashboard\'s Deleted Sucessfully');
+										}
+								});
+							});
+						}													
+					}
+				} ]
+			});
+
+			//selected row in dashboard list
+		$('#dashboardList tbody').on('click', 'tr', function(item) {
+			$(this).toggleClass('selected');
+			setTimeout(() => {  var lastSeletedDashboardObj =  dashboardTable.rows(
+			'.selected').data()[0];
+			lastSelectedDashboardId = lastSeletedDashboardObj[1];
+			lastSelectedDashboardName = lastSeletedDashboardObj[2];
+			lastSelectedDashboardURL = lastSeletedDashboardObj[3];
+							
+			//set values in edit model
+			$("#dashboardModalId").val(lastSelectedDashboardId);
+			$("#dashboardModalName").val(lastSelectedDashboardName);
+			$("#dashboardModalURL").val(lastSelectedDashboardURL); }, 1);
+			
+
+		});
+		//selected row in user list
+		$('#userList tbody').on('click', 'tr', function(item) {
+			$(this).toggleClass('selected');	
+			setTimeout(() => {  
+				var lastSeletedUserObj =  userTable.rows('.selected').data()[0];
+				
+				lastSelectedUserId = lastSeletedUserObj[1];
+				lastSelectedUserName = lastSeletedUserObj[2];
+				lastSelectedFirstName = lastSeletedUserObj[3];
+				lastSelectedLastName = lastSeletedUserObj[4];
+				lastSelectedEmail = lastSeletedUserObj[5];
+				lastSelectedStatus = lastSeletedUserObj[6];
+				
+				if(lastSelectedStatus == 'Active'){
+					lastSelectedStatus = 'true';
+				}else if(lastSelectedStatus == 'InActive'){
+					lastSelectedStatus = 'false';
+				}
+														
+				$('#userModalId').val(lastSelectedUserId);
+				$('#userModalUserName').val(lastSelectedUserName);
+				$('#userModalFirstName').val(lastSelectedFirstName);
+				$('#userModalLastName').val(lastSelectedLastName);
+				$('#userModalEmail').val(lastSelectedEmail);
+				$('#userModalStatus').val(lastSelectedStatus);									
+				}, 1);
+
+			});
+			
+			$('.toastUpdateSuccess').click(function() {
+				toastr.clear();
+			    toastr.success('Update Successfully');
+			});
+			
+			$(function() {
+				
+			$("#editUserForm").validate({
+			    rules: {
+			      userName: {
+			        required: true,
+			        minlength: 5 ,
+			        remote: {
+                        url: "/admin/checkUsernameExistByUser",
+                        type: "post",
+                        data: {
+                        	id: function() {
+                                return $( "#userModalId" ).val();
+                            },
+                            userName: function() {
+                            	return $("#userModalUserName").val();
+                            }
+                        }
+                     }
+			      }, 
+			      name: {
+			    	  required: true
+			      },
+			      lastName: {
+			    	  required: true
+			      },
+			      email: {
+			    	  required: true,
+			    	  email: true
+			      },
+			      action: "Please provide some data"
+			    },
+			    messages: {
+			      userName: {
+			        required: "Please enter some data",
+			        minlength: "Your data must be at least 5 characters",
+			        remote: "Username already exist. Please try another one"
+			      },
+				  name: {
+				        required: "Please enter some data"
+				  },
+				  lastName: {
+				        required: "Please enter some data"
+				  },
+				  email: {
+				        required: "Please enter some data"
+				  },
+			      action: "Please provide some data"
+			    },
+			    submitHandler: function(form) {
+			        form.submit();
+			        toastr.clear();
+			        toastr.success('Successfully Updated!');
+			      }
+			  });
+			
+			$("#addUserForm").validate({
+			    rules: {
+			      userName: {
+			        required: true,
+			        minlength: 5,
+			        remote: {
+                        url: "/admin/checkUserExist",
+                        type: "post"
+                     }
+			      },
+			      password: {
+			    	  required: true,
+			    	  minlength: 5
+			      },
+			      name: {
+			    	  required: true
+			      },
+			      lastName: {
+			    	  required: true
+			      },
+			      email: {
+			    	  required: true,
+			    	  email: true
+			      },
+			      action: "Please provide some data"
+			    },
+			    messages: {
+			      userName: {
+			        required: "Please enter some data",
+			        minlength: "Your data must be at least 5 characters",
+			        remote: "Username already exist. Please try another one"
+			      },
+			      password: {
+				        required: "Please enter some data",
+				        minlength: "Your data must be at least 5 characters"
+				  },
+				  name: {
+				        required: "Please enter some data"
+				  },
+				  lastName: {
+				        required: "Please enter some data"
+				  },
+				  email: {
+				        required: "Please enter some data"
+				  },
+			      action: "Please provide some data"
+			    },
+			    submitHandler: function(form) {
+			        form.submit();
+			        toastr.clear();
+			        toastr.success('Successfully Added!');
+			      }
+			  });
+			
+			$("#addDashboardForm").validate({
+			    rules: {
+			    	dashboardName: {
+				    	  required: true
+				      },
+				    dashboardURL: {
+				    	  required: true,
+				    	  url: true
+				    }
+			    },
+			    messages: {
+			    	dashboardName: {
+				    	  required: "Please enter some data"
+				      },
+				    dashboardURL: {
+				    	  required: "Please enter some data",
+				    	  url: "Please enter valid URL"
+				    },
+			    },
+			    submitHandler: function(form) {
+			        form.submit();
+			        toastr.clear();
+			        toastr.success('Successfully Added!');
+			      }
+			  });
+			});
+			
+			$("#editDashboardForm").validate({
+			    rules: {
+			    	id: {
+			    		required: true,
+			    		number: true
+			    	},
+			    	dashboardName: {
+				    	  required: true
+				      },
+				    dashboardURL: {
+				    	  required: true,
+				    	  url: true
+				    }
+			    },
+			    messages: {
+			    	dashboardName: {
+				    	  required: "Please enter some data"
+				      },
+				    dashboardURL: {
+				    	  required: "Please enter some data",
+				    	  url: "Please enter valid URL"
+				    },
+			    },
+			    submitHandler: function(form) {
+			        form.submit();
+			        toastr.clear();
+			        toastr.success('Successfully Updated!');
+			      }
+			  });
+			function redirect(url){
+				
+			}
+			});
+		});
+	</script>
+</body>
+</html>

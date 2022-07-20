@@ -1,0 +1,285 @@
+html,body{
+    background-color: $secondaryColor;
+    overflow-x: hidden;
+}
+
+.page-master-container{
+    overflow: hidden;
+}
+
+//input type button all loose default focus
+.btn:focus,select:focus,.form-control:focus{
+    outline: none !important;
+    box-shadow: none;
+}
+
+///To view select2 container on tab devices  --overide runtime generation
+.select2-container{
+    z-index: 1400;  
+}
+////sidebar calculated value
+@mixin CalculateSidebarContainer{
+    top: $HeaderHeight;
+    z-index: 1800;
+    position: fixed;
+    width: $DrawerWidth;
+    @media screen and (max-width:$breakpoint-md) and (min-width:0px){
+        top: 0;
+        width: 100vw;
+        height: 70vh;
+        display: none;
+    }
+}
+
+///base container calculated value
+@mixin CalculateBaseContainer{
+    padding-top: $HeaderHeight;
+    margin-left: $DrawerWidth;
+    width: calc(100% - 250px);
+    background-color: $secondaryColor;
+    @media (max-width:$breakpoint-md){
+        margin-left: 0px;
+        width: 100%;
+        .view{
+            .cards{
+                padding: 8px !important;
+            }
+        }
+    }
+}
+
+/// mixin for custom scrollbar
+@mixin Scrollbar_addon{
+    &::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+      }
+      &::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 5px $hightlightColor;
+                box-shadow: inset 0 0 5px $hightlightColor;
+        border-radius: 2px;
+      }
+      /* Handle */
+     &::-webkit-scrollbar-thumb {
+        background: $hightlightColor;
+        border-radius: 10px;
+      }
+ }
+
+ ///mixin for Non-Select2-dropdowns
+@mixin dropdownIconSelector($IconType,$color){
+    background:none;
+    background: url($IconType) no-repeat 95% 50%;
+    background-size: 11px;
+    border-color: $color;
+    cursor: pointer;
+    &:focus{
+        border-color: $color;
+    }
+    option{
+        color:black;
+        font-weight: inherit;
+    }
+}
+
+ ///Navbar with and without share,download $$$pass {Addon:true} to enable
+@mixin NavbarReusable($Addon:false){
+    .fixed-top{
+        background-color: $primaryColor;
+        z-index: 1600;
+        .nav-header{
+            padding: 8px 16px;
+            #mobile-view-toggler-off{
+                cursor:pointer;
+            }
+            #logo{
+               width: 140px;
+            }
+            .navbar-icons{
+                padding:10px;
+                align-self: center;
+                a{
+                    .fa{ 
+                        color: $primaryColor;
+                       -webkit-text-stroke-width: 1.4px;
+                       -webkit-text-stroke-color: $hightlightColor;
+                        cursor: pointer;
+                     }
+                }
+                .notificationCounter{
+                    background-color: #FF0000; 
+                    color: $primaryColor; 
+                    margin-top: -14px; 
+                    margin-left: -10px; 
+                    border-radius: 50%; 
+                    width: 16px; 
+                    height: 16px; 
+                    font-size: 0.6rem;
+                }
+                 #userPic{
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 8px;
+                    object-fit: cover;
+                }
+            }
+        }
+        .navbar-operations{
+            padding: 10px 16px;
+            background-color: $hightlightColor;
+            .title{
+                font-family: robotoBold;
+                font-size: 12px;
+                color: $primaryColor;
+                padding: 10px;
+            }
+            .dropdown{
+              font-family: robotoBold;
+              font-size:12px;
+              background: none;
+              -webkit-appearance: none;
+              background-color: $hightlightColor;
+              color: $primaryColor;
+              text-align: left;
+              width: 180px;
+              @include dropdownIconSelector($ArrowWhite,$primaryColor);
+            }
+            select option {
+                font-family: robotoRegular;
+                font-size: 120%;
+                padding: 10px;
+            }
+
+            ///navbar share and download --additional option
+            @if $Addon{
+                div:nth-child(2){
+                    button{
+                        font-size: 0.8em;
+                        border-radius: 18px;
+                        background-color: #3D75AB;
+                        color: $primaryColor;
+                        @media (min-width:769px){
+                             padding-left: 20px;
+                             padding-right: 20px;
+                          i{padding-left: 8px;}
+                        }
+                        @media (max-width:$breakpoint-sm){
+                            border-radius: 50%;
+                            text-align: center;
+                             width: 40px;
+                             height: 40px;
+                          span{display: none;} 
+                        }
+                    }
+                }
+            }
+            @else{
+                div:nth-child(2){
+                    display:none;
+                }
+            }
+        }
+    }
+ }
+ 
+ ////select2-container  inheriting parent width {width 100%...use it wisely}
+ @mixin Select2Container(){
+   .select2-container{
+    font-size: 12px;
+    width: 100% !important;
+    //multi select
+    .select2-selection__placeholder{
+        color: black !important;
+    }
+    .select2-selection--single,.select2-selection--multiple{
+            min-height: 38px;
+            padding: 8px 2px;
+            opacity: 0.8;
+            border: solid 2px $borderColor;
+            text-align: left;
+            input{display:none}
+            &:focus{
+                outline: none;                                                                                  
+                border: solid 2px $hightlightColor;
+            }
+            .select2-selection__rendered{
+               font-family: robotoRegular;
+            }
+          }
+        &--default{     
+        .select2-selection__arrow {
+            background-image: url($ArrowBlack);
+            background-repeat: no-repeat;
+            background-position-y: 15px;
+            background-size: 11px;
+            b { display: none;}
+          }
+       .select2-selection__choice{
+            margin-top: 0px !important;
+            border-radius: 0px !important;
+            direction: rtl;
+            span{
+                font-family: robotoRegular;
+                font-size: 10px;
+            }
+            button{
+                border:none !important;
+                span{
+                    font-weight: 950;
+                    font-size: 12px;
+                    color: black;
+                }
+            }
+        }
+       }
+    }     
+ }
+ // Enable for full full screen view for enabling below #modal-fullscreen {Id on Runtime}
+ @mixin FullscreenView($modalBreak:false){
+        #modal-fullscreen{
+            overflow: hidden;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 3500;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            border-radius: 0px;
+            justify-content: center;
+            align-items: center;
+            background-color: transparent;
+            backdrop-filter: brightness(40%);
+            .modal-base{
+                width: 90%;
+                height: 80%;
+                @if $modalBreak {
+                    @media (max-width:1000px){
+                        //overflow: hidden;
+                        //overflow-y: scroll;
+                        //@include Scrollbar_addon();
+                    }
+                }
+                .card-body{
+                    height: 70%;
+                    .table-wrapper{
+                    height: 100%;
+                }
+                }
+            .modal-master{
+                background-color: white;
+                border-radius: 20px;
+                .card-layout{
+                    box-shadow:none;
+                }
+                .card-body-charts{
+                    height: 100%;
+                    .charts{
+                        height: 80%;
+                    }
+                }
+            }
+            }
+        }
+ }

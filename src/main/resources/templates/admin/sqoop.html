@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rsg</title>
+    <link rel="icon" href="../assets/images/titleicon.png" type="image/icon-type">
+    <link rel="stylesheet" href="../plugins_cr/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../plugins_cr/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../plugins_cr/select2/selec2.min.css">
+    <link rel="stylesheet" href="../plugins_cr/datatable/datatables.min.js"> 
+    <link rel="stylesheet" href="../styles/rsg.css">
+</head>
+<body>
+    <div class="page-master-container">
+        <!-- Main Header -->
+        <div id="header">
+			<nav class="fixed-top">
+				<div
+					class="nav-header d-flex flex-row justify-content-between align-content-center">
+					<div>
+						<btn class="mr-2 d-md-inline d-lg-none d-xl-none"
+							id="mobile-view-toggler-off"> <span class="fa fa-bars"></span>
+						</btn>
+						<a class="navbar-brand" href=""> <img
+							src="../assets/images/Logo_Innerpage.png" alt="CompanyLogo"
+							id="logo">
+						</a>
+					</div>
+					<div class="d-flex">
+						<div class="navbar-icons d-none d-md-block pr-2">
+							<a> <span id="settings" class="fa fa-cog"></span>
+							</a>
+						</div>
+						<div
+							class="navbar-icons d-inline-flex align-items-center pt-2 pr-2">
+							<div>
+								<a> <span id="notifications" class="fa fa-bell"></span>
+								</a>
+							</div>
+							<div
+								class="notificationCounter d-flex justify-content-center align-items-center">
+								<span>d</span>
+							</div>
+						</div>
+						<div class="navbar-icons p-0">
+							<a> <img id="userPic" class="img-fluid"
+								src="../assets/images/profile.jpeg" alt="profile picture">
+							</a>
+						</div>						
+						<div class="navbar-icons  d-none d-md-block pr-2">
+							<form action="/logout" method="get">
+								<button style="float: none;" 
+								class="btn btn-block btn-danger btn-sm" name="registration" type="submit">Logout</button>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div
+					class="navbar-operations d-flex flex-row justify-content-between align-content-center">
+					<div class="title">RSG | RMS</div>
+					<div class="my-auto">
+						<button class="btn mr-0 mr-md-1">
+							<span>Share</span> <i class="fa fa-share-square-o"></i>
+						</button>
+						<button class="btn btn-outline-white ml-0 ml-md-1">
+							<span>Download</span> <i class="fa fa-download"></i>
+						</button>
+					</div>
+				</div>
+			</nav>
+		</div>
+		<!--Main Header End-->
+		<!-- pre-loader -->
+		<section id="pre-loader">
+			<img src="../assets/images/Logo_Innerpage.png" alt="CompanyLogo"
+				id="logo">
+		</section>
+		<!-- end -->
+		<!-- sidebar mobile starts-->
+		<div id="sidebar-mobile">
+			<ul class="list-group">
+				<li
+					class="list-group-item d-flex justify-content-between align-items-center">
+					<span> <span class="fa fa-home"></span> <a
+						href="/admin/home">Home</a>
+				</span>
+				</li>
+				<li
+					class="list-group-item submenu d-flex justify-content-between align-items-center">
+					<span> <span class="fa fa-user"></span> <a
+						href="/admin/userDashboardMapping">Admin</a>
+				</span> <span class="badge badge-pill"> <span
+						class="fa fa-angle-down" id="sidebar-list-toggle"></span>
+				</span>
+				</li>
+				<div class="sub-list">
+					<a href="/admin/userDashboardMapping"><li class="list-group-item">User
+							Dashboard</li></a> <a href="#"><li class="list-group-item">User
+							Mapping Dashboard 2</li></a> <a href="#"><li class="list-group-item">User
+							Mapping Dashboard 3</li></a>
+				</div>
+				<li
+					class="list-group-item d-flex justify-content-between align-items-center">
+					<span> <span class="fa fa-cogs"></span> <a
+						href="/admin/sqoopConfig">Sqoop Configuration</a>
+				</span>
+				</li>
+				<li
+					class="list-group-item d-flex justify-content-between align-items-center">
+					<span> <span class="fa fa-users"></span> <a
+						href="/admin/userMatrix">User Matrix</a>
+				</span>
+				</li>
+			</ul>
+		</div>
+		<!-- sidebar mobile ends-->
+		<!--Side Bar Starts-->
+		<div id="sidebar">
+			<div class="sidebar-wrapper">
+				<a href="/admin/home">
+					<div class="tab text-center">
+						<span class="fa fa-home"></span>
+						<h3 class="h2">Home</h3>
+					</div>
+				</a> <a id="defaultLink">
+					<div class="tab text-center">
+						<span class="fa fa-user"></span>
+						<h3 class="h2">Admin</h3>
+						<select class="btn form-control dropdown custom-select"
+							id="selectTab">
+							<option></option>
+							<option value="/admin/userDashboardMapping">User Dashboard</option>
+						</select>
+					</div>
+				</a> <a href="/admin/sqoopConfig">
+					<div class="tab tab-default text-center">
+						<span class="fa fa-cogs"></span>
+						<h3 class="h2">Sqoop</h3>
+						<h3 class="h2">Configuration</h3>
+					</div>
+				</a> <a href="/admin/userMatrix">
+					<div class="tab text-center">
+						<span class="fa fa-users"></span>
+						<h3 class="h2">User Matrix</h3>
+					</div>
+				</a>
+			</div>
+		</div>
+        <!--Side bar ends-->
+        <div class="page-base-container container-fluid pl-2 pr-2">
+            <!-- Inner Container-->
+            <div class="container-fluid view">
+                <!-- Report card-->
+                <div class="row cards Reports">
+                    <div class="col-12">
+                        <div class="row card-layout">
+                            <!--Card -header-->
+                            <div class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+                                <div><span class="h2">Sqoop Configuration</span></div>
+                                <button class="resetText btn-dark float-right">
+                                    <span class="plusIcon">+</span>
+                                    ADD
+                                </button>
+                            </div>
+                            <!--Card header-->
+                            <!--Card Body-->
+                            <div class="col-12 card-body report-card">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-6 form-group">
+                                                <h6>Search</h6>
+                                                <select class="btn form-control dropdown custom-select" id="userNames">
+                                                    <option value="">Select UserName...</option>
+													<option th:each="userName : ${userNames}"
+														th:value="${userName}"
+														th:text="${userName}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="listDiv" class="col-12">
+                                    	
+                                    <div class="col-12">
+                                        <div class="row" id="urlDiv">
+                                            <div class="col-sm-12 col-md-12 form-group">
+                                                <h6>Source Scheme URL</h6>
+                                                <input type="text" class="form-control" id="listUrl"
+													name="sourceSchemaUrl" readonly="readonly"
+													placeholder="Source Schema URL..." required="required" >
+                                            </div>
+                                            <!-- <div class="col-sm12 col-md-6 form-group">
+                                                <h6>Source Scheme User Name</h6>
+                                                <input type="text" class="form-control" name="SourceSchemeUserName" id="SourceSchemeUserName" >
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row" >
+                                            <div class="col-sm-12 col-md-6 form-group" id="destinationSchemaDiv">
+                                                <h6>Destination Scheme Name</h6>
+                                                <input type="text" class="form-control" id="listDestSchema"
+												name="destinationSchemaName" readonly="readonly"
+													placeholder="Destination Schema Name..."
+													required="required">
+                                            </div>
+                                            <div class="col-sm-12 col-md-6 form-group" id="statusDiv">
+                                                <h6>Status</h6>
+                                                 <select class="btn form-control dropdown custom-select" name="isActive"
+                                                 disabled="disabled" id="listStatus">
+                                                    <option value="true">Active</option>
+													<option value="false">InActive</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-11 col-sm-12 col-md-8 col-lg-6 appendParent" id="tableNameDiv">
+                                        <div class="row appendChild">
+                                            <div class="col-sm-4 col-md-6 col-lg-6 form-group">
+                                                <h6>Source Table Name</h6>
+                                            </div>
+                                            <div class="col-sm-4 col-md-6 col-lg-6 form-group">
+                                                <h6>Destination Table Name</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                   <!--  <div class="col-12">
+                                        <div>
+                                            <button class="resetText btn-dark btn-append-plus">
+                                                <span class="plusIcon">+</span>
+                                                ADD
+                                            </button>
+                                        </div>
+                                    </div> -->
+                                    </div>
+                                    <div class="col-12 pt-5">
+                                        <div class="float-right">
+                                            <button class="resetText btn-light mr-2">DELETE</button>
+                                            <button class="resetText btn-dark">EDIT</button>
+                                        </div>
+                                    </div>   
+                                </div>
+                            </div>
+                            <!--Card Body-->
+                        </div>
+                    </div>
+                </div>
+                <!--Reports-->
+                <!-- Component Modal-->
+                <div class="col-sm-12 col-md-6 col-lg-6 explorer-enabled component-popup">
+                    <div class="col-12 cards " id="modal-fullscreen">
+                        <div class="row modal-base">
+                            <div class="col-12 d-flex flex-column card-layout p-0 modal-master">
+                                <!--Card -header-->
+                                <div class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+                                    <div><span class="h2">Components</span></div>
+                                    <div>
+                                        <btn class="explore_fullview_off"><span class="explore-icon fa fa-close"></span></btn>
+                                    </div>
+                                </div>
+                                <!--Card header-->
+                                <!--Card body-->
+                                <div class="card-body">
+                                    <div class="row h-100 componentFinder">
+                                        <div class="col-6 col-sm-6 col-md-4 group-1">
+                                            <div class="form-group">
+                                                <h6>Group Dropdown</h6>
+                                                <select class="form-control dropdown component-select-dropdown">
+                                                    <option></option>
+                                                    <option value="1">User Dashboard Mapping</option>
+                                                    <option value="2">User Dashboard Mapping</option>
+                                                    <option value="3">User Dashboard Mapping</option>
+                                                    <option value="4">User Dashboard Mapping</option>
+                                                    <option value="5">User Dashboard Mapping</option>
+                                                    <option value="6">User Dashboard Mapping</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <h6>Dropdown</h6>
+                                                <select class="form-control dropdown component-select-dropdown">
+                                                    <option></option>
+                                                    <optgroup label="Dashboard1">
+                                                        <option value="1">User Dashboard Mapping</option>
+                                                        <option value="2">User Dashboard Mapping</option>
+                                                        <option value="3">User Dashboard Mapping</option>
+                                                    </optgroup>
+                                                    <optgroup label="Dashboard2">
+                                                        <option value="4">User Dashboard Mapping</option>
+                                                        <option value="5">User Dashboard Mapping</option>
+                                                        <option value="6">User Dashboard Mapping</option>
+                                                    </optgroup>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 p-0 col-sm-6 col-md-4 group-2">
+                                            <div class="col-12 form-group">
+                                                <h6>Input Field</h6>
+                                                <input type="text" class="form-control SourceTableName" name="SourceTableName">
+                                            </div>
+                                            <div class="col-12 form-group">
+                                                <h6>Search</h6>
+                                                <select class="btn form-control" id="component-select-search">
+                                                    <option></option> <!--for place holder to work leave first option-->
+                                                    <option value="1">Search1</option>
+                                                    <option value="2">Search2</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-12 form-group">
+                                                <h6>Tags</h6>
+                                                <select class="btn form-control" multiple="multiple" id="component-select-tag">
+                                                    <option value="1">Search1</option>
+                                                    <option value="2">Search2</option>
+                                                    <option value="2">Search3</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-sm-12 col-md-4 group-3">
+                                            <div class="row">
+                                                <div class="col-6 col-sm-4 col-md-12 form-group">
+                                                    <h6>Checkbox</h6>
+                                                    <input type="checkbox" checked>
+                                                    <input type="checkbox" class="ml-1">
+                                                </div>
+                                                <div class="col-6 col-sm-4 col-md-12 form-group">
+                                                    <h6>Radio Button</h6>
+                                                    <input type="radio" checked>
+                                                    <input type="radio" class="ml-1">
+                                                </div>
+                                                <div class="col-6 col-sm-4 col-md-12 form-group">
+                                                    <h6>Toggle</h6>
+                                                    <div class="toggle-switch">
+                                                        <input type="checkbox" checked id="chkTest" name="chkTest">
+                                                        <label for="chkTest">
+                                                          <span class="toggle-track"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Card body-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Component Modal-->
+            </div>
+        </div>
+        <!-- Main Header END-->
+    </div>
+    <script src="../plugins_cr/jquery/jquery.min.js"></script>
+    <script src="../plugins_cr/bootstrap/bootstrap.min.js"></script>
+    <script src="../plugins_cr/select2/select.min.js"></script>
+    <script src="../plugins_cr/jquery/moment.min.js"></script>
+    <script type="text/Javascript" src="../common/js/sampledatatable-new.js"></script>    
+    <script>
+    jQuery(document).ready(function() {
+    	console.log('loader')
+    	//setTimeout(function() {
+    		console.log('loader.....')
+    		jQuery("#pre-loader").remove();
+    	//},5000);
+        
+    });
+    
+        $(document).ready(function () {
+        	/* window.addEventListener("load",function(){
+            setTimeout(function(){ 
+                $('#pre-loader').fadeOut(500)
+            }, 200);
+            }); */
+            //closing component on load
+            $("#selectTab").select2({        
+                dropdownParent: $('#sidebar'),
+                placeholder:'select'    
+            });
+            
+            $("#selectCard").select2({        
+                dropdownParent: $('.card-body').eq(0)    
+            });
+
+            $("#component-select-search").select2({        
+                dropdownParent: $('.card-body').eq(1),    
+                placeholder: '<span class="fa fa-search"><span class="pl-2">Search</span></span>',
+                escapeMarkup : function(markup) {
+                  return markup;
+                }
+            });
+            $(".component-select-dropdown").select2({        
+                minimumResultsForSearch: -1,
+                dropdownParent: $('.card-body').eq(1),    
+                placeholder:"select"
+            });
+            $("#component-select-tag").select2({        
+                dropdownParent: $('.card-body').eq(1)    
+            });
+        });
+         //sidebar mobile toggle
+         $('#mobile-view-toggler-off').click(function(event){
+            menuToggleOn();
+        })
+            //close on outside click
+        $(".page-base-container").click( function() {
+            var width = $(window).width();
+            //error causing on modal !couldn't find quick fix
+            var Sidebarstatus=$('#sidebar-mobile').css('display');
+            if(width<993 && Sidebarstatus=='block') {
+                menuToggleOff();
+            }
+        });
+        function menuToggleOn(){
+            $('#sidebar-mobile').fadeIn().animate({left:`0px`});
+            $(".page-base-container").css("filter","blur(.5px)");
+            $(".page-base-container").css("opacity",".5");
+            $(".page-base-container").css("opacity",".5");
+        }
+        function menuToggleOff(){
+            $('#sidebar-mobile').fadeOut();
+            $(".page-base-container").css("filter","blur(0px)");
+            $(".page-base-container").css("opacity","1");
+        }
+        //sidebar list toggler
+        $('.submenu').click(function(){
+            $('#sidebar-list-toggle').toggleClass('fa-angle-down fa-angle-up');
+            $('.sub-list').toggle();
+        })
+        ///Component Full Screen Toggler 
+            ///ON
+            $(".explore_fullview_on").click(function(event){
+                $("#modal-fullscreen").css('visibility', 'visible');
+                $('.explore_fullview_off').show();
+            });
+            ///OFF
+            $(".explore_fullview_off").click(function(event){
+                $("#modal-fullscreen").css('visibility', 'hidden');;
+                $('.explore_fullview_off').hide();
+            });
+
+            $(".btn-append-plus").click(function(e){
+                var ele=
+                `
+                <div class="col-sm-4 col-md-6 col-lg-6 form-group">
+                    <h6>Source Table Name</h6>
+                    <input type="text" class="form-control SourceTableName" name="SourceTableName">
+                </div>
+                <div class="col-sm-4 col-md-6 col-lg-6 form-group">
+                    <h6>Destination Table Name</h6>
+                    <input type="text" class="form-control SourceTableName" name="DestinationTableName">
+                    <btn class="btn-append btn-append-minus"></btn>
+                </div>
+                `
+                $(".appendParent").append('<div class="row delegateChild">'+ele+'</div>');         
+            })
+
+            $(document).on("click", ".btn-append-minus" , function(e) {
+                  var index=$('.btn-append-minus').index(this);
+                  $('.delegateChild').eq(index).remove();
+            });
+
+            ///select2 tab linksss onselect
+            var test=$('#selectTab'); 
+            test.on("select2:select", function(event) {
+              var value = $(event.currentTarget).find("option:selected").val();
+              window.location.href = value;
+            });
+
+            //handle default tab admin link
+            $('#defaultLink').on('click', function(e) {
+                if(e.target.className == 'select2-selection__rendered' 
+                    || e.target.className == 'select2-selection select2-selection--single'
+                    || e.target.className == 'select2-selection__arrow'
+                    || e.target.className == 'select2-selection__placeholder')
+                    return
+                else{
+                    $('#selectTab').val('../rsg/userdashboard.html').trigger('change');
+                    window.location.href="../rsg/userdashboard.html"
+                }
+            });
+            $("#listDiv").css("display", "none");
+            $('#userNames').on('change',function() {
+				var userName = $('#userNames').val();
+				$("#listDiv").show();
+				if(userName){
+					$.ajax({
+						type : "GET",
+						contentType : "application/json",
+						url : '/admin/getSqoopConfigByUserName',
+						data : {
+							userName : function(){
+								return userName;
+							}
+						},
+						success : function(data) {
+							sourceSchemaUrl = data.sourceSchemaUrl;
+							sourceSchemaUserName = data.sourceSchemaUserName;
+							sourceSchemaPassword = data.sourceSchemaPassword;
+							destinationSchemaName = data.destinationSchemaName;
+							status = data.isActive;
+							tableName = data.tableName;
+							if(sourceSchemaUrl==null){
+								$("#urlDiv").css("display", "none");
+							}else{
+								$("#urlDiv").show();
+								$("#listUrl").val(sourceSchemaUrl);
+							}
+							if(sourceSchemaUserName==null){
+								$("#userNameDiv").css("display", "none");
+							}else{
+								$("#userNameDiv").show();
+								$("#listUserName").val(sourceSchemaUserName);
+							}
+							if(destinationSchemaName==null){
+								$("#destinationSchemaDiv").css("display", "none");
+							}else{
+								$("#destinationSchemaDiv").show();
+								$("#listDestSchema").val(destinationSchemaName);
+							}
+							if(status==null){
+								$("#statusDiv").css("display", "none");
+							}else{
+								$("#statusDiv").show();
+								if(status){
+									$("#listStatus").val("true");
+								}else{
+									$("#listStatus").val("false");
+								}
+							}
+							if(tableName.length<=0){
+								$("#tableNameDiv").css("display", "none");
+							}else{
+								$("#tableNameDiv").show();
+								$('.childList').remove();
+								for(let i=0; i<tableName.length; i++){										
+									var appStr = '<div class="form-group row col-sm-12 childList"><div class="col-sm-4 col-md-6 col-lg-6 form-group"><input class="form-control SourceTableName" type="text" readonly="readonly" value="'+tableName[i].sourceTableName+'" placeholder="Source Table Name..."></div><div class="col-sm-4 col-md-6 col-lg-6 form-group"><input class="form-control SourceTableName" readonly="readonly" type="text" value="'+tableName[i].destinationTableName+'" placeholder="Destination Table Name..."></div><div class="col-sm-2">';
+									$('#tableNameDiv').append(appStr);
+								}
+							}
+							$("#editDelDiv").show();
+						},
+						error : function(data) {
+							if(sourceSchemaUrl==null){
+								$("#urlDiv").css("display", "none");
+							}
+							if(sourceSchemaUserName==null){
+								$("#userNameDiv").css("display", "none");
+							}
+							if(destinationSchemaName==null){
+								$("#destinationSchemaDiv").css("display", "none");
+							}
+							if(tableName.length<=0){
+								$("#tableNameDiv").css("display", "none");
+							}
+							$("#editDelDiv").css("display", "none");
+						}
+					});
+				}
+			});
+    </script>
+</body>
+</html>

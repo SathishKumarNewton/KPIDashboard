@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="https://thymeleaf.org">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RSGI | Report Management System</title>
+
+<!-- Google Font: Source Sans Pro -->
+<!-- <link rel="stylesheet"
+	href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> -->
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	href="../../plugins/fontawesome-free/css/all.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+<!-- DataTables -->
+<link rel="stylesheet"
+	href="../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet"
+	href="../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" type="text/css" href="/css/dashboard.css">
+<!-- DataTable select -->
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css">
+<!-- DataTable Buttons -->
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css">
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/rowgroup/1.1.2/css/rowGroup.dataTables.min.css">
+<!-- Toastr -->
+<link rel="stylesheet" href="../../plugins/toastr/toastr.min.css">
+<!-- Selectize -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" />
+</head>
+<body class="hold-transition layout-top-nav">
+	<div class="wrapper">
+
+		<!-- Navbar -->
+		<!-- navbar-primary navbar-dark | navbar-light navbar-white-->
+		<nav
+			class="main-header navbar navbar-expand-md navbar-light navbar-white"
+			style="background: rgb(2, 0, 36); background-color: #e0e7ed; /* background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(113, 192, 219, 1) 32%, rgba(0, 212, 255, 0.23571426861760325) 100%); */">
+			<div class="container">
+				<a href="/admin/home" class="navbar-brand"> <img
+					src="https://www.royalsundaram.in/o/RS_Landing/images/Home_page_Logo.png" class="img-responsive center-block"
+					width="160" height="60" alt="Logo" /> <!-- <img src="../../dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8"> -->
+					<span class="brand-text font-weight-light">RSGI | RMS</span>
+				</a>
+
+				<button class="navbar-toggler order-1" type="button"
+					data-toggle="collapse" data-target="#navbarCollapse"
+					aria-controls="navbarCollapse" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse order-3" id="navbarCollapse">
+					<!-- Left navbar links -->
+					<!-- Left navbar links -->
+					<ul class="navbar-nav">
+						<li class="nav-item text-center"><a href="/admin/home"
+							class="nav-link"><i class="fas fa-home"></i></a></li>
+						<li class="nav-item dropdown"><a id="dropdownSubMenu1"
+							href="#" data-toggle="dropdown" aria-haspopup="true"
+							aria-expanded="false"
+							class="nav-link dropdown-toggle text-center">Admin</a>
+							<ul aria-labelledby="dropdownSubMenu1"
+								class="dropdown-menu border-0 shadow">
+								<!-- <li><a href="#" class="dropdown-item">List User </a></li>
+								<li><a href="/admin/userMaster" class="dropdown-item">Add
+										User</a></li> 
+								<li class="dropdown-divider"></li>-->
+								<!-- Level two dropdown-->
+								<li class="dropdown-submenu dropdown-hover"><a
+									id="dropdownSubMenu2" href="#" role="button"
+									data-toggle="dropdown" aria-haspopup="true"
+									aria-expanded="false" class="dropdown-item dropdown-toggle">DashBoard</a>
+									<ul aria-labelledby="dropdownSubMenu2"
+										class="dropdown-menu border-0 shadow">
+										<!-- <li><a href="/admin/dashboardMaster"
+											class="dropdown-item">DashBoard Master</a></li> -->
+										<li><a href="/admin/userDashboardMapping"
+											class="dropdown-item">User DashBoard Mapping</a></li>
+
+										<li class="dropdown-submenu dropdown-hover"><a
+									id="dropdownSubMenu2" href="#" role="button"
+									data-toggle="dropdown" aria-haspopup="true"
+									aria-expanded="false" class="dropdown-item dropdown-toggle">Config</a>
+									<ul aria-labelledby="dropdownSubMenu2"
+										class="dropdown-menu border-0 shadow">
+										<li><a href="/admin/cubeJobStatus"
+											class="dropdown-item">Cube Job status</a></li>
+										<li><a href="/admin/SchedulerInfoDetails"
+											class="dropdown-item">Scheduler Info</a></li>
+										<li><a href="/admin/cubeSchedulerConfig"
+											class="dropdown-item">Cube Scheduler config</a></li>
+									</ul></li>
+									</ul></li>
+								<!-- End Level two -->
+							</ul></li>
+
+
+						<li class="nav-item text-center"><a href="/admin/sqoopConfig" class="nav-link">Sqoop Configuration</a>
+						</li>
+						<li class="nav-item text-center"><a href="/admin/userMatrix"
+							class="nav-link">User Matrix</a></li>
+						<li class="nav-item text-center"><a href="/admin/runsqoopcmd" class="nav-link">Run Sqoop Job</a></li>
+
+					</ul>
+
+					<!-- SEARCH FORM -->
+					<!-- <form class="form-inline ml-0 ml-md-3">
+          <div class="input-group input-group-sm">
+            <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+            <div class="input-group-append">
+              <button class="btn btn-navbar" type="submit">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+        </form> -->
+				</div>
+
+				<!-- Right navbar links -->
+				<ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+					<!-- Messages Dropdown Menu -->
+					<!-- <li class="nav-item dropdown"> -->
+					<!--  </li> -->
+					<!-- Notifications Dropdown Menu -->
+					<li class="nav-item dropdown"></li>
+					<!-- <li class="nav-item">
+          <form th:action="@{/logout}" method="get">
+		        <button style="float:right" class="btn btn-block btn-danger btn-sm" name="registration" type="submit">Logout</button>
+		  </form>
+        </li> -->
+				</ul>
+			</div>
+			<div>
+				<form th:action="@{/logout}" method="get">
+					<button style="float: none;"
+						class="btn btn-block btn-danger btn-sm" name="registration"
+						type="submit">Logout</button>
+				</form>
+			</div>
+		</nav>
+		<!-- /.navbar -->
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container">
+					<!-- <div class="row mb-2">
+          <div class="col-sm-6">
+            <h4 class="m-0 text-dark"> Welcome Mr. Zakir <small>Welcome to RSGI Report Management System</small></h4>
+          </div> -->
+					<!-- /.col
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item"><a href="#">Layout</a></li>
+              <li class="breadcrumb-item active">Top Navigation</li>
+            </ol>
+          </div>/.col
+        </div> -->
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+
+			<!-- Main content -->
+			<div class="content">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-12">
+							
+							<div class="card card-info full-width">
+								<div class="card-header bg-info">
+									<h5 class="card-title m-0">Policy Level Data</h5>
+								</div>
+								<div class="card-body">
+									<table class="table table-bordered table-striped"
+										id="ReportListDT">
+										<thead>
+											<tr>
+												<th></th>
+												<th class="text-center">Policy</th>
+												<th class="text-center">Endtno</th>
+												<th class="text-center">Product</th>
+												<th class="text-center">Month</th>
+												<th class="text-center">finYear</th>
+												<th class="text-center">Policy Count</th>
+												<th class="text-center">GWP</th>												
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="item : ${ReportResponseList}">
+												<td></td>
+												<td class="text-center" th:text="${item.policyNo}"></td>
+												<td class="text-center" th:text="${item.endtno}"></td>
+												<td class="text-center" th:text="${item.productCode}"></td>
+												<td class="text-center" th:text="${item.monthFlag}"></td>
+												<td class="text-center"  th:text="${item.finYear}"></td>
+												<td class="text-center" th:text="${item.policyCount}"></td>
+												<td class="text-center" th:text="${item.gwpOurShare}"></td>
+											</tr>
+										</tbody>
+									</table>
+									
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+			<div class="p-3">
+				<h5>Title</h5>
+				<p>Sidebar content</p>
+			</div>
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Main Footer -->
+		<footer class="main-footer">
+			<!-- To the right -->
+			<div class="float-right d-none d-sm-inline">
+				<a href="http://prodian.co.in">Powered by Prodian</a>
+			</div>
+			<!-- Default to the left -->
+			<strong>Copyright &copy; 2019-2020 <a
+				href="http://prodian.co.in">Prodian Infotech</a>.
+			</strong> All rights reserved.
+		</footer>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+
+	<!-- jQuery -->
+	<script src="../../plugins/jquery/jquery.min.js"></script>
+	<!-- AdminLTE App -->
+	<script src="../../dist/js/adminlte.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+	<!-- Bootstrap 4 -->
+	<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<!-- DataTables -->
+	<script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
+	<script
+		src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+	<script
+		src="../../plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+	<script
+		src="../../plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+	<script
+		src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.colVis.min.js"></script>
+	<!-- DataTable select -->
+	<script
+		src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+	<!-- DataTable Buttons -->
+	<script
+		src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>
+		<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script
+		src="https://cdn.datatables.net/rowgroup/1.1.2/js/dataTables.rowGroup.min.js"></script>
+	<!-- Toastr -->
+	<script src="../../plugins/toastr/toastr.min.js"></script>
+	<!-- jquery-validation -->
+	<script src="../../plugins/jquery-validation/jquery.validate.min.js"></script>
+	<script src="../../plugins/jquery-validation/additional-methods.min.js"></script>
+	<!-- Selectize -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+	<script>
+		$(function() {
+
+			$('select').selectize({
+				sortField : 'text'
+			});
+
+			$("#userMatrixForm")
+			.validate(
+			{
+				ignore : ':hidden:not([class~=selectized]),:hidden > .selectized, .selectize-control .selectize-input input',
+				rules : {
+					userIds : {
+						required : true
+					},
+					userMatrixRoleIds : {
+						required : true
+					},
+					zoneIds : {
+						required : true
+					},
+					clusterIds : {
+						required : true
+					},
+					stateIds : {
+						required : true
+					},
+					branchCodes : {
+						required : true
+					}
+				},
+				messages : {
+					userIds : {
+						required : "Please select user"
+					},
+					userMatrixRoleIds : {
+						required : "Please select role"
+					},
+					zoneIds : {
+						required : "Please select zone"
+					},
+					clusterIds : {
+						required : "Please select cluster"
+					},
+					stateIds : {
+						required : "Please select state"
+					},
+					branchCodes : {
+						required : "Please select branch"
+					}
+				},
+				submitHandler : function(form) {
+					console.log($('zoneIds').val());
+					console.log($('clusterIds').val());
+					console.log($('stateIds').val());
+					console.log($('branchCodes').val());					
+										
+					form.submit();
+					toastr.clear();
+					toastr.success('Successfully Added!');
+				}
+			});
+
+			$('#zoneIds').on('change',function() {
+				var clusterIdsSelect = $("#clusterIds")[0].selectize;
+				clusterIdsSelect.clear();
+				clusterIdsSelect.clearOptions();
+				clusterIdsSelect.load(function(callback) {
+					var znIds = [];
+					var $zoneIds = $('#zoneIds').selectize(); // Selectize plugin initialization
+					var selectize = $zoneIds[0].selectize;
+					if($("#zoneIds option:selected").val() == '0' || $("#zoneIds option:selected").val() == ''){
+						znIds = Object.keys(selectize.options);
+						//selectize.setValue(Object.keys(selectize.options));  //Set all selectize options using setValue() method
+						
+					}else{
+						znIds.push(parseInt($("#zoneIds option:selected").val()));
+					}
+					$.ajax({
+						type : "GET",
+						contentType : "application/json",
+						url : '/admin/getClustersByZoneIds?zoneIds='+znIds,
+						//data : JSON.stringify(clIds),
+						success : function(data) {
+							var clusterList = [];
+							var clusters = [];
+							for(var obj of data){
+								var cluster = new Object();
+								cluster['text'] = obj.clusterName;
+								cluster['value'] = obj.id;
+								clusterList.push(cluster);
+								clusters.push(obj.id);
+							}
+							if(clusterList){
+								var cluster = new Object();
+								cluster['text'] = 'All';
+								cluster['value'] = clusters;
+								clusterList.push(cluster);
+							}
+							callback(clusterList);
+						},
+						error : function(data) {
+							callback();
+						}
+					});
+				});
+			});
+			
+			$('#clusterIds').on('change',function() {
+				var stateIdsSelect = $("#stateIds")[0].selectize;
+				stateIdsSelect.clear();
+				stateIdsSelect.clearOptions();
+				stateIdsSelect.load(function(callback) {
+					var clIds = [];
+					var $clusterIds = $('#clusterIds').selectize(); // Selectize plugin initialization
+					var selectize = $clusterIds[0].selectize;
+					if($("#clusterIds option:selected").val() == '0' || $("#clusterIds option:selected").val() == ''){
+						clIds = Object.keys(selectize.options);
+						//selectize.setValue(Object.keys(selectize.options));  //Set all selectize options using setValue() method
+						
+					}else{
+						clIds.push(parseInt($("#clusterIds option:selected").val()));
+					}
+					
+					$.ajax({
+						type : "GET",
+						contentType : "application/json",
+						url : '/admin/getStatesByClusterIds?stateIds='+clIds,
+						//data : JSON.stringify(clIds),
+						success : function(data) {
+							var stateList = [];
+							var states = [];
+							for(var obj of data){
+								var state = new Object();
+								state['text'] = obj.state;
+								state['value'] = [obj.id];
+								stateList.push(state);
+								states.push(obj.id);
+							}
+							if(stateList){
+								var state = new Object();
+								state['text'] = 'All';
+								state['value'] = states;
+								stateList.push(state);
+							}
+							callback(stateList);
+						},
+						error : function(data) {
+							callback();
+						}
+					});
+				});
+			});
+			
+			$('#stateIds').on('change',function() {
+				var branchCodeSelect = $("#branchCodes")[0].selectize;
+				branchCodeSelect.clear();
+				branchCodeSelect.clearOptions();
+				branchCodeSelect.load(function(callback) {
+				var stIds = [];
+				var $stateIds = $('#stateIds').selectize(); // Selectize plugin initialization
+				var selectize = $stateIds[0].selectize;
+				if($("#stateIds option:selected").val() == '0' || $("#stateIds option:selected").val() == ''){
+					stIds = Object.keys(selectize.options);
+					//selectize.setValue(Object.keys(selectize.options));  //Set all selectize options using setValue() method
+					
+				}else{
+					stIds.push(parseInt($("#stateIds option:selected").val()));
+				}
+				$.ajax({
+					type : "GET",
+					contentType : "application/json",
+					url : '/admin/getBranchesByStateIds?stateIds='+stIds,
+					success : function(data) {
+						var branchList = [];
+						var branchCodes = [];
+						for(var obj of data){
+							var branch = new Object();
+							branch['text'] = obj.revisedBranchName+" ("+ obj.branchCode+")";
+							branch['value'] = [obj.branchCode];		
+							branchList.push(branch);
+							branchCodes.push(obj.branchCode);
+						}
+						if(branchList){
+							var branch = new Object();
+							branch['text'] = 'All';
+							branch['value'] = branchCodes;
+							branchList.push(branch);
+						}
+						callback(branchList);
+					},
+					error : function(data) {
+						callback();
+					}
+				});
+				});
+			});
+						
+			$('#roleIds').on('change',function() {
+				var cluster = $("#clusterIds").selectize();
+				var clusterSelectize = cluster[0].selectize;
+				var state = $("#stateIds").selectize();
+				var stateSelectize = state[0].selectize;
+				var branch = $("#branchCodes").selectize();
+				var branchSelectize = branch[0].selectize;
+				if($("#roleIds option:selected").text() == 'ZONE_HEAD'){
+					clusterSelectize.clear();
+					stateSelectize.clear();
+					branchSelectize.clear();
+					clusterSelectize.clearOptions();
+					stateSelectize.clearOptions();
+					branchSelectize.clearOptions();
+					clusterSelectize.disable();
+					stateSelectize.disable();
+					branchSelectize.disable();
+				}else if($("#roleIds option:selected").text() == 'CLUSTER_HEAD'){
+					clusterSelectize.enable();
+					stateSelectize.clear();
+					stateSelectize.clearOptions();
+					stateSelectize.disable();
+					branchSelectize.clear();
+					branchSelectize.clearOptions();
+					branchSelectize.disable();
+				}else if($("#roleIds option:selected").text() == 'STATE_HEAD'){	
+					clusterSelectize.enable();
+					stateSelectize.enable();
+					branchSelectize.clear();
+					branchSelectize.clearOptions();
+					branchSelectize.disable();
+				}else{
+					clusterSelectize.enable();
+					stateSelectize.enable();
+					branchSelectize.enable();
+				}
+			});
+		$(document).ready(function() {
+			var collapsedGroups = {};
+			
+			var collapsedGroups = {};
+			var userMatrixListTable = $('#ReportListDT').DataTable({
+				"paging" : true,
+				"lengthChange" : true,
+				"searching" : true,
+				"ordering" : true,
+				"info" : true,
+				"autoWidth" : false,
+				"responsive" : true,
+				"columnDefs" : [ {
+					"orderable" : false,
+					"className" : 'details-control',
+					"targets" : 0
+				}]				
+		        
+			});
+			
+			$('#ReportListDT tbody').on('click', 'td.details-control', function () {
+		        var tr = $(this).closest('tr');
+		        var row = userMatrixListTable.row( tr );
+		 
+		        if ( row.child.isShown() ) {
+		            // This row is already open - close it
+		            //row.child.hide();
+		            destroyChild(row);
+		            tr.removeClass('shown');
+		        }
+		        else {
+		            // Open this row
+		            createChild(row,'child-table');
+		            tr.addClass('shown');
+		        }
+		    } );
+			
+		});
+
+		});
+		function createChild ( row ) {
+			var rowData = row.data();
+		    // This is the table we'll convert into a DataTable
+		    var table = $('<table class="display text-center" width="100%"/><thead><th>Zone</th><th>Cluster</th><th>State</th><th>Branch</th></thead></table>');
+ 
+		    // Display it the child row
+		    row.child( table ).show();
+		    
+		    // Initialise as a DataTable
+		    var userMatrixChildTable = table.DataTable( {
+		    	"paging" : true,
+		    	"searching" : true,
+				"ordering" : true,
+				"info" : true,
+				"autoWidth" : false,
+				"responsive" : true,
+				"deferRender": true,
+				"lengthChange" : true,
+				"pageLength": 5,
+				"lengthMenu": [ 5, 10, 25, 50 ],
+				dom : "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+				"<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+		    	"ajax" : {		    		
+		    		url : "/admin/userMatrixByUserId",
+		    		contentType : "application/json",
+		    		dataSrc : '',
+		    		data: {
+		    			"userId": rowData[1],
+		    			"userMatrixRole": rowData[3],
+		    			"assignedTo": rowData[4]
+		    		}
+		    	},
+		    	columns: [
+		            { "data": "zone"},
+		            { "data": "cluster"},
+		            { "data": "state"},
+		            { "data": "branch"}
+		    	] 
+		    	
+		    } );
+		}
+		
+		function destroyChild(row) {
+			var table = $("table", row.child());
+		    table.detach();
+		    table.DataTable().destroy();
+		 
+		    // And then hide the row
+		    row.child.hide();
+		}
+	</script>
+</body>
+</html>

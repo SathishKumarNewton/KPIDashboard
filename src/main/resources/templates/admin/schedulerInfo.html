@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="https://thymeleaf.org">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RSGI | Report Management System</title>
+
+<!-- <link rel="stylesheet"
+	href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> -->
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	href="../../plugins/fontawesome-free/css/all.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+<!-- DataTables -->
+<link rel="stylesheet"
+	href="../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet"
+	href="../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" type="text/css" href="/css/dashboard.css">
+<!-- DataTable select -->
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css">
+<!-- DataTable Buttons -->
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css">
+<!-- Toastr -->
+<link rel="stylesheet" href="../../plugins/toastr/toastr.min.css">
+<!-- Selectize -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" />
+</head>
+<body class="hold-transition layout-top-nav">
+	<div class="wrapper">
+
+		<!-- Navbar -->
+		<!-- navbar-primary navbar-dark | navbar-light navbar-white-->
+		<nav
+			class="main-header navbar navbar-expand-md navbar-light navbar-white"
+			style="background: rgb(2, 0, 36); background-color: #e0e7ed; /* background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(113, 192, 219, 1) 32%, rgba(0, 212, 255, 0.23571426861760325) 100%); */">
+			<div class="container">
+				<a href="/admin/home" class="navbar-brand"> <img
+					src="https://www.royalsundaram.in/o/RS_Landing/images/Home_page_Logo.png" class="img-responsive center-block"
+					width="160" height="60" alt="Logo" /> <!-- <img src="../../dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8"> -->
+					<span class="brand-text font-weight-light">RSGI | RMS</span>
+				</a>
+
+				<button class="navbar-toggler order-1" type="button"
+					data-toggle="collapse" data-target="#navbarCollapse"
+					aria-controls="navbarCollapse" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse order-3" id="navbarCollapse">
+					<!-- Left navbar links -->
+					<!-- Left navbar links -->
+					<ul class="navbar-nav">
+						<li class="nav-item text-center"><a href="/admin/home"
+							class="nav-link"><i class="fas fa-home"></i></a></li>
+						<li class="nav-item dropdown"><a id="dropdownSubMenu1"
+							href="#" data-toggle="dropdown" aria-haspopup="true"
+							aria-expanded="false"
+							class="nav-link dropdown-toggle text-center">Admin</a>
+							<ul aria-labelledby="dropdownSubMenu1"
+								class="dropdown-menu border-0 shadow">
+								<!-- <li><a href="#" class="dropdown-item">List User </a></li>
+								<li><a href="/admin/userMaster" class="dropdown-item">Add
+										User</a></li> 
+								<li class="dropdown-divider"></li>-->
+								<!-- Level two dropdown-->
+								<li class="dropdown-submenu dropdown-hover"><a
+									id="dropdownSubMenu2" href="#" role="button"
+									data-toggle="dropdown" aria-haspopup="true"
+									aria-expanded="false" class="dropdown-item dropdown-toggle">DashBoard</a>
+									<ul aria-labelledby="dropdownSubMenu2"
+										class="dropdown-menu border-0 shadow">
+										<!-- <li><a href="/admin/dashboardMaster"
+											class="dropdown-item">DashBoard Master</a></li> -->
+										<li><a href="/admin/userDashboardMapping"
+											class="dropdown-item">User DashBoard Mapping</a></li>
+
+										<li class="dropdown-submenu dropdown-hover"><a
+									id="dropdownSubMenu2" href="#" role="button"
+									data-toggle="dropdown" aria-haspopup="true"
+									aria-expanded="false" class="dropdown-item dropdown-toggle">Config</a>
+									<ul aria-labelledby="dropdownSubMenu2"
+										class="dropdown-menu border-0 shadow">
+										<li><a href="/admin/cubeJobStatus"
+											class="dropdown-item">Cube Job status</a></li>
+										<li><a href="/admin/SchedulerInfoDetails"
+											class="dropdown-item">Scheduler Info</a></li>
+										<li><a href="/admin/cubeSchedulerConfig"
+											class="dropdown-item">Cube Scheduler config</a></li>
+									</ul></li>
+									</ul></li>
+								<!-- End Level two -->
+							</ul></li>
+
+
+						<li class="nav-item text-center"><a href="/admin/sqoopConfig" class="nav-link">Sqoop Configuration</a>
+						</li>
+						<li class="nav-item text-center"><a href="/admin/userMatrix"
+							class="nav-link">User Matrix</a></li>
+						<li class="nav-item text-center"><a href="/admin/runsqoopcmd" class="nav-link">Run Sqoop Job</a></li>
+
+					</ul>
+
+					<!-- SEARCH FORM -->
+					<!-- <form class="form-inline ml-0 ml-md-3">
+          <div class="input-group input-group-sm">
+            <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+            <div class="input-group-append">
+              <button class="btn btn-navbar" type="submit">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+        </form> -->
+				</div>
+
+				<!-- Right navbar links -->
+				<ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+					<!-- Messages Dropdown Menu -->
+					<!-- <li class="nav-item dropdown"> -->
+					<!--  </li> -->
+					<!-- Notifications Dropdown Menu -->
+					<li class="nav-item dropdown"></li>
+					<!-- <li class="nav-item">
+          <form th:action="@{/logout}" method="get">
+		        <button style="float:right" class="btn btn-block btn-danger btn-sm" name="registration" type="submit">Logout</button>
+		  </form>
+        </li> -->
+				</ul>
+			</div>
+			<div>
+				<form th:action="@{/logout}" method="get">
+					<button style="float: none;"
+						class="btn btn-block btn-danger btn-sm" name="registration"
+						type="submit">Logout</button>
+				</form>
+			</div>
+		</nav>
+		<!-- /.navbar -->
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container">
+					<!-- <div class="row mb-2">
+          <div class="col-sm-6">
+            <h4 class="m-0 text-dark"> Welcome Mr. Zakir <small>Welcome to RSGI Report Management System</small></h4>
+          </div> -->
+					<!-- /.col
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item"><a href="#">Layout</a></li>
+              <li class="breadcrumb-item active">Top Navigation</li>
+            </ol>
+          </div>/.col
+        </div> -->
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+
+			<!-- Main content -->
+			<div class="content">
+				<div class="container shadow p-3 mb-5 bg-white rounded">
+				<div class="card-header bg-info">
+										<h5 class="card-title m-0">Scheduler Info</h5>
+				</div>
+					<div class="row">
+				<div class="col-lg-12">
+					<div class="card">
+						<div class="card-header">
+							<i class="fa fa-edit"></i>View Results
+							<div class="card-actions">
+								<a href="#" class="btn-setting d-sm-down-none"><i
+									class="icon-settings"></i></a> <a href="#" class="btn-minimize"
+									data-toggle="collapse" data-target="#collapseExample"
+									aria-expanded="true"><i class="icon-arrow-up"></i></a> <a
+									href="#" class="btn-close"><i class="icon-close"></i></a>
+							</div>
+						</div>
+						<div class="card-body collapse show" id="collapseExample">
+							<div class="col-sm-12">
+
+								<div class="form-group">
+
+									<label for="name">Start Date:</label> <input id="startDate"
+										type="text" class="form-control" placeholder="dd/MM/yyyy" />
+
+								</div>
+
+							</div>
+							<div class="col-sm-12">
+								<div class="form-group" id="endDate1">
+									<label for="name">End Date:</label> <input id="endDate"
+										type="text" class="form-control" placeholder="dd/MM/yyyy" />
+								</div>
+
+							</div>
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label class="col-md-3 col-form-label" for="select1">Scheduler</label>
+									<select id="processName" name="select1" class="form-control">
+										<option value="CUBE_BUILD">CUBE_BUILD</option>
+										<option value="JOB_STATUS">JOB_STATUS</option>
+									</select>
+								</div>
+							</div>
+
+							<!-- <div class="col-sm-12 statusFilter">
+								<div class="form-group">
+									<label class="col-md-3 col-form-label" for="select1">Filter By</label>
+									<select id="statusFilter" name="select1" class="form-control">
+										<option th:value="A" th:text="ALL"></option>
+										<option th:value="P" th:text="Pending"></option>
+										<option th:value="C" th:text="Completed"></option>
+									</select>
+								</div>
+							</div> -->
+
+							<div class="card-block">
+								<!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
+								<button id="buttonSchedulerFilter" type="button" class="btn btn-primary">Filter</button>
+							</div>
+							<div class="card-body" style="overflow-x: scroll">
+								<table id="schedluerTransaction"
+									class="table table-responsive-sm table-bordered table-striped table-sm">
+									<thead>
+										<tr>
+											<th data-field="id">ID</th>
+											<!-- <th data-field="checkDelete">Results</th> -->
+											<th data-field="processName">Process Name</th>
+											<th data-field="transactionStatus">Transaction Status</th>
+											<th data-field="startDate">Start Date</th>
+											<th data-field="endDate">End Date</th>
+											<th data-field="endDate">Remarks</th>
+											<th data-field="endDate">Error Msg</th>
+										</tr>
+									</thead>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--/.col-->
+			</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+			<div class="p-3">
+				<h5>Title</h5>
+				<p>Sidebar content</p>
+			</div>
+		</aside>
+		<!-- /.control-sidebar -->
+
+
+			<!-- Job status modal -->
+			<div id="currentJobStatus" class="modal fade"
+				role="dialog" data-backdrop="static" data-keyboard="false">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header bg-info">
+							<h4 class="modal-title">Job Detail Status</h4>
+							<button type="button" class="close btn-danger"
+								data-dismiss="modal">&times;</button>
+						</div>
+						<div class="modal-body">
+							<div class="form-group row">
+									<label class="col-md-3 col-form-label">Ref Key</label>
+								<div class="col-md-9">
+									<input id="job_refKey" type="text" class="form-control"
+										placeholder="" readonly="readonly"/>
+								</div>
+							</div>
+							<div class="form-group row">
+									<label class="col-md-3 col-form-label">Remarks</label>
+								<div class="col-md-9">
+									<input id="job_remarks" type="text" class="form-control"
+										placeholder="" readonly="readonly"/>
+								</div>
+							</div>
+							<div class="form-group row">
+									<label class="col-md-3 col-form-label">Initial Response</label>
+								<div class="col-md-9">
+									<textarea id="job_response" type="text" class="form-control"
+										placeholder="" readonly="readonly" ></textarea>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default"
+								data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+								
+		<!-- Main Footer -->
+		<footer class="main-footer">
+			<!-- To the right -->
+			<div class="float-right d-none d-sm-inline">
+				<a href="http://prodian.co.in">Powered by Prodian</a>
+			</div>
+			<!-- Default to the left -->
+			<strong>Copyright &copy; 2019-2020 <a
+				href="http://prodian.co.in">Prodian Infotech</a>.
+			</strong> All rights reserved.
+		</footer>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+
+	<!-- jQuery -->
+	<script src="../../plugins/jquery/jquery.min.js"></script>
+	<!-- AdminLTE App -->
+	<script src="../../dist/js/adminlte.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+	<!-- Bootstrap 4 -->
+	<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<!-- DataTables -->
+	<script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
+	<script
+		src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+	<script
+		src="../../plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+	<script
+		src="../../plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+	<!-- DataTable select -->
+	<script
+		src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+	<!-- DataTable Buttons -->
+	<script
+		src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>
+	<!-- Toastr -->
+	<script src="../../plugins/toastr/toastr.min.js"></script>
+	<!-- jquery-validation -->
+	<script src="../../plugins/jquery-validation/jquery.validate.min.js"></script>
+	<script src="../../plugins/jquery-validation/additional-methods.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.28.0/moment.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+	<!-- Selectize -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+	<script>
+		$(function() {
+			
+			$("#startDate").datetimepicker({
+				format: 'DD/MM/YYYY',
+				defaultDate:new Date(),
+				showClose:true
+				//language:"en"
+
+			}).on('dp.show dp.update', function () {
+				$(".picker-switch").css('cursor','none');
+				$(".picker-switch").removeAttr('title')
+				    //.css('cursor', 'default')  <-- this is not needed if the CSS above is used
+				    //.css('background', 'inherit')  <-- this is not needed if the CSS above is used
+				    .on('click', function (e) {
+				        e.stopPropagation();
+				    });
+				});
+			
+			$("#endDate").datetimepicker({
+				format: 'DD/MM/YYYY',
+				defaultDate:new Date(),
+				showClose:true
+			}).on('dp.show dp.update', function () {
+				$(".picker-switch").css('cursor','none');
+				$(".picker-switch").removeAttr('title')
+				    //.css('cursor', 'default')  <-- this is not needed if the CSS above is used
+				    //.css('background', 'inherit')  <-- this is not needed if the CSS above is used
+				    .on('click', function (e) {
+				        e.stopPropagation();
+				    });
+				});
+			
+			var tableTransaction = $('#schedluerTransaction').DataTable( {
+				
+			} );
+			
+			$("#buttonSchedulerFilter").click(function(){
+
+				if($("#startDate").val()=="") {
+					toastr.clear();toastr.warning('Please enter a valid Start Date.');
+					return false;
+				} else if($("#endDate").val()=="") {
+					toastr.clear();toastr.warning('Please enter a valid End Date.');
+					return false;
+				} else if($("#processName").val()==""){
+					toastr.clear();toastr.warning("Please select a Process.")
+					return false;
+				}
+
+				$(this).filterTransactionDetailAjax("getSchdeulerTransactionDetails", "");
+
+			});
+			
+			$.fn.filterTransactionDetailAjax = function( method, checkeds ){
+				//showLoader();
+				$.ajax({
+					type: "GET",
+					url: "/admin/" + method,
+					dataType: "json",
+					timeout : 100000,
+					data: { startDate: $("#startDate").val(), endDate: $("#endDate").val(), processName: $("#processName").val(), checked: checkeds },
+
+					"success" :  function(data){
+						//hideLoader();
+						tableTransaction.clear().draw();
+						$.each(data, function(ind, obj){
+
+								//$("#tableTransaction thead").find("th:eq(3)").text("Transaction Status");
+								
+								tableTransaction.row.add([
+								                          obj.id,
+								                         // "<a href='#myModal' class='btn btn-info' data-toggle='modal' id='"+obj.id+"' data-target='"+FetchId+"'>Fetch Results</a>",
+								                          obj.processName,
+								                          obj.schedulerStatus,
+								                          obj.startDate,
+								                          obj.endDate,
+								                          obj.remarks,
+								                          obj.errorMsg
+								                          ]).draw();
+
+
+						});
+						//toastr.clear();toastr.info("Action completed successfully.");
+					},
+					error: function(e){
+						//hideLoader();
+						toastr.clear();toastr.error("Internal Server Error. Please contact the Admin.");
+					}
+				});
+
+			}
+
+		});
+	</script>
+</body>
+</html>

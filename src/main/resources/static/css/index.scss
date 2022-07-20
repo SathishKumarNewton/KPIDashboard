@@ -1,0 +1,702 @@
+$hightlightColor:#004990;
+$primaryColor:#fff;
+$secondaryColor:#F4F5F8;
+$borderColor:#EAEAEA;
+
+$breakpoint-sm:768px;
+$breakpoint-md:991px;
+
+$DrawerWidth:250px;
+$HeaderHeight:150px;
+
+$ArrowWhite:'../assets/images/dropdown-icon-white.svg';
+$ArrowBlack:'../assets/images/dropdown-icon-black.svg';
+
+
+html,body{
+    background-color: $secondaryColor;
+    overflow-x: hidden;
+}
+@font-face {
+    font-family: "robotoLight";
+    src: url("../assets/fonts/Roboto-Light.ttf");
+  }
+@font-face{
+    font-family: "robotoRegular";
+    src: url("../assets/fonts/Roboto-Regular.ttf");
+}
+@font-face{
+    font-family: "robotoBold";
+    src: url('../assets/fonts/Roboto-Bold.ttf');
+}
+@font-face{
+    font-family: "robotoMedium";
+    src: url('../assets/fonts/Roboto-Medium.ttf');
+}
+@font-face {
+  font-family: "poppinsSemibold";
+  src: url("../assets/fonts/Poppins-SemiBold.ttf");
+}
+
+@font-face {
+  font-family: "poppinsRegular";
+  src: url("../assets/fonts/Poppins-Regular.ttf");
+}
+
+@font-face {
+  font-family: "poppinsBold";
+  src: url("../assets/fonts/Poppins-Bold.ttf");
+}
+
+#pre-loader{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    background-size: 150% 150%;
+    position: fixed;
+    top: 0;
+    background-color: #FFFFFF;
+    z-index: 99999999;
+    align-items:center;
+    justify-content:center;
+    // background: linear-gradient(0deg, rgba(0, 73, 144, 1) -20%, rgba(255,255,255,1) 40%);
+}
+
+///common header fonts
+.h2{
+      font-family: "robotoBold";
+      font-size: 14px;
+}
+
+///mixin for Non-Select2-dropdowns
+@mixin dropdownIconSelector($IconType,$color){
+    background:none;
+    background: url($IconType) no-repeat 95% 50%;
+    background-size: 11px;
+    border-color: $color;
+    cursor: pointer;
+    &:focus{
+        border-color: $color;
+    }
+    option{
+        color:black;
+        font-weight: inherit;
+    }
+}
+
+////mixin for scrollbar
+@mixin Scrollbar_addon{
+    &::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+      }
+      &::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 5px $hightlightColor;
+                box-shadow: inset 0 0 5px $hightlightColor;
+        border-radius: 2px;
+      }
+      /* Handle */
+     &::-webkit-scrollbar-thumb {
+        background: $hightlightColor;
+        border-radius: 10px;
+      }
+ }
+
+.resetText{
+    font-family: robotoBold;
+    font-size: 12px;
+    color: $hightlightColor;
+    cursor: pointer;
+}
+.btn:focus,select:focus,.form-control:focus{
+    outline: none !important;
+    box-shadow: none;
+}
+
+.page-master-container{
+    overflow: hidden;
+}
+///Header-grouping
+.fixed-top{
+    background-color: $primaryColor;
+    .nav-header{
+        padding: 8px 16px;
+        #logo{
+           width: 140px;
+        }
+        .navbar-icons{
+            padding:10px;
+            align-self: center;
+            a{
+                .fa{ 
+                    color: $primaryColor;
+                   -webkit-text-stroke-width: 1.4px;
+                   -webkit-text-stroke-color: $hightlightColor;
+                    cursor: pointer;
+                 }
+            }
+            .notificationCounter{
+                background-color: #FF0000; 
+                color: $primaryColor; 
+                margin-top: -14px; 
+                margin-left: -10px; 
+                border-radius: 50%; 
+                width: 16px; 
+                height: 16px; 
+                font-size: 0.6rem;
+            }
+             #userPic{
+                width: 40px;
+                height: 40px;
+                border-radius: 8px;
+                object-fit: cover;
+            }
+        }
+    }
+    .navbar-operations{
+        padding: 10px 16px;
+        background-color: $hightlightColor;
+        // .header-dashboard-select{
+        //     .select2-container .select2-selection--single{
+        //         border: solid 2px #fff !important;
+        //         background-color: transparent;
+        //         min-width: 180px;
+        //     }
+        //     .select2-container--default .select2-selection--single .select2-selection__rendered{
+        //         color: #fff !important;
+        //         font-size: 13px !important;
+        //     }
+        //     .select2-container--default .select2-selection__arrow{
+        //         filter: invert(1);
+        //     }
+        // }
+        .dropdown{
+          font-family: robotoBold;
+          font-size:12px;
+          background: none;
+          -webkit-appearance: none;
+          background-color: $hightlightColor;
+          color: $primaryColor;
+          text-align: left;
+          width: 180px;
+          @include dropdownIconSelector($ArrowWhite,$primaryColor);
+        }
+        select option {
+            font-family: robotoRegular;
+            font-size: 120%;
+            padding: 10px;
+        }
+        div:nth-child(2){
+            button{
+                font-size: 0.8em;
+                border-radius: 18px;
+                background-color: #3D75AB;
+                color: $primaryColor;
+                @media (min-width:769px){
+                     padding-left: 20px;
+                     padding-right: 20px;
+                  i{padding-left: 8px;}
+                }
+                @media (max-width:$breakpoint-sm){
+                    border-radius: 50%;
+                    text-align: center;
+                     width: 40px;
+                     height: 40px;
+                  span{display: none;} 
+                }
+            }
+        }
+    }
+}
+ 
+///sidebar 
+#sidebar{
+        top: $HeaderHeight;
+        z-index: 1200;
+        position: fixed;
+        width: $DrawerWidth;
+    .sidebar-box{
+        background-color: $primaryColor;
+        border-top-right-radius: 50px; 
+            .sidebar-content{
+                padding:14px 18px;
+                .list-header{  
+                    padding: 10px;
+                    border-bottom: solid 2px $secondaryColor;
+                    .mobile-view-toggler-off{
+                        cursor: pointer;
+                    }
+                }
+                .form-wrapper{
+                    height: calc(100vh - 238px);
+                    overflow-y: auto;
+                    .filters{
+                        .master-control{
+                            padding: 6px 4px;
+                            .dropdown{
+                                @include dropdownIconSelector($ArrowBlack,$secondaryColor);
+                                font-size: 14px;
+                                border-width: 2px;
+                            }
+                        }
+                    }
+                }
+                ////Visible only on mobile screen scroll
+                .ApplyFilters{
+                    width: 100vw;
+                    height: 74px;
+                    margin-top: 16px;
+                    border-top: solid 2px $borderColor;
+                    display: none;
+                    .btn{
+                        font-family: robotoBold;
+                        font-size: 12px;
+                        letter-spacing: 0.5px;
+                        padding: 10px 20px;
+                        border-radius: 2px;
+                        background-color: $hightlightColor;
+                        color: $primaryColor;
+                    }
+                }
+            }
+    }
+}
+
+///Body of the app
+.page-base-container{
+    padding-top: $HeaderHeight;
+    ///drawerwidth 250 
+    margin-left: $DrawerWidth;
+    width: calc(100% - 250px);
+    background-color: $secondaryColor;
+    @media (max-width:$breakpoint-md){
+        margin-left: 0px;
+        width: 100%;
+    }
+    .view{
+        margin-bottom: 20px;
+       .first-layer{
+             .titlecard{
+                background-color: #D69100;
+                background-image: transparent linear-gradient(180deg, #EDAD27 0%, #D69100 100%) 0% 0% no-repeat padding-box;
+                background-image: url('../assets/images/Curves.svg');
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position-y: 100%;
+                border-radius: 10px;
+                color: $primaryColor; 
+
+                .titlecard-welcome{
+                    .title{
+                        font-size: 14px;
+                        font-family: robotoLight;
+                    }
+                    .title-name{
+                        font-family: robotoBold;
+                        font-size: 20px;
+                    }
+                }
+                .ilustrated-img{
+                    max-width:200px; 
+                    height: 100%; 
+                    right: 3%;
+                    img{
+                        width: 100%;
+                        height: 100%;
+                    }
+                }
+            }
+            .card{
+                padding: 15px 15px;
+                border-radius: 10px;
+                .leadsData{
+                    .leadsCount{
+                       color: $hightlightColor;
+                    }
+                }
+                .piechart{
+                    width: 7em;
+                    margin: auto 0px;
+                    height: 100px;
+                }
+            }
+        }
+        .cards{
+            padding: 8px;
+            .card-layout{
+                border-radius: 10px;
+                background-color: $primaryColor;
+                .card-layout-header{ 
+                   padding: 14px;
+                   color: black;
+                   border-bottom: solid 1px $borderColor;
+                   button{
+                       border-color: $hightlightColor;
+                       padding: 4px 10px;
+                       background-color: $primaryColor;
+                       &:hover{
+                            background-color: $hightlightColor;
+                            color: $primaryColor;
+                       }
+                   }
+                   .explore_fullview_on,.explore_fullview_off{
+                       .explore-icon{
+                           font-size: 14px;
+                           color:rgba($color: #000000, $alpha: 0.4);
+                           cursor: pointer;
+                           &:hover{
+                               transform: scaleX(1.15);
+                           }
+                       }
+                   }
+                   .explore_fullview_off{display: none;}
+                }
+                .card-body{
+                    .btn{
+                        font-size: 0.7em;
+                        font-family: robotoRegular;
+                        background-color: $primaryColor;
+                        border:solid 2px $borderColor;
+                        color: black;
+                        border-radius: 8px;
+                        &:hover{
+                            background-color: $hightlightColor;
+                            color: $primaryColor;
+                        }
+                    }
+                    .date-picker{
+                        width: 100%;
+                        height: 34px;
+                        font-size: 0.7em;
+                        color: black;
+                        background-image: url('../assets/images/datepicker.svg');
+                        background-repeat: no-repeat;
+                        background-position: 96% 50%;
+                        background-size: 14px;
+                        &:focus{
+                            outline: none;
+                            border: solid 1px $hightlightColor;
+                        }
+                    }
+                    &-charts{
+                        padding: 20px;
+                        height: 100%;
+                        width: 100%;
+                    .charts{
+                        height: 200px;
+                        width: 100%;
+                    }
+                    }
+                }
+                .card-layout-footer{
+                    border-top: solid 1px $borderColor;
+                    font-size: 12px;
+                    padding: 10px;
+                    div{
+                        padding: 4px;
+                        .btn{
+                            padding: 1px 8px;
+                            border: solid 1px $borderColor;
+                        }
+                    }
+                    .dropdown{
+                        padding: 4px;
+                        width: 60px;
+                        height: 28px;
+                        border-radius: 4px;
+                        font-size: 11px;
+                        cursor: pointer ;
+                        &:focus{
+                            outline: none; 
+                            border: 
+                            solid 1px $hightlightColor;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+///filter options toggler --mobile View form
+.mobile-view-toggler{
+    &-on{
+        z-index: 1500;
+        background-color: $hightlightColor;
+        bottom: 15px;
+        right: 15px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: none;
+        .icon-o{
+            width: 12px;
+            height: 12px;
+            top: 0;
+            right: 0;
+            background-color: #FF0000;
+            border-radius: 50%;
+        }
+        span{
+            vertical-align: center;
+            font-size: 22px;
+            color: $primaryColor;
+        }
+    }
+    &-off{
+       font-size: 18px;
+    }
+}
+
+////Table overrides  Check 'plugins/jqwidgets/jqwidgets/styles/jqx.base.css
+.table-wrapper,.form-wrapper{
+    @include Scrollbar_addon();
+    max-width: 100%;
+    height: 100%;  ///99% overflow x
+    overflow: auto;
+    
+    #divPivotGrid{
+        width: 100%;
+        #innerDiv jqx-pivotgrid-expand-button{
+            padding:10px !important;
+            left: 40px;
+        }
+        .jqx-pivotgrid-content-wrapper {
+            border: solid 1px $borderColor;
+            font-size: 1em;   
+            font-family: "robotoRegular";
+        }
+        .jqx-pivotgrid{
+            &::before{
+                position: absolute;
+                top: 20px;
+                left: 14px;
+                font-size: 14px;
+                font-family: "robotoBold";
+                content: 'Measures';
+                color: black;
+            }    
+            border: solid 1px $borderColor;
+            background-color: $primaryColor;
+        }
+        .jqx-widget-header{
+            font-family: "robotoMedium";
+            font-size: 12px;
+            background-color: $primaryColor;
+            color: black;
+        }
+        .jqx-pivotgrid-{
+                &expand-button{background-image: url('../assets/images/plus-icon.svg') !important;}
+                &collapse-button{background-image: url('../assets/images/minus-icon.svg') !important;}
+                &collapse-button,&expand-button{
+                    background-size: contain;
+                    background-repeat: no-repeat;
+                    margin: 0 8px 0 10px;
+                    left: 0px;
+                }
+        }
+    }    
+}
+
+///To view select2 container on tab devices  --overide runtime generation
+.select2-container{
+    z-index: 1400;  
+}
+
+///sidebar Responsiveness
+@media screen and (max-width:$breakpoint-md) and (min-width:0px){
+    #sidebar{
+        top: 0;
+        width: 100vw;
+        height: 80vh;
+        display: none;
+        .sidebar-box{
+            .sidebar-content{
+                padding-top: 0px;
+                .form-wrapper{
+                    height: calc(100vh - 156px);
+                }
+                .ApplyFilters{
+                    display: block;
+                }
+            }
+        } 
+    }
+    .mobile-view-toggler-on{
+        display: block;
+    }
+}
+
+////select2-container
+.select2-container{
+    font-size: 12px;
+    width: 100% !important;
+    .select2-selection--single {
+        height: 38px;
+        padding: 8px 2px;
+        opacity: 0.8;
+        border: solid 2px $borderColor;
+        &:focus{
+            outline: none;
+            border: solid 2px $hightlightColor;
+        }
+        .select2-selection__rendered{
+           font-family: robotoRegular;
+        }
+      }
+    &--default{
+    .select2-selection__arrow {
+        background-image: url('../assets/images/dropdown-icon-black.svg');
+        background-repeat: no-repeat;
+        background-position-y: 15px;
+        background-size: 11px;
+        b { display: none;}
+      }
+}
+}
+
+////Enable for full full screen view
+#modal-fullscreen{
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1500;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    border-radius: 0px;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    backdrop-filter: brightness(40%);
+    .modal-base{
+        width: 90%;
+        height: 80%;
+        .card-body{
+            height: 70%;
+            .table-wrapper{
+            height: 100%;
+        }
+        }
+       .modal-master{
+           background-color: white;
+           border-radius: 20px;
+           .card-body-charts{
+            height: 100%;
+              .charts{
+                  height: 80%;
+              }
+           }
+       }
+    }
+}
+
+
+////bootstrap datatable
+.top{
+    height: 50px;
+}
+#bootstrapDataTable{
+    min-width: 100%;
+    max-height: 200px;
+}
+tbody{
+    border: solid 1px $borderColor;
+ }
+ thead {
+    th{
+        border: solid 1px #EAEAEA !important;
+        border-bottom: none !important;
+        font-size: 12px;
+        @media (max-width:$breakpoint-sm){
+            font-size: 11px;
+        }
+        min-width: 80px;
+        height: 34px;
+        &:nth-child(1){
+            padding-left: 10px;
+        }
+    }
+}
+th,tr,td{
+    padding-left: 10px;
+}
+ tr{
+     td{
+         border:solid 1px $borderColor !important;
+         font-family: robotoRegular;
+         font-size: 12px !important;
+         height: 25px;
+         @media (max-width:$breakpoint-sm){
+            font-size: 11px !important;
+        }
+     }
+ } 
+.dataTables_wrapper .dataTables_filter{
+    font-family: robotoRegular !important;
+     font-size: 12px;
+     input{
+        border: solid 2px $borderColor !important;
+        height: 30px;
+    }
+ }
+.bottom{
+    margin-top: 25px;
+    margin-bottom: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    .dataTables_paginate {
+        .paginate_button{
+            background-color: white;
+            color: black;
+            border: solid 1px $borderColor !important;
+            font-family: robotoRegular !important;
+            font-size: 11px;
+            padding: 8px 10px;
+            margin-right: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            &:hover{
+                background-color: $hightlightColor;
+                color: white;
+            }
+        }
+        .current{
+            background-color: $hightlightColor;
+            color: white;
+        }
+    }
+    .dataTables_length{
+        font-family: robotoRegular;
+        font-size: 12px;
+        select{
+            padding: 4px;
+            margin-left: 5px;
+            background-color: white;
+            border: solid 1px $borderColor;
+            border-radius: 4px;
+            &:focus{
+                border: solid 1px $hightlightColor;
+                cursor: pointer;
+            }
+        }
+    }
+} 
+
+ .dataTables_scroll{
+     height: 350px;
+     width: 100%;
+     overflow: auto !important;
+     @include Scrollbar_addon();
+ }
+
+.dataTables_scrollBody{
+    overflow: auto !important;
+    @include Scrollbar_addon();
+ }
+ 

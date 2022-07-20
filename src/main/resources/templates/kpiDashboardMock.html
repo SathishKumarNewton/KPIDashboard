@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>RSD</title>
+    <link rel="icon" href="../../assets/images/titleicon.png" type="image/icon-type">
+    <link rel="stylesheet" href="../../plugins_cr/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../../plugins_cr/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../plugins_cr/select2/selec2.min.css">
+    <link rel="stylesheet" href="../../plugins_cr/daterangepicker/monthpicker.css">
+    <link rel="stylesheet" href="../../plugins_cr/jqwidgets/jqwidgets/styles/jqx.base.css" />
+    <link rel="stylesheet" href="../../plugins_cr/datatable/datatables.min.js"> 
+    <link rel="stylesheet" href="../../styles/index.css">
+    <link rel="stylesheet" href="../../css/kpi.css">
+    <!-- Range -->
+    <link rel="stylesheet" href="https://demos.jquerymobile.com/1.4.2/css/themes/default/jquery.mobile-1.4.2.min.css">  
+</head>
+
+<body>
+    <div class="page-master-container">
+        <!-- Main Header -->
+        <div id="header">
+            <nav class="fixed-top">
+                <div class="nav-header d-flex flex-row justify-content-between align-content-center">
+                    <div>
+                        <btn class="mobile-view-toggler-off mr-2 d-md-inline d-lg-none d-xl-none">
+                            <span class="fa fa-bars"></span>
+                        </btn>
+                        <a class="navbar-brand" href="">
+                            <img src="../../assets/images/Logo_Innerpage.png" alt="CompanyLogo" id="logo">
+                        </a>
+                    </div>
+                    <div class="d-flex">
+                        <div class="navbar-icons d-none d-md-block pr-2">
+                            <a>
+                                <span id="settings" class="fa fa-cog"></span>
+                            </a>
+                         </div>
+                         <div class="navbar-icons d-inline-flex align-items-center pt-2 pr-2">
+                                <div>
+                                    <a>
+                                        <span id="notifications" class="fa fa-bell"></span>
+                                    </a>
+                                </div>
+                                <div class="notificationCounter d-flex justify-content-center align-items-center">
+                                    <span>d</span>
+                                </div>
+                         </div>
+                         <div class="navbar-icons p-0">
+                            <a>
+                                <img id="userPic" class="img-fluid" src="../../assets/images/profile.jpeg" alt="profile picture">
+                            </a>
+                         </div>
+						<div class="navbar-icons  d-none d-md-block pr-2">
+							<form action="/logout" method="get">
+								<button style="float: none;" 
+								class="btn btn-block btn-danger btn-sm" name="registration" type="submit">Logout</button>
+							</form>
+						</div>
+                    </div>
+                </div>
+                <div class="navbar-operations d-flex flex-row justify-content-between align-content-center">
+                    <div class="header-dashboard-select">
+                        <select class="form-control dropdown" id = "dashboardselection" > 
+                            <option selected value="GENERAL">General KPI Dashboard</option>
+                            <option value="MOTOR">Motor KPI Dashboard</option>
+							<option value="HEALTH">Health KPI Dashboard</option>
+                        </select>
+                    </div>
+                    <div class="my-auto">
+                        <button class="btn mr-0 mr-md-1">
+                            <span>Share</span>
+                            <i class="fa fa-share-square-o"></i>
+                        </button>
+                        <button class="btn btn-outline-white ml-0 ml-md-1">
+                            <span>Download</span>
+                            <i class="fa fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <!-- Main Header END-->
+        <!-- pre-loader -->
+        <section id="pre-loader">
+            <img src="../../assets/images/Logo_Innerpage.png" alt="CompanyLogo" id="logo">
+        </section>
+        <!-- end -->
+        <!-- Sidebar -->
+        <div id="sidebar">
+        <!-- Sidebar OutSide Wrapper -->
+                <form class="sidebar-box">
+                            <!-- Sidebar contents -->
+                            <div class="col-12 sidebar-content">
+                                <div class="row">
+                                    <!-- Sidebar Header Box -->
+                                    <div class="col-12 p-0">
+                                        <ul class="list-header d-flex justify-content-between align-items-center list-unstyled">
+                                            <li class="d-lg-none"><btn class="mobile-view-toggler-off"><span class="fa fa-arrow-left"></span></btn></li>
+                                            <li class="h2 my-auto">
+                                                Filters
+                                            </li>
+                                            <li><span class="resetText">RESET</span></li>
+                                        </ul>
+                                    </div>
+                                    <!-- Filter Form-->
+									<div id = "motorDiv">	
+									<div class="container-fluid form-wrapper p-0">
+                                        <div class="col-12">
+                                            <div class="row">
+                                                <!-- Filter 1 --CHannel -->
+                                                <div class="filters col-12">
+                                                    <label class="h2">Channel Type</label>
+                                                    <div class="row">
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select" id="select">
+                                                                    <option selected>Channel</option>
+                                                                    <option value="1">Channel1</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select" id="select1">
+                                                                    <option selected>Sub Channel</option>
+                                                                    <option value="1">Sub Channel1</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Filter 2 Region -->
+                                                <div class="filters col-12">
+                                                   <label class="h2">Region</label>
+                                                    <div class="row">
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Region</option>
+                                                                    <option value="1">East India</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														
+													    <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Cluster</option>
+                                                                    <option value="1">TN & Kerela</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>State</option>
+                                                                    <option value="1">Tamilnadu</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>City</option>
+                                                                    <option value="1">Chennai</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Zone</option>
+                                                                    <option value="1">South</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Pincode</option>
+                                                                    <option value="1">600011</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Branch</option>
+                                                                    <option value="1">Adyar</option>
+																	<option value="1">Karapakkam</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>T20 Location</option>
+                                                                    <option value="1">Adyar</option>
+																	<option value="1">Karapakkam</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Filters 4 Intermediary-->
+                                                <div class="filters col-12 pb-md-3 pb-lg-3">
+                                                    <label class="h2">Intermediary</label>
+                                                    <div class="row">
+                                                        <div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Intermediary Code</option>
+                                                                    <option value="1">AB56</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Intermediary Name</option>
+                                                                    <option value="1">EON</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>OA Code</option>
+                                                                    <option value="1">xyx</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>OA Name</option>
+                                                                    <option value="1">asdf</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+												<!-- Filters 5 Motor Parameters-->
+                                                <div class="filters col-12 pb-md-3 pb-lg-3">
+                                                    <label class="h2">Motor Parameters</label>
+                                                    <div class="row">
+                                                        <div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Make</option>
+                                                                    <option value="1">TATA</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Model</option>
+                                                                    <option value="1">Nano</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Model Group</option>
+                                                                    <option value="1">4</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Model Classification</option>
+                                                                    <option value="1">AR3</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Vehicle Age</option>
+                                                                    <option value="1">4R</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>NoofYearsWithRs</option>
+                                                                    <option value="1">4</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>AddOn</option>
+                                                                    <option value="1">NONE</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														
+                                                    </div>
+                                                </div>
+												<div class="filters col-12 pb-md-3 pb-lg-3">                                                   
+                                                    <div class="row form-group">
+												<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12"style="margin-left: 2em;">
+                                                            <div class="master-control">
+                                                                <input class="form-check-input" type ="radio"><label class ="form-check-label">New Business</label>
+                                                            </div>
+															<div class="master-control">
+                                                                <input class="form-check-input" type ="radio"><label class ="form-check-label">Renewal</label>
+                                                            </div>
+															<div class="master-control">
+                                                                <input class="form-check-input" type ="radio"><label class ="form-check-label">Roll Over</label>
+                                                            </div>
+                                                        </div>
+														</div>
+														</div>
+												<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Product Code</option>
+                                                                    <option value="1">Policy1</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Campaing Code</option>
+                                                                    <option value="1">Plugin 1</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														
+                                                        
+                                            </div>
+                                        </div>
+                                    </div>
+									</div>
+									<div id = "healthDiv">
+									<div class="container-fluid form-wrapper p-0">
+                                        <div class="col-12">
+                                            <div class="row">
+                                                <!-- Filter 1 --CHannel -->
+                                                <div class="filters col-12">
+                                                    <label class="h2">Channel Type</label>
+                                                    <div class="row">
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select" id="select">
+                                                                    <option selected>Channel</option>
+                                                                    <option value="1">Channel1</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select" id="select1">
+                                                                    <option selected>Sub Channel</option>
+                                                                    <option value="1">Sub Channel1</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select" id="select1">
+                                                                    <option selected>Intermediary</option>
+                                                                    <option value="1">XYZ</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Filter 2 Region -->
+                                                <div class="filters col-12">
+                                                   <label class="h2">Region</label>
+                                                    <div class="row">
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Region</option>
+                                                                    <option value="1">East India</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>State</option>
+                                                                    <option value="1">Tamilnadu</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>City</option>
+                                                                    <option value="1">Chennai</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Branch</option>
+                                                                    <option value="1">Adyar</option>
+																	<option value="1">Karapakkam</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Filter 3 Polices-->
+                                                <div class="filters col-12">
+                                                    <label class="h2">Policy Parameters</label>
+                                                    <div class="row">
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Policy Type</option>
+                                                                    <option value="1">Policy1</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Policy Category</option>
+                                                                    <option value="1">Policy1</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Add On</option>
+                                                                    <option value="1">Plugin 1</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Sum Insured</option>
+                                                                    <option value="1">$45000</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Max Age</option>
+                                                                    <option value="1">50</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Migration Number</option>
+                                                                    <option value="1">500001</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Version</option>
+                                                                    <option value="1">3</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>NoOfMigratedYears</option>
+                                                                    <option value="1">2</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+												<!-- Filters 4 Insurance-->
+                                                <div class="filters col-12 pb-md-3 pb-lg-3">
+                                                    <label class="h2">Insurance Parameters</label>
+                                                    <div class="row">
+                                                        <div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Age Band</option>
+                                                                    <option value="1">56</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Pre Existing Disease</option>
+                                                                    <option value="1">None</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Family Size</option>
+                                                                    <option value="1">4</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>NoofYearsWith Rs</option>
+                                                                    <option value="1">4</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+												<div class="filters col-12 pb-md-3 pb-lg-3">                                                   
+                                                    <div class="row form-group">
+												<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12"style="margin-left: 2em;">
+                                                            <div class="master-control">
+                                                                <input class="form-check-input" type ="radio"><label class ="form-check-label">New Business</label>
+                                                            </div>
+															<div class="master-control">
+                                                                <input class="form-check-input" type ="radio"><label class ="form-check-label">Renewal</label>
+                                                            </div>
+															<div class="master-control">
+                                                                <input class="form-check-input" type ="radio"><label class ="form-check-label">STP</label>
+                                                            </div>
+															<div class="master-control">
+                                                                <input class="form-check-input" type ="radio"><label class ="form-check-label">NSTP</label>
+                                                            </div>
+                                                        </div>
+														</div>
+														</div>
+												<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Product Code</option>
+                                                                    <option value="1">Policy1</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Campaing Code</option>
+                                                                    <option value="1">Plugin 1</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Branch</option>
+                                                                    <option value="1">Policy1</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Subline</option>
+                                                                    <option value="1">Plugin 1</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                            </div>
+                                        </div>
+                                    </div>
+									</div>
+									<div id = "generalDiv">
+									<div class="container-fluid form-wrapper p-0">
+                                        <div class="col-12">
+                                            <div class="row">
+                                                <!-- Filter 1 --CHannel -->
+                                                <div class="filters col-12">
+                                                    <label class="h2">Channel Type</label>
+                                                    <div class="row">
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select" id="select">
+                                                                    <option selected>Channel</option>
+                                                                    <option value="1">Channel1</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select" id="select1">
+                                                                    <option selected>Sub Channel</option>
+                                                                    <option value="1">Sub Channel1</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select" id="select1">
+                                                                    <option selected>Intermediary</option>
+                                                                    <option value="1">Sub Channel1</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Filter 2 Region -->
+                                                <div class="filters col-12">
+                                                   <label class="h2">Region</label>
+                                                    <div class="row">
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Region</option>
+                                                                    <option value="1">East India</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>State</option>
+                                                                    <option value="1">Tamilnadu</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>City</option>
+                                                                    <option value="1">Chennai</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Branch</option>
+                                                                    <option value="1">Adyar</option>
+																	<option value="1">Karapakkam</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Filter 3 Polices-->
+                                                <div class="filters col-12">
+                                                    <label class="h2">Policy Parameters</label>
+                                                    <div class="row">
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            
+                                                        </div>
+														
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Add On</option>
+                                                                    <option value="1">Plugin 1</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        
+														<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12" id="noOfAgeWithRsSlider">		
+        													
+                                                        </div>
+                                                    </div>
+                                                </div>
+												<div class="filters col-12 pb-md-3 pb-lg-3">                                                   
+                                                    <div class="row form-group">
+												<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12"style="margin-left: 2em;">
+                                                            <div class="master-control">
+                                                                <input class="form-check-input" type ="radio"><label class ="form-check-label">New Business</label>
+                                                            </div>
+															<div class="master-control">
+                                                                <input class="form-check-input" type ="radio"><label class ="form-check-label">Renewal</label>
+                                                            </div>
+															
+                                                        </div>
+														</div>
+														</div>
+												<div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Product Code</option>
+                                                                    <option value="1">Policy1</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-12 col-md-6 col-lg-12 col-xl-12">
+                                                            <div class="master-control">
+                                                                <select class="btn form-control dropdown custom-select">
+                                                                    <option selected>Campaing Code</option>
+                                                                    <option value="1">Plugin 1</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+														
+                                            </div>
+                                        </div>
+                                    </div>
+									</div>
+                                    <div class="ApplyFilters">
+                                            <div class="d-flex h-100 p-3 align-items-center">
+                                                <button class="btn w-100">
+                                                    APPLY FILTERS
+                                                </button>
+                                            </div>
+                                    </div>
+                                    <!--Filter Form End-->
+                                </div>
+                            </div>
+                            <!-- Sidebar Contents End-->
+                </form>
+        <!--Sidebar Outside Wrapper End-->
+        </div>
+        <!-- SideBar End-->
+        <div class="page-base-container container-fluid pl-2 pr-2">
+            <!-- Inner Container-->
+            <div class="container-fluid view">
+                <!-- Layer 1-->
+                <div class="row first-layer">
+                        <div class="col-12 col-sm-7 d-flex col-md-8 col-lg-8 col-xl-8 p-2" style="min-height: 120px;">
+                            <div class="col-12 titlecard d-flex flex-nowrap">
+                                <div class="d-flex justify-content-around align-items-center">
+                                    <div class="titlecard-welcome d-flex flex-column">
+                                        <div class="title">Welcome Back</div>
+                                        <div class="title-name">Jonarthan Raphael</div>
+                                    </div>
+                                </div>           
+                                <div >
+                                    <div class="position-absolute ilustrated-img">
+                                        <img src="../../assets/images/Illustration.png" width="100%" height='100%' alt="illustration">
+                                    </div>
+                                </div>
+                            </div>                     
+                        </div>
+                        <!-- <div class="col-12 col-sm-5 col-md-4 col-lg-4 col-xl-4 p-2">
+                            <div class="col-12 card h-100">
+                                    <div class="row h-100 d-flex pl-4 justify-content-between">
+                                    <div class="leadsData">
+                                        <span class="h2"><b>Total Leads</b></span>
+                                        <span><h4><b class="leadsCount">250</b></h4></span>
+                                    </div>
+                                    <div class="piechart pr-4" >
+                                        <canvas id="LeadsChart"></canvas>
+                                    </div>
+                                    </div>
+                            </div>
+                        </div> -->
+                </div>
+                <!-- Layer 1 End-->
+                <!-- Report card-->
+                <div class="row cards Reports">
+                    <div class="col-12">
+                        <div class="row card-layout">
+                            <!--Card -header-->
+                            <div class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+                                <div><span class="h2" id="reports"></span></div>
+                                <div>
+                                	<button id="appyKpiFilter" class="resetText btn">APPLY FILTER</button>
+                                    <button class="resetText btn">RESET</button>
+                                    <btn class="btn report-toggler p-0"><span class="fa fa-angle-down"></span></btn>
+                                </div>
+                            </div>
+                            <!--Card header-->
+                            <!--Card Body-->
+                            <div class="col-12 card-body report-card">
+                                <div class="row">
+                                    <div class="col-12 col-lg-12 col-xl-5 p-0 pt-md-2 ">
+                                        <div class="col-12">
+                                        <div class="h2">Report Period</div>                                        
+                                        </div>
+                                        <div class="col-12">
+                                            <button class="btn mt-1 mt-sm-0 mr-2 mr-lg-0" id="defaultMonthButton">Current Month</button>
+                                            <button class="btn mt-1 mt-sm-0 mr-2 mr-lg-0">Last Month</button>
+                                            <button class="btn mt-1 mt-sm-0 mr-2 mr-lg-0">Current Year</button>
+                                            <button class="btn mt-1 mt-sm-0 mr-2">Last Year</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-lg-12 col-xl-7 pt-0 pt-md-2">
+                                        <div class="row">
+                                            <div class="col-sm-4 col-md-4 pt-4 pt-md-0">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <div class="h2" style="text-align:center">
+                                                            Period 1
+                                                        </div>
+                                                        <div>
+                                                            <!-- <input type="text" id="rangeDatePicker1"  class="date-picker form-control"> --> 
+                                                            <input name="startDate1" id="startDate1" class="date-picker" />
+                                                            <input name="endDate1" id="endDate1" class="date-picker" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4 col-md-4 pt-4 pt-md-0">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <div class="h2" style="text-align:center">
+                                                            Period 2
+                                                        </div>
+                                                        <div>
+                                                            <!-- <input type="text" id="rangeDatePicker2" class="date-picker form-control"> -->
+                                                            <input name="startDate2" id="startDate2" class="date-picker" />
+                                                            <input name="endDate2" id="endDate2" class="date-picker" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4 col-md-4 pt-4 pt-md-0">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <div class="h2" style="text-align:center">
+                                                            Period 3
+                                                        </div>
+                                                        <div>
+                                                            <!-- <input type="text" id="rangeDatePicker3" class="date-picker form-control"> -->
+                                                             <input name="startDate3" id="startDate3" class="date-picker" />
+                                                            <input name="endDate3" id="endDate3" class="date-picker" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Card Body-->
+                        </div>
+                    </div>
+                </div>
+                <!-- Report Card End-->
+                <!-- Table Layout Card-->
+                <div class="row cards table-jqwidget" style = "display: none;">
+                    <div class="col-12 explorer-enabled" >
+                        <div class="row card-layout modal-base" >
+                            <!--Card -header-->
+                            <div class="col-12 card-layout-header d-flex justify-content-between align-items-center" >
+                                <div><span class="h2">Pivot Table</span></div>
+                                <div>
+                                   <btn class="explore_fullview_on"><span class="explore-icon fa fa-arrows-alt"></span></btn>
+                                   <btn class="explore_fullview_off"><span class="explore-icon fa fa-close"></span></btn>
+                                </div>
+                            </div>
+                            <!--Card header-->
+                            <!--Card Body-->
+                            <div class="col-12 card-body d-flex justify-content-center" id="pivot">
+                                <div class="table-wrapper p-2">
+                                    <div id="divPivotGrid" ></div>
+                                </div>
+                            </div>
+                            <!--Card Body-->
+                            <!--Card Footer-->
+                            <div class="col-12 card-layout-footer  d-flex justify-content-between align-items-center">
+                                <div class="d-inline-flex align-items-center">
+                                    <div>
+                                        <span>Show</span>
+                                    </div>
+                                    <div>
+                                        <select class="form-control dropdown">
+                                            <option>&nbsp;5&nbsp;</option>
+                                            <option>10</option>
+                                            <option>15</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="d-inline-flex align-items-center">
+                                   <div><btn class="btn"><span class="fa fa-angle-left"></span></btn></div>
+                                   <div>1 of 10</div>
+                                   <div><btn class="btn"><span class="fa fa-angle-right"></span></btn></div>
+                                </div>
+                            </div>
+                            <!--Card Footer-->
+                        </div>
+                    </div>
+                </div>
+                <!-- Table Layout Card Jqwidget End-->
+                <!--Table Normal-->
+                <div class="explorer-enabled" >
+                <div class="row cards  modal-base table-jqwidget" >
+                    <div class="col-12 modal-master" >
+                        <div class="row card-layout">
+                            <!--Card -header-->
+                            <div class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+                                <div><span class="h2">Data Table</span></div>
+                                <div>
+                                   <btn class="explore_fullview_on"><span class="explore-icon fa fa-arrows-alt"></span></btn>
+                                    <btn class="explore_fullview_off"><span class="explore-icon fa fa-close"></span></btn>
+                                  
+                                </div>
+                            </div>
+                            <!--Card header-->
+                            <!--Card Body-->
+                            <div class="col-12" id="pivot">
+                               <!--  <table id="generalTable" class="col-12" style="width:100%" > -->
+                                <table id="generalTable" class="col-12" style="width:100%" >
+									<thead>
+										<tr>
+										 <th class="table-heading" colspan="1" rowspan="2">Measures</th>
+										 <th colspan="2" id="monthRange1">Period 1</th>
+										 <th colspan="2" id="monthRange2">Period 2</th>
+										 <th colspan="2" id="monthRange3">Period 3</th>
+									   </tr>
+									   <tr>
+										 <th>Actual</th>
+										 <th>Budget</th>
+										 <th>Actual</th>
+										 <th>Budget</th>
+										 <th>Actual</th>
+										 <th>Budget</th>
+									   </tr>
+									 </thead>
+									 <tbody>
+										<tr><td>GWP</td><td class="gwp_r1"></td><td></td><td class="gwp_r2"></td><td></td><td class="gwp_r3"></td><td></td></tr>
+										<tr><td>NWP</td><td class="nwp_r1"></td><td ></td><td class="nwp_r2"></td><td></td><td class="nwp_r3"></td><td></td></tr>
+										<tr><td>GEP</td><td class="gep_r1"></td><td></td><td class="gep_r2"></td><td></td><td class="gep_r3"></td><td></td></tr>
+										<tr><td>NEP</td><td class="nep_r1"></td><td></td><td class="nep_r2"></td><td></td><td class="nep_r3"></td><td></td></tr>
+										<tr><td>AVERAGE GWP</td><td class="avgGwp_r1"></td><td></td><td class="avgGwp_r2"></td><td></td><td class="avgGwp_r3"></td><td></td></tr>
+										<tr><td>AVERAGE NEP</td><td class="avgNep_r1"></td><td></td><td class="avgNep_r2"></td><td></td><td class="avgNep_r3"></td><td></td></tr>
+										<tr><td>AVERAGE GEP</td><td class="avgGep_r1"></td><td></td><td class="avgGep_r2"></td><td></td><td class="avgGep_r3"></td><td></td></tr>
+										<tr><td>GEP TP</td><td class="gepTp_r1"></td><td></td><td class="gepTp_r2"></td><td></td><td class="gepTp_r3"></td><td></td></tr>
+										<tr><td>NEP TP</td><td class="nepTp_r1"></td><td></td><td class="nepTp_r2"></td><td></td><td class="nepTp_r3"></td><td></td></tr>
+										<tr><td>SEVERITY %</td><td class="sev_r1"></td><td></td><td class="sev_r2"></td><td ></td><td class="sev_r3"></td><td></td></tr>
+									    <tr><td>REPUDIATED CLAIMS %</td><td class="repudiatedClaimsPerc_r1"></td><td></td><td class="repudiatedClaimsPerc_r2"></td><td></td><td class="repudiatedClaimsPerc_r3"></td><td></td></tr>
+										<tr><td>REGISTERED CLAIMS</td><td class="registeredClaims_r1"></td><td></td><td class="registeredClaims_r2"></td><td></td><td class="registeredClaims_r3"></td><td></td></tr>
+										<tr><td>REPUDIATED CALIMS</td><td class="repudiatedClaims_r1"></td><td></td><td class="repudiatedClaims_r2"></td><td></td><td class="repudiatedClaims_r3"></td><td></td></tr>
+										<tr><td>NIC</td><td class="nic_r1"></td><td></td><td class="nic_r2"></td><td></td><td class="nic_r3"></td><td></td></tr>
+										<tr><td>NIC:NEP RATIO</td><td id="nicNepRatio_r1"></td><td></td><td id="nicNepRatio_r2"></td><td></td><td id="nicNepRatio_r3"></td><td></td></tr>
+										<tr><td>CLAIM FREQUENCY</td><td id="claimFreq_r1"></td><td></td><td id="claimFreq_r2"></td><td></td><td id="claimFreq_r3"></td><td></td></tr>
+										<tr><td>WRITTEN POLICIES</td><td id="wp_r1"></td><td></td><td id="wp_r2"></td><td></td><td id="wp_r3"></td><td></td></tr>
+										<tr><td>NET ACQUISITION COST</td><td id="NACCost_r1"></td><td></td><td id="NACCost_r2"></td><td></td><td id="NACCost_r3"></td><td></td></tr>
+										<tr><td>EXPENSE RATIO</td><td class="expenseRatio_r1"></td><td></td><td class="expenseRatio_r2"></td><td></td><td class="expenseRatio_r1"></td><td></td></tr>
+										<tr><td>ACQUISITION COST RATIO</td><td class="acr_r1"></td><td></td><td class="acr_r2"></td><td></td><td class="acr_r3"></td><td></td></tr>
+										<tr><td>CLAIM RATIO</td><td class="claimRatio_r1"></td><td></td><td class="claimRatio_r2"></td><td></td><td class="claimRatio_r3"></td><td></td></tr>
+										<tr><td>COR</td><td class="cor_r1"></td><td ></td><td class="cor_r2"></td><td></td><td class="cor_r3"></td><td></td></tr>
+										<tr><td>XOL COST</td><td id="xolCost_r1"></td><td></td><td id="xolCost_r2"></td><td></td><td id="xolCost_r3"></td><td></td></tr>
+										<tr><td>EXPENSES</td><td id="expense_r1"></td><td></td><td id="expense_r2"></td><td></td><td id="expense_r3"></td><td></td></tr>
+									</tbody>
+                                </table>
+                            </div>
+                            <!--Card Body-->
+                        </div>
+						
+					
+						<div class="row card-layout" id="motorTableDiv">
+						<!--Card -header-->
+                            
+							<table id ="motorTable" class="col-12" style="width:100%;display:none;">
+								<thead>
+									<tr>
+									 <th class="table-heading" colspan="1" rowspan="2">Measures</th>
+									 <th colspan="2">Period 1</td>
+									 <th colspan="2">Period 2</td>
+									 <th colspan="2">Period 3</td>
+								   </tr>
+								   <tr>
+									 <th>Actual</td>
+									 <th>Budget</td>
+									 <th>Actual</td>
+									 <th>Budget</td>
+									 <th>Actual</td>
+									 <th>Budget</td>
+								   </tr>
+								 </thead>
+								 <tbody>
+									<tr><td>GWP</td><td class="gwp_r1"></td><td></td><td class="gwp_r2"></td><td></td><td class="gwp_r3"></td><td></td></tr>
+									<tr><td>NWP</td><td class="nwp_r1"></td><td ></td><td class="nwp_r2"></td><td></td><td class="nwp_r3"></td><td></td></tr>
+									<tr><td>GEP</td><td class="gep_r1"></td><td></td><td class="gep_r2"></td><td></td><td class="gep_r3"></td><td></td></tr>
+									<tr><td>NEP</td><td class="nep_r1"></td><td></td><td class="nep_r2"></td><td></td><td class="nep_r3"></td><td></td></tr>
+									<tr><td>AVERAGE GWP</td><td class="avgGwp_r1"></td><td></td><td class="avgGwp_r2"></td><td></td><td class="avgGwp_r3"></td><td></td></tr>
+									<tr><td>AVERAGE NEP</td><td class="avgNep_r1"></td><td></td><td class="avgNep_r2"></td><td></td><td class="avgNep_r3"></td><td></td></tr>
+									<tr><td>AVERAGE GEP</td><td class="avgGep_r1"></td><td></td><td class="avgGep_r2"></td><td></td><td class="avgGep_r3"></td><td></td></tr>
+									<tr><td>GWP OD</td><td id="gwpOd_r1"></td><td></td><td id="gwpOd_r2"></td><td></td><td id="gwpOd_r3"></td><td></td></tr>
+									<tr><td>GWP TP</td><td id="gwpTp_r1"></td><td></td><td id="gwpTp_r2"></td><td></td><td id="gwpTp_r3"></td><td></td></tr>
+									<tr><td>NWP OD</td><td id="nwpOd_r1"></td><td></td><td id="nwpOd_r2"></td><td></td><td id="nwpOd_r3"></td><td></td></tr>
+									<tr><td>NWP TP</td><td id="nwpTp_r1"></td><td></td><td id="nwpTp_r2"></td><td></td><td id="nwpTp_r3"></td><td></td></tr>
+									<tr><td>GEP OD</td><td id="gepOd_r1"></td><td></td><td id="gepOd_r2"></td><td></td><td id="gepOd_r3"></td><td></td></tr>
+									<tr><td>NEP OD</td><td id="nepOd_r1"></td><td></td><td id="nepOd_r2"></td><td></td><td id="nepOd_r3"></td><td></td></tr>
+									<tr><td>DISCOUNT GWP OD</td><td id="discGwpOd_r1"></td><td></td><td id="discGwpOd_r2"></td><td></td><td id="discGwpOd_r3"></td><td></td></tr>
+									<tr><td>DISCOUNT NWP OD</td><td id="discNwpOd_r1"></td><td></td><td id="discNwpOd_r2"></td><td></td><td id="discNwpOd_r3"></td><td></td></tr>
+									<tr><td>DISCOUNT GEP OD</td><td id="discGepOd_r1"></td><td></td><td id="discGepOd_r2"></td><td></td><td id="discGepOd_r3"></td><td></td></tr>
+									<tr><td>DISCOUNT NEP OD</td><td id="discNepOd_r1"></td><td></td><td id="discNepOd_r2"></td><td></td><td id="discNepOd_r3"></td><td></td></tr>
+									<tr><td>GEP TP</td><td class="gepTp_r1"></td><td></td><td class="gepTp_r2"></td><td></td><td class="gepTp_r3"></td><td ></td></tr>
+									<tr><td>NEP TP</td><td class="nepTp_r1"></td><td></td><td class="nepTp_r2"></td><td></td><td class="nepTp_r3"></td><td></td></tr>
+									<tr><td>SEVERITY %</td><td class="sev_r1"></td><td></td><td class="sev_r2"></td><td ></td><td class="sev_r3"></td><td></td></tr>
+									<tr><td>REPUDIATED CLAIMS %</td><td class="repudiatedClaimsPerc_r1"></td><td></td><td class="repudiatedClaimsPerc_r2"></td><td></td><td class="repudiatedClaimsPerc_r3"></td><td></td></tr>
+									<tr><td>REGISTERED CLAIMS</td><td class="registeredClaims_r1"></td><td></td><td class="registeredClaims_r2"></td><td></td><td class="registeredClaims_r3"></td><td></td></tr>
+									<tr><td>REPUDIATED CALIMS</td><td class="repudiatedClaims_r1"></td><td></td><td class="repudiatedClaims_r2"></td><td></td><td class="repudiatedClaims_r3"></td><td></td></tr>
+									<tr><td>NIC</td><td class="nic_r1"></td><td></td><td class="nic_r2"></td><td></td><td class="nic_r3"></td><td></td></tr>
+									<tr><td>ACTUAL GIC OD</td><td class="actualGicOd_r1"></td><td></td><td class="actualGicOd_r2"></td><td></td><td class="actualGicOd_r3"></td><td></td></tr>
+									<tr><td>IBNR GIC OD</td><td id="ibnrGicOd_r1"></td><td></td><td id="ibnrGicOd_r2"></td><td></td><td id="ibnrGicOd_r3"></td><td></td></tr>
+									<tr><td>NBNR GIC OD</td><td id="nbnrGicOd_r1"></td><td></td><td id="nbnrGicOd_r2"></td><td></td><td id="nbnrGicOd_r3"></td><td></td></tr>
+									<tr><td>TOTAL GIC OD</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+									<tr><td>ACTUAL NIC OD</td><td class="actualNicOd_r1"></td><td></td><td class="actualNicOd_r2"></td><td></td><td class="actualNicOd_r3"></td><td></td></tr>
+									<tr><td>IBNR NIC OD</td><td id="ibnrNicOd_r1"></td><td></td><td id="ibnrNicOd_r2"></td><td></td><td id="ibnrNicOd_r3"></td><td></td></tr>
+									<tr><td>NBNR NIC OD</td><td id="nbnrNicOd_r1"></td><td></td><td id="nbnrNicOd_r2"></td><td></td><td id="nbnrNicOd_r3"></td><td></td></tr>
+									<tr><td>TOTAL NIC OD</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+									<tr><td>ACTUAL GIC TP</td><td class="actualGicTp_r1"></td><td></td><td class="actualGicTp_r2"></td><td></td><td class="actualGicTp_r3"></td><td></td></tr>
+									<tr><td>ULR GIC TP</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+									<tr><td>IBNER GIC TP</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+									<tr><td>TOTAL GIC TP</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+									<tr><td>ACTUAL NIC TP</td><td class="actualNicTp_r1"></td><td></td><td class="actualNicTp_r2"></td><td></td><td class="actualNicTp_r3"></td><td></td></tr>
+									<tr><td>ULR NIC TP</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+									<tr><td>IBNER NIC TP</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+									<tr><td>TOTAL NIC TP</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+									<tr><td>NIC:NEP RATIO</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+									<tr><td>CLAIM FREQUENCY</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+									<tr><td>WRITTEN POLICIES</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+									<tr><td>EARNED POLICIES</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+									<tr><td>NET ACQUISITION COST</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+									<tr><td>EXPENSE RATIO</td><td class="expenseRatio_r1"></td><td></td><td class="expenseRatio_r2"></td><td></td><td class="expenseRatio_r1"></td><td></td></tr>
+									<tr><td>ACQUISITION COST RATIO</td><td class="acr_r1"></td><td></td><td class="acr_r2"></td><td></td><td class="acr_r3"></td><td></td></tr>
+									<tr><td>CLAIM RATIO</td><td class="claimRatio_r1"></td><td></td><td class="claimRatio_r2"></td><td></td><td class="claimRatio_r3"></td><td></td></tr>
+									<tr><td>COR</td><td class="cor_r1"></td><td ></td><td class="cor_r2"></td><td></td><td class="cor_r3"></td><td></td></tr>
+									
+								 </tbody>
+							</table>						
+                            <!--Card Body-->
+						</div>
+						<div class="row card-layout" id="healthTableDiv" >
+                            <!--Card header-->
+                            <!--Card Body-->
+                            <div class="col-12" >
+								<!-- <table id="healthTable"> -->
+								<table id="healthTable" class="col-12" style="width:100%;display:none;">
+                                        <thead>
+                                            <tr>
+                                             <th class="table-heading" colspan="1" rowspan="2">Measures</th>
+                                             <th colspan="2">Period 1</td>
+                                             <th colspan="2">Period 2</td>
+                                             <th colspan="2">Period 3</td>
+                                           </tr>
+                                           <tr>
+                                             <th>Actual</td>
+                                             <th>Budget</td>
+                                             <th>Actual</td>
+                                             <th>Budget</td>
+                                             <th>Actual</td>
+                                             <th>Budget</td>
+                                           </tr>
+                                         </thead>
+										 <tbody>
+											<tr><td>GWP</td><td class="gwp_r1"></td><td></td><td class="gwp_r2"></td><td></td><td class="gwp_r3"></td><td></td></tr>
+											<tr><td>NWP</td><td class="nwp_r1"></td><td ></td><td class="nwp_r2"></td><td></td><td class="nwp_r3"></td><td></td></tr>
+											<tr><td>GEP</td><td class="gep_r1"></td><td></td><td class="gep_r2"></td><td></td><td class="gep_r3"></td><td></td></tr>
+											<tr><td>NEP</td><td class="nep_r1"></td><td></td><td class="nep_r2"></td><td></td><td class="nep_r3"></td><td></td></tr>
+											<tr><td>AVERAGE GWP</td><td class="avgGwp_r1"></td><td></td><td class="avgGwp_r2"></td><td></td><td class="avgGwp_r3"></td><td></td></tr>
+											<tr><td>AVERAGE NEP</td><td class="avgNep_r1"></td><td></td><td class="avgNep_r2"></td><td></td><td class="avgNep_r3"></td><td></td></tr>
+											<tr><td>AVERAGE GEP</td><td class="avgGep_r1"></td><td></td><td class="avgGep_r2"></td><td></td><td class="avgGep_r3"></td><td></td></tr>
+											<tr><td>SEVERITY %</td><td class="sev_r1"></td><td></td><td class="sev_r2"></td><td ></td><td class="sev_r3"></td><td></td></tr>
+											<tr><td>REPUDIATED CLAIMS %</td><td class="repudiatedClaimsPerc_r1"></td><td></td><td class="repudiatedClaimsPerc_r2"></td><td></td><td class="repudiatedClaimsPerc_r3"></td><td></td></tr>
+											<tr><td>OPENING OS CLAIM</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td>CLAIMS PAID</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td>CLOSING OS CLAIM</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td>REGISTERED CLAIMS</td><td class="registeredClaims_r1"></td><td></td><td class="registeredClaims_r2"></td><td></td><td class="registeredClaims_r3"></td><td></td></tr>
+											<tr><td>NIC</td><td class="nic_r1"></td><td></td><td class="nic_r2"></td><td></td><td class="nic_r3"></td><td></td></tr>
+											<tr><td>ACTUAL GIC HEALTH</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td>IBNR GIC HEALTH</td><td id="ibnrGicHealth_r1"></td><td></td><td id="ibnrGicHealth_r2"></td><td></td><td id="ibnrGicHealth_r3"></td><td></td></tr>
+											<tr><td>NBNR GIC HEALTH</td><td id="nbnrGicHealth_r1"></td><td></td><td id="nbnrGicHealth_r2"></td><td></td><td id="nbnrGicHealth_r3"></td><td></td></tr>
+											<tr><td>TOTAL GIC HEALTH</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td>ACTUAL NIC HEALTH</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td>IBNR NIC HELATH</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td>NBNR NIC HEALTH</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td>TOTAL NIC HEALTH</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td>NIC:NEP RATIO</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td>CLAIM FREQUENCY</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td>WRITTEN POLICIES</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td>XOL COST</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td>EARNED POLICIES</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td>LIVES COUNT</td><td id="livesCount_r1"></td><td ></td><td id="livesCount_r2"></td><td></td><td id="livesCount_r3"></td><td></td></tr>
+											<tr><td>NET ACQUISITION COST</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td>EXPENSES</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											<tr><td>EXPENSE RATIO</td><td class="expenseRatio_r1"></td><td></td><td class="expenseRatio_r2"></td><td></td><td class="expenseRatio_r1"></td><td></td></tr>
+											<tr><td>ACQUISITION COST RATIO</td><td class="acr_r1"></td><td></td><td class="acr_r2"></td><td></td><td class="acr_r3"></td><td></td></tr>
+											<tr><td>CLAIM RATIO</td><td class="claimRatio_r1"></td><td></td><td class="claimRatio_r2"></td><td></td><td class="claimRatio_r3"></td><td></td></tr>
+											<tr><td>COR</td><td class="cor_r1"></td><td ></td><td class="cor_r2"></td><td></td><td class="cor_r3"></td><td></td></tr>
+											<tr><td>XOL COST</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+											
+										 </tbody>
+                                    </table>
+                            </div>							
+                            <!--Card Body-->
+						</div>						
+						</div>
+                </div>
+                </div>
+                </div>
+                </div>
+				
+                <!--Table Normal-->
+                <div class="explorer-enabled"  style="margin-top: 2%">
+					<div class="row cards  modal-base table-jqwidget" >
+						<div class="col-12 modal-master" >
+							<div class="row card-layout" style="">
+								<div class="col-12" id="pivot">
+									<div style="float: left; padding-right: 10%;">Add Measure in report</div>
+									<div style="float: left;">Quick View <button>Top5 Cities</button><button>Top5 States</button><button>Top5 Branches</button></div>
+									<div style="float: right;">Export to Excel</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+                <!-- Chart Group 1-->
+                <div class="row cards" style = "display: none;">
+                    <div class="container-fluid p-0">
+                        <div class="row">
+                            <!--Char column 1-->
+                            <div class="col-sm-12 col-md-6 col-lg-6">
+                                <div class="col-12 card-layout p-0 explorer-enabled" >
+                                    <div class="row modal-base">
+                                        <div class="col-12 modal-master">
+                                            <!--Card -header-->
+                                            <div class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+                                                <div><span class="h2">Time Scale</span></div>
+                                                <div>
+                                                    <btn class="explore_fullview_on"><span class="explore-icon fa fa-arrows-alt"></span></btn>
+                                                    <btn class="explore_fullview_off"><span class="explore-icon fa fa-close"></span></btn>
+                                                </div>
+                                            </div>
+                                            <!--Card header-->
+                                            <!--Card Body-->
+                                            <div class="col-12 card-body-charts">
+                                                <div class="charts">
+                                                    <canvas id="chart1" ></canvas>
+                                                </div>
+                                            </div>
+                                            <!--Card Body-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Chart Column 1 End-->
+                            <!-- Chart Column 2 -->
+                            <div class="col-sm-12 pt-3 pt-sm-3 pt-md-0 col-md-6 col-lg-6">
+                                <div class="col-12 card-layout p-0 explorer-enabled" >
+                                    <div class="row modal-base">
+                                        <div class="col-12 modal-master">
+                                            <!--Card -header-->
+                                            <div class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+                                                <div><span class="h2">Line Chart</span></div>
+                                                <div>
+                                                    <btn class="explore_fullview_on"><span class="explore-icon fa fa-arrows-alt"></span></btn>
+                                                    <btn class="explore_fullview_off"><span class="explore-icon fa fa-close"></span></btn>
+                                                </div>
+                                            </div>
+                                            <!--Card header-->
+                                            <!--Card Body-->
+                                            <div class="col-12 card-body-charts">
+                                                <div class="charts">
+                                                    <canvas id="lineChart" ></canvas>
+                                                </div>
+                                            </div>
+                                            <!--Card Body-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             <!-- Chart Column 2 -->
+                        </div>
+                    </div>
+                </div>
+                <!-- Chart Group 1 End-->
+                <!-- Chart Group 2-->
+                <div class="row cards" style = "display: none;">
+                    <div class="container-fluid p-0">
+                        <div class="row">
+                            <!--Char column 3-->
+                            <div class="col-sm-12 col-md-6 col-lg-6">
+                                <div class="col-12 card-layout p-0 explorer-enabled " >
+                                    <div class="row modal-base">
+                                        <div class="col-12 modal-master">
+                                            <!--Card -header-->
+                                            <div class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+                                                <div><span class="h2">Bar Chart</span></div>
+                                                <div>
+                                                    <btn class="explore_fullview_on"><span class="explore-icon fa fa-arrows-alt"></span></btn>
+                                                    <btn class="explore_fullview_off"><span class="explore-icon fa fa-close"></span></btn>
+                                                </div>
+                                            </div>
+                                            <!--Card header-->
+                                            <!--Card Body-->
+                                            <div class="col-12 card-body-charts">
+                                                <div class="charts">
+                                                    <canvas id="barChart" ></canvas>
+                                                </div>
+                                            </div>
+                                            <!--Card Body-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Chart Column 1 End-->
+                            <!-- Chart Column 4 -->
+                            <div class="col-sm-12 pt-3 pt-sm-3 pt-md-0 col-md-6 col-lg-6">
+                                <div class="col-12 card-layout p-0 explorer-enabled" >
+                                    <div class="row modal-base">
+                                        <div class="col-12 modal-master">
+                                            <!--Card -header-->
+                                            <div class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+                                                <div><span class="h2">Map</span></div>
+                                                <div>
+                                                    <btn class="explore_fullview_on"><span class="explore-icon fa fa-arrows-alt"></span></btn>
+                                                    <btn class="explore_fullview_off"><span class="explore-icon fa fa-close"></span></btn>
+                                                </div>
+                                            </div>
+                                            <!--Card header-->
+                                            <!--Card Body-->
+                                            <div class="col-12 card-body-charts d-flex justify-content-center ">
+                                                <div class="charts d-flex" >
+                                                    <div id="map-chart" style="min-width:100%;"></div>
+                                                </div>
+                                            </div>
+                                            <!--Card Body-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             <!-- Chart Column 4 End -->
+                        </div>
+                    </div>
+                </div>
+                <!-- Chart Group 2 End-->
+				
+            </div>
+            <!-- Inner Container End-->
+        </div>
+        <!-- App Body End-->
+            <!--Mobile View Sidebar Toggler-->
+             <div class="btn position-fixed mobile-view-toggler-on">
+                 <div class="icon-o position-absolute"></div>
+                <div class="toggler-btn h-100 d-flex justify-content-center align-items-center">
+                    <span class="fa fa-filter"></span>
+                </div >    
+             </div>
+            <!--Mobile View Sidebar Toggler-->
+    </div>
+
+    <script src="../../plugins_cr/jquery/jquery.min.js"></script>
+    <script src="../../plugins_cr/bootstrap/bootstrap.min.js"></script>
+    <script src="../../plugins_cr/select2/select.min.js"></script>
+    <script src="../../plugins_cr/jquery/moment.min.js"></script>
+    <script src="../../plugins_cr/chartjs/chart.min.js"></script>
+    <script src="../../plugins_cr/googlechart/googlechart.min.js"></script>
+    
+    
+    <!-- Charts Import from Assets/js-->
+        <script src="../../common/js/piechart.js"></script>
+        <script src="../../common/js/linechart.js"></script>
+        <script src="../../common/js/barchart.js"></script>
+        <script src="../../common/js/mountainchart.js"></script>
+        <script type="text/javascript" src="../../common/js/googlemap.js"></script>
+    <!-- Charts Import-->
+        <script type="text/javascript" src="../../plugins_cr/jquery/moment.min.js"></script>
+        <script type="text/javascript" src="../../plugins_cr/daterangepicker/monthpicker.min.js"></script>
+       
+       <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script> -->
+    <!-- Datatables -->
+        <script type="text/javascript" src="../../plugins_cr/datatable/datatables.min.js"></script>
+    <!--Datatables-->
+    <!-- jq widgets-->
+        <script type="text/javascript" src="../../plugins_cr/jqwidgets/jqwidgets/jqxcore.js"></script>
+        <script type="text/javascript" src="../../plugins_cr/jqwidgets/jqwidgets/jqxdata.js"></script> 
+        <script type="text/javascript" src="../../plugins_cr/jqwidgets/jqwidgets/jqxbuttons.js"></script>
+        <script type="text/javascript" src="../../plugins_cr/jqwidgets/jqwidgets/jqxscrollbar.js"></script>
+        <script type="text/javascript" src="../../plugins_cr/jqwidgets/jqwidgets/jqxmenu.js"></script>
+        <script type="text/javascript" src="../../plugins_cr/jqwidgets/jqwidgets/jqxpivot.js"></script> 
+        <script type="text/javascript" src="../../plugins_cr/jqwidgets/jqwidgets/jqxpivotgrid.js"></script>
+        <script type="text/Javascript" src="../../common/js/jqwidgets.js"></script>    
+    <!-- jq widgets-->
+    
+    <script>
+    jQuery(document).ready(function() {
+    	console.log('loader')
+    	//setTimeout(function() {
+    		console.log('loader.....')
+    		jQuery("#pre-loader").remove();
+    	//},5000);
+        
+    });
+        ///Common Header and sidebar loaded dynamically
+            $(document).ready(function () {
+                /* window.addEventListener("load",function(){
+                    // $("#loading1").hide(1000)
+                    $('#pre-loader').fadeOut(500)
+                }); */
+                $(".custom-select").select2({
+                    dropdownParent: $('.sidebar-box')
+                });
+                $(".dashboard-selector").select2({
+                    dropdownParent: $('.sidebar-box'),
+                    // minimumResultsForSearch: -1
+                });
+                
+                $('#startDate1').Monthpicker({
+                    onSelect: function () {
+                        $('#endDate1').Monthpicker('option', { minValue: $('#startDate1').val() });
+                    }
+                });
+                $('#endDate1').Monthpicker({
+                    onSelect: function () {
+                        $('#startDate1').Monthpicker('option', { maxValue: $('#endDate1').val() });
+                    }
+                });
+                
+                $('#startDate2').Monthpicker({
+                    onSelect: function () {
+                        $('#endDate2').Monthpicker('option', { minValue: $('#startDate2').val() });
+                    }
+                });
+                $('#endDate2').Monthpicker({
+                    onSelect: function () {
+                        $('#startDate2').Monthpicker('option', { maxValue: $('#endDate2').val() });
+                    }
+                });
+                
+                $('#startDate3').Monthpicker({
+                    onSelect: function () {
+                        $('#endDate3').Monthpicker('option', { minValue: $('#startDate3').val() });
+                    }
+                });
+                $('#endDate3').Monthpicker({
+                    onSelect: function () {
+                        $('#startDate3').Monthpicker('option', { maxValue: $('#endDate3').val() });
+                    }
+                });
+                
+                /* $('#startDate').datepicker( {
+			        changeMonth: true,
+			        changeYear: true,
+			        showButtonPanel: true,
+			        dateFormat: 'MM yy',
+			        onClose: function(dateText, inst) { 
+			            $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+        			}
+    			});*/
+                 
+                $('#defaultMonthButton').focus();
+            });
+            
+        ///Toggle Filter ON Mobile View
+            $(".mobile-view-toggler-on").click(function(event){
+                $('#sidebar').animate({'opacity': 'show', 'paddingTop': 0});
+                $(".mobile-view-toggler-on").hide();
+            });
+        ///Toggle Filter OF Mobile View
+            $(".mobile-view-toggler-off").click(function(event){
+                $('#sidebar').fadeOut();
+                $(".mobile-view-toggler-on").show();
+            });
+        
+        ///Report Toggle < 968px
+            $(".report-toggler").click(function(){
+            $(".report-card").toggle();
+            })
+
+        ///Full Screen Toggler 
+            ///ON
+            $(".explore_fullview_on").click(function(event){
+                var index = $('.explore_fullview_on').index(this);
+                var ele=document.getElementsByClassName('explorer-enabled')[index];
+                ele.id="modal-fullscreen";
+                $(".explore_fullview_on").hide();
+                $(".explore_fullview_off").show();
+                drawRegionsMap(); ///Call invoked only for gooogleChartMap
+
+                ///redraw table on modal popup  --no reload required
+                var table = $('#bootstrapDataTable').DataTable();
+                table.columns.adjust();
+            });
+            ///OFF
+            $(".explore_fullview_off").click(function(event){
+                var index = $('.explore_fullview_off').index(this);
+                var ele=document.getElementsByClassName('explorer-enabled')[index];
+                ele.id="";
+                $(".explore_fullview_on").show();
+                $(".explore_fullview_off").hide();
+                drawRegionsMap();  ///Call invoked only for googlChartMap
+                ///redraw table on modal popup  --no reload required
+                var table = $('#bootstrapDataTable').DataTable();
+                table.columns.adjust();
+            });
+
+            ///Not Required only for switching Screens on same device 
+             $(window).resize(function(){
+                 //Resizing Google Chart Map Based on screen width 
+                setTimeout(drawRegionsMap(), 3000);
+             });
+            
+             $.ajax({
+	               type: "GET",
+	               contentType: "application/json",
+	               url: "/getKpiFiltersMock",  
+	               dataType: 'json',
+	               cache: false,
+	               timeout: 600000,
+	               success: function (data) {
+	                   responseJSON = data;
+	                   console.log(responseJSON);
+	                   //populateFilter(responseJSON);
+	               },
+	               error: function (e) {
+	               	alert(e);
+	               }
+	           });
+             
+             $('#appyKpiFilter').click(function () {
+            	 
+            	 var from1 = $("#startDate1").val();
+            	 var to1 = $("#endDate1").val();
+            	 
+            	 if(from1!=""){
+            		 if(to1==""){
+            			 alert("Period 1 Range cannot be empty");
+            			 $("#monthRange1").text("Month Range 1");
+            			 return false;
+            		 }
+            		 //$("#monthRange1").text(from1+" - "+to1);
+            	 }
+            	 
+            	 var from2 = $("#startDate2").val();
+            	 var to2 = $("#endDate2").val();
+            	 
+            	 if(from2!=""){
+            		 if(to2==""){
+            			 alert("Period 2 Range cannot be empty");
+            			 $("#monthRange2").text("Month Range 2");
+            			 return false;
+            		 }
+            		 //$("#monthRange2").text(from2+" - "+to2);
+            	 }
+            	 
+            	 var from3 = $("#startDate3").val();
+            	 var to3 = $("#endDate3").val();
+            	 
+            	 if(from3!=""){
+            		 if(to3==""){
+            			 alert("Period 3 Range cannot be empty");
+            			 $("#monthRange3").text("Month Range 3");
+            			 return false;
+            		 }
+            		 //$("#monthRange3").text(from3+" - "+to3);
+            	 }
+            	 
+            	/* var range1 = $("#rangeDatePicker1").val();
+            	 var from1 = range1.split("-")[0];
+            	 var to1 = range1.split("-")[1];
+            	 var range2 = $("#rangeDatePicker2").val();
+            	 var from2 = range2.split("-")[0];
+            	 var to2 = range2.split("-")[1];
+            	 var range3 = $("#rangeDatePicker3").val();
+            	 var from3 = range3.split("-")[0];
+            	 var to3 = range3.split("-")[1];
+            	 
+            	var fromFormattedOne =  moment(from1, "MM.DD.YYYY").format('YYYY-MM-DD');
+            	var fromFormattedTwo =  moment(from2, "MM.DD.YYYY").format('YYYY-MM-DD');
+            	var fromFormattedThree =  moment(from3, "MM.DD.YYYY").format('YYYY-MM-DD');
+            	
+            	var toFormattedOne =  moment(to1, "MM.DD.YYYY").format('YYYY-MM-DD');
+            	var toFormattedTwo =  moment(to2, "MM.DD.YYYY").format('YYYY-MM-DD');
+            	var toFormattedThree =  moment(to3, "MM.DD.YYYY").format('YYYY-MM-DD');*/
+            	 
+            	 if(from1!="" && to1!=""){
+            		 getCubeAData(1,from1,to1);
+            		 getCubeBData(1,from1,to1);
+            		 getCubeCData(1,from1,to1);
+            		 getCubeDData(1,from1,to1);
+            	 }
+            	 if(from2!="" && to2!=""){
+            		 getCubeAData(2,from2,to2);
+            		 getCubeBData(2,from2,to2);
+            		 getCubeCData(2,from2,to2);
+            		 getCubeDData(2,from2,to2);
+            	 }
+            	 if(from3!="" && to3!=""){
+            		 getCubeAData(3,from3,to3);
+            		 getCubeBData(3,from3,to3);
+            		 getCubeCData(3,from3,to3);
+            		 getCubeDData(3,from3,to3);
+            	 }
+            	 
+             });
+             
+             function getCubeAData(period,fromDate,toDate){
+            	 
+            	 $.ajax({
+    	               type: "GET",
+    	               contentType: "application/json",
+    	                  /*  url: "/getChart",    */
+    	                 url: "/getKpiCubeADataMock",  
+    	                /* url: "/getChartObjectList", */
+    	               dataType: 'json',
+    	               cache: false,
+    	               timeout: 600000,
+    	               data:{fromDate: fromDate,toDate:toDate},
+    	               success: function (data) {
+    	                   responseJSON = data;
+    	                   console.log(responseJSON);
+    	                 $.each(data, function(ind, obj){
+    	                   $(".gwp_r"+period).text(obj.gwp);
+      	                   $(".nwp_r"+period).text(obj.nwp);
+      	                   $("#livesCount_r"+period).text(obj.livesCovered);
+      	                 
+      	                   
+    	                 });
+    	                  
+    	                 
+    	                   
+    	               },
+    	               error: function (e) {
+    	               	alert(e);
+    	               }
+    	           });
+            	 
+             }
+             
+             
+			function getCubeBData(period,fromDate,toDate){
+            	 
+            	 $.ajax({
+    	               type: "GET",
+    	               contentType: "application/json",
+    	                  /*  url: "/getChart",    */
+    	                 url: "/getKpiCubeBDataMock",  
+    	                /* url: "/getChartObjectList", */
+    	               dataType: 'json',
+    	               cache: false,
+    	               timeout: 600000,
+    	               data:{fromDate: fromDate,toDate:toDate},
+    	               success: function (data) {
+    	                   responseJSON = data;
+    	                   console.log(responseJSON);
+    	                 $.each(data, function(ind, obj){
+    	                   $("#gwpOd_r"+period).text(obj.gwpOd);
+      	                   $("#gwpTp_r"+period).text(obj.gwpTp);
+      	                   $("#nwpOd_r"+period).text(obj.nwpOd);
+    	                   $("#nwpTp_r"+period).text(obj.nwpTp);
+    	                   $("#discGwpOd_r"+period).text(obj.discountGwpOd);
+    	                   $("#discNwpOd_r"+period).text(obj.discountNwpOd);
+      	                   
+    	                 });
+    	                   
+    	               },
+    	               error: function (e) {
+    	               	alert(e);
+    	               }
+    	           });
+            	 
+             }
+			
+			function getCubeCData(period,fromDate,toDate){
+           	 
+           	 $.ajax({
+   	               type: "GET",
+   	               contentType: "application/json",
+   	                  /*  url: "/getChart",    */
+   	                 url: "/getKpiCubeCDataMock",  
+   	                /* url: "/getChartObjectList", */
+   	               dataType: 'json',
+   	               cache: false,
+   	               timeout: 600000,
+   	               data:{fromDate: fromDate,toDate:toDate},
+   	               success: function (data) {
+   	                   responseJSON = data;
+   	                   console.log(responseJSON);
+   	                 $.each(data, function(ind, obj){
+   	             $(".gep_r"+period).text(obj.gep);
+   	             $(".nep_r"+period).text(obj.nep);
+   	             $("#gepOd_r"+period).text(obj.gepOd);
+	             $("#nepOd_r"+period).text(obj.nepOd);
+	             $(".gepTp_r"+period).text(obj.gepTp);
+	             $(".nepTp_r"+period).text(obj.nepTp);
+	             $("#discGepOd_r"+period).text(obj.discountGepOd);
+	             $("#dscNepOd_r"+period).text(obj.discountNepOd);
+	             $("#ibnrGicOd_r"+period).text(obj.ibnrGicOd);
+	             $("#nbnrGicOd_r"+period).text(obj.nbnrGicOd);
+	             $("#ibnrNicOd_r"+period).text(obj.ibnrNicOd);
+	             $("#nbnrGicOd_r"+period).text(obj.nbnrNicOd);
+	             $("#ibnrGicHealth_r"+period).text(obj.ibnrGicHealth);
+	             $("#nbnrGicHealth_r"+period).text(obj.nbnrGicHealth);
+     	                   
+   	                 });
+   	                   
+   	               },
+   	               error: function (e) {
+   	               	alert(e);
+   	               }
+   	           });
+           	 
+            }
+			
+			
+			function getCubeDData(period,fromDate,toDate){
+	           	 
+	           	 $.ajax({
+	   	               type: "GET",
+	   	               contentType: "application/json",
+	   	                  /*  url: "/getChart",    */
+	   	                 url: "/getKpiCubeDDataMock",  
+	   	                /* url: "/getChartObjectList", */
+	   	               dataType: 'json',
+	   	               cache: false,
+	   	               timeout: 600000,
+	   	               data:{fromDate: fromDate,toDate:toDate},
+	   	               success: function (data) {
+	   	                   responseJSON = data;
+	   	                   console.log(responseJSON);
+	   	                 $.each(data, function(ind, obj){
+	   	             	
+	   	             $(".repudiatedClaimsPerc_r"+period).text(obj.repdiatedClaimsPerc);
+	   	             $(".sev_r"+period).text(obj.severityPerc);
+	   	             $(".nic_r"+period).text(obj.nic);
+		             $(".claimRatio_r"+period).text(obj.claimRatio);
+		             $(".expenseRatio_r"+period).text(obj.expenseRatio);
+		             $(".actualGicOd_r"+period).text(obj.actualGicOd);
+		             $(".actualGicTp_r"+period).text(obj.actualGicTp);
+		             $(".actualNicOd_r"+period).text(obj.actualNicOd);
+		             $(".actualNicTp_r1"+period).text(obj.actualNicTp);
+		             $(".acr_r"+period).text(obj.acr);
+		             $(".repudiatedClaims_r"+period).text(obj.repudiatedClaims);
+		             $(".cor_r"+period).text(obj.cor);
+		             $(".registeredClaims"+period).text(obj.registeredClaims);
+	     	                   
+	   	                 });
+	   	                   
+	   	               },
+	   	               error: function (e) {
+	   	               	alert(e);
+	   	               }
+	   	           });
+	           	 
+	            }
+			
+			$( function() {
+			    $( "#noOfAgeWithRsSlider" ).slider({
+			      range: true,
+			      min: 0,
+			      max: 500,
+			      values: [ 75, 300 ],
+			      slide: function( event, ui ) {
+			        $( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+			      }
+			    });
+			    $( "#amount" ).val( "$" + $( "#range-slider" ).slider( "values", 0 ) +
+			      " - $" + $( "#slider-range" ).slider( "values", 1 ) );
+			  } );
+			
+			$('select:not("#reports")').selectize({
+				sortField : 'text'
+			});
+			
+			$('#reportName').text($('#reports').val());
+			
+			$('#reports').change(function(e){
+				var reports = $('#reports').text();
+				$('#reportName').text($('#reports').val());
+			});
+    </script>
+</body>
+</html>

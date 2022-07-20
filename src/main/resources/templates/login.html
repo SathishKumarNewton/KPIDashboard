@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>signin</title>
+    <link rel="icon" href="assets/images/titleicon.png" type="image/icon-type">
+    <link rel="stylesheet" href="/plugins_cr/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="/plugins_cr/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/styles/signup.css">
+</head>
+<body>
+    <div class="container-fluid signup p-0">
+        <div class="container">
+                <div class="header">
+                    <a class="navbar-brand" href="#">
+                        <img src="assets/images/Logo_Innerpage.png" alt="CompanyLogo" id="logo">
+                    </a>
+                </div>
+                <!-- Left Side content start-->
+                <div class="content">
+                    <div class="row h-100">
+                        <div class="col-md-6 col-lg-6 my-auto d-md-block d-sm-none d-none border-right">
+                            <div class="img-fluid ">
+                                <img src="assets/images/sigin_image.jpeg" alt="">
+                            </div>
+                        </div>
+                        <!-- Form Content-->
+                        <div class="col-sm-12 col-md-6 col-lg-6 form" id="form-alert">
+                            <form th:action="@{/login}" method="POST">
+                            <h4 class="text-center">Sign In</h4>
+                                <!-- form group1 -->
+                                <div class="form-group entry-no-alert">
+                                    <label for="InputUserName" class="form-text floating-label">Username</label>
+                                    <input type="text" class="form-control" placeholder="Username" 
+											id="user_name" name="user_name" aria-describedby="UserHelp" onfocus="inputListener(0)" onfocusout="inputListener(0)">
+                                    <button class="error-info">!</button>
+                                    <span class="error-text" th:if="${param.error}">
+                                        User Name or Password invalid, please verify
+                                    </span>
+                                </div>
+                                
+                                <!-- form group2 -->
+                                <div class="form-group">
+                                    <label for="InputPassword" class="form-text floating-label" >Password</label>
+                                    <input type="password" class="form-control" placeholder="Password" id="password" name="password"
+                                     aria-describedby="emailHelp" onfocus="inputListener(1)" onfocusout="inputListener(1)">
+                                    
+                                    <span class="fa fa-eye-slash passwordToggle" aria-hidden="true"></span>
+                                </div>
+
+                                <!-- form group3 -->
+                                <!--<div class="d-flex justify-content-between storage-access">
+                                    <div class="form-group align-self-center">
+                                        <input type="checkbox" id="Remember">
+                                        <label class="form-check-label text-muted" for="exampleCheck1">
+                                            Remember Me
+                                        </label>
+                                    </div>
+                                    <div class="form-group align-self-center">
+                                        <a href="forgotpassword.html" id="password_reset" class="resetText">
+                                            Forget Password
+                                        </a>
+                                    </div>
+                                </div>-->
+                                <div class="form-group">
+                                    <input type="submit" value="Sign In" class="form-control form-submit" aria-describedby="formSubmit">
+                                </div>
+                                <h6 class="text-center pt-3">Don't you have an Account? <a href="/registration" class="resetText">Sign Up</a></h6>
+                            </form>
+                        </div>
+                        <!-- Form Content-->
+                    </div>
+                </div>
+                <!-- Left Side content End-->
+        </div>
+    </div>
+
+    <script src="plugins_cr/jquery/jquery.min.js"></script>
+    <script>
+        ///toggle password visiblity
+        $('.passwordToggle').click(function (e) { 
+            $(this).toggleClass('fa-eye-slash fa-eye')
+            if($("#Password").prop('type')=='password')
+                $("#Password").prop('type','text')
+            else
+                $("#Password").prop('type','password')
+            e.preventDefault();
+        });
+        ///input field label motion
+        function inputListener(val){
+            var f=$('.floating-label').eq(val).css('marginTop');
+            if(f=='4px')
+                {
+                    $('.floating-label').eq(val).show();
+                    $('.floating-label').eq(val).animate({marginTop: "-14px"});
+                }
+            else
+                {
+                    $('.floating-label').eq(val).animate({marginTop: "4px"});
+                    $('.floating-label').eq(val).hide();
+                }
+        }
+    </script>
+    <script>
+        ///function to append alert and error text
+        function appendAlert(element,index,text){
+            element.addClass('entry-alert');
+            element.removeClass('entry-no-alert')
+            $('.error-text').eq(index).html(text);
+        }
+
+        //function to remove alert
+        function removeAlert(element,text=''){
+            element.addClass('entry-no-alert');
+            element.removeClass('entry-alert');
+        }
+        
+        ///form validation
+        $( "form" ).submit(function( event ) {
+          var count=0;
+          var username=$('#Username').val();
+          var password=$('#Password').val();
+          var remember=$('input[type=checkbox]').prop('checked');
+
+          /*
+            check required logic  and call respected alert function
+            with proper arguments of error text
+          */  
+          ////check username
+          var ele=$('.form-group').eq(0);
+          if(username=='')  {
+              appendAlert(ele,0,'Incorrect username');
+            }
+          else  {
+              removeAlert(ele);
+              count++;
+            }
+
+            /* 
+                check with count whether count == all alerts clear
+                if true connect to backend service
+            */
+            if(count==1)    return true;
+            else            return false;
+
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="https://thymeleaf.org">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RSGI | Report Management System</title>
+
+<!-- <link rel="stylesheet"
+	href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> -->
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	href="../../plugins/fontawesome-free/css/all.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+<!-- DataTables -->
+<link rel="stylesheet"
+	href="../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet"
+	href="../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" type="text/css" href="/css/dashboard.css">
+<!-- DataTable select -->
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css">
+<!-- DataTable Buttons -->
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css">
+<!-- Toastr -->
+<link rel="stylesheet" href="../../plugins/toastr/toastr.min.css">
+<!-- Selectize -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" />
+</head>
+<body class="hold-transition layout-top-nav">
+	<div class="wrapper">
+
+		<!-- Navbar -->
+		<!-- navbar-primary navbar-dark | navbar-light navbar-white-->
+		<nav
+			class="main-header navbar navbar-expand-md navbar-light navbar-white"
+			style="background: rgb(2, 0, 36); background-color: #e0e7ed; /* background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(113, 192, 219, 1) 32%, rgba(0, 212, 255, 0.23571426861760325) 100%); */">
+			<div class="container">
+				<a href="/user/home" class="navbar-brand"> <img
+					src="https://www.royalsundaram.in/o/RS_Landing/images/Home_page_Logo.png" class="img-responsive center-block"
+					width="160" height="60" alt="Logo" /> <!-- <img src="../../dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8"> -->
+					<span class="brand-text font-weight-light">RSGI | RMS</span>
+				</a>
+
+				<button class="navbar-toggler order-1" type="button"
+					data-toggle="collapse" data-target="#navbarCollapse"
+					aria-controls="navbarCollapse" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse order-3" id="navbarCollapse">
+					<!-- Left navbar links -->
+					<!-- Left navbar links -->
+					<ul class="navbar-nav">
+						<li class="nav-item text-center"><a href="/user/home"
+							class="nav-link"><i class="fas fa-home"> Home</i></a></li>
+					</ul>
+				</div>
+
+				<!-- Right navbar links -->
+				<ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+					<!-- Messages Dropdown Menu -->
+					<!-- <li class="nav-item dropdown"> -->
+					<h5>
+						Welcome <span th:text="${userName}"></span>
+					</h5>
+					<!--  </li> -->
+					<!-- Notifications Dropdown Menu -->
+					<li class="nav-item dropdown"></li>
+
+				</ul>
+			</div>
+			<div>
+				<form th:action="@{/logout}" method="get">
+					<button style="float: none;"
+						class="btn btn-block btn-danger btn-sm" name="registration"
+						type="submit">Logout</button>
+				</form>
+			</div>
+		</nav>
+		<!-- /.navbar -->
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container">
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+
+			<!-- Main content -->
+			<div class="content">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-3 col-xs-6" th:each="item : ${userDashboardList}">
+							<div class="small-box bg-color">
+								<div class="inner">
+									<h2 style="color: white;" th:text="${item.dashboardName}"></h2>
+									<p></p>
+								</div>
+								<div class="icon">
+									<i class="fa fa-align-left"></i>
+								</div>
+								<a th:href="${item.dashboardURL}" 
+								target="_blank" class="small-box-footer">Go To Dashbaord <i
+									class="fa fa-arrow-circle-right"></i></a>
+							</div>
+						</div>
+
+						<!-- <div class="col-lg-3 col-xs-6">
+							<div class="small-box bg-color">
+								<div class="inner" style="color: white;">
+									<h2>GENERAL KPI</h2>
+
+									<p></p>
+								</div>
+								<div class="icon">
+									<i class="fa fa-home fa-3x"></i>
+								</div>
+								<a href="#" class="small-box-footer">Go To Dashbaord <i
+									class="fa fa-arrow-circle-right"></i></a>
+							</div>
+						</div>
+						<div class="col-lg-3 col-xs-6">
+							<div class="small-box bg-color">
+								<div class="inner">
+									<h2 style="color: white;">MOTOR KPI</h2>
+
+									<p></p>
+								</div>
+								<div class="icon">
+									<i class="fa fa-list-alt fa-3x"></i>
+								</div>
+								<a href="#" class="small-box-footer">Go To Dashbaord <i
+									class="fa fa-arrow-circle-right"></i></a>
+							</div>
+						</div>
+						<div class="col-lg-3 col-xs-6">
+							<div class="small-box bg-color">
+								<div class="inner">
+									<h2 style="color: white;">HEALTH KPI</h2>
+
+									<p></p>
+								</div>
+								<div class="icon">
+									<i class="fa fa-outdent fa-3x"></i>
+								</div>
+								<a href="#" class="small-box-footer">Go To Dashbaord <i
+									class="fa fa-arrow-circle-right"></i></a>
+							</div>
+						</div> -->
+					</div>
+					<div class="col-lg-12" style="display: none;">
+						<div class="card card-info full-width">
+							<div class="card-header">
+								<h5 class="card-title m-0">List of DashBoards</h5>
+							</div>
+							<div class="card-body">
+								<table class="table table-bordered table-striped"
+									id="userDashboardMappingList">
+									<thead>
+										<tr>
+											<th class="text-center">DashBoard Id</th>
+											<th class="text-center">DashBoard Name</th>
+											<th class="text-center">DashBoard URL</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="item : ${userDashboardList}">
+											<td class="text-center" th:text="${item.dashboardId}"></td>
+											<td class="text-center" th:text="${item.dashboardName}"></td>
+											<td class="text-center small text-muted"><a
+												th:text="${item.dashboardURL}"
+												th:href="${item.dashboardURL}" target="_blank"></a></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<!-- /.content -->
+	</div>
+	<!-- /.content-wrapper -->
+
+	<!-- Control Sidebar -->
+	<aside class="control-sidebar control-sidebar-dark">
+		<!-- Control sidebar content goes here -->
+		<div class="p-3">
+			<h5>Title</h5>
+			<p>Sidebar content</p>
+		</div>
+	</aside>
+	<!-- /.control-sidebar -->
+
+	<!-- Main Footer -->
+	<footer class="main-footer">
+		<!-- To the right -->
+		<div class="float-right d-none d-sm-inline">
+			<a href="http://prodian.co.in">Powered by Prodian</a>
+		</div>
+		<!-- Default to the left -->
+		<strong>Copyright &copy; 2019-2020 <a
+			href="http://prodian.co.in">Prodian Infotech</a>.
+		</strong> All rights reserved.
+	</footer>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+
+	<!-- jQuery -->
+	<script src="../../plugins/jquery/jquery.min.js"></script>
+	<!-- AdminLTE App -->
+	<script src="../../dist/js/adminlte.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+	<!-- Bootstrap 4 -->
+	<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<!-- DataTables -->
+	<script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
+	<script
+		src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+	<script
+		src="../../plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+	<script
+		src="../../plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+	<!-- DataTable select -->
+	<script
+		src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+	<!-- DataTable Buttons -->
+	<script
+		src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>
+	<!-- Toastr -->
+	<script src="../../plugins/toastr/toastr.min.js"></script>
+	<!-- jquery-validation -->
+	<script src="../../plugins/jquery-validation/jquery.validate.min.js"></script>
+	<script src="../../plugins/jquery-validation/additional-methods.min.js"></script>
+	<!-- Selectize -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+</body>
+</html>

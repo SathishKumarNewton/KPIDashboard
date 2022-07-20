@@ -1,0 +1,2578 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="https://thymeleaf.org">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RSGI | Report Management System</title>
+
+<!-- Google Font: Source Sans Pro -->
+<!-- <link rel="stylesheet"
+	href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> -->
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	href="../../plugins/fontawesome-free/css/all.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+<!-- DataTables -->
+<link rel="stylesheet"
+	href="../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet"
+	href="../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" type="text/css" href="/css/dashboard.css">
+<!-- DataTable select -->
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css">
+<!-- DataTable Buttons -->
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css">
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/rowgroup/1.1.2/css/rowGroup.dataTables.min.css">
+<!-- Toastr -->
+<link rel="stylesheet" href="../../plugins/toastr/toastr.min.css">
+<!-- Selectize -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" />
+</head>
+<body class="hold-transition layout-top-nav">
+	<div class="wrapper">
+
+		<!-- Navbar -->
+		<!-- navbar-primary navbar-dark | navbar-light navbar-white-->
+		<nav
+			class="main-header navbar navbar-expand-md navbar-light navbar-white"
+			style="background: rgb(2, 0, 36); background-color: #e0e7ed; /* background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(113, 192, 219, 1) 32%, rgba(0, 212, 255, 0.23571426861760325) 100%); */">
+			<div class="container">
+				<a href="/admin/home" class="navbar-brand"> <img
+					src="https://www.royalsundaram.in/o/RS_Landing/images/Home_page_Logo.png" class="img-responsive center-block"
+					width="160" height="60" alt="Logo" /> <!-- <img src="../../dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8"> -->
+					<span class="brand-text font-weight-light">RSGI | RMS</span>
+				</a>
+
+				<button class="navbar-toggler order-1" type="button"
+					data-toggle="collapse" data-target="#navbarCollapse"
+					aria-controls="navbarCollapse" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse order-3" id="navbarCollapse">
+					<!-- Left navbar links -->
+					<!-- Left navbar links -->
+					<ul class="navbar-nav">
+						<li class="nav-item text-center"><a href="/admin/home"
+							class="nav-link"><i class="fas fa-home"></i></a></li>
+						<li class="nav-item dropdown"><a id="dropdownSubMenu1"
+							href="#" data-toggle="dropdown" aria-haspopup="true"
+							aria-expanded="false"
+							class="nav-link dropdown-toggle text-center">Admin</a>
+							<ul aria-labelledby="dropdownSubMenu1"
+								class="dropdown-menu border-0 shadow">
+								<!-- <li><a href="#" class="dropdown-item">List User </a></li>
+								<li><a href="/admin/userMaster" class="dropdown-item">Add
+										User</a></li> 
+								<li class="dropdown-divider"></li>-->
+								<!-- Level two dropdown-->
+								<li class="dropdown-submenu dropdown-hover"><a
+									id="dropdownSubMenu2" href="#" role="button"
+									data-toggle="dropdown" aria-haspopup="true"
+									aria-expanded="false" class="dropdown-item dropdown-toggle">DashBoard</a>
+									<ul aria-labelledby="dropdownSubMenu2"
+										class="dropdown-menu border-0 shadow">
+										<!-- <li><a href="/admin/dashboardMaster"
+											class="dropdown-item">DashBoard Master</a></li> -->
+										<li><a href="/admin/userDashboardMapping"
+											class="dropdown-item">User DashBoard Mapping</a></li>
+
+										<li class="dropdown-submenu dropdown-hover"><a
+									id="dropdownSubMenu2" href="#" role="button"
+									data-toggle="dropdown" aria-haspopup="true"
+									aria-expanded="false" class="dropdown-item dropdown-toggle">Config</a>
+									<ul aria-labelledby="dropdownSubMenu2"
+										class="dropdown-menu border-0 shadow">
+										<li><a href="/admin/cubeJobStatus"
+											class="dropdown-item">Cube Job status</a></li>
+										<li><a href="/admin/SchedulerInfoDetails"
+											class="dropdown-item">Scheduler Info</a></li>
+										<li><a href="/admin/cubeSchedulerConfig"
+											class="dropdown-item">Cube Scheduler config</a></li>
+									</ul></li>
+									</ul></li>
+								<!-- End Level two -->
+							</ul></li>
+
+
+						<li class="nav-item text-center"><a href="/admin/sqoopConfig" class="nav-link">Sqoop Configuration</a>
+						</li>
+						<li class="nav-item text-center"><a href="/admin/userMatrix"
+							class="nav-link">User Matrix</a></li>
+						<li class="nav-item text-center"><a href="/admin/runsqoopcmd" class="nav-link">Run Sqoop Job</a></li>
+
+					</ul>
+
+					<!-- SEARCH FORM -->
+					<!-- <form class="form-inline ml-0 ml-md-3">
+          <div class="input-group input-group-sm">
+            <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+            <div class="input-group-append">
+              <button class="btn btn-navbar" type="submit">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+        </form> -->
+				</div>
+
+				<!-- Right navbar links -->
+				<ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+					<!-- Messages Dropdown Menu -->
+					<!-- <li class="nav-item dropdown"> -->
+					<!--  </li> -->
+					<!-- Notifications Dropdown Menu -->
+					<li class="nav-item dropdown"></li>
+					<!-- <li class="nav-item">
+          <form th:action="@{/logout}" method="get">
+		        <button style="float:right" class="btn btn-block btn-danger btn-sm" name="registration" type="submit">Logout</button>
+		  </form>
+        </li> -->
+				</ul>
+			</div>
+			<div>
+				<form th:action="@{/logout}" method="get">
+					<button style="float: none;"
+						class="btn btn-block btn-danger btn-sm" name="registration"
+						type="submit">Logout</button>
+				</form>
+			</div>
+		</nav>
+		<!-- /.navbar -->
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container">
+					<!-- <div class="row mb-2">
+          <div class="col-sm-6">
+            <h4 class="m-0 text-dark"> Welcome Mr. Zakir <small>Welcome to RSGI Report Management System</small></h4>
+          </div> -->
+					<!-- /.col
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item"><a href="#">Layout</a></li>
+              <li class="breadcrumb-item active">Top Navigation</li>
+            </ol>
+          </div>/.col
+        </div> -->
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+
+			<!-- Main content -->
+			<div class="content">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="card card-info full-width">
+								<form id="userMatrixForm"
+									th:action="@{/admin/saveUserMatrixMaster}"
+									th:object="${userMatrixRequest}" method="post">
+									<div class="card-header bg-info">
+										<h5 class="card-title m-0">Assign User Role</h5>
+									</div>
+									<div class="card-body">
+										<div class="form-group row">
+											<label for="report" class="col-sm-2 col-form-label">Report</label>
+											<div class="col-sm-10">
+												<select class="form-control select2 full-width" id="reportType" name="dashboardId">
+														<option value="">Select Report...</option>
+														<option th:each="item : ${dashboardList}" th:value="${item.id}"
+														 th:text="${item.dashboardName}"></option>
+												</select>
+											</div>
+										</div>
+										<div class="form-group row">
+											<label for="user" class="col-sm-2 col-form-label">User</label>
+											<div class="col-sm-10">
+												<select class="form-control select2 full-width" id="userIds"
+													name="userIds" multiple="multiple">
+													<option value="">Select User...</option>
+													<option th:each="user : ${users}" th:value="${user.id}"
+														th:text="${user.userName}"></option>
+												</select>
+											</div>
+										</div>
+										<div id="gwpDiv">
+											<div class="form-group row">
+											<label for="user" class="col-sm-2 col-form-label">Role</label>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width" id="roleIds"
+													name="userMatrixRoleName">
+													<option value="">Select Role...</option>
+													<option th:each="role : ${roles}"
+														th:value="${role.roleName}" th:text="${role.roleName}"></option>
+												</select>
+											</div>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width" id="zoneIds"
+													name="zones" multiple="multiple">
+													<option value="">Select Zone...</option>
+													<option value="All">All</option>
+													<option th:each="zone : ${zones}"
+														th:value="${zone.zoneName}" th:text="${zone.zoneName}"></option>
+												</select>
+											</div>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													id="clusters" name="clusters" multiple="multiple">
+													<option value="">Select Cluster...</option>
+													<option value="All">All</option>
+													<option th:each="cluster : ${clusters}"
+														th:value="${cluster.clusterName}"
+														th:text="${cluster.clusterName}"></option>
+												</select>
+											</div>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width" id="states"
+													name="states" multiple="multiple">
+													<option value="">Select State...</option>
+													<option value="All">All</option>
+													<option th:each="state : ${states}"
+														th:value="${state.state}" th:text="${state.state}"></option>
+												</select>
+											</div>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													id="branchCodes" name="branchCodes" multiple="multiple">
+													<option value="">Select Branch...</option>
+													<option value="All">All</option>
+													<option th:each="branch : ${branches}"
+														th:value="${branch.branchCode}"
+														th:text="|${branch.revisedBranchName} (${branch.branchCode})|"></option>
+												</select>
+											</div>
+										</div>
+										<div class="form-group row">
+											<label for="user" class="col-sm-2 col-form-label">Dimensions</label>
+											<div class="col-sm-4">
+												<select class="form-control select2 full-width"
+													multiple="multiple" name="products" id="products">
+													<option value="">Select Product...</option>
+													<option value="All">All</option>
+													<option th:each="product : ${products}"
+														th:value="${product.productCode}"
+														th:text="|${product.productDescription} (${product.productCode})|"></option>
+												</select>
+											</div>
+											<div class="col-sm-2" style="display: none;">
+												<select class="form-control select2 full-width"
+													multiple="multiple" name="businessTypes" id="businessTypes">
+													<option value="">Select BusinessType...</option>
+													<option value="All">All</option>
+													<option th:each="businessType : ${businessTypes}"
+														th:value="${businessType.businessType}"
+														th:text="${businessType.businessType}"></option>
+												</select>
+											</div>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													multiple="multiple" name="lobs" id="lobs">
+													<option value="">Select LOB...</option>
+													<option value="All">All</option>
+													<option th:each="lob : ${lobs}"
+														th:value="${lob}" th:text="${lob}"></option>
+												</select>
+											</div>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													multiple="multiple" name="channels" id="channels">
+													<option value="">Select Channel...</option>
+													<option value="All">All</option>
+													<option th:each="channel : ${channels}"
+														th:value="${channel.channelName}"
+														th:text="${channel.channelName}"></option>
+												</select>
+											</div>
+											<div class="col-sm-2">
+												<select class="form-control select2 full-width"
+													multiple="multiple" name="subChannels" id="subChannels">
+													<option value="">Select SubChannel...</option>
+													<option value="All">All</option>
+													<option th:each="subChannel : ${subChannels}"
+														th:value="${subChannel.subChannel}"
+														th:text="${subChannel.subChannel}"></option>
+												</select>
+											</div>
+										</div>
+										<div class="form-group row">
+											<div class="col-sm-2"></div>
+											<div class="col-sm-4">
+												<select class="form-control select2 full-width"
+													multiple="multiple" name="makes" id="makes">
+													<option value="">Select Make...</option>
+													<option value="All">All</option>
+													<option th:each="make : ${makes}"
+														th:value="${make.makeName}" th:text="${make.makeName}"></option>
+												</select>
+											</div>
+											<div class="col-sm-6">
+												<select class="form-control select2 full-width"
+													name="models" multiple="multiple" id="models">
+													<option value="">Select Model...</option>
+													<option value="All">All</option>
+												</select>
+											</div>
+										</div>
+										</div>
+										<div id="motorDiv">
+											<div class="row">
+												<label for="region" class="col-sm-2 col-form-label">Region</label>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width" id="regionIds"
+														name="regions" multiple="multiple">
+														<option value="">Region...</option>
+														<option value="All">All</option>
+														<option th:each="branch : ${branches}"
+															th:value="${branch.region}"
+															th:text="|${branch.region}|"></option>
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width" id="motorZoneIds"
+														name="zones" multiple="multiple">
+														<option value="">Zone...</option>
+														<option value="All">All</option>
+														<option th:each="zone : ${zones}"
+															th:value="${zone.zoneName}" th:text="${zone.zoneName}"></option>
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="motorClusters" name="clusters" multiple="multiple">
+														<option value="">Cluster...</option>
+														<option value="All">All</option>
+														<option th:each="cluster : ${clusters}"
+															th:value="${cluster.clusterName}"
+															th:text="${cluster.clusterName}"></option>
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width" id="states"
+														name="states" multiple="multiple">
+														<option value="">State...</option>
+														<option value="All">All</option>
+														<option th:each="state : ${states}"
+															th:value="${state.state}" th:text="${state.state}"></option>
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="branchCodes" name="branchCodes" multiple="multiple">
+														<option value="">Branch...</option>
+														<option value="All">All</option>
+														<option th:each="branch : ${branches}"
+															th:value="${branch.branchCode}"
+															th:text="|${branch.revisedBranchName} (${branch.branchCode})|"></option>
+													</select>
+												</div>
+												<div class="col-sm-2"></div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="motorCities" name="cities" multiple="multiple">
+														<option value="">City...</option>
+														<option value="All">All</option>														
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="t20Locations" name="t20Locations" multiple="multiple">
+														<option value="">T20 Location...</option>
+														<option value="All">All</option>														
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="pincodes" name="pincodes" multiple="multiple">
+														<option value="">PinCode...</option>
+														<option value="All">All</option>														
+													</select>
+												</div>
+											</div>
+											<div class="row">
+												<label for="channelType" class="col-sm-2 col-form-label">Channel Type</label>
+												<div class="col-sm-4">
+													<select class="form-control select2 full-width"
+														multiple="multiple" name="channels" id="channels">
+														<option value="">Channel...</option>
+														<option value="All">All</option>
+														<option th:each="channel : ${channels}"
+															th:value="${channel.channelName}"
+															th:text="${channel.channelName}"></option>
+													</select>
+												</div>
+												<div class="col-sm-4">
+													<select class="form-control select2 full-width"
+														multiple="multiple" name="subChannels" id="subChannels">
+														<option value="">SubChannel...</option>
+														<option value="All">All</option>
+														<option th:each="subChannel : ${subChannels}"
+															th:value="${subChannel.subChannel}"
+															th:text="${subChannel.subChannel}"></option>
+													</select>
+												</div>
+											</div>
+											<div class="row">
+												<label for="motorParameters" class="col-sm-2 col-form-label">Motor Parameters</label>
+												<div class="col-sm-4">
+													<select class="form-control select2 full-width"
+														multiple="multiple" name="makes" id="makes">
+														<option value="">Make...</option>
+														<option value="All">All</option>
+														<option th:each="make : ${makes}"
+															th:value="${make.makeName}" th:text="${make.makeName}"></option>
+													</select>
+												</div>
+												<div class="col-sm-4">
+													<select class="form-control select2 full-width"
+														name="models" multiple="multiple" id="models">
+														<option value="">Model...</option>
+														<option value="All">All</option>
+													</select>
+												</div>
+											</div>
+											<div class="row">	
+												<div class="col-sm-2"></div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="modelGroups" name="modelGroups" multiple="multiple">
+														<option value="">ModelGroup...</option>
+														<option value="All">All</option>														
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="modelClassifications" name="modelClassifications" multiple="multiple">
+														<option value="">ModelClassification...</option>
+														<option value="All">All</option>														
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="vehicleAges" name="vehicleAges" multiple="multiple">
+														<option value="">Vehicle Age...</option>
+														<option value="All">All</option>														
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="noOfAgeWithRs" name="noOfAgeWithRs" multiple="multiple">
+														<option value="">Age with RS...</option>
+														<option value="All">All</option>														
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="addOns" name="addOns" multiple="multiple">
+														<option value="">Add Ons...</option>
+														<option value="All">Yes</option>														
+													</select>
+												</div>
+											</div>
+											<div class="row">
+												<label for="intermediary" class="col-sm-2 col-form-label">Intermediary</label>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="intermediaryCodes" name="intermediaryCodes" multiple="multiple">
+														<option value="">Intermediary Code...</option>
+														<option value="All">All</option>														
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="intermediaryNames" name="intermediaryNames" multiple="multiple">
+														<option value="">Intermediary Name...</option>
+														<option value="All">All</option>														
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="oaCodes" name="oaCodes" multiple="multiple">
+														<option value="">OA Code...</option>
+														<option value="All">All</option>														
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="oaNames" name="oaNames" multiple="multiple">
+														<option value="">OA Name...</option>
+														<option value="All">All</option>														
+													</select>
+												</div>
+											</div>
+											<div class="form-group row">
+												<label for="businessType" class="col-sm-2 col-form-label">BusinessType</label>
+												<div class="col-sm-10">
+													<select class="form-control select2 full-width"
+														multiple="multiple" name="businessTypes"
+														id="businessTypes">
+														<option value="">Select Business Type...</option>
+														<option value="All">All</option>
+														<option th:each="businessType : ${businessTypes}"
+															th:value="${businessType.businessType}"
+															th:text="${businessType.businessType}"></option>
+													</select>
+												</div>
+											</div>
+											<div class="row">
+												<label for="product" class="col-sm-2 col-form-label">Product</label>
+												<div class="col-sm-10">
+													<select class="form-control select2 full-width"
+														multiple="multiple" name="products" id="products">
+														<option value="">Select Product...</option>
+														<option value="All">All</option>
+														<option th:each="product : ${products}"
+															th:value="${product.productCode}"
+															th:text="|${product.productDescription} (${product.productCode})|"></option>
+													</select>
+												</div>
+											</div>
+										</div>
+										<div id="healthDiv">
+											<div class="row">
+												<label for="channelType" class="col-sm-2 col-form-label">Channel Type</label>
+												<div class="col-sm-4">
+													<select class="form-control select2 full-width"
+														multiple="multiple" name="channels" id="healthChannels">
+														<option value="">Channel...</option>
+														<option value="All">All</option>
+														<option th:each="channel : ${channels}"
+															th:value="${channel.channelName}"
+															th:text="${channel.channelName}"></option>
+													</select>
+												</div>
+												<div class="col-sm-4">
+													<select class="form-control select2 full-width"
+														multiple="multiple" name="subChannels" id="healthSubChannels">
+														<option value="">SubChannel...</option>
+														<option value="All">All</option>
+														<option th:each="subChannel : ${subChannels}"
+															th:value="${subChannel.subChannel}"
+															th:text="${subChannel.subChannel}"></option>
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														multiple="multiple" name="intermediary" id="healthIntermediary">
+														<option value="">Intermediary...</option>
+														<option value="All">All</option>
+													</select>
+												</div>
+											</div>
+											<div class="row">
+												<label for="region" class="col-sm-2 col-form-label">Region</label>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width" id="healthRegions"
+														name="regions" multiple="multiple">
+														<option value="">Region...</option>
+														<option value="All">All</option>
+														<option th:each="branch : ${branches}"
+															th:value="${branch.region}"
+															th:text="|${branch.region}|"></option>
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width" id="healthStates"
+														name="states" multiple="multiple">
+														<option value="">State...</option>
+														<option value="All">All</option>
+														<option th:each="state : ${states}"
+															th:value="${state.state}" th:text="${state.state}"></option>
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="healthCities" name="cities" multiple="multiple">
+														<option value="">City...</option>
+														<option value="All">All</option>														
+													</select>
+												</div>												
+											</div>
+											<div class="row">
+												<label for="policyParameters" class="col-sm-2 col-form-label">Policy Parameters</label>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="healthPolicyTypes" name="policyTypes" multiple="multiple">
+														<option value="">Policy Type...</option>
+														<option value="All">All</option>														
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="healthPolicyCategories" name="policyCategories" multiple="multiple">
+														<option value="">Policy Category...</option>
+														<option value="All">All</option>														
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="healthSumInsured" name="sumInsured" multiple="multiple">
+														<option value="">Sum Insured...</option>
+														<option value="All">All</option>														
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="healthMaxAges" name="maxAges" multiple="multiple">
+														<option value="">Max Age...</option>
+														<option value="All">All</option>														
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="healthAddOns" name="addOns" multiple="multiple">
+														<option value="">Add Ons...</option>
+														<option value="All">Yes</option>														
+													</select>
+												</div>
+											</div>
+										</div>										
+										<div id="generalDiv">
+											<div class="row">
+												<label for="channelType" class="col-sm-2 col-form-label">Channel Type</label>
+												<div class="col-sm-4">
+													<select class="form-control select2 full-width"
+														multiple="multiple" name="channels" id="channels">
+														<option value="">Channel...</option>
+														<option value="All">All</option>
+														<option th:each="channel : ${channels}"
+															th:value="${channel.channelName}"
+															th:text="${channel.channelName}"></option>
+													</select>
+												</div>
+												<div class="col-sm-4">
+													<select class="form-control select2 full-width"
+														multiple="multiple" name="subChannels" id="subChannels">
+														<option value="">SubChannel...</option>
+														<option value="All">All</option>
+														<option th:each="subChannel : ${subChannels}"
+															th:value="${subChannel.subChannel}"
+															th:text="${subChannel.subChannel}"></option>
+													</select>
+												</div>
+											</div>
+											<div class="row">
+												<label for="region" class="col-sm-2 col-form-label">Region</label>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width" id="regionIds"
+														name="regions" multiple="multiple">
+														<option value="">Region...</option>
+														<option th:each="branch : ${branches}"
+															th:value="${branch.region}"
+															th:text="|${branch.region}|"></option>
+														<option value="All">All</option>
+													</select>
+												</div>
+												
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width" id="states"
+														name="states" multiple="multiple">
+														<option value="">State...</option>
+														<option value="All">All</option>
+														<option th:each="state : ${states}"
+															th:value="${state.state}" th:text="${state.state}"></option>
+													</select>
+												</div>
+												
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="motorCities" name="cities" multiple="multiple">
+														<option value="">City...</option>
+														<option value="All">All</option>														
+													</select>
+												</div>
+												
+											</div>
+											<div class="row">
+												<label for="policyParameters" class="col-sm-2 col-form-label">Policy Parameters</label>
+												
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="healthMaxAges" name="maxAges" multiple="multiple">
+														<option value="">Age with Rs...</option>
+														<option value="All">All</option>														
+													</select>
+												</div>
+												<div class="col-sm-2">
+													<select class="form-control select2 full-width"
+														id="healthAddOns" name="addOns" multiple="multiple">
+														<option value="">Add Ons...</option>
+														<option value="All">Yes</option>														
+													</select>
+												</div>
+											</div>
+										</div>						
+									</div>
+									<div class="card-footer">
+										<button type="submit" class="btn btn-info">Add</button>
+										<!-- <button type="button" class="btn btn-default"
+											style="float: right;">Cancel</button> -->
+									</div>
+								</form>
+							</div>
+							<div class="card card-info full-width">
+								<div class="card-header bg-info">
+									<h5 class="card-title m-0">User Matrix List</h5>
+								</div>
+								<div class="card-body">
+									<div class="form-group row">
+										<label for="report" class="col-sm-2 col-form-label">Report</label>
+										<div class="col-sm-10">
+											<select class="form-control select2 full-width" id="reportTypeList" name="dashboardId">
+													<option value="">Select Report...</option>
+													<option th:each="item : ${dashboardList}" th:value="${item.id}"
+													 th:text="${item.dashboardName}"></option>
+											</select>
+										</div>
+									</div>
+									<table class="table table-bordered table-striped"
+										id="userMatrixListDT">
+										<thead>
+											<tr>
+												<th></th>
+												<th></th>
+												<th class="text-center">UserId</th>
+												<th class="text-center">UserName</th>
+												<th class="text-center">Role</th>
+												<th class="text-center">Report</th>
+												<th class="text-center">Edit</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="item : ${userMatrixResponseList}">
+												<td></td>
+												<td></td>
+												<td class="text-center" th:text="${item.userId}"></td>
+												<td class="text-center" th:text="${item.userName}"></td>
+												<td class="text-center" th:text="${item.userMatrixRole}"></td>
+												<td class="text-center" th:text="${item.dashboardName}"></td>
+												<td class="text-center"><button data-toggle="modal"
+														id="userMatrixEditButton"
+														data-target="#editUserMatrixModal"
+														class="btn btn-outline btn-sm">
+														<i class="fas fa-edit"></i>
+													</button></td>
+											</tr>
+										</tbody>
+									</table>
+									<table class="table table-bordered table-striped"
+										style="display: none" id="userMatrixListChildDT">
+										<thead>
+											<tr>
+												<th></th>
+												<th class="text-center">UserId</th>
+												<th class="text-center">UserName</th>
+												<th class="text-center">Role</th>
+											</tr>
+										</thead>
+										<tbody>
+
+										</tbody>
+									</table>
+								</div>
+							</div>
+
+							<!-- Edit user matrix table -->
+							<div id="editUserMatrixModal" class="modal fade" role="dialog"
+								data-backdrop="static" data-keyboard="false">
+								<div class="modal-dialog modal-lg">
+									<div class="modal-content">
+										<form th:action="@{/admin/saveUserMatrixMaster}"
+											th:object="${userMatrixRequest}" method="post">
+											<div class="modal-header bg-info">
+												<h4 class="modal-title">Edit</h4>
+												<button type="button" class="close btn-danger"
+													data-dismiss="modal">&times;</button>
+											</div>
+											<div class="modal-body">
+												<div class="form-group row">
+													<label for="user" class="col-sm-2 col-form-label">UserId</label>
+													<div class="col-sm-10">
+														<!-- <select class="form-control select2 full-width" contenteditable="false"
+														id="editUserIds" name="userIds" >
+														<option value="">Select User...</option>
+														<option th:each="user : ${allUsers}" th:value="${user.id}"
+															th:text="${user.userName}"></option>
+													</select> -->
+														<input class="form-control full-width" type="text"
+															name="userIds" id="editUserIds" readonly="readonly">
+													</div>
+												</div>
+												<div class="form-group row">
+													<label for="user" class="col-sm-2 col-form-label">Role</label>
+													<div class="col-sm-10">
+														<select class="form-control select2 full-width"
+															id="editRoles" name="userMatrixRoleName">
+															<option value="">Select Role...</option>
+															<option th:each="role : ${roles}"
+																th:value="${role.roleName}" th:text="${role.roleName}"></option>
+														</select>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label for="zone" class="col-sm-2 col-form-label">Zone</label>
+													<div class="col-sm-10">
+														<select class="form-control select2 full-width"
+															id="editZones" name="zones" multiple="multiple">
+															<option value="">Select Zone...</option>
+															<option value="All">All</option>
+															<option th:each="zone : ${zones}"
+																th:value="${zone.zoneName}" th:text="${zone.zoneName}"></option>
+														</select>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label for="cluster" class="col-sm-2 col-form-label">Cluster</label>
+													<div class="col-sm-10">
+														<select class="form-control select2 full-width"
+															id="editClusters" name="clusters" multiple="multiple">
+															<option value="">Select Cluster...</option>
+															<option value="All">All</option>
+															<option th:each="cluster : ${clusters}"
+																th:value="${cluster.clusterName}"
+																th:text="${cluster.clusterName}"></option>
+														</select>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label for="state" class="col-sm-2 col-form-label">State</label>
+													<div class="col-sm-10">
+														<select class="form-control select2 full-width"
+															id="editStates" name="states" multiple="multiple">
+															<option value="">Select State...</option>
+															<option value="All">All</option>
+															<option th:each="state : ${states}"
+																th:value="${state.state}" th:text="${state.state}"></option>
+														</select>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label for="branch" class="col-sm-2 col-form-label">Branch</label>
+													<div class="col-sm-10">
+														<select class="form-control select2 full-width"
+															id="editBranchCodes" name="branchCodes"
+															multiple="multiple">
+															<option value="">Select Branch...</option>
+															<option value="All">All</option>
+															<option th:each="branch : ${branches}"
+																th:value="${branch.branchCode}"
+																th:text="|${branch.revisedBranchName} (${branch.branchCode})|"></option>
+														</select>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label for="product" class="col-sm-2 col-form-label">Product</label>
+													<div class="col-sm-10">
+														<select class="form-control select2 full-width"
+															multiple="multiple" name="products" id="editProducts">
+															<option value="">Select Product...</option>
+															<option value="All">All</option>
+															<option th:each="product : ${products}"
+																th:value="${product.productCode}"
+																th:text="|${product.productDescription} (${product.productCode})|"></option>
+														</select>
+													</div>
+												</div>
+												<div class="form-group row" style="display: none;">
+													<label for="businessType" class="col-sm-2 col-form-label">BusinessType</label>
+													<div class="col-sm-10">
+														<select class="form-control select2 full-width"
+															multiple="multiple" name="businessTypes"
+															id="editBusinessTypes">
+															<option value="">Select LOB...</option>
+															<option value="All">All</option>
+															<option th:each="businessType : ${businessTypes}"
+																th:value="${businessType.businessType}"
+																th:text="${businessType.businessType}"></option>
+														</select>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label for="lob" class="col-sm-2 col-form-label">LOB</label>
+													<div class="col-sm-10">
+														<select class="form-control select2 full-width"
+															multiple="multiple" name="lobs"	id="editLobs">
+															<option value="">Select LOB...</option>
+															<option value="All">All</option>
+															<option th:each="lob : ${lobs}"
+																th:value="${lob}"
+																th:text="${lob}"></option>
+														</select>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label for="channel" class="col-sm-2 col-form-label">Channel</label>
+													<div class="col-sm-10">
+														<select class="form-control select2 full-width"
+															multiple="multiple" name="channels" id="editChannels">
+															<option value="">Select Channel...</option>
+															<option value="All">All</option>
+															<option th:each="channel : ${channels}"
+																th:value="${channel.channelName}"
+																th:text="${channel.channelName}"></option>
+														</select>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label for="subChannel" class="col-sm-2 col-form-label">SubChannel</label>
+													<div class="col-sm-10">
+														<select class="form-control select2 full-width"
+															multiple="multiple" name="subChannels"
+															id="editSubChannels">
+															<option value="">Select SubChannel...</option>
+															<option value="All">All</option>
+															<option th:each="subChannel : ${subChannels}"
+																th:value="${subChannel.subChannel}"
+																th:text="${subChannel.subChannel}"></option>
+														</select>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label for="make" class="col-sm-2 col-form-label">Make</label>
+													<div class="col-sm-10">
+														<select class="form-control select2 full-width"
+															multiple="multiple" name="makes" id="editMakes">
+															<option value="">Select Make...</option>
+															<option value="All">All</option>
+															<option th:each="make : ${makes}"
+																th:value="${make.makeName}" th:text="${make.makeName}"></option>
+														</select>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label for="model" class="col-sm-2 col-form-label">Model</label>
+													<div class="col-sm-10">
+														<select class="form-control select2 full-width"
+															name="models" multiple="multiple" id="editModels">
+															<option value="">Select Model...</option>
+															<option value="All">All</option>
+														</select>
+													</div>
+												</div>
+											</div>
+											<div class="modal-footer">
+												<button type="submit" id="editUserMatrixDTModalConfirm"
+													class="btn btn-success">Update</button>
+												<button type="button" class="btn btn-default"
+													data-dismiss="modal">Close</button>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+
+							<!-- Delete user confirmation modal -->
+							<div id="deleteConfirmUserModal" class="modal fade" role="dialog"
+								data-backdrop="static" data-keyboard="false">
+								<div class="modal-dialog modal-sm">
+									<div class="modal-content">
+										<div class="modal-header bg-danger">
+											<h4 class="modal-title">Confirmation</h4>
+											<button type="button" class="close btn-danger"
+												data-dismiss="modal">&times;</button>
+										</div>
+										<div class="modal-body">
+											<h6 id="deleteUserContent"></h6>
+										</div>
+										<div class="modal-footer">
+											<button type="button" id="confirmUserDelete"
+												class="btn btn-danger">Delete</button>
+											<button type="button" class="btn btn-default"
+												data-dismiss="modal">Close</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+			<div class="p-3">
+				<h5>Title</h5>
+				<p>Sidebar content</p>
+			</div>
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Main Footer -->
+		<footer class="main-footer">
+			<!-- To the right -->
+			<div class="float-right d-none d-sm-inline">
+				<a href="http://prodian.co.in">Powered by Prodian</a>
+			</div>
+			<!-- Default to the left -->
+			<strong>Copyright &copy; 2019-2020 <a
+				href="http://prodian.co.in">Prodian Infotech</a>.
+			</strong> All rights reserved.
+		</footer>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+
+	<!-- jQuery -->
+	<script src="../../plugins/jquery/jquery.min.js"></script>
+	<!-- AdminLTE App -->
+	<script src="../../dist/js/adminlte.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+	<!-- Bootstrap 4 -->
+	<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<!-- DataTables -->
+	<script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
+	<script
+		src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+	<script
+		src="../../plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+	<script
+		src="../../plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+	<script
+		src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.colVis.min.js"></script>
+	<!-- DataTable select -->
+	<script
+		src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+	<!-- DataTable Buttons -->
+	<script
+		src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>
+	<script
+		src="https://cdn.datatables.net/rowgroup/1.1.2/js/dataTables.rowGroup.min.js"></script>
+	<!-- Toastr -->
+	<script src="../../plugins/toastr/toastr.min.js"></script>
+	<!-- jquery-validation -->
+	<script src="../../plugins/jquery-validation/jquery.validate.min.js"></script>
+	<script src="../../plugins/jquery-validation/additional-methods.min.js"></script>
+	<!-- Selectize -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+	<script>
+		$(function() {
+			$(document).ready(function() {
+			var lastSelectedMatrixUser = {};
+
+			$('#reportType,#regionIds,#motorCities,#userIds,#roleIds,#zoneIds,#motorZoneIds,#clusters,#motorClusters,#states,#branchCodes,#t20Locations,#pincodes,#modelGroups,#modelClassifications,#vehicleAges,#noOfAgeWithRs,#addOns,#intermediaryCodes,#intermediaryNames,#oaCodes,#oaNames,#products,#lobs,#businessTypes,#channels,#subChannels,#makes,#models')
+				.selectize({
+				sortField : 'text'
+			});
+			
+			$('#editRoles,#editZones,#editClusters,#editStates,#editBranchCodes,#editProducts,#editLobs,#editBusinessTypes,#editChannels,#editSubChannels,#editMakes,#editModels')
+			.selectize({
+				sortField : 'text'
+			});
+			
+			$('#healthChannels,#healthSubChannels,#healthIntermediary,#healthRegions,#healthCities,#healthStates,#healthPolicyTypes,#healthPolicyCategories,#healthSumInsured,#healthMaxAges,#healthAddOns')
+			.selectize({
+				sortField : 'text'
+			});
+			
+			$('#reportTypeList')
+			.selectize({
+				sortField : 'text'
+			});
+			
+			$("#userMatrixForm")
+			.validate(
+			{
+				ignore : ':hidden:not([class~=selectized]),:hidden > .selectized, .selectize-control .selectize-input input',
+				rules : {
+					userIds : {
+						required : true
+					},
+					/* userMatrixRoleName : {
+						required : true
+					},
+					zoneIds : {
+						required : true
+					},
+					clusterIds : {
+						required : true
+					},
+					stateIds : {
+						required : true
+					},
+					branchCodes : {
+						required : true
+					} */
+				},
+				messages : {
+					userIds :  {
+						required: "Please select User"
+					},
+					/* userMatrixRoleName : {
+						required : "Please select role"
+					},
+					zoneIds : {
+						required : "Please select zone"
+					},
+					clusterIds : {
+						required : "Please select cluster"
+					},
+					stateIds : {
+						required : "Please select state"
+					},
+					branchCodes : {
+						required : "Please select branch"
+					} */
+				},
+				submitHandler : function(form) {
+					form.submit();
+					toastr.clear();
+					toastr.success('Successfully Added!');
+				}
+			});
+
+			
+			$('#zoneIds,#motorZoneIds,#editZones').on('change',function() {
+				var clusterIdsSelect = $("#clusters")[0].selectize;
+				if($('#motorZoneids').length){
+					clusterIdsSelect = $("#motorClusters")[0].selectize;
+				}
+				if($('#editUserMatrixModal').hasClass('show')){
+					clusterIdsSelect = $("#editClusters")[0].selectize;
+				}
+				clusterIdsSelect.clear();
+				clusterIdsSelect.clearOptions();
+				clusterIdsSelect.load(function(callback) {
+					var znIds = [];
+					var $zoneIds = $('#zoneIds').selectize();
+					if($('#motorZoneids').length){
+						$zoneIds = $('#motorZoneIds').selectize();
+					}
+					if($('#editUserMatrixModal').hasClass('show')){
+						$zoneIds = $('#editZones').selectize();
+					}
+					var zoneSelectize = $zoneIds[0].selectize;
+					if($("#zoneIds option:selected").text().includes('All')||$("#zoneIds").val().length==0){
+						if($("#zoneIds option:selected").text().includes('All') ){
+							zoneSelectize.clear();							
+							zoneSelectize.setValue('All',true);
+							zoneSelectize.close();
+						}
+						znIds = Object.keys(zoneSelectize.options);
+					}
+					if($('#editUserMatrixModal').hasClass('show')&&
+							($("#editZones option:selected").text().includes('All')||$("#editZones").val().length==0)){
+						if($("#editZones option:selected").text().includes('All') ){
+							zoneSelectize.clear();							
+							zoneSelectize.setValue('All',true);
+							zoneSelectize.close();
+						}
+						znIds = Object.keys(zoneSelectize.options);
+					}
+					if($('#motorZoneids').length && 
+							($("#motorZoneids option:selected").text().includes('All')||$("#motorZoneids").val().length==0)){
+						if($("#motorZoneids option:selected").text().includes('All') ){
+							zoneSelectize.clear();							
+							zoneSelectize.setValue('All',true);
+							zoneSelectize.close();
+						}
+						znIds = Object.keys(zoneSelectize.options);
+					}
+					else{
+						if($('#editUserMatrixModal').hasClass('show')){
+							znIds = $("#editZones").val();
+						}
+						if($('#motorZoneids').length){
+							znIds = $("#motorZoneids").val();
+						}
+						else{
+							znIds = $("#zoneIds").val();
+						}
+					}
+					$.ajax({
+						type : "GET",
+						contentType : "application/json",
+						url : '/admin/getClustersByZoneIds',
+						data : {
+							zoneNames: function(){
+								return znIds;
+							}
+						},
+						contentType: 'application/json',
+						success : function(data) {
+							var clusterList = [];
+							var clusters = [];
+							for(var obj of data){
+								var cluster = new Object();
+								cluster['text'] = obj.clusterName;
+								cluster['value'] = obj.clusterName;
+								clusterList.push(cluster);
+								clusters.push(obj.id);
+							}
+							if(clusterList){
+								var cluster = new Object();
+								cluster['text'] = 'All';
+								cluster['value'] = 'All';
+								clusterList.push(cluster);
+							}
+							callback(clusterList);
+						},
+						error : function(data) {
+							callback();
+						}
+					}); 
+				});
+			});
+			
+			function loadClustersWithoutClear(){
+				var clusterIdsSelect = $("#clusters")[0].selectize;
+				if($('#editUserMatrixModal').hasClass('show')){
+					clusterIdsSelect = $("#editClusters")[0].selectize;
+				}
+				//clusterIdsSelect.clear();
+				clusterIdsSelect.clearOptions();
+				clusterIdsSelect.load(function(callback) {
+					var znIds = [];
+					var $zoneIds = $('#zoneIds').selectize();				
+					if($('#editUserMatrixModal').hasClass('show')){
+						$zoneIds = $('#editZones').selectize();
+					}
+					var zoneSelectize = $zoneIds[0].selectize;
+					if($("#zoneIds option:selected").text().includes('All')||$("#zoneIds").val().length==0){
+						if($("#zoneIds option:selected").text().includes('All') ){
+							zoneSelectize.clear();							
+							zoneSelectize.setValue('All',true);
+							zoneSelectize.close();
+						}
+						znIds = Object.keys(zoneSelectize.options);
+					}
+					if($('#editUserMatrixModal').hasClass('show')&&
+							($("#editZones option:selected").text().includes('All')||$("#editZones").val().length==0)){
+						if($("#editZones option:selected").text().includes('All') ){
+							zoneSelectize.clear();							
+							zoneSelectize.setValue('All',true);
+							zoneSelectize.close();
+						}
+						znIds = Object.keys(zoneSelectize.options);
+					}
+					else{
+						if($('#editUserMatrixModal').hasClass('show')){
+							znIds = $("#editZones").val();
+						}
+						else{
+							znIds = $("#zoneIds").val();
+						}
+					}
+					$.ajax({
+						type : "GET",
+						contentType : "application/json",
+						url : '/admin/getClustersByZoneIds',
+						data : {
+							zoneNames: function(){
+								return znIds;
+							}
+						},
+						contentType: 'application/json',
+						success : function(data) {
+							var clusterList = [];
+							var clusters = [];
+							for(var obj of data){
+								var cluster = new Object();
+								cluster['text'] = obj.clusterName;
+								cluster['value'] = obj.clusterName;
+								clusterList.push(cluster);
+								clusters.push(obj.id);
+							}
+							if(clusterList){
+								var cluster = new Object();
+								cluster['text'] = 'All';
+								cluster['value'] = 'All';
+								clusterList.push(cluster);
+							}
+							callback(clusterList);
+						},
+						error : function(data) {
+							callback();
+						}
+					}); 
+				});
+			}
+					
+			$('#clusters,#editClusters').on('change',function() {
+				var stateIdsSelect = $("#states")[0].selectize
+				if($('#editUserMatrixModal').hasClass('show')){
+					stateIdsSelect = $("#editStates")[0].selectize;
+				}
+				stateIdsSelect.clear();
+				stateIdsSelect.clearOptions();
+				stateIdsSelect.load(function(callback) {
+					var clIds = [];
+					var $clusters = $('#clusters').selectize();
+					if($('#editUserMatrixModal').hasClass('show')){
+						$clusters = $("#editClusters").selectize();
+					}
+					var clusterSelectize = $clusters[0].selectize;
+					if($("#clusters option:selected").text().includes('All') || $("#clusters").val().length==0){
+						clIds = Object.keys(clusterSelectize.options);
+						if($("#clusters option:selected").text().includes('All')){
+							clusterSelectize.clear();
+							clusterSelectize.setValue('All',true);
+							clusterSelectize.close();							
+						}
+					}
+					else{
+						clIds = $("#clusters").val();					
+					}
+					if($('#editUserMatrixModal').hasClass('show')){			
+						clIds = $("#editClusters").val();
+						if($("#editClusters option:selected").text().includes('All')){
+							clusterSelectize.clear();
+							clusterSelectize.setValue('All',true);
+							clusterSelectize.close();		
+							clIds = Object.keys(clusterSelectize.options);
+						}
+						if($("#editClusters").val().length==0){
+							clIds = Object.keys(clusterSelectize.options);
+						}						
+					}
+					$.ajax({
+						type : "GET",
+						contentType : "application/json",
+						url : '/admin/getStatesByClusterIds',
+						data : {
+							clusters : function(){
+								return clIds;
+							}
+						},
+						success : function(data) {
+							var stateList = [];
+							var states = [];
+							for(var obj of data){
+								var state = new Object();
+								state['text'] = obj.state;
+								state['value'] = [obj.state];
+								stateList.push(state);
+								states.push(obj.id);
+							}
+							if(stateList){
+								var state = new Object();
+								state['text'] = 'All';
+								state['value'] = 'All';
+								stateList.push(state);
+							}
+							callback(stateList);
+						},
+						error : function(data) {
+							callback();
+						}
+					});
+				});
+			});
+			
+			function loadStatesWithoutClear(){
+				var stateIdsSelect = $("#states")[0].selectize
+				if($('#editUserMatrixModal').hasClass('show')){
+					stateIdsSelect = $("#editStates")[0].selectize;
+				}
+				//stateIdsSelect.clear();
+				stateIdsSelect.clearOptions();
+				stateIdsSelect.load(function(callback) {
+					var clIds = [];
+					var $clusters = $('#clusters').selectize();
+					if($('#editUserMatrixModal').hasClass('show')){
+						$clusters = $("#editClusters").selectize();
+					}
+					var clusterSelectize = $clusters[0].selectize;
+					if($("#clusters option:selected").text().includes('All') || $("#clusters").val().length==0){
+						clIds = Object.keys(clusterSelectize.options);
+						if($("#clusters option:selected").text().includes('All')){
+							clusterSelectize.clear();
+							clusterSelectize.setValue('All',true);
+							clusterSelectize.close();
+							
+						}
+					}
+					else{
+						clIds = $("#clusters").val();					
+					}
+					if($('#editUserMatrixModal').hasClass('show')){			
+						clIds = $("#editClusters").val();
+						if($("#editClusters option:selected").text().includes('All')){
+							clusterSelectize.clear();
+							clusterSelectize.setValue('All',true);
+							clusterSelectize.close();	
+							clIds = Object.keys(clusterSelectize.options);
+						}
+						if($("#editClusters").val().length==0){
+							clIds = Object.keys(clusterSelectize.options);
+						}						
+					}
+					$.ajax({
+						type : "GET",
+						contentType : "application/json",
+						url : '/admin/getStatesByClusterIds',
+						data : {
+							clusters : function(){
+								return clIds;
+							}
+						},
+						success : function(data) {
+							var stateList = [];
+							var states = [];
+							for(var obj of data){
+								var state = new Object();
+								state['text'] = obj.state;
+								state['value'] = [obj.state];
+								stateList.push(state);
+								states.push(obj.id);
+							}
+							if(stateList){
+								var state = new Object();
+								state['text'] = 'All';
+								state['value'] = 'All';
+								stateList.push(state);
+							}
+							callback(stateList);
+						},
+						error : function(data) {
+							callback();
+						}
+					});
+				});
+			}
+			
+			function loadBranchesWithoutClear(){
+				var branchCodeSelect = $("#branchCodes")[0].selectize;
+				if($('#editUserMatrixModal').hasClass('show')){
+					branchCodeSelect = $("#editBranchCodes")[0].selectize;
+				}
+				//branchCodeSelect.clear();
+				branchCodeSelect.clearOptions();
+				branchCodeSelect.load(function(callback) {
+				var stIds = [];
+				var $stateIds = $('#states').selectize();
+				if($('#editUserMatrixModal').hasClass('show')){
+					$stateIds = $('#editStates').selectize();
+				}
+				var stateSelectize = $stateIds[0].selectize;
+				if($("#states option:selected").text().includes('All') || $("#states").val().length==0){
+					stIds = Object.keys(stateSelectize.options);
+					if($("#states option:selected").text().includes('All')){
+						stateSelectize.clear();
+						stateSelectize.setValue('All',true);
+						stateSelectize.close();
+					}			
+				}else{
+					stIds = $("#states").val();
+				}
+				if($('#editUserMatrixModal').hasClass('show')){
+					stIds = $("#editStates").val();
+					if($("#editStates option:selected").text().includes('All')){
+						stateSelectize.clear();
+						stateSelectize.setValue('All',true);
+						stateSelectize.close();
+						stIds = Object.keys(stateSelectize.options);
+					}
+					if($("#editStates").val().length==0){
+						stIds = Object.keys(stateSelectize.options);
+					}
+				}
+				$.ajax({
+					type : "GET",
+					contentType: 'application/json; charset=utf-8',
+					url : '/admin/getBranchesByStateIds',
+					data : {
+						states : function(){
+							return stIds;
+						}
+					},
+					success : function(data) {
+						var branchList = [];
+						var branchCodes = [];
+						for(var obj of data){
+							var branch = new Object();
+							branch['text'] = obj.revisedBranchName+" ("+ obj.branchCode+")";
+							branch['value'] = [obj.branchCode];		
+							branchList.push(branch);
+							branchCodes.push(obj.branchCode);
+						}
+						if(branchList){
+							var branch = new Object();
+							branch['text'] = 'All';
+							branch['value'] = 'All';
+							branchList.push(branch);
+						}
+						callback(branchList);
+					},
+					error : function(data) {
+						callback();
+					}
+				});
+				});
+			}
+						
+			$('#states,#editStates').on('change',function() {
+				var branchCodeSelect = $("#branchCodes")[0].selectize;
+				if($('#editUserMatrixModal').hasClass('show')){
+					branchCodeSelect = $("#editBranchCodes")[0].selectize;
+				}
+				//branchCodeSelect.clear();
+				branchCodeSelect.clearOptions();
+				branchCodeSelect.load(function(callback) {
+				var stIds = [];
+				var $stateIds = $('#states').selectize();
+				if($('#editUserMatrixModal').hasClass('show')){
+					$stateIds = $('#editStates').selectize();
+				}
+				var stateSelectize = $stateIds[0].selectize;
+				if($("#states option:selected").text().includes('All') || $("#states").val().length==0){
+					stIds = Object.keys(stateSelectize.options);
+					if($("#states option:selected").text().includes('All')){
+						stateSelectize.clear();
+						stateSelectize.setValue('All',true);
+						stateSelectize.close();
+					}			
+				}else{
+					stIds = $("#states").val();
+				}
+				if($('#editUserMatrixModal').hasClass('show')){
+					stIds = $("#editStates").val();
+					if($("#editStates option:selected").text().includes('All')){
+						stateSelectize.clear();
+						stateSelectize.setValue('All',true);
+						stateSelectize.close();
+						stIds = Object.keys(stateSelectize.options);
+					}
+					if($("#editStates").val().length==0){
+						stIds = Object.keys(stateSelectize.options);
+					}
+				}
+				$.ajax({
+					type : "GET",
+					contentType: 'application/json; charset=utf-8',
+					url : '/admin/getBranchesByStateIds',
+					data : {
+						states : function(){
+							return stIds;
+						}
+					},
+					success : function(data) {
+						var branchList = [];
+						var branchCodes = [];
+						for(var obj of data){
+							var branch = new Object();
+							branch['text'] = obj.revisedBranchName+" ("+ obj.branchCode+")";
+							branch['value'] = [obj.branchCode];		
+							branchList.push(branch);
+							branchCodes.push(obj.branchCode);
+						}
+						if(branchList){
+							var branch = new Object();
+							branch['text'] = 'All';
+							branch['value'] = 'All';
+							branchList.push(branch);
+						}
+						callback(branchList);
+					},
+					error : function(data) {
+						callback();
+					}
+				});
+				});
+			});
+			
+			$('#branchCodes,#editBranchCodes').on('change',function() {
+				var $branchCodes = $('#branchCodes').selectize();
+				if($('#editUserMatrixModal').hasClass('show')){
+					$branchCodes = $('#editBranchCodes').selectize();
+				}
+				var branchSelectize = $branchCodes[0].selectize;
+				if($('#editUserMatrixModal').hasClass('show') && $("#editBranchCodes option:selected").text().includes('All')){
+					branchSelectize.clear();
+					branchSelectize.setValue('All',true);
+					branchSelectize.close();						
+				}
+				else if($("#branchCodes option:selected").text().includes('All') || $("#branchCodes").val().length==0){
+					if($("#branchCodes option:selected").text().includes('All')){
+						branchSelectize.clear();
+						branchSelectize.setValue('All',true);
+						branchSelectize.close();						
+					}
+				}
+			});
+			
+			$('#products,#editProducts').on('change',function() {
+				var $product = $('#products').selectize();
+				if($('#editUserMatrixModal').hasClass('show')){
+					$product = $('#editProducts').selectize();
+				}
+				var productSelectize = $product[0].selectize;
+				if($('#editUserMatrixModal').hasClass('show') && $("#editProducts option:selected").text().includes('All')){
+					if($("#editProducts option:selected").text().includes('All')){
+						productSelectize.clear();
+						productSelectize.setValue('All',true);
+						productSelectize.close();						
+					}
+				}
+				else if($("#products option:selected").text().includes('All') || $("#products").val().length==0){
+					if($("#products option:selected").text().includes('All')){
+						productSelectize.clear();
+						productSelectize.setValue('All',true);
+						productSelectize.close();						
+					}
+				}
+			});
+			
+			$('#businessTypes,#editBusinessTypes').on('change',function() {
+				var $businessTypes = $('#businessTypes').selectize();
+				if($('#editUserMatrixModal').hasClass('show')){
+					$businessTypes = $('#editBusinessTypes').selectize();
+				}
+				var businessTypesSelectize = $businessTypes[0].selectize;
+				if($('#editUserMatrixModal').hasClass('show') && $("#editBusinessTypes option:selected").text().includes('All')){
+						businessTypesSelectize.clear();
+						businessTypesSelectize.setValue('All',true);
+						businessTypesSelectize.close();						
+				}
+				else if($("#businessTypes option:selected").text().includes('All') || $("#businessTypes").val().length==0){
+					if($("#businessTypes option:selected").text().includes('All')){
+						businessTypesSelectize.clear();
+						businessTypesSelectize.setValue('All',true);
+						businessTypesSelectize.close();						
+					}
+				}
+			});
+			
+			$('#lobs,#editLobs').on('change',function() {
+				var $businessTypes = $('#lobs').selectize();
+				if($('#editUserMatrixModal').hasClass('show')){
+					$businessTypes = $('#editLobs').selectize();
+				}
+				var businessTypesSelectize = $businessTypes[0].selectize;
+				if($('#editUserMatrixModal').hasClass('show') && $("#editLobs option:selected").text().includes('All')){
+						businessTypesSelectize.clear();
+						businessTypesSelectize.setValue('All',true);
+						businessTypesSelectize.close();						
+				}
+				else if($("#lobs option:selected").text().includes('All') || $("#lobs").val().length==0){
+					if($("#lobs option:selected").text().includes('All')){
+						businessTypesSelectize.clear();
+						businessTypesSelectize.setValue('All',true);
+						businessTypesSelectize.close();						
+					}
+				}
+			});
+			
+			$('#channels,#editChannels').on('change',function() {
+				var $channels = $('#channels').selectize();
+				if($('#editUserMatrixModal').hasClass('show')){
+					$channels = $('#editChannels').selectize();
+				}
+				var channelsSelectize = $channels[0].selectize;
+				var channelNames = [];
+				if($("#channels option:selected").text().includes('All') || $("#channels").val().length==0){
+					if($("#channels option:selected").text().includes('All')){
+						channelsSelectize.clear();
+						channelsSelectize.setValue('All',true);
+						channelsSelectize.close();						
+					}
+					channelNames = Object.keys(channelsSelectize.options);
+				}else{
+					channelNames = $("#channels").val();
+				}
+				if($('#editUserMatrixModal').hasClass('show')){
+					if($("#editChannels option:selected").text().includes('All')){
+						channelsSelectize.clear();
+						channelsSelectize.setValue('All',true);
+						channelsSelectize.close();						
+					}else if($("#editChannels").val().length==0 || $("#editChannels option:selected").text().includes('All')){
+						channelNames = Object.keys(channelsSelectize.options);
+					}else{
+						channelNames = $("#editChannels").val();
+					}					
+				}
+				var $subChannels = $('#subChannels').selectize();
+				if($('#editUserMatrixModal').hasClass('show')){
+					$subChannels = $('#editSubChannels').selectize();
+				}
+				var subChannelsSelectize = $subChannels[0].selectize;
+				subChannelsSelectize.clear();
+				subChannelsSelectize.clearOptions();
+				subChannelsSelectize.load(function(callback) {
+					$.ajax({
+						type : "GET",
+						contentType : "application/json",
+						url : '/admin/getSubchannelsByChannels',
+						data : {
+							channelNames : function(){
+								return channelNames;
+							}
+						},
+						success : function(data) {
+							var subChannelList = [];
+							for(var obj of data){
+								var subChannel = new Object();
+								subChannel['text'] = obj.subChannel;
+								subChannel['value'] = obj.subChannel;		
+								subChannelList.push(subChannel);
+							}
+							if(subChannelList){
+								var subChannel = new Object();
+								subChannel['text'] = 'All';
+								subChannel['value'] = 'All';
+								subChannelList.push(subChannel);
+							}
+							callback(subChannelList);
+						},
+						error : function(data) {
+							callback();
+						} 
+					}); 
+					
+				});
+			});
+			
+			function loadSubChannelsWithoutClear(){
+				var $channels = $('#channels').selectize();
+				if($('#editUserMatrixModal').hasClass('show')){
+					$channels = $('#editChannels').selectize();
+				}
+				var channelsSelectize = $channels[0].selectize;
+				var channelNames = [];
+				if($("#channels option:selected").text().includes('All') || $("#channels").val().length==0){
+					if($("#channels option:selected").text().includes('All')){
+						channelsSelectize.clear();
+						channelsSelectize.setValue('All',true);
+						channelsSelectize.close();						
+					}
+					channelNames = Object.keys(channelsSelectize.options);
+				}else{
+					channelNames = $("#channels").val();
+				}
+				if($('#editUserMatrixModal').hasClass('show')){
+					if($("#editChannels option:selected").text().includes('All')){
+						channelsSelectize.clear();
+						channelsSelectize.setValue('All',true);
+						channelsSelectize.close();						
+					}else if($("#editChannels").val().length==0 || $("#editChannels option:selected").text().includes('All')){
+						channelNames = Object.keys(channelsSelectize.options);
+					}else{
+						channelNames = $("#editChannels").val();
+					}					
+				}
+				var $subChannels = $('#subChannels').selectize();
+				if($('#editUserMatrixModal').hasClass('show')){
+					$subChannels = $('#editSubChannels').selectize();
+				}
+				var subChannelsSelectize = $subChannels[0].selectize;
+				//subChannelsSelectize.clear();
+				subChannelsSelectize.clearOptions();
+				subChannelsSelectize.load(function(callback) {
+					$.ajax({
+						type : "GET",
+						contentType : "application/json",
+						url : '/admin/getSubchannelsByChannels',
+						data : {
+							channelNames : function(){
+								return channelNames;
+							}
+						},
+						success : function(data) {
+							var subChannelList = [];
+							for(var obj of data){
+								var subChannel = new Object();
+								subChannel['text'] = obj.subChannel;
+								subChannel['value'] = obj.subChannel;		
+								subChannelList.push(subChannel);
+							}
+							if(subChannelList){
+								var subChannel = new Object();
+								subChannel['text'] = 'All';
+								subChannel['value'] = 'All';
+								subChannelList.push(subChannel);
+							}
+							callback(subChannelList);
+						},
+						error : function(data) {
+							callback();
+						} 
+					}); 
+					
+				});
+			}
+			
+			$('#subChannels,#editSubChannels').on('change',function() {
+				var $subChannels = $('#subChannels').selectize();
+				if($('#editUserMatrixModal').hasClass('show')){
+					$subChannels = $('#editSubChannels').selectize();
+				}
+				var subChannelsSelectize = $subChannels[0].selectize;
+				if($('#editUserMatrixModal').hasClass('show') && $("#editSubChannels option:selected").text().includes('All')){
+					subChannelsSelectize.clear();
+					subChannelsSelectize.setValue('All',true);
+					subChannelsSelectize.close();						
+				}
+				else if($("#subChannels option:selected").text().includes('All') || $("#subChannels").val().length==0){
+					if($("#subChannels option:selected").text().includes('All')){
+						subChannelsSelectize.clear();
+						subChannelsSelectize.setValue('All',true);
+						subChannelsSelectize.close();						
+					}
+				}
+			});
+			
+			$('#makes,#editMakes').on('change',function() {
+				var $makes = $('#makes').selectize();
+				if($('#editUserMatrixModal').hasClass('show')){
+					$makes = $('#editMakes').selectize();
+				}
+				var makesSelectize = $makes[0].selectize;
+				var makes = [];
+				if($('#editUserMatrixModal').hasClass('show')){
+					if($("#editMakes option:selected").text().includes('All')){
+						makesSelectize.clear();
+						makesSelectize.setValue('All',true);
+						makesSelectize.close();	
+					}
+					if( $("#editMakes").val().length==0){
+						modelAllLoad();
+						return;
+					}
+					else{
+						makes = $("#editMakes").val();
+					}
+				}
+				else if($("#makes option:selected").text().includes('All') || $("#makes").val().length==0){
+					if($("#makes option:selected").text().includes('All')){
+						makesSelectize.clear();
+						makesSelectize.setValue('All',true);
+						makesSelectize.close();	
+					}
+					if( $("#makes").val().length==0){
+						modelAllLoad();
+						return;
+					}
+					
+				}else{
+					makes = $("#makes").val();
+				}
+				var $models = $('#models').selectize();
+				if($('#editUserMatrixModal').hasClass('show')){
+					$models = $('#editModels').selectize();
+				}
+				var modelsSelectize = $models[0].selectize;
+				modelsSelectize.clear();
+				modelsSelectize.clearOptions();
+				modelsSelectize.load(function(callback) {
+					$.ajax({
+						type : "GET",
+						contentType : "application/json",
+						url : '/admin/getModelByMakes',
+						data : {
+							makes : function(){
+								return makes;
+							}
+						},
+						success : function(data) {
+							var modelList = [];
+							for(var obj of data){
+								var model = new Object();
+								model['text'] = obj.modelName;
+								model['value'] = obj.modelName;		
+								modelList.push(model);
+							}
+							if(modelList){
+								var model = new Object();
+								model['text'] = 'All';
+								model['value'] = 'All';
+								modelList.push(model);
+							}
+							callback(modelList);
+						},
+						error : function(data) {
+							callback();
+						} 
+					});
+				});
+			});
+			
+			function loadModelsWithoutClear(){
+				var $makes = $('#makes').selectize();
+				if($('#editUserMatrixModal').hasClass('show')){
+					$makes = $('#editMakes').selectize();
+				}
+				var makesSelectize = $makes[0].selectize;
+				var makes = [];
+				if($('#editUserMatrixModal').hasClass('show')){
+					if($("#editMakes option:selected").text().includes('All')){
+						makesSelectize.clear();
+						makesSelectize.setValue('All',true);
+						makesSelectize.close();	
+					}
+					if( $("#editMakes").val().length==0){
+						modelAllLoad();
+						return;
+					}
+					else{
+						makes = $("#editMakes").val();
+					}
+				}
+				else if($("#makes option:selected").text().includes('All') || $("#makes").val().length==0){
+					if($("#makes option:selected").text().includes('All')){
+						makesSelectize.clear();
+						makesSelectize.setValue('All',true);
+						makesSelectize.close();	
+					}
+					if( $("#makes").val().length==0){
+						modelAllLoad();
+						return;
+					}
+					
+				}else{
+					makes = $("#makes").val();
+				}
+				var $models = $('#models').selectize();
+				if($('#editUserMatrixModal').hasClass('show')){
+					$models = $('#editModels').selectize();
+				}
+				var modelsSelectize = $models[0].selectize;
+				//modelsSelectize.clear();
+				modelsSelectize.clearOptions();
+				modelsSelectize.load(function(callback) {
+					$.ajax({
+						type : "GET",
+						contentType : "application/json",
+						url : '/admin/getModelByMakes',
+						data : {
+							makes : function(){
+								return makes;
+							}
+						},
+						success : function(data) {
+							var modelList = [];
+							for(var obj of data){
+								var model = new Object();
+								if(obj.modelName){
+									model['text'] = obj.modelName;	
+								}else{
+									model['text'] = obj.modelCode;
+								}
+								model['value'] = obj.modelName;		
+								modelList.push(model);
+							}
+							if(modelList){
+								var model = new Object();
+								model['text'] = 'All';
+								model['value'] = 'All';
+								modelList.push(model);
+							}
+							callback(modelList);
+						},
+						error : function(data) {
+							callback();
+						} 
+					});
+				});
+			}
+			
+			var models = $("#models")[0].selectize;
+			models.load(function(callback) {
+				$.ajax({
+					type : "GET",
+					contentType : "application/json",
+					url : '/admin/getAllModels',
+					success : function(data) {
+						var modelList = [];
+						for(var obj of data){
+							var model = new Object();
+							model['text'] = obj.modelName;
+							model['value'] = obj.modelName;
+							modelList.push(model);
+						}
+						if(modelList){
+							var model = new Object();
+							model['text'] = 'All';
+							model['value'] = 'All';
+							modelList.push(model);
+						}
+						callback(modelList);
+					},
+					error : function(data) {
+						callback();
+					}
+				});
+			});
+			
+			
+			
+			function modelAllLoad(){
+				var models = $("#models")[0].selectize;
+				if($('#editUserMatrixModal').hasClass('show')){
+					models = $("#editModels")[0].selectize;
+				}
+				models.load(function(callback) {
+					$.ajax({
+						type : "GET",
+						contentType : "application/json",
+						url : '/admin/getAllModels',
+						success : function(data) {
+							var modelList = [];
+							for(var obj of data){
+								var model = new Object();
+								if(obj.modelName){
+									model['text'] = obj.modelName;	
+								}else{
+									model['text'] = obj.modelCode;
+								}
+								model['value'] = obj.modelName;
+								modelList.push(model);
+							}
+							if(modelList){
+								var model = new Object();
+								model['text'] = 'All';
+								model['value'] = 'All';
+								modelList.push(model);
+							}
+							callback(modelList);
+						},
+						error : function(data) {
+							callback();
+						}
+					});
+				});
+			}
+			
+			$('#models,#editModels').on('change',function() {
+				var $models = $('#models').selectize();
+				if($('#editUserMatrixModal').hasClass('show')){
+					$models = $('#editModels').selectize();
+				}
+				var modelsSelectize = $models[0].selectize;
+				if($('#editUserMatrixModal').hasClass('show') && $("#editModels option:selected").text().includes('All')){
+					modelsSelectize.clear();
+					modelsSelectize.setValue('All',true);
+					modelsSelectize.close();						
+				}
+				else if($("#models option:selected").text().includes('All') || $("#models").val().length==0){
+					if($("#models option:selected").text().includes('All')){
+						modelsSelectize.clear();
+						modelsSelectize.setValue('All',true);
+						modelsSelectize.close();						
+					}
+				}
+			});
+						
+			$('#roleIds').on('change',function() {
+				var cluster = $("#clusters").selectize();
+				var clusterSelectize = cluster[0].selectize;
+				var state = $("#states").selectize();
+				var stateSelectize = state[0].selectize;
+				var branch = $("#branchCodes").selectize();
+				var branchSelectize = branch[0].selectize;
+				if($("#roleIds option:selected").text() == 'ZONE_HEAD'){
+					clusterSelectize.clear();
+					stateSelectize.clear();
+					branchSelectize.clear();
+					clusterSelectize.disable();
+					stateSelectize.disable();
+					branchSelectize.disable();
+				}else if($("#roleIds option:selected").text() == 'CLUSTER_HEAD'){
+					clusterSelectize.enable();
+					stateSelectize.clear();
+					stateSelectize.disable();
+					branchSelectize.clear();
+					branchSelectize.disable();
+				}else if($("#roleIds option:selected").text() == 'STATE_HEAD'){	
+					clusterSelectize.enable();
+					stateSelectize.enable();
+					branchSelectize.clear();
+					branchSelectize.disable();
+				}else{
+					clusterSelectize.enable();
+					stateSelectize.enable();
+					branchSelectize.enable();
+				}
+			});
+		
+			var collapsedGroups = {};
+			
+			var collapsedGroups = {};
+			var userMatrixListTable = $('#userMatrixListDT').DataTable({
+				/* "ajax" : {
+					"url": "/admin/userMatrixResponseByDashboardId",
+					"data": function(data){
+						return $('#reportTypeList option:selected').val();
+					},
+					"dataSrc": ""
+				},
+				"columns" : {
+					"data": null,
+					"data" : null,
+					"data": "userId",
+					"data": "userName",
+					"data": "userMatrixRole",
+					"data": null
+				}, */
+				"paging" : true,
+				"lengthChange" : true,
+				"searching" : true,
+				"ordering" : true,
+				"info" : true,
+				"autoWidth" : false,
+				"responsive" : true,
+				"columnDefs" : [  {
+					"orderable" : false,
+					"className" : 'select-checkbox',
+					"visible" : false,
+					"targets" : 1
+				},{
+					"orderable" : false,
+					"className" : 'details-control',
+					"targets" : 0
+				},{
+					"className" : 'gwp-col',
+					"targets" : 3
+				}],
+				"select" : {
+					"style" : 'single'
+				},
+				dom : "<'row'<'col-sm-12'B>><'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+				"<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+				buttons : [ {
+					text : 'Delete'	,
+					action : function(e, dt, node, config) {
+						
+						var items = $.map(userMatrixListTable.rows('.selected')
+								.data(), function(item) {
+							return item;
+						});				
+						var matrixList = [];	
+						
+						for(var i = 0 ; i<=items.length; i++){
+							if(i % 5 == 0){
+								if(i==0){
+									var matrix = new Object();
+									continue;
+								}
+								matrixList.push(matrix);
+								var matrix = new Object();
+							}
+							if(i % 6 == 2){
+								matrix["userId"] = items[i];
+							}
+							if(i % 6 == 3){
+								matrix["userName"] = items[i];
+							}
+							if(i % 6 == 4){
+								matrix["userMatrixRole"] = items[i];
+							}
+							
+						}
+						if(matrixList.length){
+							$('#deleteConfirmUserModal').modal('show');									
+							$("#deleteUserContent").text('Are you sure to delete?');
+							$('#confirmUserDelete').click(function() {
+								$('#deleteConfirmUserModal').modal('hide');
+								$('#deleteConfirmUserModal').modal('hide');
+								$.ajax({
+									type : "POST",
+									contentType : "application/json",
+									url : '/admin/deleteUserMatrix',
+									data : JSON.stringify(matrixList),
+									success : function(data) {											
+										toastr.clear();
+										toastr.warning(matrixList.length+' Matrix Deleted Sucessfully');
+										userMatrixListTable.rows('.selected').remove().draw(false);
+									},
+									error : function(data){
+										
+									}
+								});
+								
+							});
+						}
+					}
+				}]
+			});
+			
+			var roleColumn = userMatrixListTable.column(4);
+			roleColumn.visible(false);
+			
+			$('#reportTypeList').on('change', function () {
+				//userMatrixListTable
+				var column = userMatrixListTable.column(4);	
+				if($("#reportTypeList option:selected").text() == 'GWP'){					
+			        column.visible(true);
+				}else{
+					column.visible(false);
+				}
+				userMatrixListTable.columns(5).search( $("#reportTypeList option:selected").text() ).draw();
+			});
+			
+			$('#userMatrixListDT tbody').on('click', 'tr', function () {
+		        var tr = $(this).closest('tr');
+		        var row = userMatrixListTable.row( tr );
+		 		lastSelectedMatrixUser['userId'] = row.data()[2];
+		 		lastSelectedMatrixUser['userName'] = row.data()[3];
+			});
+						
+			$('#userMatrixListDT tbody').on('click', 'td.details-control', function () {
+		        var tr = $(this).closest('tr');
+		        var row = userMatrixListTable.row( tr );
+		        if ( row.child.isShown() ) {
+		            // This row is already open - close it
+		            //row.child.hide();
+		            destroyChild(row);
+		            tr.removeClass('shown');
+		        }
+		        else {
+		            // Open this row
+		            createChild(row,'child-table');
+		            tr.addClass('shown');
+		        }
+		    } );
+			
+			$("#editUserMatrixModal").on('show.bs.modal', function () {
+				var editModels = $("#editModels")[0].selectize;
+				editModels.load(function(callback) {
+				$.ajax({
+					type : "GET",
+					contentType : "application/json",
+					url : '/admin/getAllModels',
+					success : function(data) {
+						var modelList = [];
+						for(var obj of data){
+							var model = new Object();
+							if(obj.modelName){
+								model['text'] = obj.modelName;	
+							}else{
+								model['text'] = obj.modelCode;
+							}
+							model['value'] = obj.modelName;
+							modelList.push(model);
+						}
+						if(modelList){
+							var model = new Object();
+							model['text'] = 'All';
+							model['value'] = 'All';
+							modelList.push(model);
+						}
+						callback(modelList);
+					},
+					error : function(data) {
+						callback();
+					} 
+				});
+			  });
+				
+			$.ajax({
+				type : "GET",
+				contentType : "application/json",
+				url : '/admin/getUserMatrixChildByUserId',
+				data : {
+					userId: function(){
+						return lastSelectedMatrixUser.userId;
+					} 
+				},
+				success : function(data) {		
+					if(data.userIds){
+						$('#editUserIds').val(data.userIds);
+					}
+					if(data.userMatrixRoleName){
+						var $vals = $('#editRoles').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue(data.userMatrixRoleName, true);
+						selectize.close();
+					}else {
+						var $vals = $('#editRoles').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue('', true);
+						selectize.close();
+					}
+					if(data.zones){
+						var $vals = $('#editZones').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue(data.zones, true);
+						selectize.close();
+						setTimeout(() => {  
+							loadClustersWithoutClear();
+						},100);
+					}else{
+						var $vals = $('#editZones').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue('', true);
+						selectize.close();
+						setTimeout(() => {  
+							loadClustersWithoutClear();
+						},100);
+					}
+					if(data.clusters){
+						var $vals = $('#editClusters').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue(data.clusters, true);
+						selectize.close();
+						setTimeout(() => {  
+							loadStatesWithoutClear();
+						},0);
+					}else{
+						var $vals = $('#editClusters').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue('', true);
+						selectize.close();
+						setTimeout(() => {  
+							loadStatesWithoutClear();
+						},0);
+					}
+					if(data.states){
+						var $vals = $('#editStates').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue(data.states, true);
+						selectize.close();
+						setTimeout(() => {  
+							//loadBranchesWithoutClear();
+						},0);
+					}else{
+						var $vals = $('#editStates').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue('', true);
+						selectize.close();
+						setTimeout(() => {  
+							//loadBranchesWithoutClear();
+						},0);
+					}
+					if(data.branchCodes){
+						setTimeout(() => {  
+						var $vals = $('#editBranchCodes').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue(data.branchCodes, true);
+						selectize.close();
+						},100);
+					}else{
+						setTimeout(() => {  
+						var $vals = $('#editBranchCodes').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue('', true);
+						selectize.close();
+						},100);
+					}
+					if(data.products){
+						var $vals = $('#editProducts').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue(data.products, true);
+						selectize.close();
+					}else{
+						var $vals = $('#editProducts').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue('', true);
+						selectize.close();
+					}
+					if(data.businessTypes){
+						var $vals = $('#editBusinessTypes').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue(data.businessTypes, true);
+						selectize.close();
+					}else{
+						var $vals = $('#editBusinessTypes').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue('', true);
+						selectize.close();
+					}
+					if(data.lobs){
+						var $vals = $('#editLobs').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue(data.lobs, true);
+						selectize.close();
+					}else{
+						var $vals = $('#editLobs').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue('', true);
+						selectize.close();
+					}
+					if(data.channels){
+						var $vals = $('#editChannels').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue(data.channels, true);
+						selectize.close();
+						setTimeout(() => {  
+							loadSubChannelsWithoutClear();
+						},1000);
+					}else{
+						var $vals = $('#editChannels').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue('', true);
+						selectize.close();
+						setTimeout(() => {  
+							loadSubChannelsWithoutClear();
+						},1000);
+					}
+					if(data.subChannels){
+						var $vals = $('#editSubChannels').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue(data.subChannels, true);
+						selectize.close();
+					}else{
+						var $vals = $('#editSubChannels').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue('', true);
+						selectize.close();
+					}
+					if(data.makes){
+						var $vals = $('#editMakes').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue(data.makes, true);
+						selectize.close();
+						setTimeout(() => {  
+							loadModelsWithoutClear();
+						},100);
+					}else{
+						var $vals = $('#editMakes').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue('', true);
+						selectize.close();
+						setTimeout(() => {  
+							loadModelsWithoutClear();
+						},100);
+					}
+					if(data.models){
+						
+						var $vals = $('#editModels').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue(data.models, true);
+						selectize.close();
+					}else{
+						var $vals = $('#editModels').selectize();
+						var selectize = $vals[0].selectize;
+						selectize.setValue('', true);
+						selectize.close();
+					}
+					
+				},
+				error : function(data) {
+					$('#editUserIds').val(lastSelectedMatrixUser.userIds);
+				} 
+			});
+			});
+			
+			$('#generalDiv').hide();
+			$('#gwpDiv').hide();
+			$('#healthDiv').hide();
+			$('#motorDiv').hide();
+			
+			$("#reportType").on('change', function () {
+				var $reportType = $('#reportType').selectize();				
+				var makesSelectize = $reportType[0].selectize;
+				if($("#reportType option:selected").text().includes('General')){
+					$('#generalDiv').show();
+					$('#gwpDiv').hide();
+					$('#healthDiv').hide();
+					$('#motorDiv').hide();
+				}else if($("#reportType option:selected").text().includes('GWP')){
+					$('#gwpDiv').show();
+					$('#generalDiv').hide();
+					$('#healthDiv').hide();
+					$('#motorDiv').hide();
+				}else if($("#reportType option:selected").text().includes('Health')){
+					$('#healthDiv').show();
+					$('#generalDiv').hide();
+					$('#gwpDiv').hide();
+					$('#motorDiv').hide();
+				}else if($("#reportType option:selected").text().includes('Motor')){
+					$('#motorDiv').show();
+					$('#generalDiv').hide();
+					$('#gwpDiv').hide();
+					$('#healthDiv').hide();
+				}else{
+					$('#generalDiv').hide();
+					$('#gwpDiv').hide();
+					$('#healthDiv').hide();
+					$('#motorDiv').hide();
+				}
+				/* if($('#editUserMatrixModal').hasClass('show')){
+					if($("#editMakes option:selected").text().includes('All')){
+						makesSelectize.clear();
+						makesSelectize.setValue('All',true);
+						makesSelectize.close();	
+					}
+					if( $("#editMakes").val().length==0){
+						modelAllLoad();
+						return;
+					}
+					else{
+						makes = $("#editMakes").val();
+					}
+				} */
+				
+			});
+			
+		});
+
+		});
+		function createChild ( row ) {
+			var rowData = row.data();
+		    // This is the table we'll convert into a DataTable
+		    var table = $('<table class="display text-center" width="100%"/><thead><th>id</th><th>Dimension</th><th>Value</th></thead></table>');
+ 
+		    // Display it the child row
+		    row.child( table ).show();
+		    
+		    // Initialise as a DataTable
+		    var userMatrixChildTable = table.DataTable( {
+		    	"paging" : true,
+		    	"searching" : true,
+				"ordering" : true,
+				"info" : true,
+				"autoWidth" : false,
+				"responsive" : true,
+				"deferRender": true,
+				"lengthChange" : true,
+				"pageLength": 5,
+				"lengthMenu": [ 5, 10, 25, 50 ],
+				"dom" : "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+				"<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>", 
+		    	"columnDefs" : [{
+					'visible' : false,
+					'searchable' : false,
+					'targets' : [ 0 ]
+				} ],
+				"order" : [ [ 0, "asc" ] ],				
+		    	"ajax" : {		    		
+		    		url : "/admin/userMatrixByUserId",
+		    		contentType : "application/json",
+		    		dataSrc : '',
+		    		data: {
+		    			"userId": rowData[2]
+		    		}
+		    	},
+		    	columns: [
+		    		{ "data": "id"},
+		            { "data": "userDimension"},
+		            { "data": "dimensionValue"}
+		    	]
+		    	
+		    } );
+		}
+		
+		function destroyChild(row) {
+			var table = $("table", row.child());
+		    table.detach();
+		    table.DataTable().destroy();
+		 
+		    // And then hide the row
+		    row.child.hide();
+		}	
+		
+	</script>
+</body>
+</html>

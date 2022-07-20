@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1165.771" height="193.001" viewBox="0 0 1165.771 193.001">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #f9bb3a;
+      }
+
+      .cls-2 {
+        fill: #edad27;
+      }
+    </style>
+  </defs>
+  <g id="Group_438" data-name="Group 438" transform="translate(-325 -222)">
+    <g id="Group_340" data-name="Group 340" transform="translate(189.655)">
+      <path id="Intersection_2" data-name="Intersection 2" class="cls-1" d="M77.671,67.616C59.924,39.559,2.68,40.989,0,0H112.481l29.993,84.115L71.672,134.2S95.934,96.489,77.671,67.616Z" transform="translate(1158.344 222)"/>
+      <path id="Intersection_1" data-name="Intersection 1" class="cls-2" d="M0,193c2.891-5.212,31.479-35.334,85.4-35.334,59.933,0,279.7,71.913,394.835-11.7,37.3-27.089,38.628-60.567,38.69-68.77C519.356,43.68,486.518,21.174,491.38,0h60.391a16,16,0,0,1,16,16V177a16,16,0,0,1-16,16Z" transform="translate(733.344 222)"/>
+    </g>
+    <path id="Intersection_3" data-name="Intersection 3" class="cls-2" d="M46.078,193a16,16,0,0,1-16-16V33.72c27.25,15.842-15.612,143.01,122.467,134.946C298.241,160.159,371.638,192.8,372.076,193Z" transform="translate(294.922 222)"/>
+  </g>
+</svg>

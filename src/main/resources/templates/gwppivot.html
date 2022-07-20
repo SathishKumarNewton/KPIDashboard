@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://thymeleaf.org">
+<head>
+<title>GWP Report</title>
+<link rel="stylesheet" href="../../jqwidgets/styles/jqx.base.css"
+	type="text/css" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1 maximum-scale=1 minimum-scale=1" />
+<link rel="stylesheet" href="../../jqwidgets/styles/jqx.light.css"
+	type="text/css" />
+<!-- <link rel="stylesheet" href="../../css/vanillaSelectBox.css" type="text/css" />  -->
+<!-- 
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> -->
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	href="../../plugins/fontawesome-free/css/all.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+<link rel="stylesheet"
+	href="../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js" 
+integrity="sha512-rmZcZsyhe0/MAjquhTgiUcb4d9knaFc7b5xAfju483gbEXTkeJRUMIPk6s3ySZMYUHEcjKbjLjyddGWMrNEvZg==" crossorigin="anonymous"></script>
+<style>
+.loader {
+	border: 16px solid #f3f3f3; /* Light grey */
+	border-top: 16px solid #3498db; /* Blue */
+	border-radius: 50%;
+	width: 120px;
+	height: 120px;
+	animation: spin 2s linear infinite;
+	margin-left: 45%;
+	margin-top: 15%;
+}
+
+@
+keyframes spin { 0% {
+	transform: rotate(0deg);
+}
+
+100%
+{
+transform
+:
+ 
+rotate
+(360deg);
+ 
+}
+}
+.hide-loader {
+	display: none;
+}
+
+.overlay {
+	background-color: rgba(1, 1, 1, 0.7);
+	bottom: 0;
+	left: 0;
+	position: fixed;
+	right: 0;
+	top: 0;
+	z-index: 999;
+}
+
+.selectSize {
+	width: 200px;
+	padding: 2px;
+}
+</style>
+
+<script type="text/javascript" src="../../scripts/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../../jqwidgets/jqxcore.js"></script>
+<script type="text/javascript" src="../../jqwidgets/jqxdata.js"></script>
+<script type="text/javascript" src="../../jqwidgets/jqxbuttons.js"></script>
+<script type="text/javascript" src="../../jqwidgets/jqxcheckbox.js"></script>
+<script type="text/javascript" src="../../jqwidgets/jqxinput.js"></script>
+<script type="text/javascript" src="../../jqwidgets/jqxscrollbar.js"></script>
+<script type="text/javascript" src="../../jqwidgets/jqxmenu.js"></script>
+<script type="text/javascript" src="../../jqwidgets/jqxwindow.js"></script>
+<script type="text/javascript" src="../../jqwidgets/jqxlistbox.js"></script>
+<script type="text/javascript" src="../../jqwidgets/jqxdropdownlist.js"></script>
+<script type="text/javascript" src="../../jqwidgets/jqxdragdrop.js"></script>
+<script type="text/javascript" src="../../jqwidgets/jqxpivot.js"></script>
+<script type="text/javascript" src="../../jqwidgets/jqxpivotgrid.js"></script>
+<script type="text/javascript" src="../../jqwidgets/jqxpivotdesigner.js"></script>
+<script type="text/javascript" src="../../scripts/demos.js"></script>
+<script type="text/javascript" src="../../dist/js/adminlte.min.js"></script>
+<script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- <script type="text/javascript" src="../../js/vanillaSelectBox.js"></script> -->
+<script type="text/javascript">
+    
+    var responseJSON ={};
+    var result = [];
+    
+    function unique( ar ) {
+    	  var j = {};
+
+    	  ar.forEach( function(v) {
+    	    j[v+ '::' + typeof v] = v;
+    	  });
+
+    	  
+    	  return Object.keys(j).map(function(v){
+    	    return j[v];
+    	  });
+    	}
+    
+    function populateSelect(element, arr){
+    	var lobSelect = document.getElementById(element);
+    	for(i=0;i<arr.length;i++){
+        	lobSelect.options[lobSelect.options.length] = new Option(arr[i].substring(0,30), arr[i]);
+        	}
+    	localStorage.setItem(element, arr);
+    	
+    }
+
+    
+    $(document).ready(function () {
+    	
+    	
+    	$(".overlay").show();
+	       	$.ajax({
+	               type: "GET",
+	               contentType: "application/json",
+	                  //  url: "/getChart",    
+	                 url: "/getChartObject",  
+	                /* url: "/getChartObjectList", */
+	               dataType: 'json',
+	               cache: false,
+	               timeout: 600000,
+	               success: function (data) {
+	                   responseJSON = data;
+	                   console.log(responseJSON);
+	                  //refreshPivot(responseJSON,0);
+	                   pivotBuilder(responseJSON,0);
+	                  //pivotBuilderFromListObj(responseJSON,0);
+	                   
+	               },
+	               error: function (e) {
+	               	alert(e);
+	               }
+	           }); 
+	           []
+	    	$.ajax({
+	               type: "GET",
+	               contentType: "application/json",
+	               url: "/getFilters",  
+	               dataType: 'json',
+	               cache: false,
+	               timeout: 600000,
+	               success: function (data) {
+	                   responseJSON = data;
+	                   console.log(responseJSON);
+	                   populateFilter(responseJSON);
+	               },
+	               error: function (e) {
+	               	alert(e);
+	               }
+	           });
+       	
+            //alert('done---->');
+    });
+    
+    function populateFilter(filterData){
+    	//alert("Filter function called."+filterData);
+    	if(filterData.lob){
+    		$.each(filterData.lob, function(val, text) {
+        		$('#slob').append( $('<option></option>').val(text).html(text) )
+        	});
+    	}else{
+    		$("#dlob").css("display", "none");
+    	}
+    	if(filterData.zone){
+    		$.each(filterData.zone, function(val, text) {
+        		$('#szone').append( $('<option></option>').val(text).html(text) )
+        	});
+    	}else{
+    		$("#dzone").css("display", "none");
+    	}
+    	if(filterData.cluster){
+        	$.each(filterData.cluster, function(val, text) {
+        		$('#scluster').append( $('<option></option>').val(text).html(text) )
+        	});    		
+    	}else{
+    		$("#dcluster").css("display", "none");
+    	}
+    	if(filterData.state){
+        	$.each(filterData.state, function(val, text) {
+        		$('#sstate').append( $('<option></option>').val(text).html(text) )
+        	});    		
+    	}else{
+    		$("#dstate").css("display", "none");
+    	}
+    	if(filterData.branchcode){
+        	$.each(filterData.branchcode, function(val, text) {
+        		$('#sbranchcode').append( $('<option></option>').val(text).html(text) )
+        	});    		
+    	}else{
+    		$("#dbranchcode").css("display", "none");
+    	}
+    	if(filterData.channel){
+        	$.each(filterData.channel, function(val, text) {
+        		$('#schannel').append( $('<option></option>').val(text).html(text) )
+        	});    		
+    	}else{
+    		$("#dchannel").css("display", "none");
+    	}
+    	if(filterData.subchannel){
+        	$.each(filterData.subchannel, function(val, text) {
+        		$('#ssubchannel').append( $('<option></option>').val(text).html(text) )
+        	});    		
+    	}else{
+    		$("#dsubchannel").css("display", "none");
+    	}
+    	if(filterData.product){
+        	$.each(filterData.product, function(val, text) {
+        		$('#asproduct').append( $('<option></option>').val(text).html(text) )
+        	});    		
+    	}else{
+    		$("#dsproduct").css("display", "none");
+    	}
+    	if(filterData.productDesc){
+        	$.each(filterData.productDesc, function(val, text) {
+        		$('#pproductdesc').append( $('<option></option>').val(text).html(text) )
+        	});    		
+    	}else{
+    		$("#dproductdesc").css("display", "none");
+    	}
+    	if(filterData.make){
+    		$.each(filterData.make, function(val, text) {
+        		$('#pmake').append( $('<option></option>').val(text).html(text) )
+        	});
+    	}else{
+    		$("#dmake").css("display", "none");
+    	} 	
+    	if(filterData.model){
+    		$.each(filterData.model, function(val, text) {
+        		$('#pmodelname').append( $('<option></option>').val(text).html(text) )
+        	});
+    	}else{
+    		$("#dmodelname").css("display", "none");
+    	}
+    	
+    }
+        
+    function applyFilter(){
+    	//alert("applyFilter called----------->");
+	   	$.ajax({
+	   		url: "/getFilteredPivot",
+	   		type: "GET",
+	   		data: { lob:$("#slob").val(),zone:$("#szone").val(),cluster:$("#scluster").val(),state:$("#sstate").val(),branchcode:$("#sbranchcode").val(),
+	   				channel:$("#schannel").val(),subchannel:$("#ssubchannel").val(),product:$("#asproduct").val(),productdesc:$("#pproductdesc").val(),
+	   				make:$("#pmake").val(),modelname:$("#pmodelname").val()},
+	   		success: function (result) {
+	   			console.log(result);
+	   			responseJSON = result;
+	   			refreshPivot(responseJSON,1);
+	   		},
+	   		error: function (error) {
+	   			console.log(error);
+	   		}
+	   	    })
+    }
+        
+    var lobArray = [],zoneArray=[],clusterArray=[],stateArray=[],branchArray=[],productArray=[],productDescArray=[],channelArray=[],subChannelArray=[],
+    makeArray=[],modelArray=[];
+    function fiterRecordFromMasterData(){
+    	 $(".overlay").show();
+    	lobArray =[],zoneArray=[],clusterArray=[],stateArray=[],branchArray=[],productArray=[],productDescArray=[],channelArray=[],subChannelArray=[],
+        makeArray=[],modelArray=[];
+    	lobArray.push($("#slob").val());
+    	zoneArray.push($("#szone").val());
+    	clusterArray.push($("#scluster").val());
+    	stateArray.push($("#sstate").val());
+    	branchArray.push($("#sbranchcode").val());
+    	productArray.push($("#asproduct").val());
+    	productDescArray.push($("#pproductdesc").val());
+    	channelArray.push($("#schannel").val());
+    	subChannelArray.push($("#ssubchannel").val());
+    	makeArray.push($("#pmake").val());
+    	modelArray.push($("#pmodelname").val());
+    	
+    	//refreshPivot(responseJSON,1);
+    	pivotBuilder(responseJSON,1)
+    	console.log($("#schannel").val());
+    }
+        
+
+   	function refreshPivot(json,flag){
+          //alert("called"+json.length);
+       	
+           // prepare sample data
+           var data = new Array();
+           
+           var lob = getData(2);
+           if(flag==0){
+          var ulob = unique(lob);
+           console.log(unique(lob));
+          populateSelect('slob',ulob );
+           }
+           
+           var zoneName = getData(10);
+           if(flag==0){
+           var uzoneName = unique(zoneName);
+           populateSelect('szone',uzoneName );
+           }
+           
+           var clusterName = getData(11);
+           if(flag==0){
+           var uclusterName = unique(clusterName);
+          populateSelect('scluster',uclusterName );
+           }
+           
+           var state = getData(12);
+           if(flag==0){
+           var ustate = unique(state);
+           populateSelect('sstate',ustate );
+           }
+           
+           var branchCode = getData(13);
+           if(flag==0){
+          var ubranchCode = unique(branchCode);
+          populateSelect('sbranchcode',ubranchCode );
+           }
+           
+           var channel = getData(3);
+           if(flag==0){
+          var uchannel = unique(channel);
+          populateSelect('schannel',uchannel );
+           }
+           
+           var subChannel = getData(4);
+           if(flag==0){
+          var usubChannel = unique(subChannel);
+          populateSelect('ssubchannel',usubChannel );
+           }
+           
+           var product = getData(0);
+           if(flag==0){
+          var uproduct = unique(product);
+          populateSelect('asproduct',uproduct );
+           }
+           
+           var productDesc = getData(1);
+           if(flag==0){
+          var uproductDesc = unique(productDesc);
+          populateSelect('pproductdesc',uproductDesc );
+           }
+           
+           var make = getData(5);
+           if(flag==0){
+          var umake = unique(make);
+          populateSelect('pmake',umake );
+           }
+           
+           var modelName = getData(6);
+           if(flag==0){
+           var umodelName = unique(modelName);
+          populateSelect('pmodelname',umodelName );
+           }
+           
+           var mtdGWP = getData(15);
+           var ytdGWP = getData(16);
+           var mtdPolicyCount = getData(17);
+           var ytdPolicyCount = getData(18);
+           var preMtdGWP = getData(19);
+           var preYtdGWP = getData(20);
+           var preMtdPolicyCount = getData(21);
+           var preYtdPolicyCount = getData(22);
+           
+           /* var firstNames = 
+           [
+               "Andrew", "Nancy", "Shelley", "Regina", "Yoshi", "Antoni", "Mayumi", "Ian", "Peter", "Lars", "Petra", "Martin", "Sven", "Elio", "Beate", "Cheryl", "Michael", "Guylene"
+           ];
+           var lastNames =
+           [
+               "Fuller", "Davolio", "Burke", "Murphy", "Nagase", "Saavedra", "Ohno", "Devling", "Wilson", "Peterson", "Winkler", "Bein", "Petersen", "Rossi", "Vileid", "Saylor", "Bjorn", "Nodier"
+           ];
+           var productNames =
+           [
+               "Black Tea", "Green Tea", "Caffe Espresso", "Doubleshot Espresso", "Caffe Latte", "White Chocolate Mocha", "Cramel Latte", "Caffe Americano", "Cappuccino", "Espresso Truffle", "Espresso con Panna", "Peppermint Mocha Twist"
+           ];
+           var priceValues =
+           [
+               "2.25", "1.5", "3.0", "3.3", "4.5", "3.6", "3.8", "2.5", "5.0", "1.75", "3.25", "4.0"
+           ]; */
+           
+           for (var i = 1; i < json.length; i++) {
+               var row = {};
+               //var productindex = Math.floor(Math.random() * productNames.length);
+               //var price = parseFloat(priceValues[productindex]);
+               //var quantity = 1 + Math.round(Math.random() * 10);
+               if(flag===0){
+               row["lob"] = lob[i];
+               row["zoneName"] = zoneName[i];
+               row["clusterName"] = clusterName[i];
+               row["state"] = state[i];
+               row["branchCode"] = branchCode[i];
+               row["channel"] = channel[i];
+               row["mtdGWP"] = mtdGWP[i];
+               row["ytdGWP"] = ytdGWP[i];
+               row["mtdPolicyCount"] = mtdPolicyCount[i];
+               row["ytdPolicyCount"] = ytdPolicyCount[i];
+               row["preMtdGWP"] = preMtdGWP[i];
+               row["preYtdGWP"] = preYtdGWP[i];
+               row["preMtdPolicyCount"] = preMtdPolicyCount[i];
+               row["preYtdPolicyCount"] = preYtdPolicyCount[i];
+               }else{
+            	   if( (lobArray.indexOf("all")>-1 || lobArray.indexOf(lob[i])>-1) && (zoneArray.indexOf("all")>-1 || zoneArray.indexOf(zoneName[i])>-1) && (clusterArray.indexOf("all")>-1 || clusterArray.indexOf(clusterName[i])>-1) && (stateArray.indexOf("all")>-1 || stateArray.indexOf(state[i])>-1)){
+            		   row["lob"] = lob[i];
+                       row["zoneName"] = zoneName[i];
+                       row["clusterName"] = clusterName[i];
+                       row["state"] = state[i];
+                       row["branchCode"] = branchCode[i];
+                       row["channel"] = channel[i];
+                       row["mtdGWP"] = mtdGWP[i];
+                       row["ytdGWP"] = ytdGWP[i];
+                       row["mtdPolicyCount"] = mtdPolicyCount[i];
+                       row["ytdPolicyCount"] = ytdPolicyCount[i];
+                       row["preMtdGWP"] = preMtdGWP[i];
+                       row["preYtdGWP"] = preYtdGWP[i];
+                       row["preMtdPolicyCount"] = preMtdPolicyCount[i];
+                       row["preYtdPolicyCount"] = preYtdPolicyCount[i];
+            	   }
+               }
+               
+               /* row["firstname"] = firstNames[Math.floor(Math.random() * firstNames.length)];
+               row["lastname"] = lastNames[Math.floor(Math.random() * lastNames.length)];
+               row["productname"] = productNames[productindex];
+               row["price"] = price;
+               row["quantity"] = quantity;
+               row["total"] = price * quantity; */
+               data[i] = row;
+           }
+           // create a data source and data adapter
+           var source =
+           {
+               localdata: data,
+               datatype: "array",
+               datafields:
+               [
+                   { name: 'lob', type: 'string' },
+                   { name: 'zoneName', type: 'string' },
+                   { name: 'clusterName', type: 'string' },
+                   { name: 'state', type: 'string' },
+                   { name: 'branchCode', type: 'string' },
+                   { name: 'channel', type: 'string' },
+                   { name: 'mtdGWP', type: 'number' },
+                   { name: 'ytdGWP', type: 'number' },
+                   { name: 'mtdPolicyCount', type: 'number' },
+                   { name: 'ytdPolicyCount', type: 'number' },
+                   { name: 'preMtdGWP', type: 'number' },
+                   { name: 'preYtdGWP', type: 'number' },
+                   { name: 'preMtdPolicyCount', type: 'number' },
+                   { name: 'preYtdPolicyCount', type: 'number' }
+               ]
+           };
+           var dataAdapter = new $.jqx.dataAdapter(source);
+           dataAdapter.dataBind();
+           // create a pivot data source from the dataAdapter
+           var pivotDataSource = new $.jqx.pivot(
+               dataAdapter,
+               {
+                   /*customAggregationFunctions: {
+                       'var': function (values) {
+                           if (values.length <= 1)
+                               return 0;
+                           // sample's mean
+                           var mean = 0;
+                           for (var i = 0; i < values.length; i++)
+                               mean += values[i];
+                           mean /= values.length;
+                           // calc squared sum
+                           var ssum = 0;
+                           for (var i = 0; i < values.length; i++)
+                               ssum += Math.pow(values[i] - mean, 2)
+                           // calc the variance
+                           var variance = ssum / values.length;
+                           return variance;
+                       }
+                   },*/
+                   pivotValuesOnRows: false,
+                   fields: [
+                        { dataField: 'lob', text: 'LOB' },
+                        { dataField: 'zoneName', text: 'Zone Name' },
+                        { dataField: 'clusterName', text: 'Cluster Name' },
+                        { dataField: 'state', text: 'State' },
+                        { dataField: 'branchCode', text: 'Branch Code' },
+                        { dataField: 'channel', text: 'Channel' },
+                        { dataField: 'mtdGWP', text: 'MTD GWP' },
+                        { dataField: 'ytdGWP', text: 'YTD GWP' },
+                        { dataField: 'mtdPolicyCount', text: 'MTD Policies' },
+                        { dataField: 'ytdPolicyCount', text: 'YTD Policies' },
+                        { dataField: 'preMtdGWP', text: 'Pre MTD GWP' },
+                        { dataField: 'preYtdGWP', text: 'Pre YTD GWP' },
+                        { dataField: 'preMtdPolicyCount', text: 'Pre MTD Policies' },
+                        { dataField: 'preYtdPolicyCount', text: 'Pre YTD Policies' }
+                   ],
+                   rows: [
+                   	{ dataField: 'lob', text: 'LOB' },
+                       { dataField: 'zoneName', text: 'Zone Name' },
+                       { dataField: 'clusterName', text: 'Cluster Name' },
+                       { dataField: 'state', text: 'State' },
+                       { dataField: 'branchCode', text: 'Branch Code' },
+                       { dataField: 'channel', text: 'Channel' }
+                   ],
+                   columns: [],
+                   filters: [
+                       
+                   ],
+                   values: [
+                       { dataField: 'mtdGWP', 'function': 'sum', text: 'MTD GWP', align: 'left', formatSettings: { prefix: '', decimalPlaces: 2, align: 'center' }, cellsClassName: 'myItemStyle', cellsClassNameSelected: 'myItemStyleSelected' },
+                       { dataField: 'ytdGWP', 'function': 'sum', text: 'YTD GWP', align: 'left', formatSettings: { prefix: '', decimalPlaces: 2, align: 'center' }, cellsClassName: 'myItemStyle', cellsClassNameSelected: 'myItemStyleSelected' },
+                       { dataField: 'mtdPolicyCount', 'function': 'sum', text: 'MTD Policies', align: 'left', formatSettings: { prefix: '', decimalPlaces: 2, align: 'center' }, cellsClassName: 'myItemStyle', cellsClassNameSelected: 'myItemStyleSelected' },
+                       { dataField: 'ytdPolicyCount', 'function': 'sum', text: 'YTD Policies', align: 'left', formatSettings: { prefix: '', decimalPlaces: 2, align: 'center' }, cellsClassName: 'myItemStyle', cellsClassNameSelected: 'myItemStyleSelected' },
+                       { dataField: 'preMtdGWP', 'function': 'sum', text: 'Pre MTD GWP', align: 'left', formatSettings: { prefix: '', decimalPlaces: 2, align: 'center' }, cellsClassName: 'myItemStyle', cellsClassNameSelected: 'myItemStyleSelected' },
+                       { dataField: 'preYtdGWP', 'function': 'sum', text: 'Pre YTD GWP', align: 'left', formatSettings: { prefix: '', decimalPlaces: 2, align: 'center' }, cellsClassName: 'myItemStyle', cellsClassNameSelected: 'myItemStyleSelected' },
+                       { dataField: 'preMtdPolicyCount', 'function': 'sum', text: 'Pre MTD Policies', align: 'left', formatSettings: { prefix: '', decimalPlaces: 2, align: 'center' }, cellsClassName: 'myItemStyle', cellsClassNameSelected: 'myItemStyleSelected' },
+                       { dataField: 'preYtdPolicyCount', 'function': 'sum', text: 'Pre YTD Policies', align: 'left', formatSettings: { prefix: '', decimalPlaces: 2, align: 'center' }, cellsClassName: 'myItemStyle', cellsClassNameSelected: 'myItemStyleSelected' }
+                   
+                       ]
+               });
+           var localization = { 'var': 'Variance' };
+           // create a pivot grid
+           $('#divPivotGrid').jqxPivotGrid(
+           {
+               localization: localization,
+               source: pivotDataSource,
+               treeStyleRows: false,
+               autoResize: false,
+               multipleSelectionEnabled: false
+           });
+          // var pivotGridInstance = $('#divPivotGrid').jqxPivotGrid('getInstance');
+           // create a pivot grid
+           /* $('#divPivotGridDesigner').jqxPivotDesigner(
+           {
+               type: 'pivotGrid',
+               target: pivotGridInstance
+           }); */
+           
+           $(".overlay").hide();
+          }
+        
+        	function getData(index){
+        	   var retArr = [];
+        	   for(i=1; i<responseJSON.length;i++){
+        	     retArr[i] = responseJSON[i][index];
+        	   }
+        	  return retArr;
+        	}
+        	
+        	
+        	/* removed refreshData() function */
+        	
+        	function search(json){
+                return Object.keys(this).every((key) => json[key] === this[key]);
+              }
+        	
+        	
+        	
+        	
+        	function pivotBuilder(json,flag){
+               	   
+                  //alert("called"+json.length);
+               	
+                   // prepare sample data
+                   var data = new Array();
+                   
+                   
+                   /* var firstNames = 
+                   [
+                       "Andrew", "Nancy", "Shelley", "Regina", "Yoshi", "Antoni", "Mayumi", "Ian", "Peter", "Lars", "Petra", "Martin", "Sven", "Elio", "Beate", "Cheryl", "Michael", "Guylene"
+                   ];
+                   var lastNames =
+                   [
+                       "Fuller", "Davolio", "Burke", "Murphy", "Nagase", "Saavedra", "Ohno", "Devling", "Wilson", "Peterson", "Winkler", "Bein", "Petersen", "Rossi", "Vileid", "Saylor", "Bjorn", "Nodier"
+                   ];
+                   var productNames =
+                   [
+                       "Black Tea", "Green Tea", "Caffe Espresso", "Doubleshot Espresso", "Caffe Latte", "White Chocolate Mocha", "Cramel Latte", "Caffe Americano", "Cappuccino", "Espresso Truffle", "Espresso con Panna", "Peppermint Mocha Twist"
+                   ];
+                   var priceValues =
+                   [
+                       "2.25", "1.5", "3.0", "3.3", "4.5", "3.6", "3.8", "2.5", "5.0", "1.75", "3.25", "4.0"
+                   ]; */
+                   
+                  /*  var row = {};
+                   row["lob"] = responseJSON.lob;
+                   row["zoneName"] = responseJSON.zone;
+                   row["clusterName"] = responseJSON.cluster;
+                   row["state"] = responseJSON.state;
+                   row["branchCode"] = responseJSON.branchcode;
+                   row["channel"] = responseJSON.channel;
+                   row["mtdGWP"] = responseJSON.mtdGWP;
+                   row["ytdGWP"] = responseJSON.ytdGWP; */
+                   
+                    if(responseJSON && responseJSON.lob){
+                    	for (var i = 1; i < responseJSON.lob.length; i++) {
+                            var row = {};
+                            if(flag===0){
+                         	   row["segment_name"] = responseJSON.lob[i];
+                               row["zone_name"] = responseJSON.zone[i];
+                               row["cluster_name"] = responseJSON.cluster[i];
+                               row["state"] = responseJSON.state[i];
+                               row["branchCode"] = responseJSON.branchcode[i];
+                               row["channel"] = responseJSON.channel[i];
+                               row["mtdGWP"] = responseJSON.mtdGWP[i];
+                               row["ytdGWP"] = responseJSON.ytdGWP[i];
+                               row["mtdPolicyCount"] = responseJSON.mtdPolicyCount[i];
+                               row["ytdPolicyCount"] = responseJSON.ytdPolicyCount[i];
+                               row["preMtdGWP"] = responseJSON.preMtdGWP[i];
+                               row["preYtdGWP"] = responseJSON.preYtdGWP[i];
+                               row["preMtdPolicyCount"] = responseJSON.preMtdPolicyCount[i];
+                               row["preYtdPolicyCount"] = responseJSON.preYtdPolicyCount[i];
+                            } else{
+                         	   if( (lobArray[0].indexOf("all")>-1 || lobArray[0].indexOf(responseJSON.lob[i])>-1) && (zoneArray[0].indexOf("all")>-1 || zoneArray[0].indexOf(responseJSON.zone[i])>-1) && (clusterArray[0].indexOf("all")>-1 || clusterArray[0].indexOf(responseJSON.cluster[i])>-1) && (stateArray[0].indexOf("all")>-1 || stateArray[0].indexOf(responseJSON.state[i])>-1)&&
+                         			   (branchArray[0].indexOf("all")>-1 || branchArray[0].indexOf(responseJSON.branchcode[i])>-1) && (productArray[0].indexOf("all")>-1 || productArray[0].indexOf(responseJSON.product[i])>-1) && (productDescArray[0].indexOf("all")>-1 || productDescArray[0].indexOf(responseJSON.productDesc[i])>-1) && (channelArray[0].indexOf("all")>-1 || channelArray[0].indexOf(responseJSON.channel[i])>-1)
+                         			   && (subChannelArray[0].indexOf("all")>-1 || subChannelArray[0].indexOf(responseJSON.subchannel[i])>-1)&& (makeArray[0].indexOf("all")>-1 || makeArray[0].indexOf(responseJSON.make[i])>-1)&& (modelArray[0].indexOf("all")>-1 || modelArray[0].indexOf(responseJSON.model[i])>-1)){
+                       		   if(responseJSON && responseJSON.lob[i]){
+     								 row["segment_name"] = responseJSON.lob[i];
+       							}
+       	                      if(responseJSON && responseJSON.zone && responseJSON.zone[i]){
+       	                    	  row["zone_name"] = responseJSON.zone[i];
+       	                      }
+       	                      if(responseJSON && responseJSON.cluster && responseJSON.cluster[i]){
+       	                    	  row["cluster_name"] = responseJSON.cluster[i];
+       	                      }
+       	                      if(responseJSON && responseJSON.state && responseJSON.state[i]){
+       	                    	  row["state"] = responseJSON.state[i];
+       	                      }
+       	                      if(responseJSON && responseJSON.branchcode && responseJSON.branchcode[i]){
+       	                    	  row["branchCode"] = responseJSON.branchcode[i];
+       	                      }
+       	                      if(responseJSON && responseJSON.channel && responseJSON.channel[i]){
+       	                    	  row["channel"] = responseJSON.channel[i];
+       	                      }
+       	                      if(i<responseJSON.mtdGWP.length){
+       	                    	row["mtdGWP"] = responseJSON.mtdGWP[i];
+     	                      }
+       	                      if(i<responseJSON.ytdGWP.length){
+       	                    	 row["ytdGWP"] = responseJSON.ytdGWP[i];
+     	                      }
+       	                   		if(i<responseJSON.mtdPolicyCount.length){
+      	                    	row["mtdPolicyCount"] = responseJSON.mtdPolicyCount[i];
+    	                      }
+      	                      if(i<responseJSON.ytdPolicyCount.length){
+      	                    	 row["ytdPolicyCount"] = responseJSON.ytdPolicyCount[i];
+    	                      }
+	      	                  if(i<responseJSON.preMtdGWP.length){
+	       	                  	row["preMtdGWP"] = responseJSON.preMtdGWP[i];
+	     	                  }
+       	                      if(i<responseJSON.preYtdGWP.length){
+       	                    	 row["preYtdGWP"] = responseJSON.preYtdGWP[i];
+     	                      }
+       	                   		if(i<responseJSON.preMtdPolicyCount.length){
+      	                    	row["preMtdPolicyCount"] = responseJSON.preMtdPolicyCount[i];
+    	                      }
+      	                      if(i<responseJSON.preYtdPolicyCount.length){
+      	                    	 row["preYtdPolicyCount"] = responseJSON.preYtdPolicyCount[i];
+    	                      }
+       	                      }
+                            } 
+                            
+                            data[i] = row;
+                         }
+                    } 
+                   // create a data source and data adapter
+                   var source =
+                   {
+                       localdata: data,
+                       datatype: "array",
+                       datafields:
+                       [
+                           { name: 'segment_name', type: 'string' },
+                           { name: 'zone_name', type: 'string' },
+                           { name: 'cluster_name', type: 'string' },
+                           { name: 'state', type: 'string' },
+                           { name: 'branchCode', type: 'string' },
+                           { name: 'channel', type: 'string' },
+                           { name: 'mtdGWP', type: 'number' },
+                           { name: 'ytdGWP', type: 'number' },
+                           { name: 'mtdPolicyCount', type: 'number' },
+                           { name: 'ytdPolicyCount', type: 'number' },
+                           { name: 'preMtdGWP', type: 'number' },
+                           { name: 'preYtdGWP', type: 'number' },
+                           { name: 'preMtdPolicyCount', type: 'number' },
+                           { name: 'preYtdPolicyCount', type: 'number' }
+                       ]
+                   };
+                   var dataAdapter = new $.jqx.dataAdapter(source);
+                   dataAdapter.dataBind();
+                   // create a pivot data source from the dataAdapter
+                   var pivotDataSource = new $.jqx.pivot(
+                       dataAdapter,
+                       {
+                           /*customAggregationFunctions: {
+                               'var': function (values) {
+                                   if (values.length <= 1)
+                                       return 0;
+                                   // sample's mean
+                                   var mean = 0;
+                                   for (var i = 0; i < values.length; i++)
+                                       mean += values[i];
+                                   mean /= values.length;
+                                   // calc squared sum
+                                   var ssum = 0;
+                                   for (var i = 0; i < values.length; i++)
+                                       ssum += Math.pow(values[i] - mean, 2)
+                                   // calc the variance
+                                   var variance = ssum / values.length;
+                                   return variance;
+                               }
+                           },*/
+                           pivotValuesOnRows: false,
+                           fields: [
+                                { dataField: 'segment_name', text: 'LOB' },
+                                { dataField: 'zone_name', text: 'Zone Name' },
+                                { dataField: 'cluster_name', text: 'Cluster Name' },
+                                { dataField: 'state', text: 'State' },
+                                { dataField: 'branchCode', text: 'Branch Code' },
+                                { dataField: 'channel', text: 'Channel' },
+                                { dataField: 'mtdGWP', text: 'MTD GWP' },
+                                { dataField: 'ytdGWP', text: 'YTD GWP' },
+                                { dataField: 'mtdPolicyCount', text: 'MTD Policies' },
+                                { dataField: 'ytdPolicyCount', text: 'YTD Policies' },
+                                { dataField: 'preMtdGWP', text: 'Pre MTD GWP' },
+                                { dataField: 'preYtdGWP', text: 'Pre YTD GWP' },
+                                { dataField: 'preMtdPolicyCount', text: 'Pre MTD Policies' },
+                                { dataField: 'preYtdPolicyCount', text: 'Pre YTD Policies' }
+                           ],
+                           rows: [
+                           	{ dataField: 'segment_name', text: 'LOB', align: 'center' },
+                               { dataField: 'zone_name', text: 'Zone Name', align: 'center' },
+                               { dataField: 'cluster_name', text: 'Cluster Name', align: 'center' },
+                               { dataField: 'state', text: 'State', align: 'center' },
+                               { dataField: 'branchCode', text: 'Branch Code', align: 'center' },
+                               { dataField: 'channel', text: 'Channel', align: 'center' }
+                           ],
+                           columns: [],
+                           filters: [
+                               
+                           ],
+                           values: [
+                               { dataField: 'mtdGWP', 'function': 'sum', text: 'MTD GWP', align: 'left', formatSettings: { prefix: '', decimalPlaces: 2, align: 'center' }, cellsClassName: 'myItemStyle', cellsClassNameSelected: 'myItemStyleSelected' },
+                               { dataField: 'ytdGWP', 'function': 'sum', text: 'YTD GWP', align: 'left', formatSettings: { prefix: '', decimalPlaces: 2, align: 'center' }, cellsClassName: 'myItemStyle', cellsClassNameSelected: 'myItemStyleSelected' },
+                               { dataField: 'mtdPolicyCount', 'function': 'sum', text: 'MTD Policies', align: 'left', formatSettings: { prefix: '', decimalPlaces: 2, align: 'center' }, cellsClassName: 'myItemStyle', cellsClassNameSelected: 'myItemStyleSelected' },
+                               { dataField: 'ytdPolicyCount', 'function': 'sum', text: 'YTD Policies', align: 'left', formatSettings: { prefix: '', decimalPlaces: 2, align: 'center' }, cellsClassName: 'myItemStyle', cellsClassNameSelected: 'myItemStyleSelected' },
+                               { dataField: 'preMtdGWP', 'function': 'sum', text: 'Pre MTD GWP', align: 'left', formatSettings: { prefix: '', decimalPlaces: 2, align: 'center' }, cellsClassName: 'myItemStyle', cellsClassNameSelected: 'myItemStyleSelected' },
+                               { dataField: 'preYtdGWP', 'function': 'sum', text: 'Pre YTD GWP', align: 'left', formatSettings: { prefix: '', decimalPlaces: 2, align: 'center' }, cellsClassName: 'myItemStyle', cellsClassNameSelected: 'myItemStyleSelected' },
+                               { dataField: 'preMtdPolicyCount', 'function': 'sum', text: 'Pre MTD Policies', align: 'left', formatSettings: { prefix: '', decimalPlaces: 2, align: 'center' }, cellsClassName: 'myItemStyle', cellsClassNameSelected: 'myItemStyleSelected' },
+                               { dataField: 'preYtdPolicyCount', 'function': 'sum', text: 'Pre YTD Policies', align: 'left', formatSettings: { prefix: '', decimalPlaces: 2, align: 'center' }, cellsClassName: 'myItemStyle', cellsClassNameSelected: 'myItemStyleSelected' }
+                           
+                           ]
+                       });
+                   var localization = { 'var': 'Variance' };
+                   // create a pivot grid
+                   $('#divPivotGrid').jqxPivotGrid(
+                   {
+                       localization: localization,
+                       source: pivotDataSource,
+                       treeStyleRows: false,
+                       autoResize: false,
+                       multipleSelectionEnabled: false
+                   });
+                   
+                   $(".overlay").hide();
+                   
+                   $('#divPivotGrid').on('pivotcellclick', function (event) {
+                	   getClickedRowKeyAndValuesInarray(event,6);
+              	});
+                  }
+        	
+        	function getClickedRowKeyAndValuesInarray(event,noOfLevels){
+        		
+        		var paramKeys = [];
+         	   var paramValues = [];
+         	   var proceedFurther= true;
+         	   var isYTDClicked = false;
+         	   for(var i=0;i<noOfLevels;i++){
+         		   if(i==0){
+         			   if((event.args.pivotColumn.text).indexOf("MTD")>-1){
+         				  paramKeys.push("month_flag");
+           			 	  paramValues.push('MAY-2019');   
+           			 //paramValues.push(moment().format('MMM-YYYY'));
+         			   }else if((event.args.pivotColumn.text).indexOf("YTD")>-1){
+         				  paramKeys.push("fin_year");
+           			 	  paramValues.push('2019-2020');
+           			 	isYTDClicked =true;
+         			   }
+         			  
+         			   paramKeys.push(event.args.pivotRow.adapterItem.boundField.dataField);
+         			   paramValues.push(event.args.pivotRow.text);
+         		   }else{
+         		   	if(proceedFurther){
+         			   switch (i) {
+         			   case 1:
+         				   if(event.args.pivotRow.parentItem!=null){
+         				   paramKeys.push(event.args.pivotRow.parentItem.adapterItem.boundField.dataField);
+             			   paramValues.push(event.args.pivotRow.parentItem.text);
+         				   }else{
+         					   proceedFurther= false;
+         				   }
+         			     break;
+         			   case 2:
+         				   if(event.args.pivotRow.parentItem.parentItem!=null){
+             				   paramKeys.push(event.args.pivotRow.parentItem.parentItem.adapterItem.boundField.dataField);
+                 			   paramValues.push(event.args.pivotRow.parentItem.parentItem.text);
+             				   }else{
+             					   proceedFurther= false;
+             				   }
+             			     break;
+         			   case 3:
+         				   if(event.args.pivotRow.parentItem.parentItem.parentItem!=null){
+             				   paramKeys.push(event.args.pivotRow.parentItem.parentItem.parentItem.adapterItem.boundField.dataField);
+                 			   paramValues.push(event.args.pivotRow.parentItem.parentItem.parentItem.text);
+             				   }else{
+             					   proceedFurther= false;
+             				   }
+             			     break;
+         			   case 4:
+         				   if(event.args.pivotRow.parentItem.parentItem.parentItem.parentItem!=null){
+             				   paramKeys.push(event.args.pivotRow.parentItem.parentItem.parentItem.parentItem.adapterItem.boundField.dataField);
+                 			   paramValues.push(event.args.pivotRow.parentItem.parentItem.parentItem.parentItem.text);
+             				   }else{
+             					   proceedFurther= false;
+             				   }
+             			     break;
+         			  case 5:
+        				   if(event.args.pivotRow.parentItem.parentItem.parentItem.parentItem.parentItem!=null){
+            				   paramKeys.push(event.args.pivotRow.parentItem.parentItem.parentItem.parentItem.parentItem.adapterItem.boundField.dataField);
+                			   paramValues.push(event.args.pivotRow.parentItem.parentItem.parentItem.parentItem.parentItem.text);
+            				   }else{
+            					   proceedFurther= false;
+            				   }
+            			     break;
+         				   
+         		   }
+         		   	}
+         	   }
+         	   }
+       	     //alert('cell click, row: ' + event.args.pivotRow.text + ' , column:' + event.args.pivotColumn.text + ' , mouse button:' + event.args.mousebutton );
+       	     alert("paramKeys-->"+paramKeys);
+       	   alert("paramValues-->"+paramValues);
+       	   if(isYTDClicked){
+       			if(paramKeys.length<4)
+       				alert("Cant show report at this level, Please drill down to more level");
+       			else 
+       				getPolicyLevelData(paramKeys,paramValues);	
+       	   }else{
+       			getPolicyLevelData(paramKeys,paramValues);
+       	   }
+       		
+        		
+        	}
+        	
+        	
+        	$('#applicationConfigModal').on('show.bs.modal', function(e) {
+        		
+        		
+        	});
+        	var globalDataIndex = 0;
+        	function getPolicyLevelData(paramKeys,paramValues){
+        		$(".overlay").show();
+        		
+        		//$("#applicationConfigModal").modal('show');
+        		
+        		$.ajax({
+ 	               type: "GET",
+ 	               contentType: "application/json",
+ 	               url: "/getPolicyLevelData",  
+ 	               /* dataType: 'json', */
+ 	               cache: false,
+ 	               timeout: 600000,
+ 	              data: { paramKeyArr: paramKeys, paramValueArr:paramValues },
+ 	               success: function (data) {
+ 	                  // console.log(data);
+ 	                  globalDataIndex = 0;
+ 	                  console.log("data-->"+data.length);
+ 	                   //tablePolicyDetails.clear().draw();
+ 	                  
+ 	                	  JSONToCSVConvertor(data,"GWP_REPORT",true);   
+ 	                   
+ 	                  
+ 	                  /* 
+ 	                  var JSONObj = data;
+ 	                  var totalcount = data.length;
+ 	                 var loopCount = parseInt(totalcount)/10000;
+ 	                  loopCount = Math.ceil(loopCount);
+ 	                 console.log("loopCount-->"+loopCount);
+ 	                 var startIndex = 0;
+ 	                 var endIndex = 10000;
+ 	                 for(i=0;i<loopCount;i++){
+ 	                 	setTimeout(function(){
+ 	                 		var currentStartIndex = startIndex;
+ 	                 		var currentEndIndex = endIndex;
+ 	                 		console.log("currentStartIndex-->"+currentStartIndex+"----currentEndIndex-->"+currentEndIndex);
+ 	                 		for(j=currentStartIndex;j<currentEndIndex;j++){
+ 	                 			tablePolicyDetails.row.add([JSONObj[j].policyNo,
+ 	                           	          			               		  JSONObj[j].endtno,
+ 	                           	          			                      JSONObj[j].productCode,
+ 	                           	          			                	  JSONObj[j].monthFlag,
+ 	                           	          			          			  JSONObj[j].finYear,
+ 	                           	          			    				  JSONObj[j].policyCount,
+ 	                           	          								  JSONObj[j].gwpOurShare
+ 	                           	          			                      ]).draw();
+ 	                 		}
+ 	                 	
+ 	                 		startIndex=endIndex;
+ 	 	                 	endIndex=endIndex+10000;
+ 	 	                 	if(endIndex>totalcount){
+ 	 	                 		endIndex=totalcount;
+ 	 	                 	}
+ 	                 	},1);
+ 	                 	
+ 	                 }
+ 	                 */
+ 	                 
+ 	                 /*  intervalObj = setInterval( function () {
+ 	                   iterateObjBasedOnIndex(tablePolicyDetails,data,data.length);
+ 	                 }, 1000 ); */
+ 	                  /* $.each(data, function(ind, obj){
+ 	                	  console.log(ind);
+ 	                   tablePolicyDetails.row.add([
+		            			                      obj.policyNo,
+		            			                      obj.endtno,
+		            			                      obj.productCode,
+		            			                      obj.monthFlag,
+		            			                      obj.finYear,
+		            			                      obj.policyCount,
+		            			                      obj.gwpOurShare
+		            			                      ]).draw(); 
+ 	                  }); */
+ 	               },
+ 	               error: function (e) {
+ 	               	alert(e);
+ 	               }
+ 	           });
+        		
+        	}
+        	var intervalObj = "";
+        	function iterateObjBasedOnIndex(tablePolicyDetails,obj,maxLength){
+        		var initialIndex = globalDataIndex;
+        		var endIndex = parseInt(globalDataIndex)+parseInt(100);
+        		console.log("endIndex-->"+endIndex);
+        		for(var i =initialIndex;i<endIndex;i++){
+        			if(parseInt(initialIndex)>=parseInt(maxLength)){
+        				alert("loadedFully");
+        				clearTimeout(intervalObj);
+        				break;
+        			}else{
+        				if(obj[i].policyNo!=undefined){
+        					tablePolicyDetails.row.add([
+          	          			                      obj[i].policyNo,
+          	          			                      obj[i].endtno,
+          	          			                      obj[i].productCode,
+          	          			                      obj[i].monthFlag,
+          	          			                      obj[i].finYear,
+          	          			                      obj[i].policyCount,
+          	          			                      obj[i].gwpOurShare
+          	          			                      ]).draw();
+        				}
+        				
+        			}
+        		
+        		}
+        		globalDataIndex = endIndex;
+        	}
+        	
+        	function JSONToCSVConvertor(JSONData, ReportTitle, ShowLabel) {
+        	    //If JSONData is not an object then JSON.parse will parse the JSON string in an Object
+        	    var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
+        	    
+        	    var CSV = 'sep=,' + '\r\n\n';
+
+        	    //This condition will generate the Label/Header
+        	    if (ShowLabel) {
+        	        var row = "";
+        	        
+        	        //This loop will extract the label from 1st index of on array
+        	        for (var index in arrData[0]) {
+        	            
+        	            //Now convert each value to string and comma-seprated
+        	            row += index + ',';
+        	        }
+
+        	        row = row.slice(0, -1);
+        	        
+        	        //append Label row with line break
+        	        CSV += row + '\r\n';
+        	    }
+        	    
+        	    //1st loop is to extract each row
+        	    for (var i = 0; i < arrData.length; i++) {
+        	        var row = "";
+        	        
+        	        //2nd loop will extract each column and convert it in string comma-seprated
+        	        for (var index in arrData[i]) {
+        	            row += '"' + arrData[i][index] + '",';
+        	        }
+
+        	        row.slice(0, row.length - 1);
+        	        
+        	        //add a line break after each row
+        	        CSV += row + '\r\n';
+        	    }
+
+        	    if (CSV == '') {        
+        	        alert("Invalid data");
+        	        return;
+        	    }   
+        	    
+        	    //Generate a file name
+        	    var fileName = "PolicyReport_";
+        	    //this will remove the blank-spaces from the title and replace it with an underscore
+        	    fileName += ReportTitle.replace(/ /g,"_");   
+        	    
+        	    //Initialize file format you want csv or xls
+        	    var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
+        	    
+        	    // Now the little tricky part.
+        	    // you can use either>> window.open(uri);
+        	    // but this will not work in some browsers
+        	    // or you will not get the correct file extension    
+        	    
+        	    //this trick will generate a temp <a /> tag
+        	    var link = document.createElement("a");    
+        	    link.href = uri;
+        	    
+        	    //set the visibility hidden so it will not effect on your web-layout
+        	    link.style = "visibility:hidden";
+        	    link.download = fileName + ".csv";
+        	    
+        	    //this part will append the anchor tag and remove it after automatic click
+        	    document.body.appendChild(link);
+        	    link.click();
+        	    document.body.removeChild(link);
+        	    
+        	    $(".overlay").hide();
+        	}
+        	
+        	function pivotBuilderFromListObj(json,flag){
+                   var data = responseJSON;
+                   // create a data source and data adapter
+                   var source =
+                   {
+                       localdata: data,
+                       datatype: "array",
+                       datafields:
+                       [
+                           { name: 'lob', type: 'string' },
+                           { name: 'zoneName', type: 'string' },
+                           { name: 'clusterName', type: 'string' },
+                           { name: 'state', type: 'string' },
+                           { name: 'branchCode', type: 'string' },
+                           { name: 'channel', type: 'string' },
+                           { name: 'mtdGWP', type: 'number' },
+                           { name: 'ytdGWP', type: 'number' }
+                       ]
+                   };
+                   var dataAdapter = new $.jqx.dataAdapter(source);
+                   dataAdapter.dataBind();
+                   // create a pivot data source from the dataAdapter
+                   var pivotDataSource = new $.jqx.pivot(
+                       dataAdapter,
+                       {
+                           /*customAggregationFunctions: {
+                               'var': function (values) {
+                                   if (values.length <= 1)
+                                       return 0;
+                                   // sample's mean
+                                   var mean = 0;
+                                   for (var i = 0; i < values.length; i++)
+                                       mean += values[i];
+                                   mean /= values.length;
+                                   // calc squared sum
+                                   var ssum = 0;
+                                   for (var i = 0; i < values.length; i++)
+                                       ssum += Math.pow(values[i] - mean, 2)
+                                   // calc the variance
+                                   var variance = ssum / values.length;
+                                   return variance;
+                               }
+                           },*/
+                           pivotValuesOnRows: true,
+                           fields: [
+                                { dataField: 'lob', text: 'LOB' },
+                                { dataField: 'zoneName', text: 'Zone Name' },
+                                { dataField: 'clusterName', text: 'Cluster Name' },
+                                { dataField: 'state', text: 'State' },
+                                { dataField: 'branchCode', text: 'Branch Code' },
+                                { dataField: 'channel', text: 'Channel' },
+                                { dataField: 'mtdGWP', text: 'MTD GWP' },
+                                { dataField: 'ytdGWP', text: 'YTD GWP' }
+                           ],
+                           rows: [
+                           	{ dataField: 'lob', text: 'LOB' },
+                               { dataField: 'zoneName', text: 'Zone Name' },
+                               { dataField: 'clusterName', text: 'Cluster Name' },
+                               { dataField: 'state', text: 'State' },
+                               { dataField: 'branchCode', text: 'Branch Code' },
+                               { dataField: 'channel', text: 'Channel' }
+                           ],
+                           columns: [],
+                           filters: [
+                               
+                           ],
+                           values: [
+                               { dataField: 'mtdGWP', 'function': 'sum', text: 'MTD GWP', align: 'left', formatSettings: { prefix: '', decimalPlaces: 2, align: 'center' }, cellsClassName: 'myItemStyle', cellsClassNameSelected: 'myItemStyleSelected' },
+                               { dataField: 'ytdGWP', 'function': 'sum', text: 'YTD GWP', align: 'left', formatSettings: { prefix: '', decimalPlaces: 2, align: 'center' }, cellsClassName: 'myItemStyle', cellsClassNameSelected: 'myItemStyleSelected' }
+                           ]
+                       });
+                   var localization = { 'var': 'Variance' };
+                   // create a pivot grid
+                   $('#divPivotGrid').jqxPivotGrid(
+                   {
+                       localization: localization,
+                       source: pivotDataSource,
+                       treeStyleRows: false,
+                       autoResize: false,
+                       multipleSelectionEnabled: false,
+                       itemsRenderer: function (pivotItem) {
+                    	   var backgroundColor = pivotItem.isColumn ? 'rgba(187, 232, 227, 255)' : 'rgba(203, 254, 187, 255)';
+                    	      return "<div style='background:#de2121' width: calc(100% - 8px); height: calc(100% - 8px); padding: 4px;'>"
+                    	         + pivotItem.text
+                    	         + "</div>";
+                    	   }
+                   });
+                   $(".overlay").hide();
+                   
+                  /*  $('#divPivotGrid').on('pivotcellclick', function (event) {
+                	     alert('cell click, row: ' + event.args.pivotRow.text + ' , column:' + event.args.pivotColumn.text + ' , mouse button:' + event.args.mousebutton );
+                	}); */
+                  }
+
+        	
+    </script>
+</head>
+<div class="overlay">
+	<div class="loader" id="loader"></div>
+</div>
+<body class="hold-transition layout-top-nav">
+
+	<div class="wrapper">
+		<nav
+			class="main-header navbar navbar-expand-md navbar-light navbar-white"
+			style="background: rgb(2, 0, 36); background-color: #e0e7ed; /* background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(113, 192, 219, 1) 32%, rgba(0, 212, 255, 0.23571426861760325) 100%); */">
+			<div class="container">
+				<a href="/admin/home" class="navbar-brand"> <img
+					src="https://www.royalsundaram.in/o/RS_Landing/images/Home_page_Logo.png" class="img-responsive center-block"
+					width="160" height="60" alt="Logo" /> <!-- <img src="../../dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8"> -->
+					<span class="brand-text font-weight-light">RSGI | RMS</span>
+				</a>
+
+				<button class="navbar-toggler order-1" type="button"
+					data-toggle="collapse" data-target="#navbarCollapse"
+					aria-controls="navbarCollapse" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div th:if="${isAdmin}" class="collapse navbar-collapse order-3" id="navbarCollapse">
+					<!-- Left navbar links -->
+					<!-- Left navbar links -->
+					<ul class="navbar-nav">
+						<li class="nav-item text-center"><a href="/admin/home"
+							class="nav-link"><i class="fas fa-home"></i></a></li>
+						<li class="nav-item dropdown"><a id="dropdownSubMenu1"
+							href="#" data-toggle="dropdown" aria-haspopup="true"
+							aria-expanded="false"
+							class="nav-link dropdown-toggle text-center">Admin</a>
+							<ul aria-labelledby="dropdownSubMenu1"
+								class="dropdown-menu border-0 shadow">
+								<!-- <li><a href="#" class="dropdown-item">List User </a></li>
+								<li><a href="/admin/userMaster" class="dropdown-item">Add
+										User</a></li> 
+								<li class="dropdown-divider"></li>-->
+								<!-- Level two dropdown-->
+								<li class="dropdown-submenu dropdown-hover"><a
+									id="dropdownSubMenu2" href="#" role="button"
+									data-toggle="dropdown" aria-haspopup="true"
+									aria-expanded="false" class="dropdown-item dropdown-toggle">DashBoard</a>
+									<ul aria-labelledby="dropdownSubMenu2"
+										class="dropdown-menu border-0 shadow">
+										<!-- <li><a href="/admin/dashboardMaster"
+											class="dropdown-item">DashBoard Master</a></li> -->
+										<li><a href="/admin/userDashboardMapping"
+											class="dropdown-item">User DashBoard Mapping</a></li>
+
+										<li class="dropdown-submenu dropdown-hover"><a
+									id="dropdownSubMenu2" href="#" role="button"
+									data-toggle="dropdown" aria-haspopup="true"
+									aria-expanded="false" class="dropdown-item dropdown-toggle">Config</a>
+									<ul aria-labelledby="dropdownSubMenu2"
+										class="dropdown-menu border-0 shadow">
+										<li><a href="/admin/cubeJobStatus"
+											class="dropdown-item">Cube Job status</a></li>
+										<li><a href="/admin/SchedulerInfoDetails"
+											class="dropdown-item">Scheduler Info</a></li>
+										<li><a href="/admin/cubeSchedulerConfig"
+											class="dropdown-item">Cube Scheduler config</a></li>
+									</ul></li>
+									</ul></li>
+								<!-- End Level two -->
+							</ul></li>
+
+
+						<li class="nav-item text-center"><a href="/admin/sqoopConfig" class="nav-link">Sqoop Configuration</a>
+						</li>
+						<li class="nav-item text-center"><a href="/admin/userMatrix"
+							class="nav-link">User Matrix</a></li>
+						<li class="nav-item text-center"><a href="/admin/runsqoopcmd" class="nav-link">Run Sqoop Job</a></li>
+
+					</ul>
+
+					
+				</div>
+				<div class="collapse navbar-collapse order-3" id="navbarCollapse" th:unless="${isAdmin}">
+					<!-- Left navbar links -->
+					<ul class="navbar-nav">
+						<li class="nav-item text-center"><a href="/user/home"
+							class="nav-link"><i class="fas fa-home">Home</i></a></li>						
+					</ul>
+
+					
+				</div>
+
+				<!-- Right navbar links -->
+				<ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+					<!-- Messages Dropdown Menu -->
+					<!-- <li class="nav-item dropdown"> -->
+					<!--  </li> -->
+					<!-- Notifications Dropdown Menu -->
+					<li class="nav-item dropdown"></li>
+					<!-- <li class="nav-item">
+          <form th:action="@{/logout}" method="get">
+		        <button style="float:right" class="btn btn-block btn-danger btn-sm" name="registration" type="submit">Logout</button>
+		  </form>
+        </li> -->
+				</ul>
+			</div>
+			<div>
+				<form th:action="@{/logout}" method="get">
+					<button style="float: none;"
+						class="btn btn-block btn-danger btn-sm" name="registration"
+						type="submit">Logout</button>
+				</form>
+			</div>
+		</nav>
+		<!-- /.navbar -->
+
+
+
+		<h3 align="center">GWP Report</h3>
+		<br>
+
+		<table align="center">
+			<tr>
+
+				<td>
+					<div id="divPivotGridDesigner"
+						style="height: 625px; width: 250px; border-right: 3px solid #707677">
+						<h4>
+							<label>GWP Filters</label>
+						</h4>
+						<div>
+							<button class="selectSize" onclick="fiterRecordFromMasterData()">Apply
+								Filter</button>
+						</div>
+						<br>
+						<div id="dlob" style="margin-bottom: 1em;">
+							<select id="slob" name="select-lob"
+								class="selectSize btn btn-secondary dropdown-toggle">
+								<option value="all">Select LOB</option>
+								<!-- <option value="MOTOR">MOTOR</option>
+			            	<option value="A & H">A&H</option>
+			            	<option value="CI">CI</option> -->
+							</select>
+						</div>
+						<div id="dzone" style="margin-bottom: 1em;">
+							<select id="szone" name="select-zone"
+								class="selectSize btn btn-secondary dropdown-toggle">
+								<option value="all">Select ZONE</option>
+								<!-- <option value="South Zone">South Zone</option> -->
+							</select>
+						</div>
+						<div id="dcluster" style="margin-bottom: 1em;">
+							<select id="scluster" name="select-cluster"
+								class="selectSize btn btn-secondary dropdown-toggle">
+								<option value="all">Select CLUSTER</option>
+							</select>
+						</div>
+						<div id="dstate" style="margin-bottom: 1em;">
+							<select id="sstate"
+								class="selectSize btn btn-secondary dropdown-toggle">
+								<option value="all">Select STATE</option>
+								<!-- <option value="Tamil Nadu">Tamil Nadu</option> -->
+							</select>
+						</div>
+						<div id="dbranchcode" style="margin-bottom: 1em;">
+							<select id="sbranchcode"
+								class="selectSize btn btn-secondary dropdown-toggle">
+								<option value="all">Select BRANCHCODE</option>
+								<!-- <option value="X1">X1</option> -->
+							</select>
+						</div>
+						<div id="dchannel" style="margin-bottom: 1em;">
+							<select id="schannel"
+								class="selectSize btn btn-secondary dropdown-toggle">
+								<option value="all">Select CHANNEL</option>
+							</select>
+						</div>
+						<div id="dsubchannel" style="margin-bottom: 1em;">
+							<select id="ssubchannel"
+								class="selectSize btn btn-secondary dropdown-toggle">
+								<option value="all">Select SUBCHANNEL</option>
+							</select>
+						</div>
+						<div id="dproduct" style="margin-bottom: 1em;">
+							<select id="asproduct"
+								class="selectSize btn btn-secondary dropdown-toggle">
+								<option value="all">Select PRODUCT</option>
+							</select>
+						</div>
+						<div id="dproductdesc" style="margin-bottom: 1em;">
+							<select id="pproductdesc"
+								class="selectSize btn btn-secondary dropdown-toggle">
+								<option value="all">Select PRODUCTDESC</option>
+							</select>
+						</div>
+						<div id="dmake" style="margin-bottom: 1em;">
+							<select id="pmake"
+								class="selectSize btn btn-secondary dropdown-toggle">
+								<option value="all">Select MAKE</option>
+							</select>
+						</div>
+						<div id="dmodelname" style="margin-bottom: 1em;">
+							<select id="pmodelname"
+								class="selectSize btn btn-secondary dropdown-toggle">
+								<option value="all">Select MODELNAME</option>
+							</select>
+						</div>
+					</div>
+				</td>
+				<td>
+					<div id="divPivotGrid"
+						style="height: 500px; width: 900px; margin-left: 50px"></div> <!-- <div id="divPivotGrid" style="height: 600px; width: 750px; overflow: scroll;"> </div> -->
+				</td>
+			</tr>
+		</table>
+
+	</div>
+
+	<!--/.col-->
+	<div class="modal fade" id="applicationConfigModal" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-info" role="document"
+			style="max-width: 80%">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Policy level details</h4>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="card-body">
+						<table id="tablePolicyDetails"
+							class="table table-responsive-sm table-bordered table-striped table-sm">
+							<thead>
+								<tr>
+									<th class="text-center">Policy</th>
+									<th class="text-center">Endtno</th>
+									<th class="text-center">Product</th>
+									<th class="text-center">Month</th>
+									<th class="text-center">finYear</th>
+									<th class="text-center">Policy Count</th>
+									<th class="text-center">GWP</th>
+								</tr>
+							</thead>
+						</table>
+						<script>
+						var tablePolicyDetails = $('#tablePolicyDetails').DataTable( {
+					   		/*  "pageLength":100, */
+					   	     "processing": true,
+					   	     "deferRender": true,
+					   	 /*  "paging":   false,
+					        "ordering": false,
+					        "info":     false, */
+					        "deferLoading": 5000,
+					        "scrollY":        "200px"
+					   		} );
+						</script>
+						<!-- <table class="table table-bordered table-striped"
+										id="ReportListDT">
+										<thead>
+											<tr>
+												<th></th>
+												<th class="text-center">Policy</th>
+												<th class="text-center">Endtno</th>
+												<th class="text-center">Product</th>
+												<th class="text-center">Month</th>
+												<th class="text-center">finYear</th>
+												<th class="text-center">Policy Count</th>
+												<th class="text-center">GWP</th>												
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="item : ${ReportResponseList}">
+												<td></td>
+												<td class="text-center" th:text="${item.policyNo}"></td>
+												<td class="text-center" th:text="${item.endtno}"></td>
+												<td class="text-center" th:text="${item.productCode}"></td>
+												<td class="text-center" th:text="${item.monthFlag}"></td>
+												<td class="text-center"  th:text="${item.finYear}"></td>
+												<td class="text-center" th:text="${item.policyCount}"></td>
+												<td class="text-center" th:text="${item.gwpOurShare}"></td>
+											</tr>
+										</tbody>
+									</table> -->
+
+					</div>
+				</div>
+				<div class="modal-footer">
+					<!-- button type="button" class="btn btn-success"
+									id="buttonApplicationConfigUpdate">Update</button> -->
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">Close</button>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+
+
+	<!-- jQuery -->
+	<!-- <script src="../../plugins/jquery/jquery.min.js"></script> -->
+	<!-- Bootstrap 4 -->
+	<!-- <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script> -->
+	<!-- AdminLTE App -->
+
+</body>
+</html>

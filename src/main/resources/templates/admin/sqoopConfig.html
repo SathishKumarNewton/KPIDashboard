@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="https://thymeleaf.org">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RSGI | Report Management System</title>
+
+<!-- Google Font: Source Sans Pro -->
+<!-- <link rel="stylesheet"
+	href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> -->
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	href="../../plugins/fontawesome-free/css/all.min.css">
+<!-- Theme style -->
+<link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+<!-- DataTables -->
+<link rel="stylesheet"
+	href="../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet"
+	href="../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" type="text/css" href="/css/dashboard.css">
+<!-- DataTable select -->
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css">
+<!-- DataTable Buttons -->
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css">
+<!-- Toastr -->
+<link rel="stylesheet" href="../../plugins/toastr/toastr.min.css">
+<!-- Selectize -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" />
+</head>
+<body class="hold-transition layout-top-nav">
+	<div class="wrapper">
+
+		<!-- Navbar -->
+		<!-- navbar-primary navbar-dark | navbar-light navbar-white-->
+		<nav
+			class="main-header navbar navbar-expand-md navbar-light navbar-white"
+			style="background: rgb(2, 0, 36); background-color: #e0e7ed; /* background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(113, 192, 219, 1) 32%, rgba(0, 212, 255, 0.23571426861760325) 100%); */">
+			<div class="container">
+				<a href="/admin/home" class="navbar-brand"> <img
+					src="https://www.royalsundaram.in/o/RS_Landing/images/Home_page_Logo.png" class="img-responsive center-block"
+					width="160" height="60" alt="Logo" /> <!-- <img src="../../dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8"> -->
+					<span class="brand-text font-weight-light">RSGI | RMS</span>
+				</a>
+
+				<button class="navbar-toggler order-1" type="button"
+					data-toggle="collapse" data-target="#navbarCollapse"
+					aria-controls="navbarCollapse" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse order-3" id="navbarCollapse">
+					<!-- Left navbar links -->
+					<!-- Left navbar links -->
+					<ul class="navbar-nav">
+						<li class="nav-item text-center"><a href="/admin/home"
+							class="nav-link"><i class="fas fa-home"></i></a></li>
+						<li class="nav-item dropdown"><a id="dropdownSubMenu1"
+							href="#" data-toggle="dropdown" aria-haspopup="true"
+							aria-expanded="false"
+							class="nav-link dropdown-toggle text-center">Admin</a>
+							<ul aria-labelledby="dropdownSubMenu1"
+								class="dropdown-menu border-0 shadow">
+								<!-- <li><a href="#" class="dropdown-item">List User </a></li>
+								<li><a href="/admin/userMaster" class="dropdown-item">Add
+										User</a></li> 
+								<li class="dropdown-divider"></li>-->
+								<!-- Level two dropdown-->
+								<li class="dropdown-submenu dropdown-hover"><a
+									id="dropdownSubMenu2" href="#" role="button"
+									data-toggle="dropdown" aria-haspopup="true"
+									aria-expanded="false" class="dropdown-item dropdown-toggle">DashBoard</a>
+									<ul aria-labelledby="dropdownSubMenu2"
+										class="dropdown-menu border-0 shadow">
+										<!-- <li><a href="/admin/dashboardMaster"
+											class="dropdown-item">DashBoard Master</a></li> -->
+										<li><a href="/admin/userDashboardMapping"
+											class="dropdown-item">User DashBoard Mapping</a></li>
+
+										<li class="dropdown-submenu dropdown-hover"><a
+									id="dropdownSubMenu2" href="#" role="button"
+									data-toggle="dropdown" aria-haspopup="true"
+									aria-expanded="false" class="dropdown-item dropdown-toggle">Config</a>
+									<ul aria-labelledby="dropdownSubMenu2"
+										class="dropdown-menu border-0 shadow">
+										<li><a href="/admin/cubeJobStatus"
+											class="dropdown-item">Cube Job status</a></li>
+										<li><a href="/admin/SchedulerInfoDetails"
+											class="dropdown-item">Scheduler Info</a></li>
+										<li><a href="/admin/cubeSchedulerConfig"
+											class="dropdown-item">Cube Scheduler config</a></li>
+									</ul></li>
+									</ul></li>
+								<!-- End Level two -->
+							</ul></li>
+
+
+						<li class="nav-item text-center"><a href="/admin/sqoopConfig" class="nav-link">Sqoop Configuration</a>
+						</li>
+						<li class="nav-item text-center"><a href="/admin/userMatrix"
+							class="nav-link">User Matrix</a></li>
+						<li class="nav-item text-center"><a href="/admin/runsqoopcmd" class="nav-link">Run Sqoop Job</a></li>
+
+					</ul>
+
+					<!-- SEARCH FORM -->
+					<!-- <form class="form-inline ml-0 ml-md-3">
+          <div class="input-group input-group-sm">
+            <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+            <div class="input-group-append">
+              <button class="btn btn-navbar" type="submit">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+        </form> -->
+				</div>
+
+				<!-- Right navbar links -->
+				<ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+					<!-- Messages Dropdown Menu -->
+					<!-- <li class="nav-item dropdown"> -->
+					<!--  </li> -->
+					<!-- Notifications Dropdown Menu -->
+					<li class="nav-item dropdown"></li>
+					<!-- <li class="nav-item">
+          <form th:action="@{/logout}" method="get">
+		        <button style="float:right" class="btn btn-block btn-danger btn-sm" name="registration" type="submit">Logout</button>
+		  </form>
+        </li> -->
+				</ul>
+			</div>
+			<div>
+				<form th:action="@{/logout}" method="get">
+					<button style="float: none;"
+						class="btn btn-block btn-danger btn-sm" name="registration"
+						type="submit">Logout</button>
+				</form>
+			</div>
+		</nav>
+		<!-- /.navbar -->
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container"></div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+
+			<!-- Main content -->
+			<div class="content">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-12">
+							<form action="/admin/saveSqoopConfig" method="post" th:object="${sqoopConfig}">
+								<div class="card card-info full-width">
+									<div class="card-header">
+										<h5 class="card-title m-0">Sqoop Configuration</h5>
+									</div>
+									<div class="card-body">
+										<div class="form-group row">
+											<label for="user" class="col-sm-3 col-form-label">Source
+												Schema URL</label>
+											<div class="col-sm-9">
+												<input class="form-control" type="text"
+													name="sourceSchemaUrl"
+													placeholder="Source Schema URL..." required="required">
+											</div>
+										</div>
+										<div class="form-group row">
+											<label for="user" class="col-sm-3 col-form-label">Source
+												Schema UserName</label>
+											<div class="col-sm-9">
+												<input class="form-control" type="text"
+												name="sourceSchemaUserName"
+													placeholder="Source Schema UserName..." required="required">
+											</div>
+										</div>
+										<div class="form-group row">
+											<label for="user" class="col-sm-3 col-form-label">Source
+												Schema Password</label>
+											<div class="col-sm-9">
+												<input class="form-control" type="password"
+												name="sourceSchemaPassword"
+													placeholder="Source Schema Password..." required="required">
+											</div>
+										</div>
+										<div class="form-group row">
+											<label for="user" class="col-sm-3 col-form-label">Destination
+												Schema Name</label>
+											<div class="col-sm-9">
+												<input class="form-control" type="text"
+												name="destinationSchemaName"
+													placeholder="Destination Schema Name..."
+													required="required">
+											</div>
+										</div>
+										<div class="form-group row">
+											<label for="user" class="col-sm-5 col-form-label">Source
+												Table Name</label> <label for="user" class="col-sm-5 col-form-label">Destination
+												Table Name</label>
+										</div>
+										<div class="form-group row" id="d1">
+											<div class="form-group row col-sm-12">
+												<div class="col-sm-5">
+													<input class="form-control" type="text"
+														name="tableName[0].sourceTableName"
+														placeholder="Source Table Name..." required="required">
+												</div>
+												<div class="col-sm-5">
+													<input class="form-control" type="text"
+													name="tableName[0].destinationTableName"
+														placeholder="Destination Table Name..."
+														required="required">
+												</div>
+												<div class="col-sm-2">
+													<button type="button" onclick="addRow()"
+														class="btn btn-outline btn-sm">
+														<i class="fas fa-plus-circle"></i>
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="card-footer">
+										<button type="submit" class="btn btn-info">Add</button>
+										<button type="reset" class="btn btn-default"
+											style="float: right;">Cancel</button>
+									</div>
+								</div>
+							</form>
+							<div class="card card-info full-width">
+									<div class="card-header">
+										<h5 class="card-title m-0">Sqoop Configuration List</h5>
+									</div>
+									<div class="card-body">									
+										<div class="form-group row" id="editDelDiv">
+											<div class="col-sm-1" id="editButtonDiv">
+												<button type="button" class="btn btn-info" data-toggle="modal"
+													id="sqoopConfigEditButton" data-target="#editUserModal">Edit</button>
+											</div>
+											<div class="col-sm-1">
+												<button type="button" class="btn btn-danger" id="sqoopConfigDeleteButton"
+												data-toggle="modal" data-target="#deleteConfirmModal">Delete</button>
+											</div>
+											<div class="col-sm-10">												
+											</div>
+										</div>
+										<div id="listDiv">
+											<div class="form-group row">
+												<label for="user" class="col-sm-3 col-form-label">Source
+													UserName</label>
+												<div class="col-sm-9">
+													<select class="form-control select2 full-width required" id="userNames"
+														name="userNames" required="required">
+														<option value="">Select UserName...</option>
+														<option th:each="userName : ${userNames}"
+															th:value="${userName}"
+															th:text="${userName}"></option>
+													</select>
+												</div>											
+											</div>
+										</div>
+										<div class="form-group row" id="urlDiv">
+											<label for="user" class="col-sm-3 col-form-label">Source
+												Schema URL</label>
+											<div class="col-sm-9">
+												<input class="form-control" type="text" id="listUrl"
+													name="sourceSchemaUrl" readonly="readonly"
+													placeholder="Source Schema URL..." required="required">
+											</div>
+										</div>
+										<div class="form-group row" id="passwordDiv">
+											<label for="user" class="col-sm-3 col-form-label">Source
+												Schema Password</label>
+											<div class="col-sm-9">
+												<input class="form-control" type="password" id="listPassword"
+												name="sourceSchemaPassword" readonly="readonly"
+													placeholder="Source Schema Password..." required="required">
+											</div>
+										</div>
+										<div class="form-group row" id="destinationSchemaDiv">
+											<label for="user" class="col-sm-3 col-form-label">Destination
+												Schema Name</label>
+											<div class="col-sm-9">
+												<input class="form-control" type="text" id="listDestSchema"
+												name="destinationSchemaName" readonly="readonly"
+													placeholder="Destination Schema Name..."
+													required="required">
+											</div>
+										</div>
+										<div class="form-group row" id="statusDiv">
+											<label for="user" class="col-sm-3 col-form-label">Status</label>
+											<div class="col-sm-9">
+												<select name="isActive" class="form-control" disabled="disabled" id="listStatus">
+													<option value="true">Active</option>
+													<option value="false">InActive</option>
+												</select>
+											</div>
+										</div>
+										<div class="form-group row" id="tableNameDiv">
+											<label for="user" class="col-sm-5 col-form-label">Source
+												Table Name</label> <label for="user" class="col-sm-5 col-form-label">Destination
+												Table Name</label>
+										</div>							
+									</div>
+								</div>
+								
+								<!-- Edit sqoop configuration -->
+								<div id="editSqoopConfigModal" class="modal fade" role="dialog"
+									data-backdrop="static" data-keyboard="false">
+								<div class="modal-dialog modal-lg">	
+									<!-- Modal content-->
+									<form action="/admin/editSqoopConfig" method="post" id="editSqoopConfigForm"
+										autocomplete="off">
+										<div class="modal-content">
+											<div class="modal-header bg-info">
+												<h4 class="modal-title">Edit Sqoop Configuration</h4>
+												<button type="button" class="close btn-danger"
+													data-dismiss="modal">&times;</button>
+											</div>
+											<div class="modal-body" id="editSqoopConfigBody">
+											<div class="form-group row" id="editUserName">
+												<label for="user" class="col-sm-3 col-form-label">UserName</label>
+												<div class="col-sm-9">
+													<input class="form-control" type="text" id="editListUsername"
+														name="sourceSchemaUserName" readonly="readonly"
+														placeholder="Source Schema Name..." required="required">
+												</div>
+											</div>
+											<div class="form-group row" id="editUrlDiv">
+												<label for="user" class="col-sm-3 col-form-label">Source
+													Schema URL</label>
+												<div class="col-sm-9">
+													<input class="form-control" type="text" id="editListUrl"
+														name="sourceSchemaUrl" 
+														placeholder="Source Schema URL..." required="required">
+												</div>
+											</div>
+											<div class="form-group row" id="editPasswordDiv">
+												<label for="user" class="col-sm-3 col-form-label">Source
+													Schema Password</label>
+												<div class="col-sm-9">
+													<input class="form-control" type="password" id="editListPassword"
+													name="sourceSchemaPassword"
+														placeholder="Source Schema Password..." required="required">
+												</div>
+											</div>
+											<div class="form-group row" id="editDestinationSchemaDiv">
+												<label for="user" class="col-sm-3 col-form-label">Destination
+													Schema Name</label>
+												<div class="col-sm-9">
+													<input class="form-control" type="text" id="editListDestSchema"
+													name="destinationSchemaName"
+														placeholder="Destination Schema Name..."
+														required="required">
+												</div>
+											</div>
+											<div class="form-group row" id="editStatusDiv">
+												<label for="user" class="col-sm-3 col-form-label">Status</label>
+												<div class="col-sm-9">
+													<select name="isActive" class="form-control" id="editStatus">
+													<option value="true">Active</option>
+													<option value="false">InActive</option>
+												</select>
+												</div>
+											</div>
+											<div class="form-group row" id="editTableNameDiv">
+												<label for="user" class="col-sm-5 col-form-label">Source
+													Table Name</label> <label for="user" class="col-sm-5 col-form-label">Destination
+													Table Name</label>
+											</div>											
+											</div>
+											<div class="modal-footer">
+												<button type="submit" class="btn btn-success">Update</button>
+												<button type="button" class="btn btn-default"
+													data-dismiss="modal">Close</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+							
+							<!-- Delete confirmation modal -->
+							<div id="deleteConfirmModal" class="modal fade" role="dialog"
+								data-backdrop="static" data-keyboard="false">
+								<div class="modal-dialog modal-sm">
+									<div class="modal-content">
+										<div class="modal-header bg-danger">
+											<h4 class="modal-title">Confirmation</h4>
+											<button type="button" class="close btn-danger"
+												data-dismiss="modal">&times;</button>
+										</div>
+										<div class="modal-body">
+											<h6 id="deleteContent"></h6>
+										</div>
+										<div class="modal-footer">
+											<button type="button" id="confirmDelete"
+												class="btn btn-danger">Delete</button>
+											<button type="button" class="btn btn-default"
+												data-dismiss="modal">Close</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+			<div class="p-3">
+				<h5>Title</h5>
+				<p>Sidebar content</p>
+			</div>
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Main Footer -->
+		<footer class="main-footer">
+			<!-- To the right -->
+			<div class="float-right d-none d-sm-inline">
+				<a href="http://prodian.co.in">Powered by Prodian</a>
+			</div>
+			<!-- Default to the left -->
+			<strong>Copyright &copy; 2019-2020 <a
+				href="http://prodian.co.in">Prodian Infotech</a>.
+			</strong> All rights reserved.
+		</footer>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+
+	<!-- jQuery -->
+	<script src="../../plugins/jquery/jquery.min.js"></script>
+	<!-- AdminLTE App -->
+	<script src="../../dist/js/adminlte.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+	<!-- Bootstrap 4 -->
+	<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<!-- DataTables -->
+	<script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
+	<script
+		src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+	<script
+		src="../../plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+	<script
+		src="../../plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+	<!-- DataTable select -->
+	<script
+		src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+	<!-- DataTable Buttons -->
+	<script
+		src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>
+	<!-- Toastr -->
+	<script src="../../plugins/toastr/toastr.min.js"></script>
+	<!-- jquery-validation -->
+	<script src="../../plugins/jquery-validation/jquery.validate.min.js"></script>
+	<script src="../../plugins/jquery-validation/additional-methods.min.js"></script>
+	<!-- Selectize -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"></script>
+	<script type="text/javascript">
+	var row = 0;
+	var editRow = 0;
+	$(function() {
+		$(document).ready(function() {
+			$('#userNames').selectize({
+				sortField : 'text'
+			});
+			
+			$(document).on("click", ".removeButton", function() {
+				$(this).parents('.child').remove();
+				if(row <= 0){
+					row = 0;
+				}else{
+					row--;
+				}
+			});
+			$(document).on("click", ".editRemoveButton", function() {
+				$(this).parents('.editChild').remove();
+				if(editRow <= 0){
+					editRow = 0;
+				}else{
+					editRow--;
+				}
+			});
+			var sourceSchemaUrl = null;
+			var sourceSchemaUserName = null;
+			var sourceSchemaPassword = null;
+			var destinationSchemaName = null;
+			var tableName = [];
+			var status = null;
+			if(sourceSchemaUrl==null){
+				$("#urlDiv").css("display", "none");
+			}
+			if(sourceSchemaUserName==null){
+				$("#userNameDiv").css("display", "none");
+			}
+			if(sourceSchemaPassword==null){
+				$("#passwordDiv").css("display", "none");
+			}
+			if(destinationSchemaName==null){
+				$("#destinationSchemaDiv").css("display", "none");
+			}
+			if(status==null){
+				$("#statusDiv").css("display", "none");
+			}
+			if(tableName.length<=0){
+				$("#tableNameDiv").css("display", "none");
+			}
+			$("#editDelDiv").css("display", "none");
+			$('#userNames').on('change',function() {
+				var userName = $('#userNames').val();
+				
+				if(userName){
+					$.ajax({
+						type : "GET",
+						contentType : "application/json",
+						url : '/admin/getSqoopConfigByUserName',
+						data : {
+							userName : function(){
+								return userName;
+							}
+						},
+						success : function(data) {
+							sourceSchemaUrl = data.sourceSchemaUrl;
+							sourceSchemaUserName = data.sourceSchemaUserName;
+							sourceSchemaPassword = data.sourceSchemaPassword;
+							destinationSchemaName = data.destinationSchemaName;
+							status = data.isActive;
+							tableName = data.tableName;
+							if(sourceSchemaUrl==null){
+								$("#urlDiv").css("display", "none");
+							}else{
+								$("#urlDiv").show();
+								$("#listUrl").val(sourceSchemaUrl);
+							}
+							if(sourceSchemaUserName==null){
+								$("#userNameDiv").css("display", "none");
+							}else{
+								$("#userNameDiv").show();
+								$("#listUserName").val(sourceSchemaUserName);
+							}
+							if(sourceSchemaPassword==null){
+								$("#passwordDiv").css("display", "none");
+							}else{
+								$("#passwordDiv").show();
+								$("#listPassword").val(sourceSchemaPassword);
+							}
+							if(destinationSchemaName==null){
+								$("#destinationSchemaDiv").css("display", "none");
+							}else{
+								$("#destinationSchemaDiv").show();
+								$("#listDestSchema").val(destinationSchemaName);
+							}
+							if(status==null){
+								$("#statusDiv").css("display", "none");
+							}else{
+								$("#statusDiv").show();
+								if(status){
+									$("#listStatus").val("true");
+								}else{
+									$("#listStatus").val("false");
+								}
+							}
+							if(tableName.length<=0){
+								$("#tableNameDiv").css("display", "none");
+							}else{
+								$("#tableNameDiv").show();
+								$('.childList').remove();
+								for(let i=0; i<tableName.length; i++){										
+									var appStr = '<div class="form-group row col-sm-12 childList"><div class="col-sm-5"><input class="form-control" type="text" readonly="readonly" value="'+tableName[i].sourceTableName+'" placeholder="Source Table Name..."></div><div class="col-sm-5"><input class="form-control" readonly="readonly" type="text" value="'+tableName[i].destinationTableName+'" placeholder="Destination Table Name..."></div><div class="col-sm-2">';
+									$('#tableNameDiv').append(appStr);
+								}
+							}
+							$("#editDelDiv").show();
+						},
+						error : function(data) {
+							if(sourceSchemaUrl==null){
+								$("#urlDiv").css("display", "none");
+							}
+							if(sourceSchemaUserName==null){
+								$("#userNameDiv").css("display", "none");
+							}
+							if(sourceSchemaPassword==null){
+								$("#passwordDiv").css("display", "none");
+							}
+							if(destinationSchemaName==null){
+								$("#destinationSchemaDiv").css("display", "none");
+							}
+							if(tableName.length<=0){
+								$("#tableNameDiv").css("display", "none");
+							}
+							$("#editDelDiv").css("display", "none");
+						}
+					});
+				}
+			});
+			
+			$('#sqoopConfigEditButton').on('click', function(item) {
+				$('#editSqoopConfigModal').modal('show');
+			});
+			
+			$("#editSqoopConfigModal").on('show.bs.modal', function () {
+				var userName = $('#userNames').val();
+				
+				if(userName){
+					$.ajax({
+						type : "GET",
+						contentType : "application/json",
+						url : '/admin/getSqoopConfigByUserName',
+						data : {
+							userName : function(){
+								return userName;
+							}
+						},
+						success : function(data) {
+							sourceSchemaUrl = data.sourceSchemaUrl;
+							sourceSchemaUserName = data.sourceSchemaUserName;
+							sourceSchemaPassword = data.sourceSchemaPassword;
+							destinationSchemaName = data.destinationSchemaName;
+							tableName = data.tableName;
+							status = data.isActive;
+							console.log(JSON.stringify(data));
+							$('#editListUsername').val(userName);
+							if(sourceSchemaUrl==null){
+								$("#editUrlDiv").css("display", "none");
+							}else{
+								$("#editUrlDiv").show();
+								$("#editListUrl").val(sourceSchemaUrl);
+							}
+							if(sourceSchemaPassword==null){
+								$("#editPasswordDiv").css("display", "none");
+							}else{
+								$("#editPasswordDiv").show();
+								$("#editListPassword").val(sourceSchemaPassword);
+							}
+							if(destinationSchemaName==null){
+								$("#editDestinationSchemaDiv").css("display", "none");
+							}else{
+								$("#editDestinationSchemaDiv").show();
+								$("#editListDestSchema").val(destinationSchemaName);
+							}
+							if(status==null){
+								$("#editStatusDiv").css("display", "none");
+							}else{
+								$("#editStatusDiv").show();
+								if(status){
+									$("#editStatusDiv").val("true");
+								}else{
+									$("#editStatus").val("false");
+								}
+							}
+							if(tableName.length<=0){
+								$("#editTableNameDiv").css("display", "none");
+							}else{
+								$("#editTableNameDiv").show();
+								$('.editChild').remove();
+								for(let i=0; i<tableName.length; i++){	
+									var appStr = '';
+									if(i==0){
+										appStr = '<div class="form-group row col-sm-12 editChild"><div class="col-sm-5"><input class="form-control" type="text" value="'+tableName[i].sourceTableName+'" name="tableName['+editRow+'].sourceTableName" placeholder="Source Table Name..."></div><div class="col-sm-5"><input class="form-control" type="text" name="tableName['+editRow+'].destinationTableName" value="'+tableName[i].destinationTableName+'" placeholder="Destination Table Name..."></div><div class="col-sm-2"><div class="col-sm-2"><button type="button" onclick="addEditRow()" class="btn btn-outline btn-sm"><i class="fas fa-plus-circle"></i></button></div>';
+									}else{
+										appStr = '<div class="form-group row col-sm-12 editChild"><div class="col-sm-5"><input class="form-control" type="text" value="'+tableName[i].sourceTableName+'" name="tableName['+editRow+'].sourceTableName" placeholder="Source Table Name..."></div><div class="col-sm-5"><input class="form-control" type="text" name="tableName['+editRow+'].destinationTableName" value="'+tableName[i].destinationTableName+'" placeholder="Destination Table Name..."></div><div class="col-sm-2"><div class="col-sm-2"><button type="button" class="btn btn-outline btn-sm"><i class="fas fa-minus-circle editRemoveButton"></i></button></div>';
+									}
+									editRow++;
+									$('#editTableNameDiv').append(appStr);
+								}
+							}
+						},
+						error : function(data) {
+							
+						}
+					});
+				}
+			});
+			
+			$("#deleteConfirmModal").on('show.bs.modal', function () {
+				$('#deleteContent').text('Are you sure to delete?');
+			});
+			
+			$('#confirmDelete').on('click', function(item) {
+				var userName = $('#userNames').val();
+				if(userName){
+					$.ajax({
+						type : "GET",
+						contentType : "application/json",
+						url : '/admin/deleteSqoopConfig',
+						data : {
+							userName : function(){
+								return userName;
+							}
+						},
+						success : function(data) {
+							$("#deleteConfirmModal").modal('hide');
+							$('#listStatus').val('false');
+							toastr.success('Deleted SuccessFully');
+						},
+						error : function(data) {
+							$("#deleteConfirmModal").modal('hide');
+							toastr.warning('Internal Server Error');
+						}
+					});
+				}
+			});
+			
+			$("#editSqoopConfigForm").validate({
+			    rules: {			      
+			      action: "Please provide some data"
+			    },
+			    messages: {
+			      
+			      action: "Please provide some data"
+			    },
+			    submitHandler: function(form) {
+			        form.submit();
+			        toastr.clear();
+			        toastr.success('Successfully Updated!');
+			      }
+			  });
+			
+		});// doc ready
+	});// fun 
+	function addRow() {
+		console.log('add')
+		var appStr = '<div class="form-group row col-sm-12 child"><div class="col-sm-5"><input class="form-control" type="text" required="required" name="tableName['+row+'].sourceTableName" placeholder="Source Table Name..."></div><div class="col-sm-5"><input class="form-control" required="required" type="text" name="tableName['+row+'].destinationTableName" placeholder="Destination Table Name..."></div><div class="col-sm-2"><button type="button" class="btn btn-outline btn-sm removeButton"><i class="fas fa-minus-circle"></i></button></div></div>';
+		//if(!$('#editUserMatrixModal').hasClass('show')){
+			row++;			
+			$('#d1').append(appStr);
+		//}else{
+			
+		//}
+	}
+	
+	function addEditRow(){
+		var appStr = '<div class="form-group row col-sm-12 editChild"><div class="col-sm-5"><input class="form-control" type="text" name="tableName['+editRow+'].sourceTableName" placeholder="Source Table Name..."></div><div class="col-sm-5"><input class="form-control" type="text" name="tableName['+editRow+'].destinationTableName" placeholder="Destination Table Name..."></div><div class="col-sm-2"><div class="col-sm-2"><button type="button" class="btn btn-outline btn-sm"><i class="fas fa-minus-circle editRemoveButton"></i></button></div>';
+		$('#editTableNameDiv').append(appStr);
+		editRow++;
+	}
+	</script>
+</body>
+</html>
