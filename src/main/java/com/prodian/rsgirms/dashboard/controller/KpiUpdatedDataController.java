@@ -807,7 +807,7 @@ public class KpiUpdatedDataController {
 			String toYear = toDate.split("/")[1];
 
 			// New Query Changed
-			String queryStr = "SELECT  SUM(INS_GWP),"+
+			String queryStr = "SELECT "+
 			"SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP ELSE 0 END) as INS_GWP_POLICY_COMP,"+  
 			"SUM(case when aa.CATEGORY='TP' THEN INS_GWP ELSE 0 END) as INS_GWP_POLICY_TP,"+
 			"SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP ELSE 0 END) as INS_GWP_POLICY_others," +
@@ -1685,7 +1685,7 @@ public List<SingleLineCubeResponseNew> getSingleLineCubeDataNew(HttpServletReque
 		String queryStr = "";
 		// New Query Changed
 		if(claimParamType.equals("GIC")){
-			queryStr = "SELECT SUM(csl_gic)gic,"+
+			queryStr = "SELECT "+
 			"SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"+
 			"'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"+
 			"'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"+
