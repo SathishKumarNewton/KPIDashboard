@@ -866,13 +866,19 @@ public class KpiController {
 								" ON RSA_KPI_FACT_POLICY_FINAL.CITY_CODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE "; 
 
 			
-			/*if (fromYear.equals(toYear)) {
+			if (fromYear.equals(toYear)) {
 				queryStr += " WHERE (( FINANCIAL_YEAR=" + fromYear + " and EFF_FIN_YEAR_MONTH >= '" + fromMonth
 						+ "' and EFF_FIN_YEAR_MONTH <='" + toMonth + "' ))";
 			} else {
 				queryStr += " WHERE (( FINANCIAL_YEAR=" + fromYear + " and EFF_FIN_YEAR_MONTH >= '" + fromMonth
 						+ "' ) or ( FINANCIAL_YEAR=" + toYear + " and EFF_FIN_YEAR_MONTH <='" + toMonth + "' ))";
-			}*/
+			}
+			
+//			if (fromYear.equals(toYear)) {
+//				queryStr += " WHERE (( FINANCIAL_YEAR='" + fromYear + "'))";
+//			} else {
+//				queryStr += " WHERE (( FINANCIAL_YEAR='" + fromYear + "'))";
+//			}
 
 			String finstartDate = fromYear + "-" + fromMonth + "-01";
 			String finEndDate = toYear + "-" + toMonth + "-01";
