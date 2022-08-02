@@ -1779,7 +1779,8 @@ public List<SingleLineCubeResponseNew> getSingleLineCubeDataNew(HttpServletReque
 			"'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"+
 			"'APLV')) AND  CSL_CLAIM_NO LIKE 'TP%' AND coalesce(x.CATEGORY,'Others')='Others' THEN CSL_GIC ELSE 0 END) cat_gic_tp_policy_others, "+ 
 			"SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive' THEN CSL_GIC ELSE 0 END) theft_gic_tp_policy_comp,"+ 
-			"SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and category='TP' THEN CSL_GIC ELSE 0 END) theft_gic_tp_policy_tp,  SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others' THEN CSL_GIC ELSE 0 END) theft_gic_tp_policy_others,"+
+			"SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and category='TP' THEN CSL_GIC ELSE 0 END) theft_gic_tp_policy_tp, " + 
+			"SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others' THEN CSL_GIC ELSE 0 END) theft_gic_tp_policy_others,"+
 			"SUM(CASE WHEN (csl_claim_type not in ('MUTA','PUBB',"+
 			"'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"+
 			"'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"+
