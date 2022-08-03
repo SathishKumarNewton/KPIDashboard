@@ -105,7 +105,7 @@
 	/* ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: #fff;
   opacity: 1; /* Firefox */
-} */
+ }
 
 	@font-face {
   font-family: "poppinsSemibold";
@@ -201,7 +201,7 @@ padding-top: 150px;
 		.h2 {
 			font-size: 16px;
 			font-family: poppinsMedium;
-			//font-weight: bold;
+			font-weight: bold;
 		}
 		thead th {
 			border: solid 1px #EAEAEA !important;
@@ -3384,7 +3384,7 @@ $('#iTest').selectize({
 			                    	 	//$(".acr_r"+period).text(parseFloat(acqCostTp/$(".gwpTp_r"+period).text())+parseFloat(acqCostOd/$(".gwpOd_r"+period).text()));
 			                    	 	//$(".acr_r"+period).text((parseFloat($(".extra_13 > .acrOd_r"+period).text())+parseFloat($(".extra_13 > .acrTp_r"+period).text())) );
 			                    	 	
-			                    	 	var acqVal = ((parseFloat(acqCostOd*1000)+parseFloat(acqCostTp*1000))/($("#show_1 > .gwp_r"+period).text().replaceAll(",","")*100000)).toFixed("2");
+			                    	 	var acqVal = ((parseFloat(acqCostOd*100)+parseFloat(acqCostTp*100))/($("#show_1 > .gwp_r"+period).text().replaceAll(",","")*100000)).toFixed("2");
 			                    	 	acqVal = isFinite(acqVal) ? acqVal : 0;
 			                    	 	$(".acr_r"+period).text((+acqVal||0)+'%');
 			                    	  }
