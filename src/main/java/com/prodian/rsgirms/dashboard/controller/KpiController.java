@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.kylin.jdbc.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,11 +41,13 @@ import com.prodian.rsgirms.dashboard.model.MonthlyDashboardDetails;
 import com.prodian.rsgirms.dashboard.model.ProductMaster;
 import com.prodian.rsgirms.dashboard.model.SubChannelMaster;
 import com.prodian.rsgirms.dashboard.model.UserDashboard;
+import com.prodian.rsgirms.dashboard.model.gicnicmodel;
 import com.prodian.rsgirms.dashboard.repository.IntermediaryMasterRepository;
 import com.prodian.rsgirms.dashboard.repository.MonthlyDashboardDetailsRepository;
 import com.prodian.rsgirms.dashboard.repository.ProductMasterRepository;
 import com.prodian.rsgirms.dashboard.repository.SubChannelMasterRepository;
 import com.prodian.rsgirms.dashboard.repository.UserDashboardRepository;
+import com.prodian.rsgirms.dashboard.repository.gicnicRepository;
 import com.prodian.rsgirms.dashboard.response.BudgetCubeResponse;
 import com.prodian.rsgirms.dashboard.response.ClaimsCubeResponse;
 import com.prodian.rsgirms.dashboard.response.ClaimsCubeResponseNew;
@@ -3602,6 +3605,18 @@ public static String getCustomFirstDate(boolean isFirstDateOfCurrentMonth,boolea
     return sdf.format(lastDayOfMonth);
 }
 
+
+// 04.08
+
+@Autowired
+@Qualifier("gicnicRepository")
+private gicnicRepository gicnicRepository;
+
+@GetMapping("/gicnic")
+public List<gicnicmodel> players(){
+    return gicnicRepository.findAll();
+
+}
 
 /*@GetMapping("/getSubChannelByChannel/{channelId}")
 @ResponseBody
