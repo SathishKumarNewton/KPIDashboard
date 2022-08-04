@@ -187,7 +187,7 @@
 
    <type>jar</type>
 
-  <!--  <exclusions>
+  <exclusions>
 
     <exclusion>
 
@@ -203,9 +203,9 @@
 
      <groupId>log4j</groupId>
 
-    </exclusion> -->
+    </exclusion>
 
-   <!--  <exclusion>
+    <exclusion>
 
      <artifactId>servlet-api</artifactId>
 
@@ -213,7 +213,7 @@
 
     </exclusion>
 
-   </exclusions> -->
+   </exclusions>
 
   </dependency>		
 
