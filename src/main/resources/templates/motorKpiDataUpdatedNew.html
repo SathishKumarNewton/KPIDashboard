@@ -4154,14 +4154,14 @@ $('#iTest').selectize({
             		callGepApi(period,fromDate,toDate,apiURL);
             	}else if($("#uwYearBtn").css('background-color')!="rgb(255, 255, 255)"){
             		/*Basic*/
-            		apiURL="/getGepCubeMonthAscolumnData/R/B";
+            		apiURL="/getGepCubeMonthAscolumnData/U/B";
             		callGepApi(period,fromDate,toDate,apiURL);
             		/*Freq*/
-            		apiURL="/getGepCubeMonthAscolumnData/UWR12/F";
-            		callGepApi(period,fromDate,toDate,apiURL);
+            		/* apiURL="/getGepCubeMonthAscolumnData/UWR12/F";
+            		callGepApi(period,fromDate,toDate,apiURL); */
             		/*GIC & Sev*/
-            		apiURL="/getGepCubeMonthAscolumnData/UWR12/G";
-            		callGepApi(period,fromDate,toDate,apiURL);
+            		/* apiURL="/getGepCubeMonthAscolumnData/UWR12/G";
+            		callGepApi(period,fromDate,toDate,apiURL); */
             	}
              }
              
@@ -4795,6 +4795,9 @@ $('#iTest').selectize({
             		 getCubeGEPData(1,from1,to1);
             		 callPolicyApi(1,from1,to1);
             		 callInsApi(1,from1,to1);
+					 callClaimApi(1,from1,to1);
+					 callSingleLineApi(1,from1,to1,"GIC");
+                	 callSingleLineApi(1,from1,to1,"NIC");
             		 if ($("#periodBasedBtn").css('background-color')!="rgb(255, 255, 255)"){
             			 callClaimApi(1,from1,to1);
             			 callSingleLineApi(1,from1,to1,"GIC");
@@ -4809,9 +4812,12 @@ $('#iTest').selectize({
 					$('#uwGeneralTable > tbody > tr > td:nth-child(3)').text('0.00');
            		 	$('#uwMotorTable > tbody > tr > td:nth-child(3)').text('0.00');
            		 	$('#uwHealthTable > tbody > tr > td:nth-child(3)').text('0.00');
-           			 getCubeGEPData(2,from2,to2);
-           			 callPolicyApi(2,from2,to2);
+           			getCubeGEPData(2,from2,to2);
+           			callPolicyApi(2,from2,to2);
            			callInsApi(2,from2,to2);
+           			callClaimApi(2,from2,to2);
+					callSingleLineApi(2,from2,to2,"GIC");
+					callSingleLineApi(2,from2,to2,"NIC");
            			if ($("#periodBasedBtn").css('background-color')!="rgb(255, 255, 255)"){
            			callClaimApi(2,from2,to2);
            		 	callSingleLineApi(2,from2,to2,"GIC");
@@ -4828,6 +4834,9 @@ $('#iTest').selectize({
            		 	getCubeGEPData(3,from3,to3);
            			callPolicyApi(3,from3,to3);
            			callInsApi(3,from3,to3);
+           			callClaimApi(3,from3,to3);
+					callSingleLineApi(3,from3,to3,"GIC");
+					callSingleLineApi(3,from3,to3,"NIC");
            			if ($("#periodBasedBtn").css('background-color')!="rgb(255, 255, 255)"){
            			callClaimApi(3,from3,to3);
            		 	callSingleLineApi(3,from3,to3,"GIC");
