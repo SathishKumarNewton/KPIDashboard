@@ -807,7 +807,7 @@ public class KpiUpdatedDataController {
 			String toYear = toDate.split("/")[1];
 
 			// New Query Changed
-			String queryStr = "SELECT"
+			String queryStr = "SELECT "
 					+"SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP ELSE 0 END) as INS_GWP_POLICY_COMP,"
 					+ "SUM(case when aa.CATEGORY='TP' THEN INS_GWP ELSE 0 END) as INS_GWP_POLICY_TP,"
 					+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP ELSE 0 END) as INS_GWP_POLICY_others, "
