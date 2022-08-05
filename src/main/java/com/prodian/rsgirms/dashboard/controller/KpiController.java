@@ -41,7 +41,6 @@ import com.prodian.rsgirms.dashboard.model.ProductMaster;
 import com.prodian.rsgirms.dashboard.model.SubChannelMaster;
 import com.prodian.rsgirms.dashboard.model.UserDashboard;
 import com.prodian.rsgirms.dashboard.repository.IntermediaryMasterRepository;
-import com.prodian.rsgirms.dashboard.repository.GicNicPsqlRepository;
 import com.prodian.rsgirms.dashboard.repository.MonthlyDashboardDetailsRepository;
 import com.prodian.rsgirms.dashboard.repository.ProductMasterRepository;
 import com.prodian.rsgirms.dashboard.repository.SubChannelMasterRepository;
@@ -60,8 +59,9 @@ import com.prodian.rsgirms.dashboard.response.KpiFiltersResponse;
 import com.prodian.rsgirms.dashboard.response.PolicyCubeResponseNew;
 import com.prodian.rsgirms.dashboard.response.ReserverSingleLineCubeResponseNew;
 import com.prodian.rsgirms.dashboard.response.SingleLineCubeResponseNew;
+import com.prodian.rsgirms.dashboard.rsrepository.GicNicPsqlRepository;
 import com.prodian.rsgirms.dashboard.service.KpiDashboardService;
-import com.prodian.rsgirms.dashboard.model.GicNicPsqlFunction;
+import com.prodian.rsgirms.dashboard.modelfunction.UserRole;
 import com.prodian.rsgirms.userapp.model.User;
 import com.prodian.rsgirms.userapp.service.UserService;
 import com.prodian.rsgirms.usermatrix.model.UserMatrixMasterRequest;
@@ -801,6 +801,10 @@ public class KpiController {
 				kpiResponseList.add(gepCubeResponse);
 
 			}
+
+			System.out.println("-----call---- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::callR12GicNic ---- Start");
+			List<UserRole> result = gicNicPsqlRepository.findAll();
+			System.out.println("-----call---- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::callR12GicNic ---- Success ::::"+ result.toString());
 
 			System.out.println("Query execution time " + (System.currentTimeMillis() - startTime));
 		} catch (Exception e) {
@@ -3591,19 +3595,19 @@ public static String getCustomFirstDate(boolean isFirstDateOfCurrentMonth,boolea
     return sdf.format(lastDayOfMonth);
 }
 
-@GetMapping("/getGicNic")
-public GicNicPsqlFunction getGicNic(){
-	try{
-		System.out.println("-----call---- callR12GicNic ---- Start");
-		GicNicPsqlFunction result = gicNicPsqlRepository.callR12GicNic();
+// @GetMapping("/getGicNic")
+// public List<UserRole> getGicNic(){
+// 	try{
+// 		System.out.println("-----call---- callR12GicNic ---- Start");
+// 		List<UserRole> result = gicNicPsqlRepository.findAll();
 
-		System.out.println("-----call---- callR12GicNic ---- Success");
-		return result;
-	}catch (Exception e) {
-		System.out.println("-----call---- callR12GicNic ---- Failed");
-		return null;
-	}
-}
+// 		System.out.println("-----call---- callR12GicNic ---- Success");
+// 		return result;
+// 	}catch (Exception e) {
+// 		System.out.println("-----call---- callR12GicNic ---- Failed");
+// 		return null;
+// 	}
+// }
 
 
 /*@GetMapping("/getSubChannelByChannel/{channelId}")

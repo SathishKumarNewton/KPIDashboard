@@ -4139,26 +4139,6 @@ $('#iTest').selectize({
 	         
              function getCubeGEPData(period,fromDate,toDate){
 
-				//// Testing
-				$.ajax({
-					type: "GET",
-					contentType: "application/json",
-					url: "/getGicNic", 
-					dataType: 'json',
-					cache: false,
-					timeout: 600000,
-					data:genDiv,
-					success: function (data) {
-						responseJSON = data;
-						console.log(responseJSON);
-					  	jQuery("#pre-loader").remove();
-					},
-					error: function (e) {
-						jQuery("#pre-loader").remove();
-						alert(e);
-					}
-				});
-				////
             	 var apiURL = "";
             	if ($("#periodBasedBtn").css('background-color')!="rgb(255, 255, 255)"){
             		apiURL="/getGepCubeMonthAscolumnData/R/B";

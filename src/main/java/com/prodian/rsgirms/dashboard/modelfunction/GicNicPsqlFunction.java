@@ -1,4 +1,4 @@
-package com.prodian.rsgirms.dashboard.model;
+package com.prodian.rsgirms.dashboard.modelfunction;
 
 public interface GicNicPsqlFunction {
     

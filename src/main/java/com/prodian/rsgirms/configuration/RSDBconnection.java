@@ -14,7 +14,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.prodian.rsgirms.dashboard.model.GicNicPsqlFunction;
+import com.prodian.rsgirms.dashboard.modelfunction.GicNicPsqlFunction;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -22,33 +22,32 @@ import javax.sql.DataSource;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        entityManagerFactoryRef = "trainingDSEmFactory",
-        transactionManagerRef = "trainingDSTransactionManager",
-        basePackages = "com.prodian.rsgirms.dashboard.repository."
+        entityManagerFactoryRef = "RSDSEmFactory",
+        transactionManagerRef = "RSDSTransactionManager",
+        basePackages = "com.prodian.rsgirms.dashboard.rsrepository"
 )
-public class RSDBconnection {
+public class RSDBConnection {
     @Bean
     @ConfigurationProperties("spring.datasource1")
-    public DataSourceProperties trainingDSProperties(){
+    public DataSourceProperties RSDSProperties(){
         return new DataSourceProperties();
     }
 
-
     @Bean
-    public DataSource trainingDS(@Qualifier("trainingDSProperties") DataSourceProperties trainingDSProperties){
-        return trainingDSProperties.initializeDataSourceBuilder().build();
+    public DataSource RSDS(@Qualifier("RSDSProperties") DataSourceProperties rsDSProperties){
+        return rsDSProperties.initializeDataSourceBuilder().build();
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean trainingDSEmFactory(
-            @Qualifier("trainingDS") DataSource trainingDS,
+    public LocalContainerEntityManagerFactoryBean RSDSEmFactory(
+            @Qualifier("RSDS") DataSource rsDS,
             EntityManagerFactoryBuilder builder
             ){
-        return builder.dataSource(trainingDS).packages(GicNicPsqlFunction.class).build();
+        return builder.dataSource(rsDS).packages("com.prodian.rsgirms.dashboard.modelfunction").build();
     }
 
     @Bean
-    public PlatformTransactionManager trainingDSTransactionManager(@Qualifier("trainingDSEmFactory")EntityManagerFactory trainingDSEmFactory){
-        return new JpaTransactionManager(trainingDSEmFactory);
+    public PlatformTransactionManager RSDSTransactionManager(@Qualifier("RSDSEmFactory")EntityManagerFactory rsDSEmFactory){
+        return new JpaTransactionManager(rsDSEmFactory);
     }
 }
