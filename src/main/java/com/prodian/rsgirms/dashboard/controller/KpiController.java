@@ -41,6 +41,7 @@ import com.prodian.rsgirms.dashboard.model.ProductMaster;
 import com.prodian.rsgirms.dashboard.model.SubChannelMaster;
 import com.prodian.rsgirms.dashboard.model.UserDashboard;
 import com.prodian.rsgirms.dashboard.repository.IntermediaryMasterRepository;
+import com.prodian.rsgirms.dashboard.repository.GicNicPsqlRepository;
 import com.prodian.rsgirms.dashboard.repository.MonthlyDashboardDetailsRepository;
 import com.prodian.rsgirms.dashboard.repository.ProductMasterRepository;
 import com.prodian.rsgirms.dashboard.repository.SubChannelMasterRepository;
@@ -60,6 +61,7 @@ import com.prodian.rsgirms.dashboard.response.PolicyCubeResponseNew;
 import com.prodian.rsgirms.dashboard.response.ReserverSingleLineCubeResponseNew;
 import com.prodian.rsgirms.dashboard.response.SingleLineCubeResponseNew;
 import com.prodian.rsgirms.dashboard.service.KpiDashboardService;
+import com.prodian.rsgirms.dashboard.model.GicNicPsqlFunction;
 import com.prodian.rsgirms.userapp.model.User;
 import com.prodian.rsgirms.userapp.service.UserService;
 import com.prodian.rsgirms.usermatrix.model.UserMatrixMasterRequest;
@@ -93,6 +95,9 @@ public class KpiController {
 
 	@Autowired
 	private IntermediaryMasterRepository intermediaryMasterRepository;
+
+	@Autowired
+	private GicNicPsqlRepository gicNicPsqlRepository;
 	
 	@GetMapping("/motorKpiNew")
 	public ModelAndView getMockMotorKpiDashBoard() {
@@ -3584,6 +3589,20 @@ public static String getCustomFirstDate(boolean isFirstDateOfCurrentMonth,boolea
     DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  
     
     return sdf.format(lastDayOfMonth);
+}
+
+@GetMapping("/getGicNic")
+public GicNicPsqlFunction getGicNic(){
+	try{
+		System.out.println("-----call---- callR12GicNic ---- Start");
+		GicNicPsqlFunction result = gicNicPsqlRepository.callR12GicNic();
+
+		System.out.println("-----call---- callR12GicNic ---- Success");
+		return result;
+	}catch (Exception e) {
+		System.out.println("-----call---- callR12GicNic ---- Failed");
+		return null;
+	}
 }
 
 
