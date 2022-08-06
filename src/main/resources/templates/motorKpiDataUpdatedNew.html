@@ -2938,7 +2938,7 @@ $('#iTest').selectize({
 			                      var gepOd = "0.0",gepTp="0.0",nepOd="0.0",nepTp="0.0",gicTp="0.0",
 			                      earnedPoliciesOd="0.0",earnedPoliciesTp="0.0",gep="0.0",freqCat="0.0",freqTheft="0.0",freqOthers="0.0";
 			                      $.each(data, function(ind, obj){
-			    	               if(apiURL=="/getGepCubeMonthAscolumnData/R/B"){
+			    	               if(apiURL=="/getGepCubeMonthAscolumnData/R/B" || apiURL=="/getGepCubeMonthAscolumnData/U/B"){
 			    	            	   if($("#onlyAddOnBtn").css('background-color')!="rgb(255, 255, 255)"){
 			    	                		gepOd=parseFloat(obj.gepNildep.toPrecision())+parseFloat(obj.gepNcb.toPrecision())+parseFloat(obj.gepOtherAddon.toPrecision());
 			    	                		//gepOd=parseFloat(obj.gepNildep.toPrecision())+parseFloat(obj.gepNcb.toPrecision())+(parseFloat(obj.gepOd.toPrecision())-parseFloat(obj.gepOtherAddon.toPrecision())) ;
