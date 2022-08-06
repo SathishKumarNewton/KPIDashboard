@@ -2754,7 +2754,7 @@ padding-top: 150px;
         	 
         	 $("#r12Btn").click(function () {
         		 
-        	$("#groupedDim").show();
+        		$("#groupedDim").show();
         		 
         		$('#periodBasedBtn').css('background-color', "white");
 		      	$('#periodBasedBtn').css('color', "black");
@@ -2790,13 +2790,13 @@ padding-top: 150px;
         	        	//$(this).css("background-color", "white");
         	        	//uwYearToogleColor = $(this).css('color');       	        	
         	         	//$(this).css("color", "black");
-        	         	$('#r12Btn').css('background-color', "#004990");
- 	      			$('#r12Btn').css('color', "white");
+        	    $('#r12Btn').css('background-color', "#004990");
+ 	      		$('#r12Btn').css('color', "white");
+ 	      		
+ 	      		$('#finYearBtn').css('background-color', "#004990");
+ 		      	$('#finYearBtn').css('color', "white");
  	      			
- 	      			$('#finYearBtn').css('background-color', "#004990");
- 		      		$('#finYearBtn').css('color', "white");
- 	      			
-        	            console.log('true');
+        	    console.log('true');
         	            
         	       //not uw year
         	         	
@@ -2986,7 +2986,7 @@ $('#iTest').selectize({
 			    	                	$(".earnedPolicies_r"+period).text(convertToLaksh(Math.abs((parseFloat(earnedPoliciesOd)+parseFloat(earnedPoliciesTp)).toFixed("2"))));
 			    	               
 			    	                	$(".gicTpulr_r"+period).text(convertToLaksh(Math.abs(gicTp.toFixed("2"))));
-			    	                	 $(".gic_r"+period).text( (parseFloat($(".gicOdCat_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")) + parseFloat($(".gicTpulr_r"+period).text().replaceAll(",",""))).toFixed("2"));
+			    	                	$(".gic_r"+period).text( (parseFloat($(".gicOdCat_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")) + parseFloat($(".gicTpulr_r"+period).text().replaceAll(",",""))).toFixed("2"));
 			    	                	/* $(".lossRatioOd_r"+period).text(($(".nicOd_r"+period).text()/$(".nepOd_r"+period).text()).toFixed("2")*100);
 			    	                	$(".lossRatio_r"+period).text(($(".nicOd_r"+period).text()/$(".nepOd_r"+period).text()).toFixed("2")*100); */
 			    	                	
@@ -3412,6 +3412,242 @@ $('#iTest').selectize({
 							}
 							}));
 	         }
+			// R12 GIC NIC Call
+			var isR12GicNicFetched="N";
+	        var acqCostOd="0.0",acqCostTp="0.0";
+			function callgetR12GicNic(period,fromDate,toDate){
+				var report = $('#reports').val();
+				var myInput;
+				if(report=='GENERAL'){
+					myInputs=$('#generalDiv').clone();
+				}else if(report=='MOTOR'){
+					myInputs=$('#dimensionFilterDiv').clone();
+				}else if(report=='HEALTH'){
+					myInputs=$('#healthDiv').clone();
+				}					
+				var genDiv=$('<form>').append( myInputs).serializeArray();
+				genDiv.push({name: 'fromDate',value:fromDate});
+				genDiv.push({name: 'toDate',value:toDate});
+				genDiv.push({name: 'reportType',value:report});
+				jQuery("body").prepend('<section id="pre-loader"><img src="../../assets/images/Logo_Innerpage.png" alt="CompanyLogo" id="logo"></section>');
+				ajaxArray.push(
+					$.ajax({
+					type: "GET",
+					contentType: "application/json",
+					url: 'getR12GicNic',
+					dataType: 'json',
+					cache: false,
+					timeout: 600000,
+					data:genDiv,
+					success: function (data) {
+						isR12GicNicFetched="Y";
+						responseJSON = data;
+						console.log('isR12GicNicFetched');
+						console.log(responseJSON);
+						if(responseJSON){
+							$(".nic_r"+period).text(parseFloat(responseJSON.nic).toFixed("2"));
+							$(".nicOd_r"+period).text(parseFloat(responseJSON.nicod).toFixed("2"));
+							$(".nicTp_r"+period).text(parseFloat(responseJSON.nictp).toFixed("2"));
+							$(".gic_r"+period).text(parseFloat(responseJSON.gic).toFixed("2"));
+							$(".gicOdCat_r"+period).text(parseFloat(responseJSON.catgic).toFixed("2"));
+							$(".gicOdTheft_r"+period).text(parseFloat(responseJSON.theftgic).toFixed("2"));
+							$(".gicOdOthers_r"+period).text(parseFloat(responseJSON.othergic).toFixed("2"));
+							$(".gicTp_r"+period).text(parseFloat(responseJSON.gictp).toFixed("2"));
+							$(".gicTpulr_r"+period).text(parseFloat(responseJSON.gictpulr).toFixed("2"));
+							$(".claimSev_r"+period).text(parseFloat(responseJSON.sev).toFixed("2"));
+							$(".claimSevCat_r"+period).text(parseFloat(responseJSON.catsev).toFixed("2"));
+							$(".claimSevTheft_r"+period).text(parseFloat(responseJSON.theftsev).toFixed("2"));
+							$(".claimSevOthers_r"+period).text(parseFloat(responseJSON.othersev).toFixed("2"));
+							$(".claimFreq_r"+period).text((parseFloat(responseJSON.freq).toFixed("2")||0)+'%');
+							$(".claimFreqCat_r"+period).text((parseFloat(responseJSON.catfreq).toFixed("2")||0)+'%');
+							$(".claimFreqTheft_r"+period).text((parseFloat(responseJSON.theftfreq).toFixed("2")||0)+'%');
+							$(".claimFreqOthers_r"+period).text((parseFloat(responseJSON.otherfreq).toFixed("2")||0)+'%');  
+							$(".writtenPolicies_r"+period).text(parseFloat(responseJSON.policycount).toFixed("3"));
+							$(".writtenPoliciesTp_r"+period).text(parseFloat(responseJSON.policyodcount).toFixed("3"));
+							$(".writtenPoliciesOd_r"+period).text(parseFloat(responseJSON.policytpcount).toFixed("3"));
+							$(".writtenPoliciesOthers_r"+period).text(parseFloat(responseJSON.policyothercount).toFixed("3"));
+						}
+						jQuery("#pre-loader").remove();	 
+								 
+					}
+				}));
+			}
+
+			function callR12AcqFunction(period,fromDate,toDate){
+				var report = $('#reports').val();
+				var myInput;
+				if(report=='GENERAL'){
+					myInputs=$('#generalDiv').clone();
+				}else if(report=='MOTOR'){
+					myInputs=$('#dimensionFilterDiv').clone();
+				}else if(report=='HEALTH'){
+					myInputs=$('#healthDiv').clone();
+				}					
+				var genDiv=$('<form>').append( myInputs).serializeArray();
+				genDiv.push({name: 'fromDate',value:fromDate});
+				genDiv.push({name: 'toDate',value:toDate});
+				genDiv.push({name: 'reportType',value:report});
+				jQuery("body").prepend('<section id="pre-loader"><img src="../../assets/images/Logo_Innerpage.png" alt="CompanyLogo" id="logo"></section>');
+				ajaxArray.push(
+					$.ajax({
+					type: "GET",
+					contentType: "application/json",
+					url: 'getcR12Acq',
+					dataType: 'json',
+					cache: false,
+					timeout: 600000,
+					data:genDiv,
+					success: function (data) {
+						isR12GicNicFetched="Y";
+						responseJSON = data;
+						console.log('getcR12Acq');
+						console.log(responseJSON);
+						if(responseJSON){
+							$(".lossRatio_r"+period).text(parseFloat(responseJSON.lossratio).toFixed("2"));
+							$(".lossRatioOd_r"+period).text(parseFloat(responseJSON.odlossratio).toFixed("2"));
+							$(".lossRatioTp_r"+period).text(parseFloat(responseJSON.tplossratio).toFixed("2"));
+							$(".acr_r"+period).text((parseFloat(responseJSON.acqcosttotal).toFixed("2") || 0)+'%');
+							$(".acrOd_r"+period).text((parseFloat(responseJSON.odacqcosttotal).toFixed("2") || 0)+'%');
+							$(".acrTp_r"+period).text((parseFloat(responseJSON.tpacqcosttotal).toFixed("2") || 0)+'%');  
+							/*$(".gicOdOthers_r"+period).text(parseFloat(responseJSON.othergic).toFixed("2"));
+							$(".acr_r"+period).text(parseFloat(responseJSON.acqcosttotal).toFixed("2"));
+							$(".acrOd_r"+period).text(parseFloat(responseJSON.odacqcosttotal).toFixed("2"));
+							$(".acrTp_r"+period).text(parseFloat(responseJSON.tpacqcosttotal).toFixed("2"));
+							$(".gicTp_r"+period).text(parseFloat(responseJSON.gictp).toFixed("2"));
+							$(".gicTpulr_r"+period).text(parseFloat(responseJSON.gictpulr).toFixed("2"));
+							$(".claimSev_r"+period).text(parseFloat(responseJSON.sev).toFixed("2"));
+							$(".claimSevCat_r"+period).text(parseFloat(responseJSON.catsev).toFixed("2"));
+							$(".claimSevTheft_r"+period).text(parseFloat(responseJSON.theftsev).toFixed("2"));
+							$(".claimSevOthers_r"+period).text(parseFloat(responseJSON.othersev).toFixed("2"));
+							$(".claimFreq_r"+period).text((+responseJSON.freq||0)+'%');
+							$(".writtenPolicies_r"+period).text(parseFloat(responseJSON.policycount).toFixed("3"));
+							$(".writtenPoliciesTp_r"+period).text(parseFloat(responseJSON.policyodcount).toFixed("3"));
+							$(".writtenPoliciesOd_r"+period).text(parseFloat(responseJSON.policytpcount).toFixed("3"));
+							$(".writtenPoliciesOthers_r"+period).text(parseFloat(responseJSON.policyothercount).toFixed("3"));*/
+						}
+						jQuery("#pre-loader").remove();	 
+								 
+					}
+				}));
+			}
+
+			function callR12GwpNwp(period,fromDate,toDate){
+				var report = $('#reports').val();
+				var myInput;
+				if(report=='GENERAL'){
+					myInputs=$('#generalDiv').clone();
+				}else if(report=='MOTOR'){
+					myInputs=$('#dimensionFilterDiv').clone();
+				}else if(report=='HEALTH'){
+					myInputs=$('#healthDiv').clone();
+				}					
+				var genDiv=$('<form>').append( myInputs).serializeArray();
+				genDiv.push({name: 'fromDate',value:fromDate});
+				genDiv.push({name: 'toDate',value:toDate});
+				genDiv.push({name: 'reportType',value:report});
+				jQuery("body").prepend('<section id="pre-loader"><img src="../../assets/images/Logo_Innerpage.png" alt="CompanyLogo" id="logo"></section>');
+				ajaxArray.push(
+					$.ajax({
+					type: "GET",
+					contentType: "application/json",
+					url: 'getR12GwpNwp',
+					dataType: 'json',
+					cache: false,
+					timeout: 600000,
+					data:genDiv,
+					success: function (data) {
+						isR12GicNicFetched="Y";
+						responseJSON = data;
+						console.log('getR12GwpNwp');
+						console.log(responseJSON);
+						if(responseJSON){
+							$(".nwp_r"+period).text(parseFloat(responseJSON.nwpsum).toFixed("2"));
+							$(".nwpOd_r"+period).text(parseFloat(responseJSON.nwpodsum).toFixed("2"));
+							$(".nwpTp_r"+period).text(parseFloat(responseJSON.nwptpsum).toFixed("2"));
+							$(".gwp_r"+period).text(parseFloat(responseJSON.gwpsum).toFixed("2"));
+							$(".gwpOd_r"+period).text(parseFloat(responseJSON.gwpodsum).toFixed("2"));
+							$(".gwpTp_r"+period).text(parseFloat(responseJSON.gwptpsum).toFixed("2"));
+							$(".earnedPolicies_r"+period).text(parseFloat(responseJSON.earnedpoliciessum).toFixed("2"));
+							$(".earnedPoliciesOd_r"+period).text(parseFloat(responseJSON.earnedpoliciessum).toFixed("2"));
+							/*$(".gicTp_r"+period).text(parseFloat(responseJSON.gictp).toFixed("2"));
+							$(".gicTpulr_r"+period).text(parseFloat(responseJSON.gictpulr).toFixed("2"));
+							$(".claimSev_r"+period).text(parseFloat(responseJSON.sev).toFixed("2"));
+							$(".claimSevCat_r"+period).text(parseFloat(responseJSON.catsev).toFixed("2"));
+							$(".claimSevTheft_r"+period).text(parseFloat(responseJSON.theftsev).toFixed("2"));
+							$(".claimSevOthers_r"+period).text(parseFloat(responseJSON.othersev).toFixed("2"));
+							$(".claimFreq_r"+period).text((+responseJSON.freq||0)+'%');
+							$(".claimFreqCat_r"+period).text((+responseJSON.catfreq||0)+'%');
+							$(".claimFreqTheft_r"+period).text((+responseJSON.theftfreq||0)+'%');
+							$(".claimFreqOthers_r"+period).text((+responseJSON.otherfreq||0)+'%');  
+							$(".writtenPolicies_r"+period).text(parseFloat(responseJSON.policycount).toFixed("3"));
+							$(".writtenPoliciesTp_r"+period).text(parseFloat(responseJSON.policyodcount).toFixed("3"));
+							$(".writtenPoliciesOd_r"+period).text(parseFloat(responseJSON.policytpcount).toFixed("3"));
+							$(".writtenPoliciesOthers_r"+period).text(parseFloat(responseJSON.policyothercount).toFixed("3"));*/
+						}
+						jQuery("#pre-loader").remove();	 
+								 
+					}
+				}));
+			}
+
+			function callR12GepNep(period,fromDate,toDate){
+				var report = $('#reports').val();
+				var myInput;
+				if(report=='GENERAL'){
+					myInputs=$('#generalDiv').clone();
+				}else if(report=='MOTOR'){
+					myInputs=$('#dimensionFilterDiv').clone();
+				}else if(report=='HEALTH'){
+					myInputs=$('#healthDiv').clone();
+				}					
+				var genDiv=$('<form>').append( myInputs).serializeArray();
+				genDiv.push({name: 'fromDate',value:fromDate});
+				genDiv.push({name: 'toDate',value:toDate});
+				genDiv.push({name: 'reportType',value:report});
+				console.log(genDiv);
+				jQuery("body").prepend('<section id="pre-loader"><img src="../../assets/images/Logo_Innerpage.png" alt="CompanyLogo" id="logo"></section>');
+				ajaxArray.push(
+					$.ajax({
+					type: "GET",
+					contentType: "application/json",
+					url: 'getR12GepNep',
+					dataType: 'json',
+					cache: false,
+					timeout: 600000,
+					data:genDiv,
+					success: function (data) {
+						isR12GicNicFetched="Y";
+						responseJSON = data;
+						console.log('getR12GepNep');
+						console.log(responseJSON);
+						if(responseJSON){
+							$(".nep_r"+period).text(parseFloat(responseJSON.nepsum).toFixed("2"));
+							$(".nepOd_r"+period).text(parseFloat(responseJSON.nepodsum).toFixed("2"));
+							$(".nepTp_r"+period).text(parseFloat(responseJSON.neptpsum).toFixed("2"));
+							$(".gep_r"+period).text(parseFloat(responseJSON.gepsum).toFixed("2"));
+							$(".gepOd_r"+period).text(parseFloat(responseJSON.gepodsum).toFixed("2"));
+							$(".gepTp_r"+period).text(parseFloat(responseJSON.geptpsum).toFixed("2"));
+							/*$(".gicOdOthers_r"+period).text(parseFloat(responseJSON.othergic).toFixed("2"));
+							$(".gicTp_r"+period).text(parseFloat(responseJSON.gictp).toFixed("2"));
+							$(".gicTpulr_r"+period).text(parseFloat(responseJSON.gictpulr).toFixed("2"));
+							$(".claimSev_r"+period).text(parseFloat(responseJSON.sev).toFixed("2"));
+							$(".claimSevCat_r"+period).text(parseFloat(responseJSON.catsev).toFixed("2"));
+							$(".claimSevTheft_r"+period).text(parseFloat(responseJSON.theftsev).toFixed("2"));
+							$(".claimSevOthers_r"+period).text(parseFloat(responseJSON.othersev).toFixed("2"));
+							$(".claimFreq_r"+period).text((+responseJSON.freq||0)+'%');
+							$(".claimFreqCat_r"+period).text((+responseJSON.catfreq||0)+'%');
+							$(".claimFreqTheft_r"+period).text((+responseJSON.theftfreq||0)+'%');
+							$(".claimFreqOthers_r"+period).text((+responseJSON.otherfreq||0)+'%');  
+							$(".writtenPolicies_r"+period).text(parseFloat(responseJSON.policycount).toFixed("3"));
+							$(".writtenPoliciesTp_r"+period).text(parseFloat(responseJSON.policyodcount).toFixed("3"));
+							$(".writtenPoliciesOd_r"+period).text(parseFloat(responseJSON.policytpcount).toFixed("3"));
+							$(".writtenPoliciesOthers_r"+period).text(parseFloat(responseJSON.policyothercount).toFixed("3"));*/
+						}
+						jQuery("#pre-loader").remove();	 
+								 
+					}
+				}));
+			}
 	         var isPolicyDataFetched="N";
 	         var acqCostOd="0.0",acqCostTp="0.0";
 			function callPolicyApi(period,fromDate,toDate){
@@ -4139,22 +4375,6 @@ $('#iTest').selectize({
 	         
              function getCubeGEPData(period,fromDate,toDate){
 
-				$.ajax({
-					type: "GET",
-					contentType: "application/json",
-					url: "/getR12GicNic",  
-					dataType: 'json',
-					cache: false,
-					timeout: 600000,
-					success: function (data) {
-						responseJSON = data;
-						console.log(responseJSON);
-						//populateFilter(responseJSON);
-					},
-					error: function (e) {
-						alert(e);
-					}
-				});
             	 var apiURL = "";
             	if ($("#periodBasedBtn").css('background-color')!="rgb(255, 255, 255)"){
             		apiURL="/getGepCubeMonthAscolumnData/R/B";
@@ -4809,19 +5029,30 @@ $('#iTest').selectize({
             		 $('#generalTable > tbody > tr > td:nth-child(2)').text('0.00');
             		 $('#motorTable > tbody > tr > td:nth-child(2)').text('0.00');
             		 $('#healthTable > tbody > tr > td:nth-child(2)').text('0.00');
-            		 getCubeGEPData(1,from1,to1);
-            		 callPolicyApi(1,from1,to1);
-            		 callInsApi(1,from1,to1);
-					 callClaimApi(1,from1,to1);
-					 callSingleLineApi(1,from1,to1,"GIC");
-                	 callSingleLineApi(1,from1,to1,"NIC");
+					 if ($("#uwYearBtn").css('background-color')!="rgb(255, 255, 255)"){
+						getCubeGEPData(1,from1,to1);
+						callPolicyApi(1,from1,to1);
+						callInsApi(1,from1,to1);
+						callClaimApi(1,from1,to1);
+						callSingleLineApi(1,from1,to1,"GIC");
+						callSingleLineApi(1,from1,to1,"NIC");
+					 }
             		 if ($("#periodBasedBtn").css('background-color')!="rgb(255, 255, 255)"){
-            			 callClaimApi(1,from1,to1);
-            			 callSingleLineApi(1,from1,to1,"GIC");
-                		 callSingleLineApi(1,from1,to1,"NIC");
-                		 callReserveSingleLineApi(1,from1,to1,"GIC");
-                		 callReserveSingleLineApi(1,from1,to1,"NIC");
+						getCubeGEPData(1,from1,to1);
+						callPolicyApi(1,from1,to1);
+						callInsApi(1,from1,to1);
+            			callClaimApi(1,from1,to1);
+            			callSingleLineApi(1,from1,to1,"GIC");
+                		callSingleLineApi(1,from1,to1,"NIC");
+                		callReserveSingleLineApi(1,from1,to1,"GIC");
+                		callReserveSingleLineApi(1,from1,to1,"NIC");
             		 }
+					 if ($("#r12Btn").css('background-color')!="rgb(255, 255, 255)"){
+						callgetR12GicNic(1,from1,to1);
+						callR12AcqFunction(1,from1,to1);
+						callR12GwpNwp(1,from1,to1);
+						callR12GepNep(1,from1,to1);
+					 }
             		 
             	 }
             	 
@@ -4829,38 +5060,60 @@ $('#iTest').selectize({
 					$('#uwGeneralTable > tbody > tr > td:nth-child(3)').text('0.00');
            		 	$('#uwMotorTable > tbody > tr > td:nth-child(3)').text('0.00');
            		 	$('#uwHealthTable > tbody > tr > td:nth-child(3)').text('0.00');
-           			getCubeGEPData(2,from2,to2);
-           			callPolicyApi(2,from2,to2);
-           			callInsApi(2,from2,to2);
-           			callClaimApi(2,from2,to2);
-					callSingleLineApi(2,from2,to2,"GIC");
-					callSingleLineApi(2,from2,to2,"NIC");
+					if ($("#uwYearBtn").css('background-color')!="rgb(255, 255, 255)"){
+						getCubeGEPData(2,from2,to2);
+						callPolicyApi(2,from2,to2);
+						callInsApi(2,from2,to2);
+						callClaimApi(2,from2,to2);
+						callSingleLineApi(2,from2,to2,"GIC");
+						callSingleLineApi(2,from2,to2,"NIC");
+					}
            			if ($("#periodBasedBtn").css('background-color')!="rgb(255, 255, 255)"){
-           			callClaimApi(2,from2,to2);
-           		 	callSingleLineApi(2,from2,to2,"GIC");
-           		 	callSingleLineApi(2,from2,to2,"NIC");
-           		 	callReserveSingleLineApi(2,from2,to2,"GIC");
-        		 	callReserveSingleLineApi(2,from2,to2,"NIC");
+						getCubeGEPData(2,from2,to2);
+						callPolicyApi(2,from2,to2);
+						callInsApi(2,from2,to2);
+						callClaimApi(2,from2,to2);
+						callSingleLineApi(2,from2,to2,"GIC");
+						callSingleLineApi(2,from2,to2,"NIC");
+						callReserveSingleLineApi(2,from2,to2,"GIC");
+						callReserveSingleLineApi(2,from2,to2,"NIC");
            			}
+					if ($("#r12Btn").css('background-color')!="rgb(255, 255, 255)"){
+						callgetR12GicNic(2,from2,to2);
+						callR12AcqFunction(2,from2,to2);
+						callR12GwpNwp(2,from2,to2);
+						callR12GepNep(2,from2,to2);
+					 }
             	 }
             	 
 				if(from3!=""){
 					$('#uwGeneralTable > tbody > tr > td:nth-child(4)').text('0.00');
            		 	$('#uwMotorTable > tbody > tr > td:nth-child(4)').text('0.00');
            		 	$('#uwHealthTable > tbody > tr > td:nth-child(4)').text('0.00');
-           		 	getCubeGEPData(3,from3,to3);
-           			callPolicyApi(3,from3,to3);
-           			callInsApi(3,from3,to3);
-           			callClaimApi(3,from3,to3);
-					callSingleLineApi(3,from3,to3,"GIC");
-					callSingleLineApi(3,from3,to3,"NIC");
+					if ($("#uwYearBtn").css('background-color')!="rgb(255, 255, 255)"){
+						getCubeGEPData(3,from3,to3);
+						callPolicyApi(3,from3,to3);
+						callInsApi(3,from3,to3);
+						callClaimApi(3,from3,to3);
+						callSingleLineApi(3,from3,to3,"GIC");
+						callSingleLineApi(3,from3,to3,"NIC");
+					}
            			if ($("#periodBasedBtn").css('background-color')!="rgb(255, 255, 255)"){
-           			callClaimApi(3,from3,to3);
-           		 	callSingleLineApi(3,from3,to3,"GIC");
-           		 	callSingleLineApi(3,from3,to3,"NIC");
-           			callReserveSingleLineApi(3,from3,to3,"GIC");
-     		 		callReserveSingleLineApi(3,from3,to3,"NIC");
+						getCubeGEPData(3,from3,to3);
+						callPolicyApi(3,from3,to3);
+						callInsApi(3,from3,to3);
+						callClaimApi(3,from3,to3);
+						callSingleLineApi(3,from3,to3,"GIC");
+						callSingleLineApi(3,from3,to3,"NIC");
+						callReserveSingleLineApi(3,from3,to3,"GIC");
+						callReserveSingleLineApi(3,from3,to3,"NIC");
            			}
+					if ($("#r12Btn").css('background-color')!="rgb(255, 255, 255)"){
+						callgetR12GicNic(3,from3,to3);
+						callR12AcqFunction(3,from3,to3);
+						callR12GwpNwp(3,from3,to3);
+						callR12GepNep(3,from3,to3);
+					}
 				}
 				
 			
