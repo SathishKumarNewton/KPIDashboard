@@ -67,6 +67,8 @@ import com.prodian.rsgirms.userapp.service.UserService;
 import com.prodian.rsgirms.usermatrix.model.UserMatrixMasterRequest;
 import com.prodian.rsgirms.usermatrix.service.UserMatrixService;
 
+import com.prodian.rsgirms.dashboard.modelfunction.GicNicPsqlFunction;
+
 @Controller
 public class KpiController {
 
@@ -802,10 +804,7 @@ public class KpiController {
 
 			}
 
-			System.out.println("-----call---- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::callR12GicNic ---- Start");
-			List<UserRole> result = gicNicPsqlRepository.findAll();
-			System.out.println("-----call---- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::callR12GicNic ---- Success ::::"+ result.toString());
-
+			
 			System.out.println("Query execution time " + (System.currentTimeMillis() - startTime));
 		} catch (Exception e) {
 			System.out.println("kylinDataSource initialize error, ex: " + e);

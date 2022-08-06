@@ -66,6 +66,9 @@ import com.prodian.rsgirms.userapp.service.UserService;
 import com.prodian.rsgirms.usermatrix.model.UserMatrixMasterRequest;
 import com.prodian.rsgirms.usermatrix.service.UserMatrixService;
 
+import com.prodian.rsgirms.dashboard.modelfunction.GicNicPsqlFunction;
+import com.prodian.rsgirms.dashboard.rsrepository.GicNicPsqlRepository;
+
 @Controller
 public class KpiUpdatedDataController {
 
@@ -92,7 +95,10 @@ public class KpiUpdatedDataController {
 
 	@Autowired
 	private IntermediaryMasterRepository intermediaryMasterRepository;
-	
+
+	@Autowired
+	private GicNicPsqlRepository gicNicPsqlRepository;
+
 	@GetMapping("/motorKpiDataUpdatedNew")
 	public ModelAndView getMockMotorKpiDashBoard() {
 		ModelAndView model = new ModelAndView("motorKpiDataUpdatedNew");
@@ -4715,7 +4721,7 @@ public List<SingleLineCubeResponseNew> getUWSingleLineCubeGicDataUpdatedNew(Http
 		queryStr += " group by RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CSL_CATASTROPHECODE,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.csl_claim_type ,CATASTROPHIC_MASTER.CAT_TYPE ,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CSL_NATURE_OF_CLAIM,CSL_CLAIM_NO,category ) x";
 	}
 	else if(claimParamType.equals("NIC")){
-		queryStr +=" group by uw_year,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.PRODUCT_CODE,'NONE',category,CSL_CLAIM_NO) A ,   (select underwriting_year,XGEN_PRODUCTCODE,band,SUM(OD_OBLIGATORY) OD_OBLIGATORY,SUM(OD_QUOTA_SHARE) OD_QUOTA_SHARE,SUM(TP_OBLIGATORY) TP_OBLIGATORY,SUM(TP_QUOTA_SHARE) TP_QUOTA_SHARE from  RSA_DWH_RI_OBLIGATORY_MASTER1_NEW group by underwriting_year,XGEN_PRODUCTCODE,band) B   where B.underwriting_year=A.uw_year AND A.PRODUCT_CODE=B.XGEN_PRODUCTCODE AND A.BAND=B.band";
+		queryStr +=" group by uw_year,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.PRODUCT_CODE,'NONE',category,CSL_CLAIM_NO) A ,(select underwriting_year,XGEN_PRODUCTCODE,band,SUM(OD_OBLIGATORY) OD_OBLIGATORY,SUM(OD_QUOTA_SHARE) OD_QUOTA_SHARE,SUM(TP_OBLIGATORY) TP_OBLIGATORY,SUM(TP_QUOTA_SHARE) TP_QUOTA_SHARE from  RSA_DWH_RI_OBLIGATORY_MASTER1_NEW group by underwriting_year,XGEN_PRODUCTCODE,band) B   where B.underwriting_year=A.uw_year AND A.PRODUCT_CODE=B.XGEN_PRODUCTCODE AND A.BAND=B.band";
 
 	}
 	
@@ -4782,4 +4788,27 @@ public List<SingleLineCubeResponseNew> getUWSingleLineCubeGicDataUpdatedNew(Http
 	}
 	return kpiResponseList;
 }
+
+
+@GetMapping("/getR12GicNic")
+@ResponseBody
+public GicNicPsqlFunction getR12GicNic(HttpServletRequest req, UserMatrixMasterRequest filterRequest) throws SQLException {
+
+	String queryStr="' and (BUSINESS_TYPE) in (''Renewal'') and (CHANNEL) in (''OEM'') and (SUB_CHANNEL) in (''Honda Assure'') and (MAKE) in (''Honda Motors Ltd.'') and (MODELGROUP) in (''WRV'') and upper(coalesce(FUELTYPE,''N'')) in (''DIESEL'') and (STATEGROUPING) in (''Rest of Tamilnadu'') and (ncb_flag) in (''N'')'";
+	try{
+	String date = "201904";
+	System.out.println("-----call---- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::callR12GicNic ---- Start");
+	GicNicPsqlFunction result = gicNicPsqlRepository.callR12GicNic(queryStr, date);
+	System.out.println("-----call---- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::callR12GicNic ---- Success ::::"+ result.toString());
+	return result;
+		
+	} catch (Exception e) {
+		System.out.println("kylinDataSource initialize error, ex: " + e);
+		System.out.println();
+		e.printStackTrace();
+		return null;
+	}
+	// change "myview" to the name of your view 
+}
+
 }

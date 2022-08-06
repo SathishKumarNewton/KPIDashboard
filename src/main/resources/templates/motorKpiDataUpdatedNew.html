@@ -3414,7 +3414,7 @@ $('#iTest').selectize({
 	         }
 	         var isPolicyDataFetched="N";
 	         var acqCostOd="0.0",acqCostTp="0.0";
-		function callPolicyApi(period,fromDate,toDate){
+			function callPolicyApi(period,fromDate,toDate){
 	        	 
 	        	 var report = $('#reports').val();
 	        	 	var myInput;
@@ -4139,6 +4139,22 @@ $('#iTest').selectize({
 	         
              function getCubeGEPData(period,fromDate,toDate){
 
+				$.ajax({
+					type: "GET",
+					contentType: "application/json",
+					url: "/getR12GicNic",  
+					dataType: 'json',
+					cache: false,
+					timeout: 600000,
+					success: function (data) {
+						responseJSON = data;
+						console.log(responseJSON);
+						//populateFilter(responseJSON);
+					},
+					error: function (e) {
+						alert(e);
+					}
+				});
             	 var apiURL = "";
             	if ($("#periodBasedBtn").css('background-color')!="rgb(255, 255, 255)"){
             		apiURL="/getGepCubeMonthAscolumnData/R/B";
@@ -4148,11 +4164,11 @@ $('#iTest').selectize({
             		apiURL="/getGepCubeMonthAscolumnData/R/B";
             		callGepApi(period,fromDate,toDate,apiURL);
             		/*Freq*/
-            		apiURL="/getGepCubeMonthAscolumnData/R12/F";
-            		callGepApi(period,fromDate,toDate,apiURL);
+            		//apiURL="/getGepCubeMonthAscolumnData/R12/F";
+            		//callGepApi(period,fromDate,toDate,apiURL);
             		/*GIC & Sev*/
-            		apiURL="/getGepCubeMonthAscolumnData/R12/G";
-            		callGepApi(period,fromDate,toDate,apiURL);
+            		//apiURL="/getGepCubeMonthAscolumnData/R12/G";
+            		//callGepApi(period,fromDate,toDate,apiURL);
             	}else if($("#uwYearBtn").css('background-color')!="rgb(255, 255, 255)"){
             		/*Basic*/
             		apiURL="/getGepCubeMonthAscolumnData/U/B";
