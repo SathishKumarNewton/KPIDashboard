@@ -3452,115 +3452,51 @@ public List<String> getgepUWR12SevGicMeasures(){
 }	
 
 	public String getFinGepCondQuery(int fromMonth,int toMonth,int fromYear,int toYear){
-			
-		//String txt = "("; 
-		
-		
-		String txt = ""; 
-		if( (fromYear==toYear && fromMonth==toMonth) ||  (fromYear==toYear && 
-				((toMonth <4 && fromMonth <4) || (toMonth >=4 && fromMonth >=4) ) )){
-			
-			txt ="";
-		}else{
-			txt = "(";
-		}
-		
+
+		String txt = "("; 
+
 		int endMonth = 12;  
 		if(fromYear==toYear){
-		endMonth=toMonth;
+			endMonth=toMonth;
 		}
-
-		if(fromMonth>0 && fromMonth<=3 ){
-		txt +="(gep_year='"+(fromYear-1)+"' and gep_MONTH in ( " ;
-		
-		for (int i=fromMonth; i<=3; i++){
-			if(i<10 && i>0){
-				txt +="'0"+i+"'";
-			}else{
-				txt +="'"+i+"'";
-			}
-		if(i!=3){
-		txt +=",";
-		}else{
-			txt+=") ) or ";
-		}
-
-		}
-		fromMonth=4;
-		}
-		txt +=" (gep_year='"+fromYear+"' and gep_MONTH in (" ;
-
+		txt +="(gep_year='"+(fromYear)+"' and gep_MONTH in (" ;
 		for (int i=fromMonth; i<=endMonth; i++){
 			if(i<10 && i>0){
-				txt +="'0"+i+"'";
+				txt += "'0"+i+"'";
 			}else{
-				txt +="'"+i+"'";
+				txt += "'"+i+"'";
 			}
-		if(i!=endMonth){
-		txt +=",";
-		}else{
-			txt+="))";
-		}
+			if(i!=endMonth){
+				txt +=",";
+			}else{
+				txt+="))";
 			}
-		
-		/*if(fromYear == toYear && fromMonth==toMonth){
-			return txt;
-		}*/
-		if(fromYear == toYear){
-			return txt;
-		}
-		
-
-		if(toMonth>0){
-		if(toMonth>3){
-			endMonth = 3;
-		}else{
-			endMonth = toMonth;
+			
 		}
 
-		for (int i=1; i<=endMonth; i++){
-		if(i==1){
-		txt +=" or (gep_year='"+(toYear-1)+"' and gep_MONTH in (" ;
-		}
-		if(i<10 && i>0){
-			txt +="'0"+i+"'";
-		}else{
-			txt +="'"+i+"'";
-		}
-		if(i!=endMonth){
-		txt +=",";
-		}else{
-			txt+="))";
-		}
+		if(fromYear!=toYear){
+			txt +=" or (gep_year='"+(toYear)+"' and gep_MONTH in (" ;
+			for (int i=1; i<=toMonth; i++){
+				if(i<10 && i>0){
+					txt += "'0"+i+"'";
+				}else{
+					txt += "'"+i+"'";
+				}
+				if(i!=toMonth){
+					txt +=",";
+				}else{
+					txt+="))";
+				}
+				
 			}
-
-		endMonth = toMonth;
-
-			for (int i=4; i<=endMonth; i++){
-		if(i==4){
-		txt +=" or (gep_year='"+toYear+"' and gep_MONTH in (" ;
 		}
-		
-		if(i<10 && i>0){
-			txt +="'0"+i+"'";
-		}else{
-			txt +="'"+i+"'";
-		}
-		
-		if(i!=endMonth){
-		txt +=",";
-		}else{
-			txt+="))";
-		}
-			}
+	
+	txt +=")";
 
-		}
-		
-		txt +=")";
 
-		return txt;
-		
-}
+	return txt;
+	
+	}
 
 	public String getFinCondQuery(int fromMonth,int toMonth,int fromYear,int toYear){
 		
