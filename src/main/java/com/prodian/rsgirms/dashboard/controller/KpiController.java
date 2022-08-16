@@ -456,7 +456,7 @@ public class KpiController {
 						vals += ",";
 					}
 				}
-				queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.CHANNEL) in (" + vals + ")";
+				queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.CHANNEL) in (" + vals + ")";
 			}
 			if (filterRequest != null && filterRequest.getSubChannelNow() != null
 					&& !filterRequest.getSubChannelNow().isEmpty()) {
@@ -467,7 +467,7 @@ public class KpiController {
 						vals += ",";
 					}
 				}
-				queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.SUB_CHANNEL) in (" + vals + ")";
+				queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.SUB_CHANNEL) in (" + vals + ")";
 			}
 			if (filterRequest != null && filterRequest.getMakeNow() != null
 					&& !filterRequest.getMakeNow().isEmpty()) {
@@ -537,7 +537,7 @@ public class KpiController {
 						vals += ",";
 					}
 				}
-				queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.CHANNEL) in (" + vals + ")";
+				queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.CHANNEL) in (" + vals + ")";
 			}
 
 			if (filterRequest != null && filterRequest.getMotorSubChannel() != null
@@ -549,7 +549,7 @@ public class KpiController {
 						vals += ",";
 					}
 				}
-				queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.SUB_CHANNEL) in (" + vals + ")";
+				queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.SUB_CHANNEL) in (" + vals + ")";
 			}
 
 			/*if (filterRequest != null && filterRequest.getMotorRegion() != null

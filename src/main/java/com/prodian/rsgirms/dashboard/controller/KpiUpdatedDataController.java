@@ -2891,7 +2891,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.BRANCH_CODE) in (" + vals + ")";
+			queryStr += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.BRANCH_CODE) in (" + vals + ")";
 		}
 		
 		if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
@@ -3777,7 +3777,7 @@ public List<InsCubeResponseNew> getUWInsCubeDataUpdatedNew(HttpServletRequest re
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BRANCH_CODE) in (" + vals + ")";
+			queryStr += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.BRANCH_CODE) in (" + vals + ")";
 		}
 		
 		if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
@@ -4239,7 +4239,7 @@ public List<ClaimsCubeResponseNew> getUWClaimsCubeDataUpdatedNew(HttpServletRequ
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_FINAL_NOW.BRANCH_CODE) in (" + vals + ")";
+			queryStr += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.BRANCH_CODE) in (" + vals + ")";
 		}
 		
 		if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
