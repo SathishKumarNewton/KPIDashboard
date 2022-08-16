@@ -2665,7 +2665,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 	Statement stmt = connection.createStatement();
 	
 	
-	String queryStr= "select sum(gic_tp*(1-TP_QUOTA_SHARE-TP_OBLIGATORY)) from (select  SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEPCOVERAGE*0.95) as gic_tp,uw_year,GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.PRODUCT_CODE,'NONE' band",
+	String queryStr= "select sum(gic_tp*(1-TP_QUOTA_SHARE-TP_OBLIGATORY)) from (select  SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GIC_TP) as gic_tp,uw_year,GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.PRODUCT_CODE,'NONE' band",
 			monthPrefix="",year="",measure="gic_tp"; int counter = 0, measureCount = 0;
 	
 	
@@ -2690,7 +2690,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 	//}
 		System.out.println("nic tp select------------------------------ " + queryStr);
 		
-		queryStr += " FROM RSDB.GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL as GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL";
+		queryStr += " FROM RSDB.GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL as GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE";
 		
 		
 		// if (fromYear.equals(toYear)) {
@@ -2715,7 +2715,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.BUSINESS_TYPE) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.BUSINESS_TYPE) in (" + vals + ")";
 		}
 		if (filterRequest != null && filterRequest.getChannelNow() != null
 				&& !filterRequest.getChannelNow().isEmpty()) {
@@ -2726,7 +2726,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.CHANNEL) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.CHANNEL) in (" + vals + ")";
 		}
 		if (filterRequest != null && filterRequest.getSubChannelNow() != null
 				&& !filterRequest.getSubChannelNow().isEmpty()) {
@@ -2737,7 +2737,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.SUB_CHANNEL) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.SUB_CHANNEL) in (" + vals + ")";
 		}
 		if (filterRequest != null && filterRequest.getMakeNow() != null
 				&& !filterRequest.getMakeNow().isEmpty()) {
@@ -2748,7 +2748,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.MAKE) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.MAKE) in (" + vals + ")";
 		}
 		if (filterRequest != null && filterRequest.getModelGroupNow() != null
 				&& !filterRequest.getModelGroupNow().isEmpty()) {
@@ -2759,7 +2759,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.MODELGROUP) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.MODELGROUP) in (" + vals + ")";
 		}
 		if (filterRequest != null && filterRequest.getFuelTypeNow() != null
 				&& !filterRequest.getFuelTypeNow().isEmpty()) {
@@ -2770,7 +2770,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.FUEL_TYPE) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.FUEL_TYPE) in (" + vals + ")";
 		}
 		if (filterRequest != null && filterRequest.getStateGroupNow() != null
 				&& !filterRequest.getStateGroupNow().isEmpty()) {
@@ -2781,7 +2781,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.STATE_GROUPING) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.STATE_GROUPING) in (" + vals + ")";
 		}
 		if (filterRequest != null && filterRequest.getNcbNow() != null
 				&& !filterRequest.getNcbNow().isEmpty()) {
@@ -2792,7 +2792,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.NCB) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NCB) in (" + vals + ")";
 		}
 		
 		
@@ -2807,7 +2807,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.CHANNEL) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.CHANNEL) in (" + vals + ")";
 		}
 
 		if (filterRequest != null && filterRequest.getMotorSubChannel() != null
@@ -2819,7 +2819,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.SUB_CHANNEL) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.SUB_CHANNEL) in (" + vals + ")";
 		}
 
 		/*if (filterRequest != null && filterRequest.getMotorRegion() != null
@@ -2891,7 +2891,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.BRANCH_CODE) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.BRANCH_CODE) in (" + vals + ")";
 		}
 		
 		if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
@@ -2903,7 +2903,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.AGENT_CODE) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.AGENT_CODE) in (" + vals + ")";
 		}
 		
 		if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
@@ -2927,7 +2927,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.FUEL_TYPE) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.FUEL_TYPE) in (" + vals + ")";
 		}
 		
 		if (filterRequest != null && filterRequest.getMotorNcbFlag() != null
@@ -2939,7 +2939,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.NCB) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NCB) in (" + vals + ")";
 		}
 		
 		queryStr +=" group by uw_year,PRODUCT_CODE,'NONE') A ,(select underwriting_year,XGEN_PRODUCTCODE,band,SUM(OD_OBLIGATORY) OD_OBLIGATORY,SUM(OD_QUOTA_SHARE) OD_QUOTA_SHARE,SUM(TP_OBLIGATORY) TP_OBLIGATORY,SUM(TP_QUOTA_SHARE) TP_QUOTA_SHARE from  RSA_DWH_RI_OBLIGATORY_MASTER1_NEW group by underwriting_year,XGEN_PRODUCTCODE,band) B   where B.underwriting_year=A.uw_year AND A.PRODUCT_CODE=B.XGEN_PRODUCTCODE AND A.BAND=B.band";
