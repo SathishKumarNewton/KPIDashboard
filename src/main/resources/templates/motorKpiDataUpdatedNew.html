@@ -331,7 +331,7 @@ padding-top: 150px;
 	                    <div class="col-12">
 	                        <div class="row card-layout">
 	                            <!--Card -header-->
-	                            <div class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+	                            <div class="col-12 card-layout-header d-flex justify-content-between align-items-center" id="channelType">
 	                                <div><span class="h2" id="">Channel Type</span></div>
 	                                <div>
 	                                	<button  class="resetText btn appyKpiFilter">APPLY FILTER</button>
@@ -424,7 +424,7 @@ padding-top: 150px;
 	                    <div class="col-12">
 	                        <div class="row card-layout">
 	                            <!--Card -header-->
-	                            <div class="col-12 card-layout-header d-flex justify-content-between align-items-center">
+	                            <div class="col-12 card-layout-header d-flex justify-content-between align-items-center" id="motorParameters">
 	                                <div><span class="h2" id="">Motor Parameters</span></div>
 	                                <div>
 	                                	<button  class="resetText btn appyKpiFilter">APPLY FILTER</button>
@@ -810,7 +810,7 @@ padding-top: 150px;
 	                                        <div class="col-12 p-0" id="customClaimBtns" style="display: inline-flex;">
 	                                            <button class="btn mt-1 mt-sm-0 mr-1 " id="comprehensiveBtn">Comprehensive</button>
 	                                            <button class="btn mt-1 mt-sm-0 mr-1 " id="tpBtn">TP</button>
-	                                            <button class="btn mt-1 mt-sm-0 mr-1 uwYearBtnFocus" id="sodBtn">SOD</button>
+	                                            <button class="btn mt-1 mt-sm-0 mr-1 uwYearBtnFocus" id="sodBtn" hidden>SOD</button>
 	                                            <button class="btn mt-1 mt-sm-0 mr-1" id="allPolicyTypeBtn">All</button>
 	                                            <!-- <button class="btn mt-1 mt-sm-0 mr-2" id="extraPulatedLinkBtn">View On Business UW</button> -->
 	                                            <!-- <a href="/monthlyDashboard" id="extraPulatedLink">View On Business UW</a> -->
@@ -2296,6 +2296,10 @@ padding-top: 150px;
 	         var uwYrToogle = true;
 	         
 	         $('#periodBasedBtn').click(function () {
+		
+					$('channelType').show();
+					$('motorParameters').show();
+					
 	        	 $('#uwYearBtn').css('background-color', "white");
 		      		$('#uwYearBtn').css('color', "black");
 		      		
@@ -2325,6 +2329,9 @@ padding-top: 150px;
 	         });
 	         
 	         $('#uwYrBtn').click(function () {
+				
+					$('#channelType').show();
+					$('#motorParameters').show();
 	        	 
 	        	 	$('#periodBasedBtn').css('background-color', "white");
 	 		      	$('#periodBasedBtn').css('color', "black");
@@ -2755,6 +2762,8 @@ padding-top: 150px;
         	 $("#r12Btn").click(function () {
         		 
         		$("#groupedDim").show();
+        		$("#channelType").hide();
+        		$("#motorParameters").hide();
         		 
         		$('#periodBasedBtn').css('background-color', "white");
 		      	$('#periodBasedBtn').css('color', "black");
