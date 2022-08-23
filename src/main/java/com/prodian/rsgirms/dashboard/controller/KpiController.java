@@ -377,7 +377,58 @@ public class KpiController {
 				String queryStr = "";
 			if(claimType.equalsIgnoreCase("R")){
 					measureList = getgepBaseMeasures();
-					queryStr += "SELECT  SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEPCOVERAGE),SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEPCOVERAGE),SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_OD), SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_TP), SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_OD),  SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_TP), 0, 0, 0, SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.OD_EARNED_POLICIES ), 0, 0,  0, SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEPCOVERAGE*0.95) as GIC_TP ";
+					
+					if(filterRequest.getAddOns() == "Include") {
+						queryStr += "SELECT SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEPCOVERAGE) as GEP,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEPCOVERAGE) as NEP,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_OD) as GEP_OD,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_TP) as GEP_TP  ,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_OD) as NEP_OD,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_TP) as NEP_TP,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_NILDEP) as GEP_NILDEP,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_NCB) as GEP_NCB,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_OTHER_ADDON) as GEP_OTHER_ADDON,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.OD_EARNED_POLICIES ) as GEP_OD_EARNED_POLICIES,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_NILDEP) as NEP_NILDEP,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_NCB) as NEP_NCB,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_OTHER_ADDON) as NEP_OTHER_ADDON,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GIC_TP) as GIC_TP";	
+					}
+					else if(filterRequest.getAddOns() == "Exclude") {
+						queryStr += "SELECT SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEPCOVERAGE) as GEP,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEPCOVERAGE) as NEP,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_OD) as GEP_OD,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_TP) as GEP_TP  ,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_OD) as NEP_OD,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_TP) as NEP_TP,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_NILDEP) as GEP_NILDEP,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_NCB) as GEP_NCB,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_OTHER_ADDON) as GEP_OTHER_ADDON,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.OD_EARNED_POLICIES ) as GEP_OD_EARNED_POLICIES,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_NILDEP) as NEP_NILDEP,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_NCB) as NEP_NCB,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_OTHER_ADDON) as NEP_OTHER_ADDON,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GIC_TP) as GIC_TP";	
+					}
+					else {
+						queryStr += "SELECT SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEPCOVERAGE) as GEP,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEPCOVERAGE) as NEP,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_OD) as GEP_OD,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_TP) as GEP_TP  ,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_OD) as NEP_OD,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_TP) as NEP_TP,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_NILDEP) as GEP_NILDEP,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_NCB) as GEP_NCB,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_OTHER_ADDON) as GEP_OTHER_ADDON,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.OD_EARNED_POLICIES ) as GEP_OD_EARNED_POLICIES,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_NILDEP) as NEP_NILDEP,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_NCB) as NEP_NCB,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_OTHER_ADDON) as NEP_OTHER_ADDON,"
+								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GIC_TP) as GIC_TP";	
+					}
+						
+					
+			//		queryStr += "SELECT  SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEPCOVERAGE),SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEPCOVERAGE),SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_OD), SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_TP), SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_OD),  SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_TP), 0, 0, 0, SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.OD_EARNED_POLICIES ), 0, 0,  0, SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEPCOVERAGE*0.95) as GIC_TP ";
 					// queryStr +=frameMesaureQuery(Integer.valueOf(fromMonth), Integer.valueOf(toMonth), Integer.valueOf(fromYear) , Integer.valueOf(toYear), measureList,queryStr);
 			}else if(claimType.equalsIgnoreCase("U")){
 					queryStr += "SELECT  SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEPCOVERAGE),SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEPCOVERAGE),SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_OD), SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_TP), SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_OD),  SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_TP), 0, 0, 0, SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.OD_EARNED_POLICIES ), 0, 0,  0, SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEPCOVERAGE*0.95) as GIC_TP ";
@@ -401,7 +452,7 @@ public class KpiController {
 				queryStr += " FROM RSDB.GEP_POLICY_FACT_DENORMAL ";
 			}*/
 			
-		  	queryStr += "FROM RSDB.GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL as GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL "+
+/*		  	queryStr += "FROM RSDB.GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL as GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL "+
 			  "LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW "+
 			  "ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL "+
 			  "LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER "+
@@ -415,7 +466,26 @@ public class KpiController {
 			  "LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER "+
 			  "ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE "+
 			  "LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT "+
-			  "ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE";
+			  "ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE"; */
+			
+			queryStr += "FROM RSDB.GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL as GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL "
+					+"LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW "
+					+"ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL "
+					+"LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER "
+					+"ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE "
+					+"LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER "
+					+"ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE "
+					+"LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER "
+					+"ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE "
+					+"LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER "
+					+"ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE "
+					+"LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER "
+					+"ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE "
+					+"LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT "
+					+"ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE ";
+			
+			
+			
 			
 			if(claimType.equalsIgnoreCase("R")){
 				queryStr += " WHERE";
@@ -436,6 +506,19 @@ public class KpiController {
 				String finEndDate = toYear + "-" + toMonth + "-31";
 				queryStr += " WHERE SUBSTRING(inception_date,1,10) >='"+finstartDate+"' and SUBSTRING(inception_date,1,10) <='"+finEndDate+"' ";
 			}
+			
+			if (filterRequest != null && filterRequest.getPolicyTypes() != null
+					&& !filterRequest.getPolicyTypes().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getPolicyTypes().size(); i++) {
+					vals += "'" + filterRequest.getPolicyTypes().get(i).trim() + "'";
+					if (i != filterRequest.getPolicyTypes().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_DWH_COVERCODE_MASTER.CATEGORY) in (" + vals + ")";
+			}
+			
 			if (filterRequest != null && filterRequest.getBTypeNow() != null
 					&& !filterRequest.getBTypeNow().isEmpty()) {
 				String vals = "";
@@ -445,7 +528,7 @@ public class KpiController {
 						vals += ",";
 					}
 				}
-				queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.BUSINESS_TYPE) in (" + vals + ")";
+				queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.BUSINESS_TYPE) in (" + vals + ")";
 			}
 			if (filterRequest != null && filterRequest.getChannelNow() != null
 					&& !filterRequest.getChannelNow().isEmpty()) {
@@ -456,7 +539,7 @@ public class KpiController {
 						vals += ",";
 					}
 				}
-				queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.CHANNEL) in (" + vals + ")";
+				queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.CHANNEL) in (" + vals + ")";
 			}
 			if (filterRequest != null && filterRequest.getSubChannelNow() != null
 					&& !filterRequest.getSubChannelNow().isEmpty()) {
@@ -467,7 +550,7 @@ public class KpiController {
 						vals += ",";
 					}
 				}
-				queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.SUB_CHANNEL) in (" + vals + ")";
+				queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.SUB_CHANNEL) in (" + vals + ")";
 			}
 			if (filterRequest != null && filterRequest.getMakeNow() != null
 					&& !filterRequest.getMakeNow().isEmpty()) {
@@ -478,7 +561,7 @@ public class KpiController {
 						vals += ",";
 					}
 				}
-				queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.MAKE) in (" + vals + ")";
+				queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.MAKE) in (" + vals + ")";
 			}
 			if (filterRequest != null && filterRequest.getModelGroupNow() != null
 					&& !filterRequest.getModelGroupNow().isEmpty()) {
@@ -489,7 +572,7 @@ public class KpiController {
 						vals += ",";
 					}
 				}
-				queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.MODELGROUP) in (" + vals + ")";
+				queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.MODELGROUP) in (" + vals + ")";
 			}
 			if (filterRequest != null && filterRequest.getFuelTypeNow() != null
 					&& !filterRequest.getFuelTypeNow().isEmpty()) {
@@ -500,7 +583,7 @@ public class KpiController {
 						vals += ",";
 					}
 				}
-				queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.FUEL_TYPE) in (" + vals + ")";
+				queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.FUEL_TYPE) in (" + vals + ")";
 			}
 			if (filterRequest != null && filterRequest.getStateGroupNow() != null
 					&& !filterRequest.getStateGroupNow().isEmpty()) {
@@ -511,7 +594,7 @@ public class KpiController {
 						vals += ",";
 					}
 				}
-				queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.STATE_GROUPING) in (" + vals + ")";
+				queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.STATE_GROUPING) in (" + vals + ")";
 			}
 			if (filterRequest != null && filterRequest.getNcbNow() != null
 					&& !filterRequest.getNcbNow().isEmpty()) {
@@ -522,7 +605,7 @@ public class KpiController {
 						vals += ",";
 					}
 				}
-				queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.NCB) in (" + vals + ")";
+				queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NCB) in (" + vals + ")";
 			}
 			
 			
@@ -537,7 +620,7 @@ public class KpiController {
 						vals += ",";
 					}
 				}
-				queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.CHANNEL) in (" + vals + ")";
+				queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.CHANNEL) in (" + vals + ")";
 			}
 
 			if (filterRequest != null && filterRequest.getMotorSubChannel() != null
@@ -549,7 +632,7 @@ public class KpiController {
 						vals += ",";
 					}
 				}
-				queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.SUB_CHANNEL) in (" + vals + ")";
+				queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.SUB_CHANNEL) in (" + vals + ")";
 			}
 
 			/*if (filterRequest != null && filterRequest.getMotorRegion() != null
