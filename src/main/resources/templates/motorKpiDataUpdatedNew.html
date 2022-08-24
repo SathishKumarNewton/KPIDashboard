@@ -2948,7 +2948,7 @@ $('#iTest').selectize({
 			                      earnedPoliciesOd="0.0",earnedPoliciesTp="0.0",gep="0.0",freqCat="0.0",freqTheft="0.0",freqOthers="0.0";
 			                      $.each(data, function(ind, obj){
 			    	               if(apiURL=="/getGepCubeMonthAscolumnData/R/B" || apiURL=="/getGepCubeMonthAscolumnData/U/B"){
-			    	            	   if($("#onlyAddOnBtn").css('background-color')!="rgb(255, 255, 255)"){
+			    	            	/*   if($("#onlyAddOnBtn").css('background-color')!="rgb(255, 255, 255)"){
 			    	                		gepOd=parseFloat(obj.gepNildep.toPrecision())+parseFloat(obj.gepNcb.toPrecision())+parseFloat(obj.gepOtherAddon.toPrecision());
 			    	                		//gepOd=parseFloat(obj.gepNildep.toPrecision())+parseFloat(obj.gepNcb.toPrecision())+(parseFloat(obj.gepOd.toPrecision())-parseFloat(obj.gepOtherAddon.toPrecision())) ;
 			    	                		//nepOd=parseFloat(obj.nepNildep.toPrecision())+parseFloat(obj.nepNcb.toPrecision())+(parseFloat(obj.nepOd.toPrecision())-parseFloat(obj.nepOtherAddon.toPrecision())) ;
@@ -2980,21 +2980,21 @@ $('#iTest').selectize({
 			    	                		gepTp=obj.gepTp;
 			    	                		nepTp=obj.nepTp;
 			    	                		gicTp=obj.gicTp;
-			    	                	}
+			    	                	}*/
 			    	                	//gepTp=obj.gepTp;
 			    	                	//nepOd=obj.nepOd;
 			    	                	//nepTp=obj.nepTp;
 			    	                	/*Basic*/
-			    	                	$(".gep_r"+period).text(convertToLaksh(Math.abs(parseFloat(gepOd)+parseFloat(gepTp)).toFixed("2")));
-			    	                	$(".gepOd_r"+period).text(convertToLaksh(Math.abs(gepOd.toFixed("2"))));
-			    	                	$(".gepTp_r"+period).text(convertToLaksh(Math.abs(gepTp.toFixed("2"))));
-			    	                	$(".nep_r"+period).text(convertToLaksh(Math.abs(parseFloat(nepOd)+parseFloat(nepTp)).toFixed("2")));
-			    	                	$(".nepOd_r"+period).text(convertToLaksh(Math.abs(nepOd.toFixed("2"))));
-			    	                	$(".nepTp_r"+period).text(convertToLaksh(Math.abs(nepTp.toFixed("2"))));
-			    	                	$(".earnedPoliciesOd_r"+period).text(earnedPoliciesOd.toFixed("0"));
-			    	                	$(".earnedPolicies_r"+period).text((parseFloat(earnedPoliciesOd)+parseFloat(earnedPoliciesTp)).toFixed("0"));
+			    	                	$(".gep_r"+period).text(convertToLaksh((obj.gepOd.toPrecision()+obj.gepTp).toFixed("2")));
+			    	                	$(".gepOd_r"+period).text(convertToLaksh((obj.gepOd.toPrecision().toFixed("2"))));
+			    	                	$(".gepTp_r"+period).text(convertToLaksh((obj.gepTp.toFixed("2"))));
+			    	                	$(".nep_r"+period).text(convertToLaksh((obj.nepOd.toPrecision()+obj.nepTp).toFixed("2")));
+			    	                	$(".nepOd_r"+period).text(convertToLaksh((obj.nepOd.toPrecision().toFixed("2"))));
+			    	                	$(".nepTp_r"+period).text(convertToLaksh((obj.nepTp.toFixed("2"))));
+			    	                	$(".earnedPoliciesOd_r"+period).text(obj.gepOdEarnedPolicies.toPrecision().toFixed("0"));
+			    	                	$(".earnedPolicies_r"+period).text((obj.gepOdEarnedPolicies.toPrecision()+(earnedPoliciesTp)).toFixed("0"));
 			    	               
-			    	                	$(".gicTpulr_r"+period).text(convertToLaksh(Math.abs(gicTp.toFixed("2"))));
+			    	                	$(".gicTpulr_r"+period).text(convertToLaksh((obj.gicTp.toFixed("2"))));
 			    	                	$(".gic_r"+period).text( (parseFloat($(".gicOdCat_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")) + parseFloat($(".gicTpulr_r"+period).text().replaceAll(",",""))).toFixed("2"));
 			    	                	/* $(".lossRatioOd_r"+period).text(($(".nicOd_r"+period).text()/$(".nepOd_r"+period).text()).toFixed("2")*100);
 			    	                	$(".lossRatio_r"+period).text(($(".nicOd_r"+period).text()/$(".nepOd_r"+period).text()).toFixed("2")*100); */
