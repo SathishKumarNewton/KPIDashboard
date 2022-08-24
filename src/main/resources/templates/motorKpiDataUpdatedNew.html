@@ -3697,7 +3697,7 @@ $('#iTest').selectize({
 			                      console.log(responseJSON);
 			                      $.each(data, function(ind, obj){
 			                    	  debugger;
-			                    	  if($("#comprehensiveBtn").css('background-color')!="rgb(255, 255, 255)"){
+			                    	 /* if($("#comprehensiveBtn").css('background-color')!="rgb(255, 255, 255)"){
 			                    		  $(".writtenPolicies_r"+period).text((obj.writtenPoliciesComprehensive).toFixed("0"));
 			                    		  $(".writtenPoliciesOd_r"+period).text((obj.writtenPoliciesComprehensive).toFixed("0"));
 			                    		  acqCostOd = obj.acqCostComprehensive;
@@ -3714,12 +3714,15 @@ $('#iTest').selectize({
 			                    		  console.log(obj.writtenPoliciesComprehensive+"--->"+parseFloat(obj.writtenPoliciesComprehensive));
 			                    		  console.log(obj.writtenPoliciesTp+"--->"+parseFloat(obj.writtenPoliciesTp));
 			                    		  console.log(obj.writtenPoliciesOthers+"--->"+parseFloat(obj.writtenPoliciesOthers));
-			                    	  
-			                    	$(".writtenPolicies_r"+period).text((parseFloat(obj.writtenPoliciesComprehensive)+parseFloat(obj.writtenPoliciesTp)+parseFloat(obj.writtenPoliciesOthers)).toFixed("0"));
+			                    	  }*/
+			                    	$(".writtenPolicies_r"+period).text(((obj.writtenPoliciesComprehensive)+(obj.writtenPoliciesTp)+(obj.writtenPoliciesOthers)).toFixed("0"));
 			                    	  $(".writtenPoliciesOthers_r"+period).text((obj.writtenPoliciesOthers).toFixed("0"));
 			                    	  $(".writtenPoliciesTp_r"+period).text((obj.writtenPoliciesTp).toFixed("0"));
 			                    	  $(".writtenPoliciesOd_r"+period).text((obj.writtenPoliciesComprehensive).toFixed("0"));
-			                    	  }
+			                    	    $(".acqCostOd"+period).text((obj.acqCostComprehensive).toFixed("0"));
+			                    	    $(".acqCostTp"+period).text((obj.acqCostTp).toFixed("0"));
+			                    	 
+			                    	   
 			                    	  if(isClaimsDataFetched=="Y"){
 			                    		  
 			                    	  	  var clmFreqCat = (((registeredClaimscatCount)/($("#show_8 > .writtenPolicies_r"+period).text().replaceAll(",","")*100000))*100).toFixed("2");
@@ -3732,12 +3735,12 @@ $('#iTest').selectize({
 			                    		  $(".claimFreq_r"+period).text((+clmFreq||0)+'%');
 			                    	  }
 			                    	  if(isInsDataFetched=="Y"){
-			                    		  var acrOdPVal = (((acqCostOd*1000)/($(".extra_1 > .gwpOd_r"+period).text().replaceAll(",","")*100000))).toFixed("2");
+			                    		  var acrOdPVal = (((obj.acqCostComprehensive*100)/($(".extra_1 > .gwpOd_r"+period).text().replaceAll(",","")*100000))).toFixed("2");
 			                    		  acrOdPVal = isFinite(acrOdPVal) ? acrOdPVal : 0;
 			                    		  $(".acrOd_r"+period).text((+acrOdPVal||0)+'%');
 				                    	 	//$(".acrTp_r"+period).text(acqCostTp/$(".gwpTp_r"+period).text());
 				                    	 	if($(".extra_1 > .gwpTp_r"+period).text().replaceAll(",","")!=0){
-				                    	 		var acrTpPVal = (((acqCostTp*1000)/($(".extra_1 > .gwpTp_r"+period).text().replaceAll(",","")*100000))).toFixed("2");
+				                    	 		var acrTpPVal = (((obj.acqCostTp*100)/($(".extra_1 > .gwpTp_r"+period).text().replaceAll(",","")*100000))).toFixed("2");
 				                    	 		acrTpPVal = isFinite(acrTpPVal) ? acrTpPVal : 0;
 				                    	 		$(".acrTp_r"+period).text((+acrTpPVal||0)+'%');	
 				                    	 	}else{
@@ -3745,7 +3748,7 @@ $('#iTest').selectize({
 				                    	 	}
 				                    	 	//$(".acr_r"+period).text(parseFloat(acqCostTp/$(".gwpTp_r"+period).text())+parseFloat(acqCostOd/$(".gwpOd_r"+period).text()));
 				                    	 	//$(".acr_r"+period).text((parseFloat($(".extra_13 > .acrOd_r"+period).text())+parseFloat($(".extra_13 > .acrTp_r"+period).text())) );
-				                    	 	var acrPVal = ((parseFloat(acqCostOd*1000)+parseFloat(acqCostTp*1000))/($("#show_1 > .gwp_r"+period).text().replaceAll(",","")*100000)).toFixed("2");
+				                    	 	var acrPVal = (((obj.acqCostComprehensive*100)+(obj.acqCostTp*100))/($("#show_1 > .gwp_r"+period).text().replaceAll(",","")*100000)).toFixed("2");
 				                    	 	acrPVal = isFinite(acrPVal) ? acrPVal : 0;
 				                    	 	$(".acr_r"+period).text((+acrPVal||0)+'%');
 				                    	  }
