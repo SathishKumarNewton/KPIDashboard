@@ -363,7 +363,7 @@ public class KpiUpdatedDataController {
 			String toYear = toDate.split("/")[1];
 
 			String queryStr = "";
-			if(filterRequest.getAddOns() == "Include"){
+			if(filterRequest.getAddOns().get(0).trim() == "Include"){
 				
 			
 			 queryStr += 
@@ -395,7 +395,7 @@ public class KpiUpdatedDataController {
 					+ "LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE  WHERE ( (financial_year='2019' and EFF_FIN_YEAR_MONTH in ('04','05','06','07','08','09','10','11','12')) or (financial_year='2019' and EFF_FIN_YEAR_MONTH in ('01','02','03'))) group by ADDON_TYPE,category ) x";   
 			}
 			    
-			 else if(filterRequest.getAddOns() == "Exclude"){
+			 else if(filterRequest.getAddOns().get(1).trim() == "Exclude"){
 				 
 				 queryStr += "SELECT (POLICY_COUNT - ADDON_POLICY_COUNT_OD - ADDON_POLICY_COUNT_TP - ADDON_POLICY_COUNT_others) POLICY_COUNT,"
 				 		+ "(POLICY_COUNT_OD - ADDON_POLICY_COUNT_OD ) POLICY_COUNT_OD,"
@@ -442,7 +442,7 @@ public class KpiUpdatedDataController {
 			
 			
 			
-			else {
+			else if(filterRequest.getAddOns().get(2).trim() == "Only Addon"){
 				
 				queryStr += "SELECT (ADDON_POLICY_COUNT_OD + ADDON_POLICY_COUNT_TP + ADDON_POLICY_COUNT_others) POLICY_COUNT, "
                       + "(ADDON_POLICY_COUNT_OD ) POLICY_COUNT_OD, "

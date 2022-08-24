@@ -45,7 +45,7 @@ public class UserMatrixMasterRequest {
 
 	private List<String> ageWithRs;
 
-	private String addOns;
+	private List<String> addOns;
 
 	private List<String> intermediaryCodes;
 
