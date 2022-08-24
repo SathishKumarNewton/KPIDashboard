@@ -378,7 +378,7 @@ public class KpiController {
 			if(claimType.equalsIgnoreCase("R")){
 					measureList = getgepBaseMeasures();
 					
-					if(filterRequest.getAddOns() == "Include") {
+					if(filterRequest.getAddOns().get(0).trim()=="Include") {
 						queryStr += "SELECT SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEPCOVERAGE) as GEP,"
 								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEPCOVERAGE) as NEP,"
 								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_OD) as GEP_OD,"
@@ -394,7 +394,7 @@ public class KpiController {
 								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_OTHER_ADDON) as NEP_OTHER_ADDON,"
 								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GIC_TP) as GIC_TP";	
 					}
-					else if(filterRequest.getAddOns() == "Exclude") {
+					else if(filterRequest.getAddOns().get(1).trim() == "Exclude") {
 						queryStr += "SELECT SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEPCOVERAGE) as GEP,"
 								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEPCOVERAGE) as NEP,"
 								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_OD) as GEP_OD,"
@@ -410,7 +410,7 @@ public class KpiController {
 								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_OTHER_ADDON) as NEP_OTHER_ADDON,"
 								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GIC_TP) as GIC_TP";	
 					}
-					else {
+					else if(filterRequest.getAddOns().get(2).trim() == "Only Addon") {
 						queryStr += "SELECT SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEPCOVERAGE) as GEP,"
 								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEPCOVERAGE) as NEP,"
 								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_OD) as GEP_OD,"
