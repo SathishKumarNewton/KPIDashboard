@@ -67,6 +67,7 @@ public class UserMatrixMasterRequest {
 	private String toDate;
 	private String uwMonth;
 	private String reportType;
+	private String addOnNew;
 	private List<String> generalChannel;
 	private List<String> generalSubChannel;
 	private List<String> generalntermediary;
