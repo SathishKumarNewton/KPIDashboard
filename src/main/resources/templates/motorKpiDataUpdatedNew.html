@@ -3797,8 +3797,10 @@ $('#iTest').selectize({
    	  	var registeredClaimsCount = "0.0";
 		function callClaimApi(period,fromDate,toDate){
        	 
-       	 var report = $('#reports').val();
+       	 	var report = $('#reports').val();
        	 	var myInput;
+			var AddOnNew = getAddOnNew();
+			var PolicyTypeNew = getPolicyTypeNew();
        	 	if(report=='GENERAL'){
        	 		myInputs=$('#generalDiv').clone();
        	 	}else if(report=='MOTOR'){
@@ -3810,6 +3812,8 @@ $('#iTest').selectize({
 				genDiv.push({name: 'fromDate',value:fromDate});
 				genDiv.push({name: 'toDate',value:toDate});
 				genDiv.push({name: 'reportType',value:report});
+				genDiv.push({name: 'addOnNew',value: AddOnNew});
+				genDiv.push({name: 'policyTypes',value: PolicyTypeNew});
 				jQuery("body").prepend('<section id="pre-loader"><img src="../../assets/images/Logo_Innerpage.png" alt="CompanyLogo" id="logo"></section>');
 				
 
