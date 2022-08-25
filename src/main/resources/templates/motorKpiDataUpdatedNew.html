@@ -3187,7 +3187,7 @@ $('#iTest').selectize({
 			                      var gwp = "0.0",gwpOd="0.0",gwpTp="0.0", gwpDiscount="0.00";
 			                      var nwp = "0.0",nwpOd="0.0",nwpTp="0.0", nwpDiscount="0.00";
 			                      $.each(data, function(ind, obj){
-			                    	  debugger;
+			                    	  
 			                    	  if($("#comprehensiveBtn").css('background-color')!="rgb(255, 255, 255)"){
 			                    		  if($("#onlyAddOnBtn").css('background-color')!="rgb(255, 255, 255)"){
 			                    			  $(".gwp_r"+period).text(convertToLaksh(Math.abs(parseFloat(obj.insGwpDepPolicyComprehensive.toPrecision())+
@@ -3683,7 +3683,9 @@ $('#iTest').selectize({
 	         var acqCostOd="0.0",acqCostTp="0.0";
 			function callPolicyApi(period,fromDate,toDate){
 	        	 
-	        	 var report = $('#reports').val();
+	        	 	var report = $('#reports').val();
+					var AddOnNew = getAddOnNew();
+					var PolicyTypeNew = getPolicyTypeNew();
 	        	 	var myInput;
 	        	 	if(report=='GENERAL'){
 	        	 		myInputs=$('#generalDiv').clone();
@@ -3696,6 +3698,8 @@ $('#iTest').selectize({
 					genDiv.push({name: 'fromDate',value:fromDate});
 					genDiv.push({name: 'toDate',value:toDate});
 					genDiv.push({name: 'reportType',value:report});
+					genDiv.push({name: 'addOnNew',value: AddOnNew});
+					genDiv.push({name: 'policyTypes',value: PolicyTypeNew});
 					jQuery("body").prepend('<section id="pre-loader"><img src="../../assets/images/Logo_Innerpage.png" alt="CompanyLogo" id="logo"></section>');
 					
 					var pApiURL="";
@@ -3718,7 +3722,7 @@ $('#iTest').selectize({
 			                      console.log('d');
 			                      console.log(responseJSON);
 			                      $.each(data, function(ind, obj){
-			                    	  debugger;
+			                    	  
 			                    	 /* if($("#comprehensiveBtn").css('background-color')!="rgb(255, 255, 255)"){
 			                    		  $(".writtenPolicies_r"+period).text((obj.writtenPoliciesComprehensive).toFixed("0"));
 			                    		  $(".writtenPoliciesOd_r"+period).text((obj.writtenPoliciesComprehensive).toFixed("0"));
@@ -3838,7 +3842,7 @@ $('#iTest').selectize({
 		                    	  registeredClaimstOthersCount = parseFloat(obj.othersClaimCountPoliciesComprehensive)+parseFloat(obj.othersClaimCountPoliciesTp)+parseFloat(obj.othersClaimCountPoliciesOthers);
 		                    	  registeredClaimsCount = parseFloat(registeredClaimscatCount)+parseFloat(registeredClaimstheftCount)+parseFloat(registeredClaimstOthersCount);
 		                    	  isClaimsDataFetched="Y";
-		                    	  debugger;
+		                    	  
 		                    	  if($("#comprehensiveBtn").css('background-color')!="rgb(255, 255, 255)"){
 		                    		 /*  catClaimCountPoliciesComprehensive =  obj.catClaimCountPoliciesComprehensive;
 		                    		  othersClaimCountPoliciesComprehensive =  obj.othersClaimCountPoliciesComprehensive;

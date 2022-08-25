@@ -3150,7 +3150,7 @@ $('#iTest').selectize({
 			                      var gwp = "0.0",gwpOd="0.0",gwpTp="0.0", gwpDiscount="0.00";
 			                      var nwp = "0.0",nwpOd="0.0",nwpTp="0.0", nwpDiscount="0.00";
 			                      $.each(data, function(ind, obj){
-			                    	  debugger;
+			                    	  
 			                    	  if($("#comprehensiveBtn").css('background-color')!="rgb(255, 255, 255)"){
 			                    		  if($("#onlyAddOnBtn").css('background-color')!="rgb(255, 255, 255)"){
 			                    			  $(".gwp_r"+period).text(convertToLaksh(Math.abs(parseFloat(obj.insGwpDepPolicyComprehensive.toPrecision())+
@@ -3439,7 +3439,7 @@ $('#iTest').selectize({
 			                      console.log('d');
 			                      console.log(responseJSON);
 			                      $.each(data, function(ind, obj){
-			                    	  debugger;
+			                    	  
 			                    	  if($("#comprehensiveBtn").css('background-color')!="rgb(255, 255, 255)"){
 			                    		  $(".writtenPolicies_r"+period).text(convertToLakshWith3digitDecimal(Math.abs(obj.writtenPoliciesComprehensive).toFixed("3")));
 			                    		  $(".writtenPoliciesOd_r"+period).text(convertToLakshWith3digitDecimal(Math.abs(obj.writtenPoliciesComprehensive).toFixed("3")));
@@ -3548,7 +3548,7 @@ $('#iTest').selectize({
 		                    	  registeredClaimstOthersCount = parseFloat(obj.othersClaimCountPoliciesComprehensive)+parseFloat(obj.othersClaimCountPoliciesTp)+parseFloat(obj.othersClaimCountPoliciesOthers);
 		                    	  registeredClaimsCount = parseFloat(registeredClaimscatCount)+parseFloat(registeredClaimstheftCount)+parseFloat(registeredClaimstOthersCount);
 		                    	  isClaimsDataFetched="Y";
-		                    	  debugger;
+		                    	  
 		                    	  if($("#comprehensiveBtn").css('background-color')!="rgb(255, 255, 255)"){
 		                    		 /*  catClaimCountPoliciesComprehensive =  obj.catClaimCountPoliciesComprehensive;
 		                    		  othersClaimCountPoliciesComprehensive =  obj.othersClaimCountPoliciesComprehensive;
