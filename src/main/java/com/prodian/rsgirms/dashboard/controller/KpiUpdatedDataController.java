@@ -363,12 +363,10 @@ public class KpiUpdatedDataController {
 			String toYear = toDate.split("/")[1];
 
 			String queryStr = "";
-			if(filterRequest.getAddOns().get(0).trim() == "Include"){
-				
-			
-			 queryStr += 
-					 
-					 "select "  
+			System.out.println("Query filterRequest: " + (filterRequest.getAddOnNew().equals( "Include")));
+			if(filterRequest.getAddOnNew().equals("Include")){
+
+			 queryStr += "select "  
 					+ "SUM(POLICY_COUNT) as POLICY_COUNT, " 
 					+ "SUM(case when x.CATEGORY='Comprehensive' THEN POLICY_COUNT ELSE 0 END) as POLICY_COUNT_OD, " 
 					+ "SUM(case when x.CATEGORY='TP' THEN POLICY_COUNT ELSE 0 END) as POLICY_COUNT_TP, " 
@@ -379,7 +377,6 @@ public class KpiUpdatedDataController {
 					 + "SUM(case when coalesce(x.CATEGORY,'Others')='Others' THEN ACQ_COST ELSE 0 END) as ACQ_COST_others, " 
 					 + "SUM(LIVESCOVERED) AS LIVESCOVERED "
 					+ "from(  SELECT  SUM(RSA_KPI_FACT_POLICY_FINAL_NOW.LIVESCOVERED) as LIVESCOVERED  ,SUM(RSA_KPI_FACT_POLICY_FINAL_NOW.ACQ_COST) as ACQ_COST  ,SUM(RSA_KPI_FACT_POLICY_FINAL_NOW.POLICY_COUNT ) as POLICY_COUNT  ,ADDON_TYPE,CATEGORY " 
-
 					+ "FROM RSDB.RSA_KPI_FACT_POLICY_CURRENT as RSA_KPI_FACT_POLICY_FINAL_NOW " 
 					+ "LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_POLICY_FINAL_NOW.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_POLICY_FINAL_NOW.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL " 
 					 + "LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_POLICY_FINAL_NOW.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE " 
@@ -392,10 +389,8 @@ public class KpiUpdatedDataController {
 					+ "LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_POLICY_FINAL_NOW.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE " 
 					+ "LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_POLICY_FINAL_NOW.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  "
 					+ "LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_POLICY_FINAL_NOW.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE  "
-					+ "LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE  WHERE ( (financial_year='2019' and EFF_FIN_YEAR_MONTH in ('04','05','06','07','08','09','10','11','12')) or (financial_year='2019' and EFF_FIN_YEAR_MONTH in ('01','02','03'))) group by ADDON_TYPE,category ) x";   
-			}
-			    
-			 else if(filterRequest.getAddOns().get(1).trim() == "Exclude"){
+					+ "LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE";   
+			} else if(filterRequest.getAddOnNew().equals( "Exclude")){
 				 
 				 queryStr += "SELECT (POLICY_COUNT - ADDON_POLICY_COUNT_OD - ADDON_POLICY_COUNT_TP - ADDON_POLICY_COUNT_others) POLICY_COUNT,"
 				 		+ "(POLICY_COUNT_OD - ADDON_POLICY_COUNT_OD ) POLICY_COUNT_OD,"
@@ -406,7 +401,7 @@ public class KpiUpdatedDataController {
 				 		+ "(ACQ_COST_TP - ADDON_ACQ_COST_TP ) ACQ_COST_TP,"
 				 		+ "(ACQ_COST_others - ADDON_ACQ_COST_others ) ACQ_COST_others,"
 				 		+ "(LIVESCOVERED) LIVESCOVERED "
-				 		+ "FROM "
+				 		+ "FROM ("
 				 		+ "select  "
 				 		+ "SUM(POLICY_COUNT) as POLICY_COUNT,  "
 				 		+ "SUM(case when x.CATEGORY='Comprehensive' THEN POLICY_COUNT ELSE 0 END) as POLICY_COUNT_OD,  "
@@ -438,11 +433,7 @@ public class KpiUpdatedDataController {
 				 		+ "LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE";
 					
 						 		 
-				}
-			
-			
-			
-			else if(filterRequest.getAddOns().get(2).trim() == "Only Addon"){
+				}else if(filterRequest.getAddOnNew().equals("Only Addon")) {
 				
 				queryStr += "SELECT (ADDON_POLICY_COUNT_OD + ADDON_POLICY_COUNT_TP + ADDON_POLICY_COUNT_others) POLICY_COUNT, "
                       + "(ADDON_POLICY_COUNT_OD ) POLICY_COUNT_OD, "
@@ -453,7 +444,7 @@ public class KpiUpdatedDataController {
                       + "(ADDON_ACQ_COST_TP ) ACQ_COST_TP, "
                       + "(ADDON_ACQ_COST_others ) ACQ_COST_others, "
                       + "(LIVESCOVERED) LIVESCOVERED "
-                      + "FROM "
+                      + "FROM ("
                       + "select  "
                       + "SUM(POLICY_COUNT) as POLICY_COUNT,  "
                       + "SUM(case when x.CATEGORY='Comprehensive' THEN POLICY_COUNT ELSE 0 END) as POLICY_COUNT_OD,  "
@@ -835,8 +826,13 @@ public class KpiUpdatedDataController {
 			
 			
 	
-
-			queryStr += " group by category ) x";
+			if(filterRequest.getAddOnNew().equals("Include")){
+				queryStr += " group by ADDON_TYPE,category ) x";
+			}else if(filterRequest.getAddOnNew().equals("Exclude")){
+				queryStr += " group by ADDON_TYPE,category ) x ) mm";
+			}else if(filterRequest.getAddOnNew().equals("Only Addon")){
+				queryStr += " group by ADDON_TYPE,category ) x) mm";
+			}
 
 			System.out.println("queryStr------------------------------ " + queryStr);
 			ResultSet rs = stmt.executeQuery(queryStr);
