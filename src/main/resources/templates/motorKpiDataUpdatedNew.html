@@ -103,9 +103,9 @@
 }
 
 	/* ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-  color: #fff;
-  opacity: 1; /* Firefox */
- }
+  /*color: #fff;
+  opacity: 1; /* Firefox 
+ }*/
 
 	@font-face {
   font-family: "poppinsSemibold";
@@ -4019,18 +4019,61 @@ $('#iTest').selectize({
 			                    	  }else if($("#includeBtn").css('background-color')!="rgb(255, 255, 255)"){
 			                    		  if($("#comprehensiveBtn").css('background-color')!="rgb(255, 255, 255)"){
 			                    			  if(claimParamType=="NIC"){
+				
+				                        $(".nic_r"+period).text(convertToLaksh(parseFloat(obj.nicTpComprehensive.toPrecision()).toFixed("2")));
+
+
+                                                  $(".nicOd_r"+period).text(convertToLaksh(parseFloat(obj.nicOdComprehensive.toPrecision()).toFixed("2")));
+				                    			
+				                    			
+				                    			 $(".nicTp_r"+period).text(convertToLaksh(parseFloat(obj.nicTp.toPrecision()).toFixed("2")));
 				                    			  //$(".nic_r"+period).text(parseFloat(obj.nicComprehensive.toPrecision()).toFixed("2")));
-				                    			  $(".nic_r"+period).text(convertToLaksh((parseFloat(obj.nicOdComprehensive.toPrecision())+parseFloat(obj.nicTpComprehensive.toPrecision())).toFixed("2")));
+				                    			/*  $(".nic_r"+period).text(convertToLaksh((parseFloat(obj.nicOdComprehensive.toPrecision())+parseFloat(obj.nicTpComprehensive.toPrecision())).toFixed("2")));
 					                    	  		$(".nicOd_r"+period).text(convertToLaksh(parseFloat(obj.nicOdComprehensive.toPrecision()).toFixed("2")));
 					                    	  		$(".nicTp_r"+period).text(convertToLaksh(parseFloat(obj.nicTpComprehensive.toPrecision()).toFixed("2")));
-				                    		  }else if(claimParamType=="GIC"){ 
-			                    			    $(".gicOdCat_r"+period).text(convertToLaksh(parseFloat(obj.catGicOdComprehensive.toPrecision()).toFixed("2")));
+				                    		  */
+				                    		  
+				                    		  
+				                    		  }else if(claimParamType=="GIC"){
+					
+					
+					//first
+					                          if($("#includeBtn").css('background-color')!="rgb(255, 255, 255)"){
+												$(".gic_r"+period).text(convertToLaksh (parseFloat(obj.catGicOdComprehensive.toPrecision())
+					                           + parseFloat(obj.theftGicOdComprehensive.toPrecision())
+					                            +  parseFloat(obj.othersGicOdComprehensive.toPrecision())
+					                             +   parseFloat(obj.catGicTpComprehensive.toPrecision())
+					                              +    parseFloat(obj.theftGicTpComprehensive.toPrecision())
+					                               +    parseFloat(obj.othersGicTpComprehensive.toPrecision()).toFixed("2")));
+					                               
+					                               
+					                          
+				//(laks(+++.tofixed))
+					                        
+			                    			  /**/  $(".gicOdCat_r"+period).text(convertToLaksh(parseFloat(obj.catGicOdComprehensive.toPrecision()).toFixed("2")));
+			                    			   //parseFloat(obj.catGicOdComprehensive.toPrecision())
+			                    			  
+				                    	  		
 				                    	  		$(".gicOdTheft_r"+period).text(convertToLaksh(parseFloat(obj.theftGicOdComprehensive.toPrecision()).toFixed("2")));
+				                    	  		  // parseFloat(obj.theftGicOdTp.toPrecision())
+				                    	  		
 				                    	  		$(".gicOdOthers_r"+period).text(convertToLaksh(parseFloat(obj.othersGicOdComprehensive.toPrecision()).toFixed("2")));
-				                    	  		$(".gicTp_r"+period).text(convertToLaksh((
-				                    	  				parseFloat(obj.catGicTpComprehensive.toPrecision())
+				                    	  			   //parseFloat(obj.othersGicOdComprehensive.toPrecision())
+				                    	  			   
+				                    	  			   
+				                    	  			   
+				                    	  			   
+				                    	  		
+				                    	  		$(".gicTp_r"+period).text(convertToLaksh(parseFloat(obj.catGicTpComprehensive.toPrecision())
+	                                      + parseFloat(obj.catGicTpComprehensive.toPrecision())
+					                 + parseFloat(obj.theftGicTpComprehensive.toPrecision())
+					                  + parseFloat(obj.othersGicTpComprehensive.toPrecision()).toFixed("2")));
+					                  
+					                  
+					                  
+				                    	  				/*parseFloat(obj.catGicTpComprehensive.toPrecision())
 				                    	  			   +parseFloat(obj.theftGicTpComprehensive.toPrecision())
-				                    	  			   +parseFloat(obj.othersGicTpComprehensive.toPrecision())).toFixed("2")));
+				                    	  			   +parseFloat(obj.othersGicTpComprehensive.toPrecision())).toFixed("2")));*/
 				                    		  }
 			                    		  }else if($("#tpBtn").css('background-color')!="rgb(255, 255, 255)"){
 			                    			  if(claimParamType=="NIC"){
@@ -4208,7 +4251,7 @@ $('#iTest').selectize({
 			                    		  		$(".lRatio_r"+period).text((+lRatioVal||0)+'%');
 		  			                    		} 
 			                    		  
-			                    	  }else{
+			                    	  }/*else{
 			                    		  
 			                    		  /* if(isReserveDataFetched=="Y"){
 		                    				  $(".nicOd_r"+period).text(parseFloat(($(".nicOd_r"+period).text())-convertToLaksh(nicOdAddon)).toFixed("2"));
