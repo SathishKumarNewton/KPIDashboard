@@ -2798,166 +2798,184 @@ public class KpiController {
 			String queryStr = "";
 			// Query in error
 			if(claimParamType.equals("GIC")){
-				queryStr = "SELECT "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='DEP' ) THEN RSL_GIC ELSE 0 END) cat_gic_od_policy_comp_dep, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NCB' ) THEN RSL_GIC ELSE 0 END) cat_gic_od_policy_comp_ncb, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='OTHER' ) THEN RSL_GIC ELSE 0 END) cat_gic_od_policy_comp_other_addon, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NONE' ) THEN RSL_GIC ELSE 0 END) cat_gic_od_policy_comp_nil_addon, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='TP' and ADDON_TYPE='DEP' ) THEN RSL_GIC ELSE 0 END) cat_gic_od_policy_tp_dep, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='TP' and ADDON_TYPE='NCB' ) THEN RSL_GIC ELSE 0 END) cat_gic_od_policy_tp_ncb, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='TP' and ADDON_TYPE='OTHER' ) THEN RSL_GIC ELSE 0 END) cat_gic_od_policy_tp_OTHER_ADDON, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='TP' and ADDON_TYPE='NONE' ) THEN RSL_GIC ELSE 0 END) cat_gic_od_policy_tp_NIL_ADDON, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO NOT LIKE 'TP%' AND coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='DEP' ) THEN RSL_GIC ELSE 0 END) cat_gic_od_policy_others_dep, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO NOT LIKE 'TP%' AND coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='NCB' ) THEN RSL_GIC ELSE 0 END) cat_gic_od_policy_others_ncb, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO NOT LIKE 'TP%' AND coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='OTHER' ) THEN RSL_GIC ELSE 0 END) cat_gic_od_policy_others_other_addon, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO NOT LIKE 'TP%' AND coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='NONE' ) THEN RSL_GIC ELSE 0 END) cat_gic_od_policy_others_nil_addon, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='DEP' THEN RSL_GIC ELSE 0 END) theft_gic_od_policy_comp_dep, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive'and ADDON_TYPE='NCB' THEN RSL_GIC ELSE 0 END) theft_gic_od_policy_comp_ncb, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='OTHER' THEN RSL_GIC ELSE 0 END) theft_gic_od_policy_comp_other_addon, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NONE' THEN RSL_GIC ELSE 0 END) theft_gic_od_policy_comp_nil_addon, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='TP' and ADDON_TYPE='DEP' THEN RSL_GIC ELSE 0 END) theft_gic_od_policy_tp_dep, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='TP' and ADDON_TYPE='NCB' THEN RSL_GIC ELSE 0 END) theft_gic_od_policy_tp_ncb, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='TP' and ADDON_TYPE='OTHER' THEN RSL_GIC ELSE 0 END) theft_gic_od_policy_tp_other_addon, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='TP' and ADDON_TYPE='NONE' THEN RSL_GIC ELSE 0 END) theft_gic_od_policy_tp_nil_addon, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='DEP' THEN RSL_GIC ELSE 0 END) theft_gic_od_policy_others_dep, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='NCB' THEN RSL_GIC ELSE 0 END) theft_gic_od_policy_others_ncb, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='OTHER' THEN RSL_GIC ELSE 0 END) theft_gic_od_policy_others_other_addon, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='NONE' THEN RSL_GIC ELSE 0 END) theft_gic_od_policy_others_nil_addon, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='DEP' ) THEN RSL_GIC ELSE 0 END) other_gic_od_policy_comp_dep, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NCB' ) THEN RSL_GIC ELSE 0 END) other_gic_od_policy_comp_ncb, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='OTHER' ) THEN RSL_GIC ELSE 0 END) other_gic_od_policy_comp_other_addon, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NONE' ) THEN RSL_GIC ELSE 0 END) other_gic_od_policy_comp_nil_addon, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='TP' and ADDON_TYPE='DEP' ) THEN RSL_GIC ELSE 0 END) other_gic_od_policy_tp_dep, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='TP' and ADDON_TYPE='NCB') THEN RSL_GIC ELSE 0 END) other_gic_od_policy_tp_ncb, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='TP' and ADDON_TYPE='OTHER' ) THEN RSL_GIC ELSE 0 END) other_gic_od_policy_tp_other_addon, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='TP' and ADDON_TYPE='NONE') THEN RSL_GIC ELSE 0 END) other_gic_od_policy_tp_nil_addon, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO NOT LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others'  and ADDON_TYPE='DEP' ) THEN RSL_GIC ELSE 0 END) other_gic_od_policy_others_dep, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO NOT LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='NCB' ) THEN RSL_GIC ELSE 0 END) other_gic_od_policy_others_ncb, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO NOT LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='OTHER' ) THEN RSL_GIC ELSE 0 END) other_gic_od_policy_others_other_addon, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO NOT LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='NONE' ) THEN RSL_GIC ELSE 0 END) other_gic_od_policy_others_nil_addon, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='DEP' ) THEN RSL_GIC ELSE 0 END) cat_gic_tp_policy_comp_dep, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NCB' ) THEN RSL_GIC ELSE 0 END) cat_gic_tp_policy_comp_ncb, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='OTHER' ) THEN RSL_GIC ELSE 0 END) cat_gic_tp_policy_comp_other_addon, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NONE' ) THEN RSL_GIC ELSE 0 END) cat_gic_tp_policy_comp_nil_addon, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='DEP' ) THEN RSL_GIC ELSE 0 END) cat_gic_tp_policy_tp_dep, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='NCB' ) THEN RSL_GIC ELSE 0 END) cat_gic_tp_policy_tp_ncb, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='OTHER' ) THEN RSL_GIC ELSE 0 END) cat_gic_tp_policy_tp_other_addon, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='NONE' ) THEN RSL_GIC ELSE 0 END) cat_gic_tp_policy_tp_nil_addon, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO LIKE 'TP%' AND coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='DEP' ) THEN RSL_GIC ELSE 0 END) cat_gic_tp_policy_others_dep, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO LIKE 'TP%' AND coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='NCB' ) THEN RSL_GIC ELSE 0 END) cat_gic_tp_policy_others_ncb, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO LIKE 'TP%' AND coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='OTHER' ) THEN RSL_GIC ELSE 0 END) cat_gic_tp_policy_others_other_addon, "+
-						" SUM(CASE WHEN ( CSL_CATASTROPHECODE='CATC' or (coalesce(CAT_TYPE,'NONE')<>'NONE' AND coalesce(CAT_TYPE,'NONE')<>'' AND coalesce(CAT_TYPE,'NONE')<>' ' AND CAT_TYPE<>'NULL')  AND CSL_CLAIM_NO LIKE 'TP%' AND coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='NONE' ) THEN RSL_GIC ELSE 0 END) cat_gic_tp_policy_others_nil_addon, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='DEP' THEN RSL_GIC ELSE 0 END) theft_gic_tp_policy_comp_dep, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NCB' THEN RSL_GIC ELSE 0 END) theft_gic_tp_policy_comp_ncb, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='OTHER' THEN RSL_GIC ELSE 0 END) theft_gic_tp_policy_comp_other_addon, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NONE' THEN RSL_GIC ELSE 0 END) theft_gic_tp_policy_comp_nil_addon, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='DEP' THEN RSL_GIC ELSE 0 END) theft_gic_tp_policy_tp_dep, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='NCB' THEN RSL_GIC ELSE 0 END) theft_gic_tp_policy_tp_ncb, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='OTHER' THEN RSL_GIC ELSE 0 END) theft_gic_tp_policy_tp_other_addon, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='NONE' THEN RSL_GIC ELSE 0 END) theft_gic_tp_policy_tp_nil_addon, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='DEP' THEN RSL_GIC ELSE 0 END) theft_gic_tp_policy_others_dep, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='NCB' THEN RSL_GIC ELSE 0 END) theft_gic_tp_policy_others_ncb, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='OTHER' THEN RSL_GIC ELSE 0 END) theft_gic_tp_policy_others_other_addon, "+
-						" SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='NONE' THEN RSL_GIC ELSE 0 END) theft_gic_tp_policy_others_nil_addon, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='DEP' ) THEN RSL_GIC ELSE 0 END) other_gic_tp_policy_comp_dep, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NCB' ) THEN RSL_GIC ELSE 0 END) other_gic_tp_policy_comp_ncb, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='OTHER' ) THEN RSL_GIC ELSE 0 END) other_gic_tp_policy_comp_other_addon, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NONE' ) THEN RSL_GIC ELSE 0 END) other_gic_tp_policy_comp_nil_addon, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='DEP' ) THEN RSL_GIC ELSE 0 END) other_gic_tp_policy_tp_dep, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='NCB' ) THEN RSL_GIC ELSE 0 END) other_gic_tp_policy_tp_ncb, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='OTHER' ) THEN RSL_GIC ELSE 0 END) other_gic_tp_policy_tp_other_addon, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='NONE' ) THEN RSL_GIC ELSE 0 END) other_gic_tp_policy_tp_nil_addon, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='DEP' ) THEN RSL_GIC ELSE 0 END) other_gic_tp_policy_others_dep, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='NCB' ) THEN RSL_GIC ELSE 0 END) other_gic_tp_policy_others_ncb, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='OTHER' ) THEN RSL_GIC ELSE 0 END) other_gic_tp_policy_others_other_addon, "+
-						" SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and ( CAT_TYPE=' ' OR CAT_TYPE='NULL') AND CSL_CATASTROPHECODE<>'CATC' AND CSL_CLAIM_NO LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others' and ADDON_TYPE='NONE' ) THEN RSL_GIC ELSE 0 END) other_gic_tp_policy_others_nil_addon "+
-						" from ( "+
-						" SELECT  "+
-						" RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CATASTROPHECODE "+ 
-						" ,CATASTROPHIC_MASTER.CAT_TYPE  "+
-						" ,RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_NATURE_OF_CLAIM, "+
-						" CSL_CLAIM_NO, category,ADDON_TYPE, "+	"SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CLOSING_BALANCE+RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CLAIM_TRANS_AMT-RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_OPENING_TOTAL) RSL_GIC "+
-						" FROM RSDB.RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL as RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL "+
-					" LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW "+
-					" ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL "+
-					" LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER "+
-					" ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE "+
-					" LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER "+
-					" ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE "+
-					" LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER "+
-					" ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE "+
-					" LEFT JOIN RSDB.KPI_MODEL_MASTER_NW as KPI_MODEL_MASTER_NW "+
-					" ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MAKE = KPI_MODEL_MASTER_NW.MAKE AND RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MODELCODE = KPI_MODEL_MASTER_NW.MODEL_CODE "+
-					" LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER "+
-					" ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE "+
-					" LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW "+
-					" ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.OA_CODE = KPI_OA_MASTER_NW.OA_CODE "+
-					" LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW "+
-					" ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY "+
-					" LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER "+
-					" ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE "+
-					" LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER "+
-					" ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE "+
-					" LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER "+
-					" ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE "+
-					" LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL "+
-					" ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CITY_CODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE "+
-					" LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER "+
-					" ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE ";
+				queryStr = "SELECT  "
+						+ "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"
+						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+						+ "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='DEP' THEN RSL_GIC ELSE 0 END)  as rsl_cat_gic_od_policy_comp_dep, "
+						+ "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"
+						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+						+ "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='NCB'  THEN RSL_GIC ELSE 0 END)  as rsl_cat_gic_od_policy_comp_ncb,  "
+						+ "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"
+						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+						+ "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='OTHER'  THEN RSL_GIC ELSE 0 END) as rsl_cat_gic_od_policy_comp_other_addon,  "
+						+ "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"
+						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+						+ "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='NONE'  THEN RSL_GIC ELSE 0 END) as rsl_cat_gic_od_policy_comp_nil_addon,"
+						+ "0 as rsl_cat_gic_od_policy_tp_dep,"
+						+ "0 as rsl_cat_gic_od_policy_tp_ncb,"
+						+ "0 as rsl_cat_gic_od_policy_tp_OTHER_ADDON,"
+						+ "0 as rsl_cat_gic_od_policy_tp_NIL_ADDON,"
+						+ "0 as rsl_cat_gic_od_policy_others_dep,"
+						+ "0 as rsl_cat_gic_od_policy_others_ncb,"
+						+ "0 as rsl_cat_gic_od_policy_others_other_addon,"
+						+ "0 as rsl_cat_gic_od_policy_others_nil_addon,  "
+						+ "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='DEP' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_od_policy_comp_dep,"
+						+ "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='NCB' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_od_policy_comp_ncb,  "
+						+ "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='OTHER' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_od_policy_comp_other_addon,  "
+						+ "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='NONE' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_od_policy_comp_nil_addon,"
+						+ "0 as rsl_theft_gic_od_policy_tp_dep,"
+						+ "0 as rsl_theft_gic_od_policy_tp_ncb,"
+						+ "0 as rsl_theft_gic_od_policy_tp_other_addon,"
+						+ "0 as rsl_theft_gic_od_policy_tp_nil_addon,"
+						+ "0 as rsl_theft_gic_od_policy_others_dep,"
+						+ "0 as rsl_theft_gic_od_policy_others_ncb,"
+						+ "0 as rsl_theft_gic_od_policy_others_other_addon,"
+						+ "0 as rsl_theft_gic_od_policy_others_nil_addon,"
+						+ "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
+						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+						+ "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='DEP' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_od_policy_comp_dep,  "
+						+ "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
+						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+						+ "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='NCB' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_od_policy_comp_ncb,  "
+						+ "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
+						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+						+ "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='OTHER' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_od_policy_comp_other_addon,  "
+						+ "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
+						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+						+ "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='NONE' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_od_policy_comp_nil_addon,"
+						+ "0 as rsl_other_gic_od_policy_tp_dep,"
+						+ "0 as rsl_other_gic_od_policy_tp_ncb,"
+						+ "0 as rsl_other_gic_od_policy_tp_other_addon,"
+						+ "0 as rsl_other_gic_od_policy_tp_nil_addon,"
+						+ "0 as rsl_other_gic_od_policy_others_dep,"
+						+ "0 as rsl_other_gic_od_policy_others_ncb,"
+						+ "0 as rsl_other_gic_od_policy_others_other_addon,"
+						+ "0 as rsl_other_gic_od_policy_others_nil_addon,"
+						+ "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"
+						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+						+ "'APLV'))  AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='DEP' THEN RSL_GIC ELSE 0 END) as rsl_cat_gic_tp_policy_comp_dep,  "
+						+ "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"
+						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+						+ "'APLV'))  AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='NCB' THEN RSL_GIC ELSE 0 END) as rsl_cat_gic_tp_policy_comp_ncb,  "
+						+ "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"
+						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+						+ "'APLV'))  AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='OTHER' THEN RSL_GIC ELSE 0 END) as rsl_cat_gic_tp_policy_comp_other_addon,  "
+						+ "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"
+						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+						+ "'APLV'))  AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='NONE' THEN RSL_GIC ELSE 0 END) as rsl_cat_gic_tp_policy_comp_nil_addon,"
+						+ "0 as rsl_cat_gic_tp_policy_tp_dep,"
+						+ "0 as rsl_cat_gic_tp_policy_tp_ncb,"
+						+ "0 as rsl_cat_gic_tp_policy_tp_other_addon,"
+						+ "0 as rsl_cat_gic_tp_policy_tp_nil_addon,"
+						+ "0 as rsl_cat_gic_tp_policy_others_dep,"
+						+ "0 as rsl_cat_gic_tp_policy_others_ncb,"
+						+ "0 as rsl_cat_gic_tp_policy_others_other_addon,"
+						+ "0 as rsl_cat_gic_tp_policy_others_nil_addon,"
+						+ "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='DEP' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_tp_policy_comp_dep,  "
+						+ "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='NCB' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_tp_policy_comp_ncb,  "
+						+ "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='OTHER' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_tp_policy_comp_other_addon,  "
+						+ "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='NONE' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_tp_policy_comp_nil_addon,"
+						+ "0 as rsl_theft_gic_tp_policy_tp_dep,"
+						+ "0 as rsl_theft_gic_tp_policy_tp_ncb,"
+						+ "0 as rsl_theft_gic_tp_policy_tp_other_addon,"
+						+ "0 as rsl_theft_gic_tp_policy_tp_nil_addon,"
+						+ "0 as rsl_theft_gic_tp_policy_others_dep,"
+						+ "0 as rsl_theft_gic_tp_policy_others_ncb,"
+						+ "0 as rsl_theft_gic_tp_policy_others_other_addon,"
+						+ "0 as rsl_theft_gic_tp_policy_others_nil_addon,"
+						+ "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
+						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+						+ "'APLV')) AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='DEP' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_tp_policy_comp_dep,  "
+						+ "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
+						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+						+ "'APLV')) AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='NCB' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_tp_policy_comp_ncb,  "
+						+ "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
+						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+						+ "'APLV')) AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='OTHER' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_tp_policy_comp_other_addon,  "
+						+ "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
+						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+						+ "'APLV')) AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='NONE' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_tp_policy_comp_nil_addon,"
+						+ "0 as rsl_other_gic_tp_policy_tp_dep,"
+						+ "0 as rsl_other_gic_tp_policy_tp_ncb,"
+						+ "0 as rsl_other_gic_tp_policy_tp_other_addon,"
+						+ "0 as rsl_other_gic_tp_policy_tp_nil_addon,"
+						+ "0 as rsl_other_gic_tp_policy_others_dep,"
+						+ "0 as rsl_other_gic_tp_policy_others_ncb,"
+						+ "0 as rsl_other_gic_tp_policy_others_other_addon,"
+						+ "0 as rsl_other_gic_tp_policy_others_nil_addon "
+						+ "from (  SELECT   RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CATASTROPHECODE  ,RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CLAIM_TYPE, CATASTROPHIC_MASTER.CAT_TYPE   ,RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_NATURE_OF_CLAIM,  CSL_CLAIM_NO, category,ADDON_TYPE, SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CLOSING_BALANCE+RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CLAIM_TRANS_AMT-RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_OPENING_TOTAL) RSL_GIC  FROM RSDB.RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL as RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL  LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL  LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE  LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE  LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE  LEFT JOIN RSDB.KPI_MODEL_MASTER_NW as KPI_MODEL_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MAKE = KPI_MODEL_MASTER_NW.MAKE AND RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MODELCODE = KPI_MODEL_MASTER_NW.MODEL_CODE  LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE  LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY  LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE  LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CITY_CODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE  LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE ";
 			}else if(claimParamType.equals("NIC")){
 				
-				queryStr	=" SELECT "
-						+" sum(case when category='Comprehensive' and ADDON_TYPE='DEP' then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) NIC_policy_comp_dep, "
-						+" sum(case when category='Comprehensive' and ADDON_TYPE='NCB' then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) NIC_policy_comp_ncb, "
-						+" sum(case when category='Comprehensive' and ADDON_TYPE='OTHER' then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) NIC_policy_comp_other_addon, "
-						+" sum(case when category='Comprehensive' and ADDON_TYPE='NONE' then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) NIC_policy_comp_nil_addon, "
-						+ " sum(case when category='TP' and ADDON_TYPE='DEP' then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) NIC_policy_tp_dep, "
-						+ " sum(case when category='TP' and ADDON_TYPE='NCB' then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) NIC_policy_tp_ncb, "
-						+ " sum(case when category='TP' and ADDON_TYPE='OTHER' then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) NIC_policy_tp_other_addon, "
-						+ " sum(case when category='TP' and ADDON_TYPE='NONE' then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) NIC_policy_tp_nil_addon, "
-						+ " sum(case when coalesce(A.CATEGORY,'Others')='Others' and ADDON_TYPE='DEP' then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) NIC_policy_others_dep, "
-						+ " sum(case when coalesce(A.CATEGORY,'Others')='Others' and ADDON_TYPE='NCB' then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) NIC_policy_others_ncb, "
-						+ " sum(case when coalesce(A.CATEGORY,'Others')='Others' and ADDON_TYPE='OTHER' then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) NIC_policy_others_other_addon, "
-						+ " sum(case when coalesce(A.CATEGORY,'Others')='Others' and ADDON_TYPE='NONE' then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) NIC_policy_others_nil_addon, "
-						+ " sum(case WHEN (CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='DEP') THEN csl_gic*(1-QUOTA_SHARE-OBLIGATORY) ELSE 0 end) nic_tp_policy_comp_dep, " 
-						+ " sum(case WHEN (CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NCB' ) THEN csl_gic*(1-QUOTA_SHARE-OBLIGATORY) ELSE 0 end) nic_tp_policy_comp_ncb, " 
-						+ " sum(case WHEN (CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='OTHER' ) THEN csl_gic*(1-QUOTA_SHARE-OBLIGATORY) ELSE 0 end) nic_tp_policy_comp_other_addon, " 
-						+ " sum(case WHEN (CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NONE' ) THEN csl_gic*(1-QUOTA_SHARE-OBLIGATORY) ELSE 0 end) nic_tp_policy_comp_nil_addon, " 
-						+ " sum(case WHEN (CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='DEP' ) THEN csl_gic*(1-QUOTA_SHARE-OBLIGATORY) ELSE 0 end) nic_tp_policy_tp_dep,  "
-						+ " sum(case WHEN (CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='NCB' ) THEN csl_gic*(1-QUOTA_SHARE-OBLIGATORY) ELSE 0 end) nic_tp_policy_tp_ncb,  "
-						+ " sum(case WHEN (CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='OTHER' ) THEN csl_gic*(1-QUOTA_SHARE-OBLIGATORY) ELSE 0 end) nic_tp_policy_tp_other_addon,  "
-						+ " sum(case WHEN (CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='NONE' ) THEN csl_gic*(1-QUOTA_SHARE-OBLIGATORY) ELSE 0 end) nic_tp_policy_tp_nil_addon,  "
-						+ " sum(case WHEN (CSL_CLAIM_NO LIKE 'TP%' and coalesce(A.CATEGORY,'Others')='Others' and ADDON_TYPE='DEP' ) THEN csl_gic*(1-QUOTA_SHARE-OBLIGATORY) ELSE 0 end) nic_tp_policy_others_dep, "
-						+ " sum(case WHEN (CSL_CLAIM_NO LIKE 'TP%' and coalesce(A.CATEGORY,'Others')='Others' and ADDON_TYPE='NCB' ) THEN csl_gic*(1-QUOTA_SHARE-OBLIGATORY) ELSE 0 end) nic_tp_policy_others_ncb, "
-						+ " sum(case WHEN (CSL_CLAIM_NO LIKE 'TP%' and coalesce(A.CATEGORY,'Others')='Others' and ADDON_TYPE='OTHER' ) THEN csl_gic*(1-QUOTA_SHARE-OBLIGATORY) ELSE 0 end) nic_tp_policy_others_other_addon, "
-						+ " sum(case WHEN (CSL_CLAIM_NO LIKE 'TP%' and coalesce(A.CATEGORY,'Others')='Others' and ADDON_TYPE='NONE' ) THEN csl_gic*(1-QUOTA_SHARE-OBLIGATORY) ELSE 0 end) nic_tp_policy_others_nil_addon, "
-						+ " sum(case WHEN (CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='DEP' ) then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) nic_od_policy_comp_dep, "
-						+ " sum(case WHEN (CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NCB' ) then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) nic_od_policy_comp_ncb, "
-						+ " sum(case WHEN (CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='OTHER' ) then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) nic_od_policy_comp_other_addon, "
-						+ " sum(case WHEN (CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NONE' ) then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) nic_od_policy_comp_nil_addon, "
-						+ " sum(case WHEN (CSL_CLAIM_NO NOT LIKE 'TP%' and category='TP' and ADDON_TYPE='DEP' ) then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) nic_od_policy_tp_dep, "
-						+ " sum(case WHEN (CSL_CLAIM_NO NOT LIKE 'TP%' and category='TP' and ADDON_TYPE='NCB' ) then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) nic_od_policy_tp_ncb, "
-						+ " sum(case WHEN (CSL_CLAIM_NO NOT LIKE 'TP%' and category='TP' and ADDON_TYPE='OTHER' ) then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) nic_od_policy_tp_other_addon, "
-						+ " sum(case WHEN (CSL_CLAIM_NO NOT LIKE 'TP%' and category='TP' and ADDON_TYPE='NONE' ) then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) nic_od_policy_tp_nil_addon, "
-						+ " sum(case WHEN (CSL_CLAIM_NO NOT LIKE 'TP%' and coalesce(A.CATEGORY,'Others')='Others' and ADDON_TYPE='DEP' ) then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) nic_od_policy_others_dep, "
-						+ " sum(case WHEN (CSL_CLAIM_NO NOT LIKE 'TP%' and coalesce(A.CATEGORY,'Others')='Others' and ADDON_TYPE='NCB' ) then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) nic_od_policy_others_ncb, "
-						+ " sum(case WHEN (CSL_CLAIM_NO NOT LIKE 'TP%' and coalesce(A.CATEGORY,'Others')='Others' and ADDON_TYPE='OTHER' )  then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) nic_od_policy_others_other_addon, "
-						+ " sum(case WHEN (CSL_CLAIM_NO NOT LIKE 'TP%' and coalesce(A.CATEGORY,'Others')='Others' and ADDON_TYPE='NONE' ) then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) nic_od_policy_others_nil_addon "
-						+ " FROM ( SELECT  SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CLOSING_BALANCE+RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CLAIM_TRANS_AMT-RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_OPENING_TOTAL) csl_gic,CSL_CLAIM_NO,CSL_MVMT_MONTH,category,ADDON_TYPE,uw_year,RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.PRODUCT_CODE,'NONE' BAND  "
-						+ " FROM RSDB.RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL as RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL   "
-						+ " LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL "  
-						+ " LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE   "
-						+ " LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE   "
-						+ " LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE   "
-						+ " LEFT JOIN RSDB.KPI_MODEL_MASTER_NW as KPI_MODEL_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MAKE = KPI_MODEL_MASTER_NW.MAKE AND RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MODELCODE = KPI_MODEL_MASTER_NW.MODEL_CODE "  
-						+ " LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE   "
-						+ " LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  "
-						+ " LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY "  
-						+ " LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE   "
-						+ " LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE "  
-						+ " LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  "
-						+ " LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CITY_CODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE "  
-						+ " LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE" ;
+				queryStr	="SELECT  "
+						+ "sum(case when ADDON_TYPE='DEP' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) as rsl_NIC_policy_comp_dep,"
+						+ "sum(case when ADDON_TYPE='NCB' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) as rsl_NIC_policy_comp_ncb,"
+						+ "sum(case when ADDON_TYPE='OTHER' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) as rsl_NIC_policy_comp_other_addon,  "
+						+ "sum(case when ADDON_TYPE='NONE' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) as rsl_NIC_policy_comp_nil_addon,"
+						+ "0 as rsl_NIC_policy_tp_dep,"
+						+ "0 as rsl_NIC_policy_tp_ncb,"
+						+ "0 as rsl_NIC_policy_tp_other_addon,"
+						+ "0 as rsl_NIC_policy_tp_nil_addon,"
+						+ "0 as rsl_NIC_policy_others_dep,"
+						+ "0 as rsl_NIC_policy_others_ncb,"
+						+ "0 as rsl_NIC_policy_others_other_addon,"
+						+ "0 as rsl_NIC_policy_others_nil_addon,"
+						+ "sum(case when CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='DEP' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_tp_policy_comp_dep,"
+						+ "sum(case when CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='NCB' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_tp_policy_comp_ncb,"
+						+ "sum(case when CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='OTHER' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_tp_policy_comp_other_addon,  "
+						+ "sum(case when CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='NONE' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_tp_policy_comp_nil_addon,"
+						+ "0 as rsl_nic_tp_policy_tp_dep,"
+						+ "0 as rsl_nic_tp_policy_tp_ncb,"
+						+ "0 as rsl_nic_tp_policy_tp_other_addon,"
+						+ "0 as rsl_nic_tp_policy_tp_nil_addon,"
+						+ "0 as rsl_nic_tp_policy_others_dep,"
+						+ "0 as rsl_nic_tp_policy_others_ncb,"
+						+ "0 as rsl_nic_tp_policy_others_other_addon,"
+						+ "0 as rsl_nic_tp_policy_others_nil_addon,"
+						+ "sum(case when CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='DEP' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_od_policy_comp_dep,"
+						+ "sum(case when CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NCB' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_od_policy_comp_ncb,"
+						+ "sum(case when CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='OTHER' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_od_policy_comp_other_addon,  "
+						+ "sum(case when CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NONE' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_od_policy_comp_nil_addon,"
+						+ "0 as rsl_nic_od_policy_tp_dep,"
+						+ "0 as rsl_nic_od_policy_tp_ncb,"
+						+ "0 as rsl_nic_od_policy_tp_other_addon,"
+						+ "0 as rsl_nic_od_policy_tp_nil_addon,"
+						+ "0 as rsl_nic_od_policy_others_dep,"
+						+ "0 as rsl_nic_od_policy_others_ncb,"
+						+ "0 as rsl_nic_od_policy_others_other_addon,"
+						+ "0 as rsl_nic_od_policy_others_nil_addon "
+						+ "FROM ( SELECT  SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CLOSING_BALANCE+RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CLAIM_TRANS_AMT-RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_OPENING_TOTAL) RSL_GIC,CSL_CLAIM_NO,CSL_MVMT_MONTH,category,ADDON_TYPE,uw_year,RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.PRODUCT_CODE,'NONE' BAND   FROM RSDB.RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL as RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL    LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL  LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE    LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE    LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE    LEFT JOIN RSDB.KPI_MODEL_MASTER_NW as KPI_MODEL_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MAKE = KPI_MODEL_MASTER_NW.MAKE AND RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MODELCODE = KPI_MODEL_MASTER_NW.MODEL_CODE  LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE    LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.OA_CODE = KPI_OA_MASTER_NW.OA_CODE   LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY  LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE    LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE   LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CITY_CODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE  LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE ";
 						
 			}
 			
@@ -2974,6 +2992,19 @@ public class KpiController {
 			
 				queryStr += " WHERE ( CSL_MVMT_MONTH between " + fromYear +fromMonth+ " and " + toYear +toMonth+ " )";
 
+				
+				if (filterRequest != null && filterRequest.getPolicyTypes() != null
+						&& !filterRequest.getPolicyTypes().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getPolicyTypes().size(); i++) {
+						vals += "'" + filterRequest.getPolicyTypes().get(i).trim() + "'";
+						if (i != filterRequest.getPolicyTypes().size() - 1) {
+							vals += ",";
+						}
+					}
+
+					queryStr += " and TRIM(RSA_DWH_COVERCODE_MASTER.CATEGORY) in (" + vals + ")";
+				}
 				
 				if (filterRequest != null && filterRequest.getBTypeNow() != null
 						&& !filterRequest.getBTypeNow().isEmpty()) {
