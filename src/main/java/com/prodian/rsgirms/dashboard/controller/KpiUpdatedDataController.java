@@ -225,7 +225,6 @@ public class KpiUpdatedDataController {
 		return model;
 	}
 
-	@RequestMapping(value="/getOEMwiseGwpUpdated", method=RequestMethod.GET)
 	/*
 	 * @RequestMapping(value="/getIntermediaries", method=RequestMethod.GET) public
 	 * String getIntermediaries(ModelMap map) { // TODO: retrieve the new value here
