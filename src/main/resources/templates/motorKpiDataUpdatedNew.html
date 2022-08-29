@@ -3896,7 +3896,9 @@ $('#iTest').selectize({
 		//var gicOdCat ="0.0" , gicOdTheft="0.0", gicOdOthers = "0.0";
 		function callSingleLineApi(period,fromDate,toDate,claimParamType){
 	       	 
-	       	 var report = $('#reports').val();
+	       	 var report = $('#reports').val(); 
+			 //var addOnNew = getAddOnNew();
+				 //var policyTypeNew = getPolicyTypeNew();
 	       	 	var myInput;
 	       	 	if(report=='GENERAL'){
 	       	 		myInputs=$('#generalDiv').clone();
@@ -3909,6 +3911,8 @@ $('#iTest').selectize({
 					genDiv.push({name: 'fromDate',value:fromDate});
 					genDiv.push({name: 'toDate',value:toDate});
 					genDiv.push({name: 'reportType',value:report});
+					//genDiv.push({name: 'addOnNew',value:addOnNew});
+					//genDiv.push({name: 'policyTypes',value:policyTypeNew});
 					jQuery("body").prepend('<section id="pre-loader"><img src="../../assets/images/Logo_Innerpage.png" alt="CompanyLogo" id="logo"></section>');
 					
 					var sApiURL="";
@@ -4044,7 +4048,7 @@ $('#iTest').selectize({
 					                            +  parseFloat(obj.othersGicOdComprehensive.toPrecision())
 					                             +   parseFloat(obj.catGicTpComprehensive.toPrecision())
 					                              +    parseFloat(obj.theftGicTpComprehensive.toPrecision())
-					                               +    parseFloat(obj.othersGicTpComprehensive.toPrecision()).toFixed("2")));
+					                               +    parseFloat(obj.othersGicOdTp.toPrecision()).toFixed("2")));
 					                               
 					                               
 					                          
@@ -4065,7 +4069,6 @@ $('#iTest').selectize({
 				                    	  			   
 				                    	  		
 				                    	  		$(".gicTp_r"+period).text(convertToLaksh(parseFloat(obj.catGicTpComprehensive.toPrecision())
-	                                      + parseFloat(obj.catGicTpComprehensive.toPrecision())
 					                 + parseFloat(obj.theftGicTpComprehensive.toPrecision())
 					                  + parseFloat(obj.othersGicTpComprehensive.toPrecision()).toFixed("2")));
 					                  
