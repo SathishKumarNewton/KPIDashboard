@@ -2999,20 +2999,22 @@ $('#iTest').selectize({
 										gepTp=obj.gepTp;
 										nepOd=obj.nepOd;
 										nepTp=obj.nepTp;
+										gicTp=obj.gicTp;
+
 										
 										/*Basic*/
 										$(".gep_r"+period).text(convertToLaksh(parseFloat(gep).toFixed("2")));
 										$(".gepOd_r"+period).text(convertToLaksh(parseFloat(gepOd).toFixed("2")));
 										$(".gepTp_r"+period).text(convertToLaksh(parseFloat(gepTp).toFixed("2")));
-										$(".nep_r"+period).text(convertToLaksh(Math.abs(parseFloat(nepOd)+parseFloat(nepTp)).toFixed("2")));
-										$(".nepOd_r"+period).text(convertToLaksh(Math.abs(nepOd.toFixed("2"))));
-										$(".nepTp_r"+period).text(convertToLaksh(Math.abs(nepTp.toFixed("2"))));
+										$(".nep_r"+period).text(convertToLaksh((parseFloat(nepOd)+parseFloat(nepTp)).toFixed("2")));
+										$(".nepOd_r"+period).text(convertToLaksh((nepOd.toFixed("2"))));
+										$(".nepTp_r"+period).text(convertToLaksh((nepTp.toFixed("2"))));
 										$(".earnedPoliciesOd_r"+period).text(parseFloat(earnedPoliciesOd).toFixed("0"));
 										$(".earnedPolicies_r"+period).text((parseFloat(earnedPoliciesOd)+parseFloat(earnedPoliciesTp)).toFixed("0"));
 								
-										$(".gicTpulr_r"+period).text(convertToLaksh(Math.abs(parseFloat(gicTp).toFixed("2"))));
+										$(".gicTpulr_r"+period).text(convertToLaksh((parseFloat(gicTp).toFixed("2"))));
 										$(".gic_r"+period).text( (parseFloat($(".gicOdCat_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")) + parseFloat($(".gicTpulr_r"+period).text().replaceAll(",",""))).toFixed("2"));
-										
+										$(".gic_Tp"+period).text(convertToLaksh(parseFloat(gicTp).toFixed("2")));
 									
 										// New Changes
 			    	                	/*$(".gep_r"+period).text(convertToLaksh((parseFloat(obj.gepOd.toPrecision())+parseFloat(obj.gepTp.toPrecision())).toFixed("2")));
@@ -3032,8 +3034,9 @@ $('#iTest').selectize({
 			    	                		
 			    	                		var lRatioSOdVal = (((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")))/$(".extra_3 > .gepOd_r"+period).text().replaceAll(",",""))*100).toFixed("2");
 				    	                	$(".lRatioOd_r"+period).text((+lRatioSOdVal||0)+'%');  
-				    	                	var lRatioSTpVal = (($(".gicTpulr_r"+period).text().replaceAll(",","")/$(".extra_3 > .gepTp_r"+period).text().replaceAll(",",""))*100).toFixed("2").replaceAll(",","");
-				    	                	$(".lRatioTp_r"+period).text((+lRatioSTpVal||0)+'%');
+				    	                	// var lRatioSTpVal = (($(".gicTpulr_r"+period).text().replaceAll(",","")/$(".extra_3 > .gepTp_r"+period).text().replaceAll(",",""))*100).toFixed("2").replaceAll(",","");
+											var lRatioSTpVal = convertToLaksh(parseFloat(gicTp/gepTp * 100).toFixed("2"));
+											$(".lRatioTp_r"+period).text((+lRatioSTpVal||0)+'%');
 				    	                	//var lRatioSVal = (($(".gic_r"+period).text().replaceAll(",","")/$("#show_3 > .gep_r"+period).text().replaceAll(",",""))*100).toFixed("2");
 				    	                	var lRatioSVal =(((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",",""))+parseFloat($(".gicTpulr_r"+period).text().replaceAll(",","")))/$("#show_3 > .gep_r"+period).text().replaceAll(",",""))*100).toFixed("2");
 				    	                	$(".lRatio_r"+period).text((+lRatioSVal||0)+'%');
