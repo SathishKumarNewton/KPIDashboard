@@ -3187,7 +3187,7 @@ $('#iTest').selectize({
 			                      var gwp = "0.0",gwpOd="0.0",gwpTp="0.0", gwpDiscount="0.00";
 			                      var nwp = "0.0",nwpOd="0.0",nwpTp="0.0", nwpDiscount="0.00";
 			                      $.each(data, function(ind, obj){
-			                    	  
+			                    	  if(apiURL=="/getInsCubeDataUpdatedNew" || apiURL=="/getInsCubeDataUpdatedNew/U"){
 			                    	  if($("#comprehensiveBtn").css('background-color')!="rgb(255, 255, 255)"){
 			                    		  if($("#onlyAddOnBtn").css('background-color')!="rgb(255, 255, 255)"){
 			                    			  $(".gwp_r"+period).text(convertToLaksh(Math.abs(parseFloat(obj.insGwpDepPolicyComprehensive.toPrecision())+
@@ -3435,9 +3435,10 @@ $('#iTest').selectize({
 			                    	  }
 			                    	  
 			                    	    
-			                    	  
+									}
 			    	              
 			    	                	jQuery("#pre-loader").remove();
+									
 			                      });
 			                      
 							}
@@ -4352,7 +4353,7 @@ $('#iTest').selectize({
 			                    		  parseFloat(obj.othersGicTpComprehensiveDep.toPrecision())+
 			                    		  parseFloat(obj.othersGicTpComprehensiveNcb.toPrecision())+
 			                    		  parseFloat(obj.othersGicTpComprehensiveOtherAddon.toPrecision())+
-			                    		  parseFloat(obj.othersGicTpComprehensiveNoAddon.toPrecision()))/GEP)*100;
+			                    		  parseFloat(obj.othersGicTpComprehensiveNoAddon.toPrecision())));
 			                    		  
 			                    		  
 			                    		   $(".gicOdCat_r"+period).text(convertToLaksh(

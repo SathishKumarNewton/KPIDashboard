@@ -860,10 +860,11 @@ public class KpiUpdatedDataController {
 		return kpiResponseList;
 	}
 
-	@GetMapping("/getInsCubeDataUpdatedNew")
+	@GetMapping("/getInsCubeDataUpdatedNew/{claimType}")
 	@ResponseBody
-	public List<InsCubeResponseNew> getInsCubeDataNew(HttpServletRequest req, UserMatrixMasterRequest filterRequest)
-			throws SQLException {
+	public List<InsCubeResponseNew> getInsCubeDataNew(HttpServletRequest req, UserMatrixMasterRequest filterRequest,@PathVariable(value="claimType") String claimType,
+	@PathVariable(value="gepReportType") String gepReportType)	
+	throws SQLException {
 		Connection connection = null;
 		List<InsCubeResponseNew> kpiResponseList = new ArrayList<InsCubeResponseNew>();
 		long startTime = System.currentTimeMillis();
@@ -951,13 +952,19 @@ public class KpiUpdatedDataController {
 
 			String finstartDate = fromYear + "-" + fromMonth + "-01";
 			String finEndDate = toYear + "-" + toMonth + "-31";
-
-			queryStr += " WHERE  ";
+			if(claimType.equalsIgnoreCase("U")){
+				
+				queryStr += " WHERE SUBSTRING(inception_date,1,10) >='"+finstartDate+"' and SUBSTRING(inception_date,1,10) <='"+finEndDate+"' ";
+			}
+				else {
+					queryStr += " WHERE  ";
+				
 			// queryStr += " WHERE SUBSTRING(inception_date,1,10) >='"+finstartDate+"' and
 			// SUBSTRING(inception_date,1,10) <='"+finEndDate+ "'";
 			queryStr += getFinCondQuery(Integer.valueOf(fromMonth), Integer.valueOf(toMonth), Integer.valueOf(fromYear),
 					Integer.valueOf(toYear));
-
+				}
+				
 			if (filterRequest != null && filterRequest.getBTypeNow() != null
 					&& !filterRequest.getBTypeNow().isEmpty()) {
 				String vals = "";
@@ -3114,7 +3121,7 @@ public class KpiUpdatedDataController {
 		 */
 	}
 
-	@GetMapping("/getUWPolicyCubeDataUpdatedNew")
+	@GetMapping("/getUWPolicyCubeDataUpdatedNew/")
 	@ResponseBody
 	public List<PolicyCubeResponseNew> getUWPolicyCubeDataUpdatedNew(HttpServletRequest req,
 			UserMatrixMasterRequest filterRequest) throws SQLException {

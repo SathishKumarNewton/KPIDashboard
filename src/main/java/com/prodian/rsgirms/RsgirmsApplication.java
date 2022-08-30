@@ -11,5 +11,4 @@ public class RsgirmsApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(RsgirmsApplication.class, args);
 	}
-
 }
