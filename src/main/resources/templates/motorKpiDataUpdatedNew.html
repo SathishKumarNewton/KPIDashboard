@@ -3847,6 +3847,9 @@ $('#iTest').selectize({
 		                    	  registeredClaimsCount = parseFloat(registeredClaimscatCount)+parseFloat(registeredClaimstheftCount)+parseFloat(registeredClaimstOthersCount);
 		                    	  isClaimsDataFetched="Y";
 		                    	  
+								  
+
+
 		                    	  if($("#comprehensiveBtn").css('background-color')!="rgb(255, 255, 255)"){
 		                    		 /*  catClaimCountPoliciesComprehensive =  obj.catClaimCountPoliciesComprehensive;
 		                    		  othersClaimCountPoliciesComprehensive =  obj.othersClaimCountPoliciesComprehensive;
@@ -3860,7 +3863,8 @@ $('#iTest').selectize({
 		                    		  theftClaimCountPoliciesOthers =  obj.theftClaimCountPoliciesOthers;
 		                    		  othersClaimCountPoliciesOthers =  obj.othersClaimCountPoliciesOthers; */
 		                    	  }
-		                    	
+								   
+
 		                    	  if(isPolicyDataFetched=="Y"){
 		                    		  
 		                    		  var clmFreqPCat = (((registeredClaimscatCount)/($("#show_8 > .writtenPolicies_r"+period).text().replaceAll(",","")*100000))*100).toFixed("2");
@@ -3884,9 +3888,13 @@ $('#iTest').selectize({
 			                    	  //$(".claimSev_r"+period).text(convertToLaksh(((gicCatAll+gicTheftAll+gicOthersAll)/(registeredClaimscatCount+registeredClaimstheftCount+registeredClaimstOthersCount)).toFixed("2")));
 			                    	   //$(".claimSev_r"+period).text(parseFloat($(".claimSevCat_r"+period).text())+parseFloat($(".claimSevTheft_r"+period).text())+parseFloat($(".claimSevOthers_r"+period).text()));
 		                    	  }
-		                    	  
-		    	                	jQuery("#pre-loader").remove();
-		                      });
+								  
+								 
+								
+									
+								 
+								
+								});
 		                      
 						}
 						}));
@@ -3951,7 +3959,52 @@ $('#iTest').selectize({
 											parseFloat(obj.theftGicTpComprehensive)+
 											parseFloat(obj.othersGicTpComprehensive)).toFixed("2")));
 					                    		 
-										}
+											
+											
+											$(".claimSev_r"+period).text(convertToLaksh((
+					                    	  				parseFloat(obj.catGicOdComprehensive)+
+					                    	  			   parseFloat(obj.theftGicOdComprehensive)+
+															 parseFloat(obj.othersGicOdComprehensive)+
+															 parseFloat(obj.catGicTpComprehensive)+
+															 parseFloat(obj.theftGicTpComprehensive)+
+															 parseFloat(obj.othersGicTpTp)/
+															 parseFloat(obj.catClaimCountPoliciesComprehensive)+
+															 parseFloat(obj.theftClaimCountPoliciesComprehensive)+
+					                    	  			   parseFloat(obj.othersClaimCountPoliciesComprehensive)).toFixed("2")));
+
+															 $(".claimSevCat_r"+period).text(convertToLaksh((
+					                    	  				parseFloat(obj.catGicOdComprehensive)+
+					                    	  			   parseFloat(obj.catGicTpComprehensive)/
+															 parseFloat(obj.catClaimCountPoliciesComprehensive)).toFixed("2")));
+													
+					                    	  			   $(".claimSevTheft_r"+period).text(convertToLaksh((
+					                    	  				parseFloat(obj.theftGicOdComprehensive)+
+					                    	  			   parseFloat(obj.theftGicTpComprehensive)/
+															 parseFloat(obj.theftClaimCountPoliciesComprehensive)).toFixed("2")));
+
+															 $(".claimSevOthers_r"+period).text(convertToLaksh((
+					                    	  				parseFloat(obj.othersGicOdComprehensive)+
+					                    	  			   parseFloat(obj.othersGicOdTp)/
+															 parseFloat(obj.othersClaimCountPoliciesComprehensive)).toFixed("2")));
+								 
+										}else if(claimParamType=="NIC") {
+
+											$(".nic_r"+period).text(convertToLaksh((
+					                    	  				parseFloat(obj.nicTpComprehensive)+
+					                    	  			   parseFloat(obj.nicTpTp)+
+					                    	  			   parseFloat(obj.nicTpOthers)+
+															 parseFloat(obj.nicOdComprehensive)+
+					                    	  			   parseFloat(obj.nicOdTp)+
+															 parseFloat(obj.nicOdOthers)).toFixed("2")));
+															 
+															 $(".nicOd_r"+period).text(convertToLaksh((
+					                    	  				parseFloat(obj.nicOdComprehensive)+
+					                    	  			   parseFloat(obj.nicOdTp)+
+					                    	  			   parseFloat(obj.nicTp)).toFixed("2")));
+
+                                                         	$(".nicTp_r"+period).text(convertToLaksh(parseFloat(obj.nicTp).toFixed("2")));
+					                    	  				 
+				
 									}else if($("#includeBtn").css('background-color')!="rgb(255, 255, 255)"){
 										if(claimParamType=="GIC"){
 											$(".gicOdCat_r"+period).text(convertToLaksh(parseFloat(obj.catGicOdComprehensive).toFixed("2")));
@@ -3964,9 +4017,64 @@ $('#iTest').selectize({
 											$(".gic_r"+period).text(convertToLaksh((parseFloat(obj.catGicOdComprehensive)+parseFloat(obj.theftGicOdComprehensive)+parseFloat(obj.othersGicOdComprehensive)+parseFloat(obj.catGicTpComprehensive)+
 											parseFloat(obj.theftGicTpComprehensive)+
 											parseFloat(obj.othersGicTpComprehensive)).toFixed("2")));
-					                    		 
+					                    	
+											
+											$(".claimSev_r"+period).text(convertToLaksh((
+					                    	  				parseFloat(obj.catGicOdComprehensive)+
+					                    	  			   parseFloat(obj.theftGicOdComprehensive)+
+															 parseFloat(obj.othersGicOdComprehensive)+
+															 parseFloat(obj.catGicTpComprehensive)+
+															 parseFloat(obj.theftGicTpComprehensive)+
+															 parseFloat(obj.othersGicOdTp)/
+															 parseFloat(obj.catClaimCountPoliciesComprehensive)+
+															 parseFloat(obj.theftClaimCountPoliciesComprehensive)+
+					                    	  			   parseFloat(obj.othersClaimCountPoliciesComprehensive)).toFixed("2")));
+
+															 $(".claimSevCat_r"+period).text(convertToLaksh((
+					                    	  				parseFloat(obj.catGicOdComprehensive)+
+					                    	  			   parseFloat(obj.catGicTpComprehensive)/
+															 parseFloat(obj.catClaimCountPoliciesComprehensive)).toFixed("2")));
+													
+					                    	  			   $(".claimSevTheft_r"+period).text(convertToLaksh((
+					                    	  				parseFloat(obj.theftGicOdComprehensive)+
+					                    	  			   parseFloat(obj.theftGicTpComprehensive)/
+															 parseFloat(obj.theftClaimCountPoliciesComprehensive)).toFixed("2")));
+
+															 $(".claimSevOthers_r"+period).text(convertToLaksh((
+					                    	  				parseFloat(obj.othersGicOdComprehensive)+
+					                    	  			   parseFloat(obj.othersGicOdTp)/
+															 parseFloat(obj.othersClaimCountPoliciesComprehensive)).toFixed("2")));
+
+															} else if(claimParamType=="NIC") {
+
+                                                                $(".nic_r"+period).text(convertToLaksh(parseFloat(obj.nicComprehensive).toFixed("2")));
+                                                                $(".nicOd_r"+period).text(convertToLaksh(parseFloat(obj.nicOdComprehensive).toFixed("2")));
+                                                                $(".nicTp_r"+period).text(convertToLaksh(parseFloat(obj.nicTp).toFixed("2")));
+
+                                                                  }		 
+
 										}
 									}
+									if(isSingleLineDataFetched=="Y"){
+			    	                		
+			    	                
+											$(".lRatio_r"+period).text(convertToLaksh( 
+											parseFloat(obj.catGicOdComprehensive)+
+					                    	  			   parseFloat(obj.theftGicOdComprehensive)+
+															 parseFloat(obj.othersGicOdComprehensive)+
+															 parseFloat(obj.catGicTpComprehensive)+
+															 parseFloat(obj.theftGicTpComprehensive)+
+															 parseFloat(obj.othersGicOdTp).toFixed("2")));
+
+
+																$(".lRatioOd_r"+period).text(convertToLaksh((
+					                    	  				parseFloat(obj.catGicOdComprehensive)+
+					                    	  			   parseFloat(obj.theftGicOdComprehensive)+
+					                    	  			   parseFloat(obj.othersGicOdComprehensive)).toFixed("2")));
+
+                                                                
+			    	                	}
+						
 			                    	jQuery("#pre-loader").remove();
 			                      });
 			                      
