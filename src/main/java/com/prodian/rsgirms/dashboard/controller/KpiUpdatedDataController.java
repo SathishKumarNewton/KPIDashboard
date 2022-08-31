@@ -2061,77 +2061,80 @@ public List<SingleLineCubeResponseNew> getSingleLineCubeDataNew(HttpServletReque
 		String toMonth = toDate.split("/")[0];
 		String toYear = toDate.split("/")[1];
 		String queryStr = "";
-		// New Query Changed
+		// New Query Changed 
 		if(claimParamType.equals("GIC")){
-			queryStr = "SELECT "+
-			"SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"+
-			"'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"+
-			"'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"+
-			"'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"+
-			"'APLV')) AND csl_claim_no NOT LIKE 'TP%' and category='Comprehensive' THEN CSL_GIC ELSE 0 END) cat_gic_od_policy_comp,"+ 
-			"SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"+
-			"'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"+
-			"'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"+
-			"'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"+
-			"'APLV')) AND csl_claim_no NOT LIKE 'TP%' and category='TP' THEN CSL_GIC ELSE 0 END) cat_gic_od_policy_tp,"+
-			"SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"+
-			"'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"+
-			"'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"+
-			"'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"+
-			"'APLV')) AND csl_claim_no NOT LIKE 'TP%' AND coalesce(x.CATEGORY,'Others')='Others' THEN CSL_GIC ELSE 0 END) cat_gic_od_policy_others,"+  
-			"SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' THEN CSL_GIC ELSE 0 END) theft_gic_od_policy_comp,  "+
-			"SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and category='TP' THEN CSL_GIC ELSE 0 END) theft_gic_od_policy_tp,"+  
-			"SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others' THEN CSL_GIC ELSE 0 END) theft_gic_od_policy_others,"+  
-			"SUM(CASE WHEN (csl_claim_type not in ('MUTA','PUBB',"+
-			"'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"+
-			"'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"+
-			"'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"+
-			"'APLV')) AND csl_claim_no NOT LIKE 'TP%' AND CSL_NATURE_OF_CLAIM<>'VTFO' and category='Comprehensive' THEN CSL_GIC ELSE 0 END) other_gic_od_policy_comp,"+  
-			"SUM(CASE WHEN (csl_claim_type not in ('MUTA','PUBB',"+
-			"'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"+
-			"'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"+
-			"'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"+
-			"'APLV')) AND csl_claim_no NOT LIKE 'TP%' AND CSL_NATURE_OF_CLAIM<>'VTFO' and category='TP' THEN CSL_GIC ELSE 0 END) other_gic_od_policy_tp,"+  
-			"SUM(CASE WHEN (csl_claim_type not in ('MUTA','PUBB',"+
-			"'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"+
-			"'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"+
-			"'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"+
-			"'APLV')) AND csl_claim_no NOT LIKE 'TP%' AND CSL_NATURE_OF_CLAIM<>'VTFO' and coalesce(x.CATEGORY,'Others')='Others' THEN CSL_GIC ELSE 0 END) other_gic_od_policy_others,"+  
-			"SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"+
-			"'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"+
-			"'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"+
-			"'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"+
-			"'APLV')) AND  CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive' THEN CSL_GIC ELSE 0 END) cat_gic_tp_policy_comp,"+
-			"SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"+
-			"'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"+
-			"'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"+
-			"'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"+
-			"'APLV')) AND  CSL_CLAIM_NO LIKE 'TP%' and category='TP' THEN CSL_GIC ELSE 0 END) cat_gic_tp_policy_tp,  "+
-			"SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"+
-			"'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"+
-			"'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"+
-			"'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"+
-			"'APLV')) AND  CSL_CLAIM_NO LIKE 'TP%' AND coalesce(x.CATEGORY,'Others')='Others' THEN CSL_GIC ELSE 0 END) cat_gic_tp_policy_others, "+ 
-			"SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive' THEN CSL_GIC ELSE 0 END) theft_gic_tp_policy_comp,"+ 
-			"SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and category='TP' THEN CSL_GIC ELSE 0 END) theft_gic_tp_policy_tp, " + 
-			"SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others' THEN CSL_GIC ELSE 0 END) theft_gic_tp_policy_others,"+
-			"SUM(CASE WHEN (csl_claim_type not in ('MUTA','PUBB',"+
-			"'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"+
-			"'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"+
-			"'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"+
-			"'APLV')) AND CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive' THEN CSL_GIC ELSE 0 END) other_gic_tp_policy_od,"+
-			"SUM(CASE WHEN (csl_claim_type not in ('MUTA','PUBB',"+
-			"'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"+
-			"'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"+
-			"'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"+
-			"'APLV')) AND CSL_CLAIM_NO LIKE 'TP%' and category='TP' THEN CSL_GIC ELSE 0 END) other_gic_tp_policy_tp,  "+
-			"SUM(CASE WHEN (csl_claim_type not in ('MUTA','PUBB',"+
-			"'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"+
-			"'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"+
-			"'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"+
-			"'APLV')) AND CSL_CLAIM_NO LIKE 'TP%' and coalesce(x.CATEGORY,'Others')='Others' THEN CSL_GIC ELSE 0 END) other_gic_tp_policy_others  "+
-			"from (  SELECT   RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CSL_CATASTROPHECODE,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.csl_claim_type ,CATASTROPHIC_MASTER.CAT_TYPE   ,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CSL_NATURE_OF_CLAIM,  CSL_CLAIM_NO, category  ,SUM(CSL_GIC) CSL_GIC  FROM RSDB.RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW_CURRENT as RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW  LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL  LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE  LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE  LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE  LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE  LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY  LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE  LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE  LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE";
-
+			queryStr = "SELECT "+ "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"
+					+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+					+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+					+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+					+ "'APLV')) AND csl_claim_no NOT LIKE 'TP%' THEN CSL_GIC ELSE 0 END) as cat_gic_od_policy_comp,"
+					+ "0 as cat_gic_od_policy_tp,"
+					+ "0 as cat_gic_od_policy_others,"
+					+ "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' THEN CSL_GIC ELSE 0 END) as theft_gic_od_policy_comp,"
+					+ "0 as theft_gic_od_policy_tp,"
+					+ "0 as theft_gic_od_policy_others,"
+					+ "SUM(CASE WHEN (csl_claim_type not in ('MUTA','PUBB',"
+					+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+					+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+					+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+					+ "'APLV')) AND csl_claim_no NOT LIKE 'TP%' AND CSL_NATURE_OF_CLAIM<>'VTFO' THEN CSL_GIC ELSE 0 END) as other_gic_od_policy_comp,"
+					+ "0 as other_gic_od_policy_tp,"
+					+ "0 as other_gic_od_policy_others,"
+					+ "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"
+					+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+					+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+					+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+					+ "'APLV')) AND  CSL_CLAIM_NO LIKE 'TP%' THEN CSL_GIC ELSE 0 END) as cat_gic_tp_policy_comp,"
+					+ "0 as cat_gic_tp_policy_tp,"
+					+ "0 as cat_gic_tp_policy_others,"
+					+ "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' THEN CSL_GIC ELSE 0 END) as theft_gic_tp_policy_comp,"
+					+ "0 as theft_gic_tp_policy_tp,"
+					+ "0 as theft_gic_tp_policy_others,"
+					+ "SUM(CASE WHEN (csl_claim_type not in ('MUTA','PUBB',"
+					+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+					+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+					+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+					+ "'APLV')) AND CSL_CLAIM_NO LIKE 'TP%' THEN CSL_GIC ELSE 0 END) as other_gic_tp_policy_od,"
+					+ "0 as other_gic_tp_policy_tp,"
+					+ "0 as other_gic_tp_policy_others"
+					+ " from (SELECT   RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CSL_CATASTROPHECODE,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.csl_claim_type ,CATASTROPHIC_MASTER.CAT_TYPE   ,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CSL_NATURE_OF_CLAIM,  CSL_CLAIM_NO, category  ,SUM(CSL_GIC) CSL_GIC  FROM RSDB.RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW_CURRENT as RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW  LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL  LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE  LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE  LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE  LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE  LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY  LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE  LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE  LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE ";
+			 
+		/*"SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"
+		+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+		+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+		+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+		+ "'APLV')) AND csl_claim_no NOT LIKE 'TP%' THEN CSL_GIC ELSE 0 END) as cat_gic_od_policy_comp,"
+		+ "0 as cat_gic_od_policy_tp,"
+		+ "0 as cat_gic_od_policy_others,"
+		+ "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' THEN CSL_GIC ELSE 0 END) as theft_gic_od_policy_comp,"
+		+ "0 as theft_gic_od_policy_tp,"
+		+ "0 as theft_gic_od_policy_others,"
+		+ "SUM(CASE WHEN (csl_claim_type not in ('MUTA','PUBB',"
+		+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+		+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+		+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+		+ "'APLV')) AND csl_claim_no NOT LIKE 'TP%' AND CSL_NATURE_OF_CLAIM<>'VTFO' THEN CSL_GIC ELSE 0 END) as other_gic_od_policy_comp,"
+		+ "0 as other_gic_od_policy_tp,"
+		+ "0 as other_gic_od_policy_others,"
+		+ "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"
+		+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+		+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+		+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+		+ "'APLV')) AND  CSL_CLAIM_NO LIKE 'TP%' THEN CSL_GIC ELSE 0 END) as cat_gic_tp_policy_comp,"
+		+ "0 as cat_gic_tp_policy_tp,"
+		+ "0 as cat_gic_tp_policy_others,"
+		+ "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' THEN CSL_GIC ELSE 0 END) as theft_gic_tp_policy_comp,"
+		+ "0 as theft_gic_tp_policy_tp,"
+		+ "0 as theft_gic_tp_policy_others,"
+		+ "SUM(CASE WHEN (csl_claim_type not in ('MUTA','PUBB',"
+		+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+		+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+		+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+		+ "'APLV')) AND CSL_CLAIM_NO LIKE 'TP%' THEN CSL_GIC ELSE 0 END) as other_gic_tp_policy_od,"
+		+ "0 as other_gic_tp_policy_tp,"
+		+ "0 as other_gic_tp_policy_others "
+		+ "from (  SELECT   RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CSL_CATASTROPHECODE,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.csl_claim_type ,CATASTROPHIC_MASTER.CAT_TYPE   ,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CSL_NATURE_OF_CLAIM,  CSL_CLAIM_NO, category  ,SUM(CSL_GIC) CSL_GIC  FROM RSDB.RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW_CURRENT as RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW  LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL  LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE  LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE  LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE  LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE  LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY  LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE  LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE  LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE  WHERE ( CSL_MVMT_MONTH between 201904 and 202003 ) group by RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CSL_CATASTROPHECODE,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.csl_claim_type ,CATASTROPHIC_MASTER.CAT_TYPE ,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CSL_NATURE_OF_CLAIM,CSL_CLAIM_NO,category ) x";			
+		*/
 		}else if(claimParamType.equals("NIC")){
 			/*queryStr	="SELECT sum(NIC_policy_comp),sum(NIC_policy_tp),sum(NIC_policy_others),  sum(nic_tp_policy_comp),sum(nic_tp_policy_tp),"
 							+ " sum(nic_tp_policy_others), sum(nic_od_policy_comp),sum(nic_od_policy_tp),sum(nic_od_policy_others) " 
@@ -2160,9 +2163,24 @@ public List<SingleLineCubeResponseNew> getSingleLineCubeDataNew(HttpServletReque
 									+ " LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.CITY_CODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE "  
 									+ " LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE" ;*/
 
+			
+			
+			
+			// queryStr="SELECT " 											
+			// + "SUM(csl_gic*(1-OD_QUOTA_SHARE-OD_OBLIGATORY)) as NIC_policy_comp,"
+			// + "0 as NIC_policy_tp,"  
+			
+			// + "0 as NIC_policy_others,"
+			// + "SUM(CASE WHEN (csl_claim_type not in ('MUTA','PUBB','VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU','OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL','MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT','APLV')) AND CSL_CLAIM_NO LIKE 'TP%' THEN csl_gic*(1-OD_QUOTA_SHARE-OD_OBLIGATORY) ELSE 0 END) as nic_tp_policy_comp,"
+			// + "0 as nic_tp_policy_tp,"
+			// + "0 as nic_tp_policy_others,"
+			// + "sum(case WHEN (CSL_CLAIM_NO NOT LIKE 'TP%' ) then csl_gic*(1-OD_QUOTA_SHARE-OD_OBLIGATORY) else 0 end) as nic_od_policy_comp,"
+			// + "0 as nic_od_policy_tp,"
+			// + "0 as nic_od_policy_others "
+			// + "FROM ( SELECT  sum(csl_gic) csl_gic,uw_year,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.PRODUCT_CODE,'NONE' BAND,category,csl_claim_type,CSL_CLAIM_NO  FROM RSDB.RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW_CURRENT as RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL  LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE  LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE  LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE  LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE  LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY  LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE  LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE  LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE ";
 			 nicTp = getNicTp( Integer.valueOf(fromMonth),  Integer.valueOf(toMonth), Integer.valueOf(fromYear) , Integer.valueOf(toYear), filterRequest);
 			// New Query Changed
-			queryStr	="SELECT  "
+			queryStr	="SELECT"
 					+ " 0 NIC_policy_comp,"
 					+ "  0 NIC_policy_tp,"
 					+ "  0 NIC_policy_others,"
@@ -2171,7 +2189,7 @@ public List<SingleLineCubeResponseNew> getSingleLineCubeDataNew(HttpServletReque
 					+ "   sum(case WHEN (CSL_CLAIM_NO NOT LIKE 'TP%' and coalesce(A.CATEGORY,'Others')='Others') THEN csl_gic*(1-TP_QUOTA_SHARE-TP_OBLIGATORY) ELSE 0 end) nic_tp_policy_others,"
 					+ "  sum(case WHEN (CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive') then csl_gic*(1-OD_QUOTA_SHARE-OD_OBLIGATORY) else 0 end) nic_od_policy_comp,"
 					+ "  sum(case WHEN (CSL_CLAIM_NO NOT LIKE  'TP%' and category='TP') then csl_gic*(1-OD_QUOTA_SHARE-OD_OBLIGATORY) else 0 end) nic_od_policy_tp,"
-					+ "  sum(case WHEN (CSL_CLAIM_NO NOT LIKE  'TP%' and coalesce(A.CATEGORY,'Others')='Others') then csl_gic*(1-OD_QUOTA_SHARE-OD_OBLIGATORY) else 0 end) nic_od_policy_others"
+					+ "  sum(case WHEN (CSL_CLAIM_NO NOT LIKE  'TP%' and coalesce(A.CATEGORY,'Others')='Others') then csl_gic*(1-OD_QUOTA_SHARE-OD_OBLIGATORY) else 0 end) nic_od_policy_others "
 					+ " FROM ( SELECT  sum(csl_gic) csl_gic,uw_year,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.PRODUCT_CODE,'NONE' BAND,category,CSL_CLAIM_NO  " +
 					" FROM RSDB.RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW_CURRENT as RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW "+
 					" LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW "+
@@ -2223,9 +2241,22 @@ public List<SingleLineCubeResponseNew> getSingleLineCubeDataNew(HttpServletReque
 					+ "' ) or ( FINANCIAL_YEAR=" + toYear + " and EFF_FIN_YEAR_MONTH <='" + toMonth + "' ))";
 		}*/
 		
-			queryStr += " WHERE ( CSL_MVMT_MONTH between " + fromYear +fromMonth+ " and " + toYear +toMonth+ " )";
-
+			queryStr += " WHERE ( CSL_MVMT_MONTH between " + fromYear + fromMonth + " and " + toYear + toMonth + " )";
 			
+
+		if (filterRequest != null && filterRequest.getPolicyTypes() != null
+				&& !filterRequest.getPolicyTypes().isEmpty()) {
+			String vals = "";
+			for (int i = 0; i < filterRequest.getPolicyTypes().size(); i++) {
+				vals += "'" + filterRequest.getPolicyTypes().get(i).trim() + "'";
+				if (i != filterRequest.getPolicyTypes().size() - 1) {
+					vals += ",";
+				}
+			}
+			
+			queryStr += " and TRIM(RSA_DWH_COVERCODE_MASTER.CATEGORY) in (" + vals + ")";
+		}
+		
 			if (filterRequest != null && filterRequest.getBTypeNow() != null
 					&& !filterRequest.getBTypeNow().isEmpty()) {
 				String vals = "";
@@ -2539,16 +2570,16 @@ public List<SingleLineCubeResponseNew> getSingleLineCubeDataNew(HttpServletReque
 		+ " where B.underwriting_year=A.uw_year AND A.PRODUCT_CODE=B.XGEN_PRODUCTCODE AND A.BAND=B.band ";	
 	}
 	
-	
+			
 	
 		
 
 		System.out.println("queryStr------------------------------ " + queryStr);
 		ResultSet rs = stmt.executeQuery(queryStr);
 		System.out.println("START------------------------------ ");
-
+			
 		// jsArray = convertToJSON(rs);
-		int count =0 ;
+			int count =0 ;
 		while (rs.next()) {
 
 			SingleLineCubeResponseNew res = new SingleLineCubeResponseNew();
@@ -2593,7 +2624,8 @@ public List<SingleLineCubeResponseNew> getSingleLineCubeDataNew(HttpServletReque
 		}
 
 		System.out.println("Query execution time " + (System.currentTimeMillis() - startTime));
-	} catch (Exception e) {
+			 
+	}catch (Exception e) {
 		System.out.println("kylinDataSource initialize error, ex: " + e);
 		System.out.println();
 		e.printStackTrace();
@@ -2601,8 +2633,8 @@ public List<SingleLineCubeResponseNew> getSingleLineCubeDataNew(HttpServletReque
 		connection.close();
 	}
 	return kpiResponseList;
-}
 
+}
 public List<String> getgepUWR12SevGicMeasures(){
 	
 	List<String> list = new ArrayList<>();
@@ -3029,8 +3061,17 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 	Statement stmt = connection.createStatement();
 	
 	
-	String queryStr= "select sum(gic_tp*(1-TP_QUOTA_SHARE-TP_OBLIGATORY)) from (select  SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEPCOVERAGE*0.95) as gic_tp,uw_year,GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.PRODUCT_CODE,'NONE' band",
-			monthPrefix="",year="",measure="gic_tp"; int counter = 0, measureCount = 0;
+	 //"select sum(gic_tp*(1-TP_QUOTA_SHARE-TP_OBLIGATORY)) from (select  SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEPCOVERAGE*0.95) as gic_tp,uw_year,GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.PRODUCT_CODE,'NONE' band",
+		
+	String queryStr= "SELECT (NIC_TP_ULR_POLICY) as nic_Tp from ("
+			+ "SELECT SUM(gic_tp*(1-TP_QUOTA_SHARE-TP_OBLIGATORY)) as NIC_TP_ULR_POLICY,"
+			+ "SUM(case when GEP_NILDEP<>0 AND NEP_NILDEP<>0 THEN GIC_TP ELSE 0 END) as NIC_NILDEP_ULR_POLICY,"
+			+ "SUM(case when GEP_NCB<>0 AND NEP_NCB<>0 THEN GIC_TP ELSE 0 END) as NIC_NCB_ULR_POLICY,"
+			+ "SUM(case when GEP_OTHER_ADDON<>0 AND NEP_OTHER_ADDON<>0 THEN GIC_TP ELSE 0 END) as NIC_OTHER_ADDON_ULR_POLICY "
+			+ "from (select  SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GIC_TP) as gic_tp,SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_NILDEP) as GEP_NILDEP,SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_NCB) as GEP_NCB,SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_OTHER_ADDON) as GEP_OTHER_ADDON,SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_NILDEP) as NEP_NILDEP,SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_NCB) as NEP_NCB,SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_OTHER_ADDON) as NEP_OTHER_ADDON,uw_year,GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.PRODUCT_CODE,'NONE' band,CATEGORY ";
+			
+//			monthPrefix="",year="",measure="gic_tp"; 
+			int counter = 0, measureCount = 0;
 	
 	
 	
@@ -3049,14 +3090,12 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 		// queryStr += "(case when gep_year='"+year+"' then "+monthPrefix+measure+" else 0 end)";
 		// counter++;
 		// }
-		// queryStr+=") gic_tp,uw_year,GEP_POLICY_FACT_DENORMAL.PRODUCT_CODE,'NONE' band";
+		// queryStr+=") gic_tp,uw_year,GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.PRODUCT_CODE,'NONE' band";
 		// measureCount++;
 	//}
 		System.out.println("nic tp select------------------------------ " + queryStr);
 		
-		queryStr += " FROM RSDB.GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL as GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL";
-		
-		
+				queryStr += "FROM RSDB.GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL as GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT ON GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE ";  
 		// if (fromYear.equals(toYear)) {
 		// 	if (fromMonth.equals(toMonth)) {
 		// 		queryStr += " where ( gep_year= " + fromYear + " )";
@@ -3079,7 +3118,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.BUSINESS_TYPE) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.BUSINESS_TYPE) in (" + vals + ")";
 		}
 		if (filterRequest != null && filterRequest.getChannelNow() != null
 				&& !filterRequest.getChannelNow().isEmpty()) {
@@ -3090,7 +3129,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.CHANNEL) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.CHANNEL) in (" + vals + ")";
 		}
 		if (filterRequest != null && filterRequest.getSubChannelNow() != null
 				&& !filterRequest.getSubChannelNow().isEmpty()) {
@@ -3101,7 +3140,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.SUB_CHANNEL) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.SUB_CHANNEL) in (" + vals + ")";
 		}
 		if (filterRequest != null && filterRequest.getMakeNow() != null
 				&& !filterRequest.getMakeNow().isEmpty()) {
@@ -3112,7 +3151,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.MAKE) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.MAKE) in (" + vals + ")";
 		}
 		if (filterRequest != null && filterRequest.getModelGroupNow() != null
 				&& !filterRequest.getModelGroupNow().isEmpty()) {
@@ -3123,7 +3162,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.MODELGROUP) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.MODELGROUP) in (" + vals + ")";
 		}
 		if (filterRequest != null && filterRequest.getFuelTypeNow() != null
 				&& !filterRequest.getFuelTypeNow().isEmpty()) {
@@ -3134,7 +3173,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.FUEL_TYPE) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.FUEL_TYPE) in (" + vals + ")";
 		}
 		if (filterRequest != null && filterRequest.getStateGroupNow() != null
 				&& !filterRequest.getStateGroupNow().isEmpty()) {
@@ -3145,7 +3184,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.STATE_GROUPING) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.STATE_GROUPING) in (" + vals + ")";
 		}
 		if (filterRequest != null && filterRequest.getNcbNow() != null
 				&& !filterRequest.getNcbNow().isEmpty()) {
@@ -3156,7 +3195,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.NCB) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NCB) in (" + vals + ")";
 		}
 		
 		
@@ -3171,7 +3210,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.CHANNEL) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.CHANNEL) in (" + vals + ")";
 		}
 
 		if (filterRequest != null && filterRequest.getMotorSubChannel() != null
@@ -3183,7 +3222,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.SUB_CHANNEL) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.SUB_CHANNEL) in (" + vals + ")";
 		}
 
 		/*if (filterRequest != null && filterRequest.getMotorRegion() != null
@@ -3255,7 +3294,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.BRANCH_CODE) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.BRANCH_CODE) in (" + vals + ")";
 		}
 		
 		if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
@@ -3267,7 +3306,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.AGENT_CODE) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.AGENT_CODE) in (" + vals + ")";
 		}
 		
 		if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
@@ -3291,7 +3330,7 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.FUEL_TYPE) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.FUEL_TYPE) in (" + vals + ")";
 		}
 		
 		if (filterRequest != null && filterRequest.getMotorNcbFlag() != null
@@ -3303,11 +3342,10 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 					vals += ",";
 				}
 			}
-			queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.NCB) in (" + vals + ")";
+			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NCB) in (" + vals + ")";
 		}
 		
-		queryStr +=" group by uw_year,PRODUCT_CODE,'NONE') A ,(select underwriting_year,XGEN_PRODUCTCODE,band,SUM(OD_OBLIGATORY) OD_OBLIGATORY,SUM(OD_QUOTA_SHARE) OD_QUOTA_SHARE,SUM(TP_OBLIGATORY) TP_OBLIGATORY,SUM(TP_QUOTA_SHARE) TP_QUOTA_SHARE from  RSA_DWH_RI_OBLIGATORY_MASTER1_NEW group by underwriting_year,XGEN_PRODUCTCODE,band) B   where B.underwriting_year=A.uw_year AND A.PRODUCT_CODE=B.XGEN_PRODUCTCODE AND A.BAND=B.band";
-		
+		queryStr += " group by uw_year,PRODUCT_CODE,CATEGORY) A ,(select underwriting_year,XGEN_PRODUCTCODE,band,SUM(OD_OBLIGATORY) OD_OBLIGATORY,SUM(OD_QUOTA_SHARE) OD_QUOTA_SHARE,SUM(TP_OBLIGATORY) TP_OBLIGATORY,SUM(TP_QUOTA_SHARE) TP_QUOTA_SHARE from  RSA_DWH_RI_OBLIGATORY_MASTER1_NEW group by underwriting_year,XGEN_PRODUCTCODE,band) B   where B.underwriting_year=A.uw_year AND A.PRODUCT_CODE=B.XGEN_PRODUCTCODE AND A.BAND=B.band)mm; ";
 		
 		
 		
