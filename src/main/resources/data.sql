@@ -1,1 +1,1 @@
-REPLACE INTO roles SELECT (1,'ADMIN');
+insert INTO roles SELECT (1,'ADMIN');

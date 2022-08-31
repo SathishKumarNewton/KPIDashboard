@@ -3245,8 +3245,8 @@ $('#iTest').selectize({
 				                    	  }
 			                    	  }*/
 			                    	    
-			                    	  
-			    	              
+									}
+
 			    	                jQuery("#pre-loader").remove();
 			                      });
 			                      
@@ -3882,6 +3882,8 @@ $('#iTest').selectize({
 		function callReserveSingleLineApi(period,fromDate,toDate,claimParamType){
 	       	 
 	       	 var report = $('#reports').val();
+	       	 var addOnNew = getAddOnNew();
+				 var policyTypeNew = getPolicyTypeNew();
 	       	 	var myInput;
 	       	 	if(report=='GENERAL'){
 	       	 		myInputs=$('#generalDiv').clone();
@@ -3894,6 +3896,8 @@ $('#iTest').selectize({
 					genDiv.push({name: 'fromDate',value:fromDate});
 					genDiv.push({name: 'toDate',value:toDate});
 					genDiv.push({name: 'reportType',value:report});
+					genDiv.push({name: 'addOnNew',value:addOnNew});
+					genDiv.push({name: 'policyTypes',value:policyTypeNew});
 					jQuery("body").prepend('<section id="pre-loader"><img src="../../assets/images/Logo_Innerpage.png" alt="CompanyLogo" id="logo"></section>');
 					
 					ajaxArray.push($.ajax({
@@ -3912,7 +3916,7 @@ $('#iTest').selectize({
 			                      var writtednPolicies = "0.0",acqCost="0.0",Livescovered="0.0";
 			                      $.each(data, function(ind, obj){
 			                    	  if(claimParamType=="GIC"){   
-			                    	  if($("#comprehensiveBtn").css('background-color')!="rgb(255, 255, 255)"){
+			                    	/* if($("#comprehensiveBtn").css('background-color')!="rgb(255, 255, 255)"){
 		                    			  catAddon =  parseFloat(obj.catGicOdComprehensiveDep.toPrecision())+
 		                    			  parseFloat(obj.catGicOdComprehensiveNcb.toPrecision())+
 		                    			  parseFloat(obj.catGicOdComprehensiveOtherAddon.toPrecision());
@@ -3960,16 +3964,76 @@ $('#iTest').selectize({
 		                    			  parseFloat(obj.othersGicOdOthersDep.toPrecision())+
 		                    			  parseFloat(obj.othersGicOdOthersNcb.toPrecision())+
 		                    			  parseFloat(obj.othersGicOdOthersOtherAddon.toPrecision());
-		                    		  }
+		                    		  }*/
 		                    		  
 			                    	  if($("#onlyAddOnBtn").css('background-color')!="rgb(255, 255, 255)"){
 			                    	  console.log("only addon-->catAddon--"+catAddon+"theftAddon--"+theftAddon+"othersAddon--"+othersAddon);
-			                    		  $(".gicOdCat_r"+period).text(convertToLaksh(catAddon));
-			                    		  $(".gicOdTheft_r"+period).text(convertToLaksh(theftAddon));
-			                    		  $(".gicOdOthers_r"+period).text(convertToLaksh(othersAddon));
+			                    		//  $(".gicOdCat_r"+period).text(convertToLaksh(catAddon));
+			                    		//  $(".gicOdTheft_r"+period).text(convertToLaksh(theftAddon));
+			                    		//  $(".gicOdOthers_r"+period).text(convertToLaksh(othersAddon));
 			                    		  /* $(".gic_r"+period).text( Number((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")) + parseFloat($(".gicTp_r"+period).text().replaceAll(",",""))).toFixed("2")).toLocaleString('en')); */
 			                    		  //$(".gic_r"+period).text( Number((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")) + parseFloat($(".gicTp_r"+period).text().replaceAll(",","")))).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,"));
-			                    		  $(".gic_r"+period).text( Number((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")) + parseFloat($(".gicTpulr_r"+period).text().replaceAll(",","")))).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,"));
+			                    		//  $(".gic_r"+period).text( Number((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")) + parseFloat($(".gicTpulr_r"+period).text().replaceAll(",","")))).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,"));
+			                    		  
+			                    		  
+			                    		 $(".gic_r"+period).text(convertToLaksh(parseFloat(obj.catGicOdComprehensiveDep.toPrecision())+
+			                    		  parseFloat(obj.catGicOdComprehensiveNcb.toPrecision())+
+			                    		  parseFloat(obj.catGicOdComprehensiveOtherAddon.toPrecision())+
+			                    		  parseFloat(obj.catGicOdComprehensiveNoAddon.toPrecision())+
+			                    		  parseFloat(obj.theftGicOdComprehensiveDep.toPrecision())+
+			                    		  parseFloat(obj.theftGicOdComprehensiveNcb.toPrecision())+
+			                    		  parseFloat(obj.theftGicOdComprehensiveOtherAddon.toPrecision())+
+			                    		  parseFloat(obj.theftGicOdComprehensiveNoAddon.toPrecision())+
+			                    		  parseFloat(obj.othersGicOdComprehensiveDep.toPrecision())+
+			                    		  parseFloat(obj.othersGicOdComprehensiveNcb.toPrecision())+
+			                    		  parseFloat(obj.othersGicOdComprehensiveOtherAddon.toPrecision())+
+			                    		  parseFloat(obj.othersGicOdComprehensiveNoAddon.toPrecision())+
+			                    		  parseFloat(obj.catGicTpComprehensiveDep.toPrecision())+
+			                    		  parseFloat(obj.catGicTpComprehensiveNcb.toPrecision())+
+			                    		  parseFloat(obj.catGicTpComprehensiveOtherAddon.toPrecision())+
+			                    		  parseFloat(obj.catGicTpComprehensiveNoAddon.toPrecision())+
+			                    		  parseFloat(obj.theftGicTpComprehensiveDep.toPrecision())+
+			                    		  parseFloat(obj.theftGicTpComprehensiveNcb.toPrecision())+
+			                    		  parseFloat(obj.theftGicTpComprehensiveOtherAddon.toPrecision())+
+			                    		  parseFloat(obj.theftGicTpComprehensiveNoAddon.toPrecision())+
+			                    		  parseFloat(obj.othersGicTpComprehensiveDep.toPrecision())+
+			                    		  parseFloat(obj.othersGicTpComprehensiveNcb.toPrecision())+
+			                    		  parseFloat(obj.othersGicTpComprehensiveOtherAddon.toPrecision())+
+			                    		  parseFloat(obj.othersGicTpComprehensiveNoAddon.toPrecision())));
+			                    		  
+			                    		  
+			                    		   $(".gicOdCat_r"+period).text(convertToLaksh(
+			                    		  parseFloat(obj.catGicOdComprehensiveDep.toPrecision())+
+			                    		  parseFloat(obj.catGicOdComprehensiveNcb.toPrecision())+
+			                    		  parseFloat(obj.catGicOdComprehensiveOtherAddon.toPrecision())+
+			                    		  parseFloat(obj.catGicOdComprehensiveNoAddon.toPrecision())));
+			                    		  
+			                    		   $(".gicOdTheft_r"+period).text(convertToLaksh(
+			                    		 parseFloat(obj.theftGicOdComprehensiveDep.toPrecision())+
+			                    		  parseFloat(obj.theftGicOdComprehensiveNcb.toPrecision())+
+			                    		  parseFloat(obj.theftGicOdComprehensiveOtherAddon.toPrecision())+
+			                    		  parseFloat(obj.theftGicOdComprehensiveNoAddon.toPrecision())));
+			                    		  
+			                    		  $(".gicOdOthers_r"+period).text(convertToLaksh(
+			                    		  parseFloat(obj.othersGicOdComprehensiveDep.toPrecision())+
+			                    		  parseFloat(obj.othersGicOdComprehensiveNcb.toPrecision())+
+			                    		  parseFloat(obj.othersGicOdComprehensiveOtherAddon.toPrecision())+
+			                    		  parseFloat(obj.othersGicOdComprehensiveNoAddon.toPrecision())));
+			                    		  
+			                    		   $(".gicTp_r"+period).text(convertToLaksh((parseFloat(obj.catGicTpComprehensiveDep.toPrecision())+
+			                    		  parseFloat(obj.catGicTpComprehensiveNcb.toPrecision())+
+			                    		  parseFloat(obj.catGicTpComprehensiveOtherAddon.toPrecision())+
+			                    		  parseFloat(obj.catGicTpComprehensiveNoAddon.toPrecision())+
+			                    		  parseFloat(obj.theftGicTpComprehensiveDep.toPrecision())+
+			                    		  parseFloat(obj.theftGicTpComprehensiveNcb.toPrecision())+
+			                    		  parseFloat(obj.theftGicTpComprehensiveOtherAddon.toPrecision())+
+			                    		  parseFloat(obj.theftGicTpComprehensiveNoAddon.toPrecision())+
+			                    		  parseFloat(obj.othersGicTpComprehensiveDep.toPrecision())+
+			                    		  parseFloat(obj.othersGicTpComprehensiveNcb.toPrecision())+
+			                    		  parseFloat(obj.othersGicTpComprehensiveOtherAddon.toPrecision())+
+			                    		  parseFloat(obj.othersGicTpComprehensiveNoAddon.toPrecision())).toFixed("2")));
+			                    		  
+			                    		  
 			                    		  
 			                    	  }else if($("#excludeBtn").css('background-color')!="rgb(255, 255, 255)"){
 			                    		  
@@ -3984,6 +4048,12 @@ $('#iTest').selectize({
 					                    		  //$(".gic_r"+period).text( Number((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")) + parseFloat($(".gicTp_r"+period).text().replaceAll(",","")))).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,"));
 					                    		  $(".gic_r"+period).text( Number((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")) + parseFloat($(".gicTpulr_r"+period).text().replaceAll(",","")))).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,"));
 					                    		  
+					                    		  
+					                    		  
+					                    		  
+					                    		  
+					                    		  
+					                    		  
 			                    			}
 			                    	  }else if($("#includeBtn").css('background-color')!="rgb(255, 255, 255)"){
 			                    		  //will be updated from single line
@@ -3994,7 +4064,7 @@ $('#iTest').selectize({
 			                    	  
 			                    	  if(claimParamType=="NIC"){
 			                    		  
-			                    		  if($("#comprehensiveBtn").css('background-color')!="rgb(255, 255, 255)"){
+			                    		/*  if($("#comprehensiveBtn").css('background-color')!="rgb(255, 255, 255)"){
 			                    			  nicOdAddon =  parseFloat(obj.nicOdComprehensiveDep.toPrecision())+
 			                    			  parseFloat(obj.nicOdComprehensiveNcb.toPrecision())+
 			                    			  parseFloat(obj.nicOdComprehensiveOtherAddon.toPrecision());
@@ -4027,13 +4097,42 @@ $('#iTest').selectize({
 			                    			  parseFloat(obj.nicTpOthersDep.toPrecision())+
 			                    			  parseFloat(obj.nicTpOthersNcb.toPrecision())+
 			                    			  parseFloat(obj.nicTpOthersOtherAddon.toPrecision());
-			                    		  }
+			                    		  }*/
 			                    		  
 			                    		  if($("#onlyAddOnBtn").css('background-color')!="rgb(255, 255, 255)"){
 					                    	  console.log("only addon-->nicOdAddon--"+nicOdAddon+"nicTpAddon--"+nicTpAddon);
-					                    		  $(".nicOd_r"+period).text(convertToLaksh(nicOdAddon));
-					                    		  $(".nicTp_r"+period).text(convertToLaksh(nicTpAddon));
-					                    		  $(".nic_r"+period).text(convertToLaksh(parseFloat(nicOdAddon)+parseFloat(nicTpAddon)));
+					                    		 // $(".nicOd_r"+period).text(convertToLaksh(nicOdAddon));
+					                    		  
+					                    		 // $(".nicTp_r"+period).text(convertToLaksh(nicTpAddon));
+					                    		  $(".nic_r"+period).text(convertToLaksh(
+					                              parseFloat(obj.nicComprehensiveDep.toPrecision())+
+					                    		  parseFloat(obj.nicComprehensiveNcb.toPrecision())+
+					                    		  parseFloat(obj.nicComprehensiveOtherAddon.toPrecision())+
+					                    		  parseFloat(obj.nicComprehensiveNoAddon.toPrecision())+
+					                    		  parseFloat(obj.nicTpDep.toPrecision())+
+					                    		  parseFloat(obj.nicTpNcb.toPrecision())+
+					                    		  parseFloat(obj.nicTpOtherAddon.toPrecision())+
+					                    		  parseFloat(obj.nicTpNoAddon.toPrecision())+
+					                    		  parseFloat(obj.nicOthersDep.toPrecision())+
+					                    		  parseFloat(obj.nicOthersNcb.toPrecision())+
+					                    		  parseFloat(obj.nicOthersOtherAddon.toPrecision())+
+					                    		  parseFloat(obj.nicOthersNoAddon.toPrecision())));
+					                    		 
+					                    		   $(".nicOd_r"+period).text(convertToLaksh(
+					                    		  parseFloat(obj.nicOdComprehensiveDep.toPrecision())+
+					                    		  parseFloat(obj.nicOdComprehensiveNcb.toPrecision())+
+					                    		  parseFloat(obj.nicOdComprehensiveOtherAddon.toPrecision())+
+					                    		  parseFloat(obj.nicOdComprehensiveNoAddon.toPrecision())+
+					                    		  parseFloat(obj.nicOdTpDep.toPrecision())+
+					                    		  parseFloat(obj.nicOdTpNcb.toPrecision())+
+					                    		  parseFloat(obj.nicOdTpOtherAddon.toPrecision())+
+					                    		  parseFloat(obj.nicOdTpNoAddon.toPrecision())+
+					                    		  parseFloat(obj.nicOdOthersDep.toPrecision())+
+					                    		  parseFloat(obj.nicOdOthersNcb.toPrecision())+
+					                    		  parseFloat(obj.nicOdOthersOtherAddon.toPrecision())+
+					                    		  parseFloat(obj.nicOdOthersNoAddon.toPrecision())));
+					                    		  
+					                    		  
 					                    	  }else if($("#excludeBtn").css('background-color')!="rgb(255, 255, 255)"){
 					                    		  
 					                    			if(isSingleLineDataFetched=="Y"){
