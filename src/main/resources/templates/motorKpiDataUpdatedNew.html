@@ -3551,6 +3551,7 @@ $('#iTest').selectize({
    	  	var registeredClaimstheftCount="0.0";
    	  	var registeredClaimstOthersCount="0.0";
    	  	var registeredClaimsCount = "0.0";
+		var gicCatAll="0.0", gicTheftAll="0.0", gicOthersAll="0.0";
 		function callClaimApi(period,fromDate,toDate){
        	 
        	 	var report = $('#reports').val();
@@ -3634,13 +3635,13 @@ $('#iTest').selectize({
 		                    	  }
 		                    	  if(isSingleLineDataFetched=="Y"){
 		                    		  if(registeredClaimscatCount!=0){
-	                    				  $(".claimSevCat_r"+period).text(convertToLaksh((($(".gicOdCat_r"+period).text().replaceAll(",","")*100000)/registeredClaimscatCount).toFixed("2")));
+	                    				  $(".claimSevCat_r"+period).text(((($(".gicOdCat_r"+period).text().replaceAll(",","")*100000)/registeredClaimscatCount).toFixed("2")));
 	                    			  }else{
 	                    				  $(".claimSevCat_r"+period).text(0);
 	                    			  }
-		                    		  $(".claimSev_r"+period).text(convertToLaksh((($(".gic_r"+period).text().replaceAll(",","")*100000)/registeredClaimsCount).toFixed("2")));
-			                    	  $(".claimSevTheft_r"+period).text(convertToLaksh((($(".gicOdTheft_r"+period).text().replaceAll(",","")*100000)/registeredClaimstheftCount).toFixed("2")));
-			                    	  $(".claimSevOthers_r"+period).text(convertToLaksh((($(".gicOdOthers_r"+period).text().replaceAll(",","")*100000)/registeredClaimstOthersCount).toFixed("2")));
+		                    		  $(".claimSev_r"+period).text(((($(".gic_r"+period).text().replaceAll(",","")*100000)/registeredClaimsCount).toFixed("2")));
+			                    	  $(".claimSevTheft_r"+period).text(((($(".gicOdTheft_r"+period).text().replaceAll(",","")*100000)/registeredClaimstheftCount).toFixed("2")));
+			                    	  $(".claimSevOthers_r"+period).text(((($(".gicOdOthers_r"+period).text().replaceAll(",","")*100000)/registeredClaimstOthersCount).toFixed("2")));
 			                    	  //$(".claimSev_r"+period).text(convertToLaksh(((gicCatAll+gicTheftAll+gicOthersAll)/(registeredClaimscatCount+registeredClaimstheftCount+registeredClaimstOthersCount)).toFixed("2")));
 			                    	   //$(".claimSev_r"+period).text(parseFloat($(".claimSevCat_r"+period).text())+parseFloat($(".claimSevTheft_r"+period).text())+parseFloat($(".claimSevOthers_r"+period).text()));
 		                    	  }
@@ -3656,7 +3657,7 @@ $('#iTest').selectize({
 						}));
         }
 		
-		var gicCatAll="0.0", gicTheftAll="0.0", gicTheftAll="0.0";
+		//var gicCatAll="0.0", gicTheftAll="0.0", gicOthersAll="0.0";
 		//var gicOdCat ="0.0" , gicOdTheft="0.0", gicOdOthers = "0.0";
 		function callSingleLineApi(period,fromDate,toDate,claimParamType){
 				var report = $('#reports').val(); 
@@ -3700,10 +3701,15 @@ $('#iTest').selectize({
 			                    var writtednPolicies = "0.0",acqCost="0.0",Livescovered="0.0";
 								isSingleLineDataFetched="Y";
 			                    $.each(data, function(ind, obj){
+									
 									if($("#onlyAddOnBtn").css('background-color')!="rgb(255, 255, 255)"){
 										// No Action
 										console.log("onlyAddOnBtn ::",claimParamType);
 										if(claimParamType=="GIC"){
+											gicCatAll=obj.catGicOdComprehensive+obj.catGicTpComprehensive; 
+											console.log(gicCatAll);
+											gicTheftAll=obj.theftGicOdComprehensive+obj.theftGicTpComprehensive;
+											gicOthersAll=obj.othersGicOdComprehensive+obj.othersGicTpComprehensive; 
 											if(isGepDataFetched=="Y"){
 												$(".lRatio_r"+period).text((parseFloat((($(".gic_r"+period).text().replaceAll(",","") * 100000)/ $("#show_1 > .gep_r"+period).text().replaceAll(",","") * 100000 ) * 100).toFixed("2")||0)+'%');
 												$(".lRatioOd_r"+period).text((parseFloat(((($(".gicOdCat_r"+period).text().replaceAll(",","") + $(".gicOdCat_r"+period).text().replaceAll(",","") + $(".gicOdCat_r"+period).text().replaceAll(",","")) * 100000)/ $(".extra_3 > .gepOd_r"+period).text().replaceAll(",","") * 100000) * 100).toFixed("2") || 0)+'%');
@@ -3714,19 +3720,37 @@ $('#iTest').selectize({
 									}else if($("#excludeBtn").css('background-color')!="rgb(255, 255, 255)"){
 										console.log("excludeBtn ::",claimParamType);
 										if(claimParamType=="GIC"){
+											gicCatAll=obj.catGicOdComprehensive+obj.catGicTpComprehensive; 
+											console.log(gicCatAll);
+											gicTheftAll=obj.theftGicOdComprehensive+obj.theftGicTpComprehensive;
+											gicOthersAll=obj.othersGicOdComprehensive+obj.othersGicTpComprehensive; 
 											$(".gicOdCat_r"+period).text(convertToLaksh(parseFloat(obj.catGicOdComprehensive).toFixed("2")));
 					                    	$(".gicOdTheft_r"+period).text(convertToLaksh(parseFloat(obj.theftGicOdComprehensive).toFixed("2")));
 					                    	$(".gicOdOthers_r"+period).text(convertToLaksh(parseFloat(obj.othersGicOdComprehensive).toFixed("2")));
 					                    	$(".gicTp_r"+period).text(convertToLaksh((parseFloat(obj.catGicTpComprehensive)+parseFloat(obj.theftGicTpComprehensive)+parseFloat(obj.othersGicTpComprehensive)).toFixed("2")));
 											$(".gic_r"+period).text(convertToLaksh((parseFloat(obj.catGicOdComprehensive)+parseFloat(obj.theftGicOdComprehensive)+parseFloat(obj.othersGicOdComprehensive)+parseFloat(obj.catGicTpComprehensive)+parseFloat(obj.theftGicTpComprehensive)+parseFloat(obj.othersGicTpComprehensive)).toFixed("2")));
-											$(".claimSev_r"+period).text(convertToLaksh((parseFloat(obj.catGicOdComprehensive)+parseFloat(obj.theftGicOdComprehensive)+parseFloat(obj.othersGicOdComprehensive)+parseFloat(obj.catGicTpComprehensive)+parseFloat(obj.theftGicTpComprehensive)+parseFloat(obj.othersGicTpTp)/parseFloat(obj.catClaimCountPoliciesComprehensive)+parseFloat(obj.theftClaimCountPoliciesComprehensive)+parseFloat(obj.othersClaimCountPoliciesComprehensive)).toFixed("2")));
-											$(".claimSevCat_r"+period).text(convertToLaksh((parseFloat(obj.catGicOdComprehensive)+parseFloat(obj.catGicTpComprehensive)/parseFloat(obj.catClaimCountPoliciesComprehensive)).toFixed("2")));
-					                    	$(".claimSevTheft_r"+period).text(convertToLaksh((parseFloat(obj.theftGicOdComprehensive)+parseFloat(obj.theftGicTpComprehensive)/parseFloat(obj.theftClaimCountPoliciesComprehensive)).toFixed("2")));
-											$(".claimSevOthers_r"+period).text(convertToLaksh((parseFloat(obj.othersGicOdComprehensive)+parseFloat(obj.othersGicOdTp)/parseFloat(obj.othersClaimCountPoliciesComprehensive)).toFixed("2")));
+											
 											/*if(isGepDataFetched=="Y"){
 												$(".lRatio_r"+period).text((parseFloat((($(".gic_r"+period).text().replaceAll(",","") * 100000)/ $("#show_1 > .gep_r"+period).text().replaceAll(",","") * 100000 ) * 100).toFixed("2")||0)+'%');
 												$(".lRatioOd_r"+period).text((parseFloat(((($(".gicOdCat_r"+period).text().replaceAll(",","") + $(".gicOdCat_r"+period).text().replaceAll(",","") + $(".gicOdCat_r"+period).text().replaceAll(",","")) * 100000)/ $(".extra_3 > .gepOd_r"+period).text().replaceAll(",","") * 100000) * 100).toFixed("2") || 0)+'%');
 											}*/
+											if(isClaimsDataFetched=="Y"){
+												/*if(registeredClaimscatCount!=0){
+													$(".claimSevCat_r"+period).text(convertToLaksh((($(".gicOdCat_r"+period).text().replaceAll(",","")*100000)/registeredClaimscatCount).toFixed("2")));
+												}else{
+													$(".claimSevCat_r"+period).text(0);
+												}
+												$(".claimSev_r"+period).text(convertToLaksh((($(".gic_r"+period).text().replaceAll(",","")*100000)/registeredClaimsCount).toFixed("2")));
+												$(".claimSevTheft_r"+period).text(convertToLaksh((($(".gicOdTheft_r"+period).text().replaceAll(",","")*100000)/registeredClaimstheftCount).toFixed("2")));
+												$(".claimSevOthers_r"+period).text(convertToLaksh((($(".gicOdOthers_r"+period).text().replaceAll(",","")*100000)/registeredClaimstOthersCount).toFixed("2")));
+												*/
+												//$(".claimSev_r"+period).text(convertToLaksh(((gicCatAll+gicTheftAll+gicOthersAll)/(registeredClaimscatCount+registeredClaimstheftCount+registeredClaimstOthersCount)).toFixed("2")));
+												 //$(".claimSev_r"+period).text(parseFloat($(".claimSevCat_r"+period).text())+parseFloat($(".claimSevTheft_r"+period).text())+parseFloat($(".claimSevOthers_r"+period).text()));
+												$(".claimSev_r"+period).text(((parseFloat(obj.catGicOdComprehensive)+parseFloat(obj.theftGicOdComprehensive)+parseFloat(obj.othersGicOdComprehensive)+parseFloat(obj.catGicTpComprehensive)+parseFloat(obj.theftGicTpComprehensive)+parseFloat(obj.othersGicTpTp)/registeredClaimsCount).toFixed("2")));
+												$(".claimSevCat_r"+period).text((parseFloat((obj.catGicOdComprehensive+obj.catGicTpComprehensive)).toFixed("2")));
+												$(".claimSevTheft_r"+period).text((parseFloat((obj.theftGicOdComprehensive+obj.theftGicTpComprehensive)).toFixed("2")));
+												$(".claimSevOthers_r"+period).text((parseFloat((obj.othersGicOdComprehensive+obj.othersGicOdTp)).toFixed("2")));
+											}
 											if(isGepDataFetched=="Y"){	
 												var lRatioOdVal =  (((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")))/$(".extra_3 > .gepOd_r"+period).text().replaceAll(",",""))*100).toFixed("2");
 												$(".lRatioOd_r"+period).text( (+lRatioOdVal||0)+'%');  
@@ -3743,15 +3767,21 @@ $('#iTest').selectize({
 									}else if($("#includeBtn").css('background-color')!="rgb(255, 255, 255)"){
 										console.log("includeBtn ::",claimParamType);
 										if(claimParamType=="GIC"){
+											gicCatAll=obj.catGicOdComprehensive+obj.catGicTpComprehensive; 
+											console.log(gicCatAll);
+											gicTheftAll=obj.theftGicOdComprehensive+obj.theftGicTpComprehensive;
+											gicOthersAll=obj.othersGicOdComprehensive+obj.othersGicTpComprehensive; 
 											$(".gicOdCat_r"+period).text(convertToLaksh(parseFloat(obj.catGicOdComprehensive).toFixed("2")));
 					                    	$(".gicOdTheft_r"+period).text(convertToLaksh(parseFloat(obj.theftGicOdComprehensive).toFixed("2")));
 					                    	$(".gicOdOthers_r"+period).text(convertToLaksh(parseFloat(obj.othersGicOdComprehensive).toFixed("2")));
 					                    	$(".gicTp_r"+period).text(convertToLaksh((parseFloat(obj.catGicTpComprehensive)+parseFloat(obj.theftGicTpComprehensive)+parseFloat(obj.othersGicTpComprehensive)).toFixed("2")));
 											$(".gic_r"+period).text(convertToLaksh((parseFloat(obj.catGicOdComprehensive)+parseFloat(obj.theftGicOdComprehensive)+parseFloat(obj.othersGicOdComprehensive)+parseFloat(obj.catGicTpComprehensive)+parseFloat(obj.theftGicTpComprehensive)+parseFloat(obj.othersGicTpComprehensive)).toFixed("2")));
-					                    	$(".claimSev_r"+period).text(convertToLaksh((parseFloat(obj.catGicOdComprehensive)+parseFloat(obj.theftGicOdComprehensive)+parseFloat(obj.othersGicOdComprehensive)+parseFloat(obj.catGicTpComprehensive)+parseFloat(obj.theftGicTpComprehensive)+parseFloat(obj.othersGicOdTp)/parseFloat(obj.catClaimCountPoliciesComprehensive)+parseFloat(obj.theftClaimCountPoliciesComprehensive)+parseFloat(obj.othersClaimCountPoliciesComprehensive)).toFixed("2")));
-											$(".claimSevCat_r"+period).text(convertToLaksh((parseFloat(obj.catGicOdComprehensive)+parseFloat(obj.catGicTpComprehensive)/parseFloat(obj.catClaimCountPoliciesComprehensive)).toFixed("2")));
-					                    	$(".claimSevTheft_r"+period).text(convertToLaksh((parseFloat(obj.theftGicOdComprehensive)+parseFloat(obj.theftGicTpComprehensive)/parseFloat(obj.theftClaimCountPoliciesComprehensive)).toFixed("2")));
-											$(".claimSevOthers_r"+period).text(convertToLaksh((parseFloat(obj.othersGicOdComprehensive)+parseFloat(obj.othersGicOdTp)/parseFloat(obj.othersClaimCountPoliciesComprehensive)).toFixed("2")));
+											if(isClaimsDataFetched=="Y"){
+												$(".claimSev_r"+period).text((((parseFloat(obj.catGicOdComprehensive)+parseFloat(obj.theftGicOdComprehensive)+parseFloat(obj.othersGicOdComprehensive)+parseFloat(obj.catGicTpComprehensive)+parseFloat(obj.theftGicTpComprehensive)+parseFloat(obj.othersGicTpComprehensive))/registeredClaimsCount).toFixed("2")));
+												$(".claimSevCat_r"+period).text((parseFloat((obj.catGicOdComprehensive+obj.catGicTpComprehensive)/registeredClaimscatCount).toFixed("2")));
+												$(".claimSevTheft_r"+period).text((parseFloat((obj.theftGicOdComprehensive+obj.theftGicTpComprehensive)/registeredClaimstheftCount).toFixed("2")));
+												$(".claimSevOthers_r"+period).text((parseFloat((obj.othersGicOdComprehensive+obj.othersGicOdTp)/registeredClaimstOthersCount).toFixed("2")));
+											}
 											/*if(isGepDataFetched=="Y"){
 												$(".lRatio_r"+period).text(((((
 													parseFloat(obj.catGicOdComprehensive)+
@@ -3966,7 +3996,34 @@ $('#iTest').selectize({
 											$(".lRatio_r"+period).text((parseFloat((($(".gic_r"+period).text().replaceAll(",","") * 100000)/ geplRatioSVal)*100).toFixed("2")||0)+'%');
 											$(".lRatioOd_r"+period).text((parseFloat(((($(".gicOdCat_r"+period).text().replaceAll(",","") + $(".gicOdCat_r"+period).text().replaceAll(",","") + $(".gicOdCat_r"+period).text().replaceAll(",",""))*100000)/ $(".extra_3 > .gepOd_r"+period).text().replaceAll(",","") * 100000) * 100).toFixed("2") || 0)+'%');
 										} */
-			                    		  
+			                    		if(isClaimsDataFetched=="Y"){
+											/*if(registeredClaimscatCount!=0){
+												$(".claimSevCat_r"+period).text(convertToLaksh((($(".gicOdCat_r"+period).text().replaceAll(",","")*100000)/registeredClaimscatCount).toFixed("2")));
+											}else{
+												$(".claimSevCat_r"+period).text(0);
+											}
+											$(".claimSevTheft_r"+period).text(convertToLaksh((($(".gicOdTheft_r"+period).text().replaceAll(",","")*100000)/registeredClaimstheftCount).toFixed("2")));
+											$(".claimSevOthers_r"+period).text(convertToLaksh((($(".gicOdOthers_r"+period).text().replaceAll(",","")*100000)/registeredClaimstOthersCount).toFixed("2")));
+											$(".claimSev_r"+period).text(((parseFloat(obj.catGicOdComprehensive)+parseFloat(obj.theftGicOdComprehensive)+parseFloat(obj.othersGicOdComprehensive)+parseFloat(obj.catGicTpComprehensive)+parseFloat(obj.theftGicTpComprehensive)+parseFloat(obj.othersGicTpTp)/registeredClaimsCount).toFixed("2")));
+											*/
+											//$(".claimSev_r"+period).text(convertToLaksh(((gicCatAll+gicTheftAll+gicOthersAll)/(registeredClaimscatCount+registeredClaimstheftCount+registeredClaimstOthersCount)).toFixed("2")));
+											//$(".claimSev_r"+period).text(parseFloat($(".claimSevCat_r"+period).text())+parseFloat($(".claimSevTheft_r"+period).text())+parseFloat($(".claimSevOthers_r"+period).text()));
+											$(".claimSev_r"+period).text(((($(".gic_r"+period).text().replaceAll(",","") * 100000)/registeredClaimsCount).toFixed("2")));
+
+											$(".claimSevCat_r"+period).text((parseFloat((catAddon + parseFloat(obj.catGicTpComprehensiveDep.toPrecision())+
+											parseFloat(obj.catGicTpComprehensiveNcb.toPrecision())+
+											parseFloat(obj.catGicTpComprehensiveOtherAddon.toPrecision())+
+											parseFloat(obj.catGicTpComprehensiveNoAddon.toPrecision())) / registeredClaimscatCount).toFixed("2")));
+											$(".claimSevTheft_r"+period).text((parseFloat((theftAddon + parseFloat(obj.theftGicTpComprehensiveDep.toPrecision())+
+											parseFloat(obj.theftGicTpComprehensiveNcb.toPrecision())+
+											parseFloat(obj.theftGicTpComprehensiveOtherAddon.toPrecision())+
+											parseFloat(obj.theftGicTpComprehensiveNoAddon.toPrecision())) / registeredClaimstheftCount).toFixed("2")));
+											$(".claimSevOthers_r"+period).text((parseFloat((othersAddon + parseFloat(obj.othersGicTpComprehensiveDep.toPrecision())+
+											parseFloat(obj.othersGicTpComprehensiveNcb.toPrecision())+
+											parseFloat(obj.othersGicTpComprehensiveOtherAddon.toPrecision())+
+											parseFloat(obj.othersGicTpComprehensiveNoAddon.toPrecision())) / registeredClaimstOthersCount).toFixed("2")));
+											
+										}
 			                    		  
 			                    	  }else if($("#excludeBtn").css('background-color')!="rgb(255, 255, 255)"){
 			                    		  
@@ -3991,6 +4048,25 @@ $('#iTest').selectize({
 													var lRatioVal = (((parseFloat($(".gic_r"+period).text().replaceAll(",","")))/$("#show_3 > .gep_r"+period).text().replaceAll(",",""))*100).toFixed("2");
 													$(".lRatio_r"+period).text((+lRatioVal||0)+'%');
 												} 
+
+												if(isClaimsDataFetched=="Y"){
+													$(".claimSev_r"+period).text(((($(".gic_r"+period).text().replaceAll(",","") * 100000)/registeredClaimsCount).toFixed("2")));
+													console.log(gicCatAll , catAddon ,parseFloat(obj.catGicTpComprehensiveDep.toPrecision()) ,
+													parseFloat(obj.catGicTpComprehensiveNcb.toPrecision()), parseFloat(obj.catGicTpComprehensiveOtherAddon.toPrecision()),
+													parseFloat(obj.catGicTpComprehensiveNoAddon.toPrecision()));
+													$(".claimSevCat_r"+period).text((parseFloat((gicCatAll - catAddon - parseFloat(obj.catGicTpComprehensiveDep.toPrecision())-
+													parseFloat(obj.catGicTpComprehensiveNcb.toPrecision())-
+													parseFloat(obj.catGicTpComprehensiveOtherAddon.toPrecision())-
+													parseFloat(obj.catGicTpComprehensiveNoAddon.toPrecision())) / registeredClaimscatCount).toFixed("2")));
+													$(".claimSevTheft_r"+period).text((parseFloat((gicTheftAll - theftAddon - parseFloat(obj.theftGicTpComprehensiveDep.toPrecision())-
+													parseFloat(obj.theftGicTpComprehensiveNcb.toPrecision())-
+													parseFloat(obj.theftGicTpComprehensiveOtherAddon.toPrecision())-
+													parseFloat(obj.theftGicTpComprehensiveNoAddon.toPrecision())) / registeredClaimstheftCount).toFixed("2")));
+													$(".claimSevOthers_r"+period).text((parseFloat((gicOthersAll - othersAddon - parseFloat(obj.othersGicTpComprehensiveDep.toPrecision())-
+													parseFloat(obj.othersGicTpComprehensiveNcb.toPrecision())-
+													parseFloat(obj.othersGicTpComprehensiveOtherAddon.toPrecision())-
+													parseFloat(obj.othersGicTpComprehensiveNoAddon.toPrecision())) / registeredClaimstOthersCount).toFixed("2")));
+												}
 											}
 			                    	  }else if($("#includeBtn").css('background-color')!="rgb(255, 255, 255)"){
 			                    		  //will be updated from single line
