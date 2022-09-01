@@ -1243,7 +1243,7 @@ padding-top: 150px;
 									<tr href="#" id="show_12"><td>LOSS RATIO (GIC/GEP)</td><td class="lRatio_r1"></td><td class="lRatio_r2"></td><td class="lRatio_r3"></td></tr>
 									<tr class="hiddenRow extra_12"><td class="sub-sub">OD</td><td class="lRatioOd_r1"></td><td class="lRatioOd_r2"></td><td class="lRatioOd_r3"></td></tr>
 									<tr class="hiddenRow extra_12"><td class="sub-sub">TP</td><td class="lRatioTp_r1"></td><td class="lRatioTp_r2"></td><td class="lRatioTp_r3"></td></tr>
-									<tr href="#" id="show_13"><td>Acq cost + ME<span style="float:right;">(In lakhs)</span></td><td class="acr_r1"></td><td class="acr_r2"></td><td class="acr_r3"></td></tr>
+									<tr href="#" id="show_13"><td>Acq cost + ME</td><td class="acr_r1"></td><td class="acr_r2"></td><td class="acr_r3"></td></tr>
 									<tr class="hiddenRow extra_13"><td class="sub-sub">OD</td><td class="acrOd_r1"></td><td class="acrOd_r2"></td><td class="acrOd_r3"></td></tr>
 									<tr class="hiddenRow extra_13"><td class="sub-sub">TP</td><td class="acrTp_r1"></td><td class="acrTp_r2"></td><td class="acrTp_r3"></td></tr>
 									<!-- <tr><td>CLAIM RATIO</td><td class="claimRatio_r1"></td><td class="claimRatio_r2"></td><td class="claimRatio_r3"></td></tr>
@@ -2972,28 +2972,6 @@ $('#iTest').selectize({
 			                      earnedPoliciesOd="0.0",earnedPoliciesTp="0.0",gep="0.0",freqCat="0.0",freqTheft="0.0",freqOthers="0.0";
 			                      $.each(data, function(ind, obj){
 			    	               if(apiURL=="/getGepCubeMonthAscolumnData/R/B" || apiURL=="/getGepCubeMonthAscolumnData/U/B"){
-										/*if($("#onlyAddOnBtn").css('background-color')!="rgb(255, 255, 255)"){
-											gepOd=parseFloat(obj.gepNildep.toPrecision())+parseFloat(obj.gepNcb.toPrecision())+parseFloat(obj.gepOtherAddon.toPrecision());
-											nepOd=parseFloat(obj.nepNildep.toPrecision())+parseFloat(obj.nepNcb.toPrecision())+parseFloat(obj.nepOtherAddon.toPrecision()) ;
-											earnedPoliciesOd=parseFloat(obj.gepDepEarnedPolicies.toPrecision())+parseFloat(obj.gepNcbEarnedPolicies.toPrecision())+parseFloat(obj.gepOtherAddonEarnedPolicies.toPrecision());
-											gepTp=0;
-											nepTp=0;
-											gicTp=0;
-										}else if($("#excludeBtn").css('background-color')!="rgb(255, 255, 255)"){
-											gepOd=parseFloat(obj.gepOd.toPrecision());
-											nepOd=parseFloat(obj.nepOd.toPrecision());
-											earnedPoliciesOd=parseFloat(obj.gepOdEarnedPolicies.toPrecision())-(parseFloat(obj.gepDepEarnedPolicies.toPrecision())+parseFloat(obj.gepNcbEarnedPolicies.toPrecision())+parseFloat(obj.gepOtherAddonEarnedPolicies.toPrecision()));
-											gepTp=obj.gepTp;
-											nepTp=obj.nepTp;
-											gicTp=obj.gicTp;
-										}else if($("#includeBtn").css('background-color')!="rgb(255, 255, 255)"){
-											gepOd=parseFloat(obj.gepOd.toPrecision())+parseFloat(obj.gepNildep.toPrecision())+parseFloat(obj.gepNcb.toPrecision())+parseFloat(obj.gepOtherAddon.toPrecision());
-											nepOd=parseFloat(obj.nepOd.toPrecision())+parseFloat(obj.nepNildep.toPrecision())+parseFloat(obj.nepNcb.toPrecision())+parseFloat(obj.nepOtherAddon.toPrecision());
-											earnedPoliciesOd=parseFloat(obj.gepOdEarnedPolicies.toPrecision());
-											gepTp=obj.gepTp;
-											nepTp=obj.nepTp;
-											gicTp=obj.gicTp;
-										}*/
 
 										gep=obj.gep;
 										gepOd=obj.gepOd;
@@ -3014,46 +2992,18 @@ $('#iTest').selectize({
 										$(".earnedPolicies_r"+period).text((parseFloat(earnedPoliciesOd)).toFixed("0"));
 								
 										$(".gicTpulr_r"+period).text(convertToLaksh((parseFloat(gicTp).toFixed("2"))));
-										var lRatioSTpVal = convertToLaksh(parseFloat(gicTp/gepTp * 100).toFixed("2"));
-										$(".lRatioTp_r"+period).text((+lRatioSTpVal||0)+'%');
-										//$(".gic_r"+period).text( (parseFloat($(".gicOdCat_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")) + parseFloat($(".gicTpulr_r"+period).text().replaceAll(",",""))).toFixed("2"));
-										//$(".gic_Tp"+period).text(convertToLaksh(parseFloat(gicTp).toFixed("2")));
-									
-										// New Changes
-			    	                	/*$(".gep_r"+period).text(convertToLaksh((parseFloat(obj.gepOd.toPrecision())+parseFloat(obj.gepTp.toPrecision())).toFixed("2")));
-			    	                	$(".gepOd_r"+period).text(convertToLaksh(parseFloat(obj.gepOd.toPrecision()).toFixed("2")));
-			    	                	$(".gepTp_r"+period).text(convertToLaksh(parseFloat(obj.gepTp.toPrecision()).toFixed("2")));
-			    	                	$(".nep_r"+period).text(convertToLaksh((parseFloat(obj.nepOd.toPrecision())+parseFloat(obj.nepTp.toPrecision())).toFixed("2")));
-			    	                	$(".nepOd_r"+period).text(convertToLaksh(parseFloat(obj.nepOd.toPrecision()).toFixed("2")));
-			    	                	$(".nepTp_r"+period).text(convertToLaksh(parseFloat(obj.nepTp).toFixed("2")));
-			    	                	$(".earnedPoliciesOd_r"+period).text(parseFloat(obj.gepOdEarnedPolicies.toPrecision()).toFixed("0"));
-			    	                	$(".earnedPolicies_r"+period).text((parseFloat(obj.gepOdEarnedPolicies.toPrecision())+parseFloat(earnedPoliciesTp.toPrecision())).toFixed("0"));
-			    	               
-			    	                	$(".gicTpulr_r"+period).text(convertToLaksh(parseFloat(obj.gicTp).toFixed("2")));
-			    	                	$(".gic_r"+period).text( (parseFloat($(".gicOdCat_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",","")) + parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")) + parseFloat($(".gicTpulr_r"+period).text().replaceAll(",",""))).toFixed("2"));
-			    	                	*/
 			    	                	
-			    	                	//if(isSingleLineDataFetched=="Y"){
+			    	                	if(isSingleLineDataFetched=="Y"){
 			    	                		
-			    	                		//var lRatioSOdVal = (((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")))/$(".extra_3 > .gepOd_r"+period).text().replaceAll(",",""))*100).toFixed("2");
-				    	                	//$(".lRatioOd_r"+period).text((+lRatioSOdVal||0)+'%');  
-											
-				    	                	//var lRatioSVal = (($(".gic_r"+period).text().replaceAll(",","")/$("#show_3 > .gep_r"+period).text().replaceAll(",",""))*100).toFixed("2");
-				    	                	//var lRatioSVal =(((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",",""))+parseFloat($(".gicTpulr_r"+period).text().replaceAll(",","")))/$("#show_3 > .gep_r"+period).text().replaceAll(",",""))*100).toFixed("2");
-				    	                	//$(".lRatio_r"+period).text((+lRatioSVal||0)+'%');
-			    	                	//}
-			    	                	
-			    	                	/*if($("#r12Btn").css('background-color')!="rgb(255, 255, 255)" && r12GicUpdated=="Y" ){
 			    	                		var lRatioSOdVal = (((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")))/$(".extra_3 > .gepOd_r"+period).text().replaceAll(",",""))*100).toFixed("2");
 				    	                	$(".lRatioOd_r"+period).text((+lRatioSOdVal||0)+'%');  
-				    	                	var lRatioSTpVal = (($(".gicTpulr_r"+period).text().replaceAll(",","")/$(".extra_3 > .gepTp_r"+period).text().replaceAll(",",""))*100).toFixed("2").replaceAll(",","");
-				    	                	$(".lRatioTp_r"+period).text((+lRatioSTpVal||0)+'%');
-				    	                	//var lRatioSVal = (($(".gic_r"+period).text().replaceAll(",","")/$("#show_3 > .gep_r"+period).text().replaceAll(",",""))*100).toFixed("2");
-				    	                	var lRatioSVal =(((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",",""))+parseFloat($(".gicTpulr_r"+period).text().replaceAll(",","")))/$("#show_3 > .gep_r"+period).text().replaceAll(",",""))*100).toFixed("2");
+											var lRatioSTpVal = convertToLaksh(parseFloat(gicTp/gepTp * 100).toFixed("2"));
+											$(".lRatioTp_r"+period).text((+lRatioSTpVal||0)+'%');
+				    	                	var lRatioSVal = (($(".gic_r"+period).text().replaceAll(",","")/$("#show_3 > .gep_r"+period).text().replaceAll(",",""))*100).toFixed("2");
+				    	                	//var lRatioSVal =(((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",",""))+parseFloat($(".gicTpulr_r"+period).text().replaceAll(",","")))/$("#show_3 > .gep_r"+period).text().replaceAll(",",""))*100).toFixed("2");
 				    	                	$(".lRatio_r"+period).text((+lRatioSVal||0)+'%');
-			    	                	}*/
-			    	                			
-			    	                			
+			    	                	}
+
 		    	                		
 			    	               }
 			                    	  
@@ -3196,59 +3146,52 @@ $('#iTest').selectize({
 			                  success: function (data) {
 							  
 							  responseJSON = data;
-			                      console.log('d');
-			                      console.log(responseJSON);
-			                      var gwp = "0.0",gwpOd="0.0",gwpTp="0.0", gwpDiscount="0.00";
-			                      var nwp = "0.0",nwpOd="0.0",nwpTp="0.0", nwpDiscount="0.00";
-			                      $.each(data, function(ind, obj){
+			                    console.log('d');
+			                    console.log(responseJSON);
+			                    var gwp = "0.0",gwpOd="0.0",gwpTp="0.0", gwpDiscount="0.00";
+			                    var nwp = "0.0",nwpOd="0.0",nwpTp="0.0", nwpDiscount="0.00";
+			                    $.each(data, function(ind, obj){
 			                    	  
-									$(".gwp_r"+period).text(convertToLaksh(parseFloat(obj.insGwpPolicyComprehensive.toPrecision()).toFixed("2")));
-									$(".gwpOd_r"+period).text(convertToLaksh(parseFloat(obj.insGwpOdPolicyComprehensive.toPrecision()).toFixed("2")));
-									$(".gwpTp_r"+period).text(convertToLaksh(parseFloat(obj.insGwpTpPolicyComprehensive.toPrecision()).toFixed("2")));
-									$(".nwp_r"+period).text(convertToLaksh(parseFloat(obj.insNwpPolicyComprehensive.toPrecision()).toFixed("2")));
-									$(".nwpOd_r"+period).text(convertToLaksh(parseFloat(obj.insNwpOdPolicyComprehensive.toPrecision()).toFixed("2")));
-									$(".nwpTp_r"+period).text(convertToLaksh(parseFloat(obj.insNwpTpPolicyComprehensive.toPrecision()).toFixed("2")));
+									$(".gwp_r"+period).text(convertToLaksh(parseFloat(obj.insGwpPolicyComprehensive).toFixed("2")));
+									$(".gwpOd_r"+period).text(convertToLaksh(parseFloat(obj.insGwpOdPolicyComprehensive).toFixed("2")));
+									$(".gwpTp_r"+period).text(convertToLaksh(parseFloat(obj.insGwpTpPolicyComprehensive).toFixed("2")));
+									$(".nwp_r"+period).text(convertToLaksh(parseFloat(obj.insNwpPolicyComprehensive).toFixed("2")));
+									$(".nwpOd_r"+period).text(convertToLaksh(parseFloat(obj.insNwpOdPolicyComprehensive).toFixed("2")));
+									$(".nwpTp_r"+period).text(convertToLaksh(parseFloat(obj.insNwpTpPolicyComprehensive).toFixed("2")));
 									
 			                    	isInsDataFetched="Y";
-			                    	/*  if(isPolicyDataFetched=="Y"){
-			                    		  var acqOdVal = ( ((acqCostOd*1000)/($(".extra_1 > .gwpOd_r"+period).text().replaceAll(",","")*100000))).toFixed("2");
-			                    		  acqOdVal = isFinite(acqOdVal) ? acqOdVal : 0;
-			                    		  $(".acrOd_r"+period).text((+acqOdVal||0)+'%');
-			                    	 	//$(".acrTp_r"+period).text(acqCostTp/$(".gwpTp_r"+period).text());
-			                    	 	if($(".extra_1 > .gwpTp_r"+period).text().replaceAll(",","")!=0){
-			                    	 		var acqTpVal = (((acqCostTp*1000)/($(".extra_1 > .gwpTp_r"+period).text().replaceAll(",","")*100000))).toFixed("2");
-			                    	 		acqTpVal = isFinite(acqTpVal) ? acqTpVal : 0;
-			                    	 		$(".acrTp_r"+period).text((+acqTpVal||0)+'%');	
+			                    		if(isPolicyDataFetched=="Y"){
+											var acqOdVal = ( ((acqCostOd)/($(".extra_1 > .gwpOd_r"+period).text().replaceAll(",","")*100000))*100).toFixed("2");
+											acqOdVal = isFinite(acqOdVal) ? acqOdVal : 0;
+											$(".acrOd_r"+period).text((+acqOdVal||0)+'%');
+			                    	 		if($(".extra_1 > .gwpTp_r"+period).text().replaceAll(",","")!=0){
+												var acqTpVal = (((acqCostTp)/($(".extra_1 > .gwpTp_r"+period).text().replaceAll(",","")*100000))*100).toFixed("2");
+												acqTpVal = isFinite(acqTpVal) ? acqTpVal : 0;
+												$(".acrTp_r"+period).text((+acqTpVal||0)+'%');	
 			                    	 	
-			                    	 	}else{
-			                    	 		$(".acrTp_r"+period).text(0);
-			                    	 	}
-			                    	 	//$(".acr_r"+period).text(parseFloat(acqCostTp/$(".gwpTp_r"+period).text())+parseFloat(acqCostOd/$(".gwpOd_r"+period).text()));
-			                    	 	//$(".acr_r"+period).text((parseFloat($(".extra_13 > .acrOd_r"+period).text())+parseFloat($(".extra_13 > .acrTp_r"+period).text())) );
-			                    	 	
-			                    	 	var acqVal = ((parseFloat(acqCostOd*100)+parseFloat(acqCostTp*100))/($("#show_1 > .gwp_r"+period).text().replaceAll(",","")*100000)).toFixed("2");
-			                    	 	acqVal = isFinite(acqVal) ? acqVal : 0;
-			                    	 	$(".acr_r"+period).text((+acqVal||0)+'%');
-			                    	  }
-			                    	  if(isSingleLineDataFetched=="Y"){
-			                    		  $(".lossRatioOd_r"+period).text( (((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")))/$(".extra_1 > .gwpOd_r"+period).text().replaceAll(",",""))*100).toFixed("2")+'%');  
-		                    				var lrTp = (($(".gicTp_r"+period).text().replaceAll(",","")/$(".extra_1 > .gwpTp_r"+period).text().replaceAll(",",""))*100).toFixed("2");
-			                    		  $(".lossRatioTp_r"+period).text((+lrTp||0)+'%');
-		                    		  		$(".lossRatio_r"+period).text((($(".gic_r"+period).text().replaceAll(",","")/$("#show_1 > .gwp_r"+period).text().replaceAll(",",""))*100).toFixed("2")+'%');  
-			                    	  }
-			                    	  if(isGepDataFetched=="Y"){			                    					                    		 
-			                    	  
-			                    		  if($("#r12Btn").css('background-color')!="rgb(255, 255, 255)"){
-				                    		  $(".lossRatioOd_r"+period).text( ((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")))/$(".extra_1 > .gwpOd_r"+period).text().replaceAll(",","")).toFixed("2"));  
-			                    				$(".lossRatioTp_r"+period).text(($(".gicTp_r"+period).text().replaceAll(",","")/$(".extra_1 > .gwpTp_r"+period).text().replaceAll(",","")).toFixed("2"));
-			                    		  		$(".lossRatio_r"+period).text(($(".gic_r"+period).text().replaceAll(",","")/$("#show_1 > .gwp_r"+period).text().replaceAll(",","")).toFixed("2"));
-				                    	  }
-			                    	  }*/
-			                    	    
-									}
-
+											}else{
+												$(".acrTp_r"+period).text(0);
+											}
+											var acqVal = (((parseFloat(acqCostOd)+parseFloat(acqCostTp*100))/($("#show_1 > .gwp_r"+period).text().replaceAll(",","")*100000))*100).toFixed("2");
+											acqVal = isFinite(acqVal) ? acqVal : 0;
+											$(".acr_r"+period).text((+acqVal||0)+'%');
+										}
+										if(isSingleLineDataFetched=="Y"){
+											$(".lossRatioOd_r"+period).text( (((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")))/$(".extra_1 > .gwpOd_r"+period).text().replaceAll(",",""))*100).toFixed("2")+'%');  
+											var lrTp = (($(".gicTp_r"+period).text().replaceAll(",","")/$(".extra_1 > .gwpTp_r"+period).text().replaceAll(",",""))*100).toFixed("2");
+											$(".lossRatioTp_r"+period).text((+lrTp||0)+'%');
+											$(".lossRatio_r"+period).text((($(".gic_r"+period).text().replaceAll(",","")/$("#show_1 > .gwp_r"+period).text().replaceAll(",",""))*100).toFixed("2")+'%');  
+										}
+										if(isGepDataFetched=="Y"){			                    					                    		 
+										
+											/*if($("#r12Btn").css('background-color')!="rgb(255, 255, 255)"){
+												$(".lossRatioOd_r"+period).text( ((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")))/$(".extra_1 > .gwpOd_r"+period).text().replaceAll(",","")).toFixed("2"));  
+												$(".lossRatioTp_r"+period).text(($(".gicTp_r"+period).text().replaceAll(",","")/$(".extra_1 > .gwpTp_r"+period).text().replaceAll(",","")).toFixed("2"));
+												$(".lossRatio_r"+period).text(($(".gic_r"+period).text().replaceAll(",","")/$("#show_1 > .gwp_r"+period).text().replaceAll(",","")).toFixed("2"));
+											}*/
+										}
 			    	                jQuery("#pre-loader").remove();
-			                      });
+			                    });
 			                      
 							}
 							}));
@@ -3490,7 +3433,7 @@ $('#iTest').selectize({
 				}));
 			}
 	         var isPolicyDataFetched="N";
-	         var acqCostOd="0.0",acqCostTp="0.0";
+	         var acqCostOd="0.0",acqCostTp="0.0",acqCost="0.0";
 			function callPolicyApi(period,fromDate,toDate){
 	        	 
 	        	 	var report = $('#reports').val();
@@ -3537,38 +3480,42 @@ $('#iTest').selectize({
 			                    	$(".writtenPoliciesOd_r"+period).text((obj.writtenPoliciesComprehensive).toFixed("0"));
 			                    	$(".writtenPoliciesTp_r"+period).text((obj.writtenPoliciesTp).toFixed("0"));
 			                    	$(".writtenPoliciesOthers_r"+period).text((obj.writtenPoliciesOthers).toFixed("0"));
-			                    	$(".acqCostOd"+period).text((obj.acqCostComprehensive).toFixed("0"));
-			                    	$(".acqCostTp"+period).text((obj.acqCostTp).toFixed("0"));
+			                    	//$(".acr_r1"+period).text((obj.acqCost).toFixed("0")+'%');
+			                    	//$(".acrOd_r"+period).text((obj.acqCostComprehensive).toFixed("0")+'%');
+			                    	//$(".acrTp_r"+period).text((obj.acqCostTp).toFixed("0")+'%');
+									acqCostOd = obj.acqCostComprehensive;
+									acqCostTp = obj.acqCostTp;
+									acqCost = obj.acqCost;
 			                    	 
 			                    	   
-			                    	 /* if(isClaimsDataFetched=="Y"){
-			                    		  
-			                    	  	  var clmFreqCat = (((registeredClaimscatCount)/($("#show_8 > .writtenPolicies_r"+period).text().replaceAll(",","")*100000))*100).toFixed("2");
+			                    	 if(isClaimsDataFetched=="Y"){
+			                    		  console.log("isClaimsDataFetched", registeredClaimscatCount,registeredClaimstheftCount,registeredClaimstOthersCount);
+			                    	  	  var clmFreqCat = (((registeredClaimscatCount)/(obj.writtenPolicies))*100).toFixed("2");
 			                    		  $(".claimFreqCat_r"+period).text((+clmFreqCat||0)+'%');
-			                    		  var clmFreqTheft = (((registeredClaimstheftCount)/($("#show_8 > .writtenPolicies_r"+period).text().replaceAll(",","")*100000))*100).toFixed("2");
+			                    		  var clmFreqTheft = (((registeredClaimstheftCount)/(obj.writtenPolicies))*100).toFixed("2");
 			                    		  $(".claimFreqTheft_r"+period).text((+clmFreqTheft||0)+'%');
-			                    		  var clmFreqOthers = (((registeredClaimstOthersCount)/($("#show_8 > .writtenPolicies_r"+period).text().replaceAll(",","")*100000))*100).toFixed("2");
+			                    		  var clmFreqOthers = (((registeredClaimstOthersCount)/(obj.writtenPolicies))*100).toFixed("2");
 			                    		  $(".claimFreqOthers_r"+period).text((+clmFreqOthers||0)+'%');  
-			                    		  var clmFreq = (((registeredClaimscatCount+registeredClaimstheftCount+registeredClaimstOthersCount)/($("#show_8 > .writtenPolicies_r"+period).text().replaceAll(",","")*100000))*100).toFixed("2");
+			                    		  var clmFreq = (((registeredClaimscatCount+registeredClaimstheftCount+registeredClaimstOthersCount)/(obj.writtenPolicies))*100).toFixed("2");
 			                    		  $(".claimFreq_r"+period).text((+clmFreq||0)+'%');
-			                    	  }*/
+			                    	  }
 			                    	  	if(isInsDataFetched=="Y"){
-											var acrOdPVal = (((obj.acqCostComprehensive*100)/($(".extra_1 > .gwpOd_r"+period).text().replaceAll(",","")*100000))).toFixed("2");
+											var acrOdPVal = (((obj.acqCostComprehensive)/($(".extra_1 > .gwpOd_r"+period).text().replaceAll(",","")*100000)) * 100).toFixed("2");
 											acrOdPVal = isFinite(acrOdPVal) ? acrOdPVal : 0;
-											$(".acrOd_r"+period).text((+acrOdPVal||0));
+											$(".acrOd_r"+period).text((+acrOdPVal||0)+'%');
 				                    	 	//$(".acrTp_r"+period).text(acqCostTp/$(".gwpTp_r"+period).text());
 				                    	 	if($(".extra_1 > .gwpTp_r"+period).text().replaceAll(",","")!=0){
-				                    	 		var acrTpPVal = (((obj.acqCostTp*100)/($(".extra_1 > .gwpTp_r"+period).text().replaceAll(",","")*100000))).toFixed("2");  
+				                    	 		var acrTpPVal = (((obj.acqCostTp)/($(".extra_1 > .gwpTp_r"+period).text().replaceAll(",","")*100000)) * 100).toFixed("2");  
 				                    	 		acrTpPVal = isFinite(acrTpPVal) ? acrTpPVal : 0;
-				                    	 		$(".acrTp_r"+period).text((+acrTpPVal||0));	
+				                    	 		$(".acrTp_r"+period).text((+acrTpPVal||0)+'%');	
 				                    	 	}else{
 				                    	 		$(".acrTp_r"+period).text(0);
 				                    	 	}
 				                    	 	//$(".acr_r"+period).text(parseFloat(acqCostTp/$(".gwpTp_r"+period).text())+parseFloat(acqCostOd/$(".gwpOd_r"+period).text()));
 				                    	 	//$(".acr_r"+period).text((parseFloat($(".extra_13 > .acrOd_r"+period).text())+parseFloat($(".extra_13 > .acrTp_r"+period).text())) );
-				                    	 	var acrPVal = (((obj.acqCostComprehensive*100)+(obj.acqCostTp*100))/($("#show_1 > .gwp_r"+period).text().replaceAll(",","")*100000)).toFixed("2");
+				                    	 	var acrPVal = ((((obj.acqCostComprehensive)+(obj.acqCostTp))/($("#show_1 > .gwp_r"+period).text().replaceAll(",","")*100000))* 100).toFixed("2");
 				                    	 	acrPVal = isFinite(acrPVal) ? acrPVal : 0;
-				                    	 	$(".acr_r"+period).text((+acrPVal||0));
+				                    	 	$(".acr_r"+period).text((+acrPVal||0)+'%');
 				                    	}
 			    	              
 			    	                	jQuery("#pre-loader").remove();
@@ -3633,9 +3580,9 @@ $('#iTest').selectize({
 		                      theftClaimCountPoliciesComprehensive = "0.0",theftClaimCountPoliciesTp="0.0",theftClaimCountPoliciesOthers="0.0";
 		                      othersClaimCountPoliciesComprehensive = "0.0",othersClaimCountPoliciesTp="0.0",othersClaimCountPoliciesOthers="0.0"; */
 		                      $.each(data, function(ind, obj){
-		                    	  registeredClaimscatCount = parseFloat(obj.catClaimCountPoliciesComprehensive)+parseFloat(obj.catClaimCountPoliciesTp)+parseFloat(obj.catClaimCountPoliciesOthers);
-		                    	  registeredClaimstheftCount = parseFloat(obj.theftClaimCountPoliciesComprehensive)+parseFloat(obj.theftClaimCountPoliciesTp)+parseFloat(obj.theftClaimCountPoliciesOthers);
-		                    	  registeredClaimstOthersCount = parseFloat(obj.othersClaimCountPoliciesComprehensive)+parseFloat(obj.othersClaimCountPoliciesTp)+parseFloat(obj.othersClaimCountPoliciesOthers);
+		                    	  registeredClaimscatCount = parseFloat(obj.catClaimCountPoliciesComprehensive);
+		                    	  registeredClaimstheftCount = parseFloat(obj.theftClaimCountPoliciesComprehensive);
+		                    	  registeredClaimstOthersCount = parseFloat(obj.othersClaimCountPoliciesComprehensive);
 		                    	  registeredClaimsCount = parseFloat(registeredClaimscatCount)+parseFloat(registeredClaimstheftCount)+parseFloat(registeredClaimstOthersCount);
 		                    	  isClaimsDataFetched="Y";
 		                    	  
@@ -3659,13 +3606,13 @@ $('#iTest').selectize({
 
 		                    	  if(isPolicyDataFetched=="Y"){
 		                    		  
-		                    		  var clmFreqPCat = (((registeredClaimscatCount)/($("#show_8 > .writtenPolicies_r"+period).text().replaceAll(",","")*100000))*100).toFixed("2");
+		                    		  var clmFreqPCat = (((registeredClaimscatCount)/($("#show_8 > .writtenPolicies_r"+period).text().replaceAll(",","")))*100).toFixed("2");
 		                    		  $(".claimFreqCat_r"+period).text((+clmFreqPCat||0)+'%');
-		                    		  var clmFreqPTheft = (((registeredClaimstheftCount)/($("#show_8 > .writtenPolicies_r"+period).text().replaceAll(",","")*100000))*100).toFixed("2");
+		                    		  var clmFreqPTheft = (((registeredClaimstheftCount)/($("#show_8 > .writtenPolicies_r"+period).text().replaceAll(",","")))*100).toFixed("2");
 		                    		  $(".claimFreqTheft_r"+period).text((+clmFreqPTheft||0)+'%');
-		                    		  var clmFreqPOthers = (((registeredClaimstOthersCount)/($("#show_8 > .writtenPolicies_r"+period).text().replaceAll(",","")*100000))*100).toFixed("2");
+		                    		  var clmFreqPOthers = (((registeredClaimstOthersCount)/($("#show_8 > .writtenPolicies_r"+period).text().replaceAll(",","")))*100).toFixed("2");
 		                    		  $(".claimFreqOthers_r"+period).text((+clmFreqPOthers||0)+'%');
-		                    		  var clmFreqP = (((registeredClaimscatCount+registeredClaimstheftCount+registeredClaimstOthersCount)/($("#show_8 > .writtenPolicies_r"+period).text().replaceAll(",","")*100000))*100).toFixed("2");
+		                    		  var clmFreqP = (((registeredClaimscatCount+registeredClaimstheftCount+registeredClaimstOthersCount)/($("#show_8 > .writtenPolicies_r"+period).text().replaceAll(",","")))*100).toFixed("2");
 		                    		  $(".claimFreq_r"+period).text((+clmFreqP||0)+'%');
 		                    	  }
 		                    	  if(isSingleLineDataFetched=="Y"){
@@ -3685,7 +3632,7 @@ $('#iTest').selectize({
 								
 									
 								 
-								
+								  jQuery("#pre-loader").remove();
 								});
 		                      
 						}
@@ -3695,10 +3642,9 @@ $('#iTest').selectize({
 		var gicCatAll="0.0", gicTheftAll="0.0", gicTheftAll="0.0";
 		//var gicOdCat ="0.0" , gicOdTheft="0.0", gicOdOthers = "0.0";
 		function callSingleLineApi(period,fromDate,toDate,claimParamType){
-	       	 
-	       	 var report = $('#reports').val(); 
-			 var addOnNew = getAddOnNew();
-			 var policyTypeNew = getPolicyTypeNew();
+				var report = $('#reports').val(); 
+				var addOnNew = getAddOnNew();
+				var policyTypeNew = getPolicyTypeNew();
 	       	 	var myInput;
 	       	 	if(report=='GENERAL'){
 	       	 		myInputs=$('#generalDiv').clone();
@@ -3722,156 +3668,71 @@ $('#iTest').selectize({
 						sApiURL="getSingleLineCubeGicDataUpdatedNew/";
 					}
 					
-					ajaxArray.push($.ajax({
-			                  type: "GET",
-			                  contentType: "application/json",
-			                   url: sApiURL+claimParamType,
-			                  dataType: 'json',
-			                  cache: false,
-			                  timeout: 600000,
-			                  data:genDiv,
-			                  success: function (data) {
-							  
-							  responseJSON = data;
-			                      console.log('d');
-			                      console.log(responseJSON);
-			                      var writtednPolicies = "0.0",acqCost="0.0",Livescovered="0.0";
-			                      $.each(data, function(ind, obj){
+						ajaxArray.push($.ajax({
+			                type: "GET",
+			                contentType: "application/json",
+			                url: sApiURL+claimParamType,
+			                dataType: 'json',
+			                cache: false,
+			                timeout: 600000,
+			                data:genDiv,
+			                success: function (data) {
+								responseJSON = data;
+			                    console.log('d');
+			                    console.log(responseJSON);
+			                    var writtednPolicies = "0.0",acqCost="0.0",Livescovered="0.0";
+								isSingleLineDataFetched="Y";
+			                    $.each(data, function(ind, obj){
 									if($("#onlyAddOnBtn").css('background-color')!="rgb(255, 255, 255)"){
+										// No Action
 									}else if($("#excludeBtn").css('background-color')!="rgb(255, 255, 255)"){
 										if(claimParamType=="GIC"){
 											$(".gicOdCat_r"+period).text(convertToLaksh(parseFloat(obj.catGicOdComprehensive).toFixed("2")));
 					                    	$(".gicOdTheft_r"+period).text(convertToLaksh(parseFloat(obj.theftGicOdComprehensive).toFixed("2")));
 					                    	$(".gicOdOthers_r"+period).text(convertToLaksh(parseFloat(obj.othersGicOdComprehensive).toFixed("2")));
-					                    	$(".gicTp_r"+period).text(convertToLaksh((
-					                    	  				parseFloat(obj.catGicTpComprehensive)+
-					                    	  			   parseFloat(obj.theftGicTpComprehensive)+
-					                    	  			   parseFloat(obj.othersGicTpComprehensive)).toFixed("2")));
-											$(".gic_r"+period).text(convertToLaksh((parseFloat(obj.catGicOdComprehensive)+parseFloat(obj.theftGicOdComprehensive)+parseFloat(obj.othersGicOdComprehensive)+parseFloat(obj.catGicTpComprehensive)+
-											parseFloat(obj.theftGicTpComprehensive)+
-											parseFloat(obj.othersGicTpComprehensive)).toFixed("2")));
-					                    		 
-											
-											
-											$(".claimSev_r"+period).text(convertToLaksh((
-					                    	  				parseFloat(obj.catGicOdComprehensive)+
-					                    	  			   parseFloat(obj.theftGicOdComprehensive)+
-															 parseFloat(obj.othersGicOdComprehensive)+
-															 parseFloat(obj.catGicTpComprehensive)+
-															 parseFloat(obj.theftGicTpComprehensive)+
-															 parseFloat(obj.othersGicTpTp)/
-															 parseFloat(obj.catClaimCountPoliciesComprehensive)+
-															 parseFloat(obj.theftClaimCountPoliciesComprehensive)+
-					                    	  			   parseFloat(obj.othersClaimCountPoliciesComprehensive)).toFixed("2")));
-
-															 $(".claimSevCat_r"+period).text(convertToLaksh((
-					                    	  				parseFloat(obj.catGicOdComprehensive)+
-					                    	  			   parseFloat(obj.catGicTpComprehensive)/
-															 parseFloat(obj.catClaimCountPoliciesComprehensive)).toFixed("2")));
-													
-					                    	  			   $(".claimSevTheft_r"+period).text(convertToLaksh((
-					                    	  				parseFloat(obj.theftGicOdComprehensive)+
-					                    	  			   parseFloat(obj.theftGicTpComprehensive)/
-															 parseFloat(obj.theftClaimCountPoliciesComprehensive)).toFixed("2")));
-
-															 $(".claimSevOthers_r"+period).text(convertToLaksh((
-					                    	  				parseFloat(obj.othersGicOdComprehensive)+
-					                    	  			   parseFloat(obj.othersGicOdTp)/
-															 parseFloat(obj.othersClaimCountPoliciesComprehensive)).toFixed("2")));
-								 
+					                    	$(".gicTp_r"+period).text(convertToLaksh((parseFloat(obj.catGicTpComprehensive)+parseFloat(obj.theftGicTpComprehensive)+parseFloat(obj.othersGicTpComprehensive)).toFixed("2")));
+											$(".gic_r"+period).text(convertToLaksh((parseFloat(obj.catGicOdComprehensive)+parseFloat(obj.theftGicOdComprehensive)+parseFloat(obj.othersGicOdComprehensive)+parseFloat(obj.catGicTpComprehensive)+parseFloat(obj.theftGicTpComprehensive)+parseFloat(obj.othersGicTpComprehensive)).toFixed("2")));
+											$(".claimSev_r"+period).text(convertToLaksh((parseFloat(obj.catGicOdComprehensive)+parseFloat(obj.theftGicOdComprehensive)+parseFloat(obj.othersGicOdComprehensive)+parseFloat(obj.catGicTpComprehensive)+parseFloat(obj.theftGicTpComprehensive)+parseFloat(obj.othersGicTpTp)/parseFloat(obj.catClaimCountPoliciesComprehensive)+parseFloat(obj.theftClaimCountPoliciesComprehensive)+parseFloat(obj.othersClaimCountPoliciesComprehensive)).toFixed("2")));
+											$(".claimSevCat_r"+period).text(convertToLaksh((parseFloat(obj.catGicOdComprehensive)+parseFloat(obj.catGicTpComprehensive)/parseFloat(obj.catClaimCountPoliciesComprehensive)).toFixed("2")));
+					                    	$(".claimSevTheft_r"+period).text(convertToLaksh((parseFloat(obj.theftGicOdComprehensive)+parseFloat(obj.theftGicTpComprehensive)/parseFloat(obj.theftClaimCountPoliciesComprehensive)).toFixed("2")));
+											$(".claimSevOthers_r"+period).text(convertToLaksh((parseFloat(obj.othersGicOdComprehensive)+parseFloat(obj.othersGicOdTp)/parseFloat(obj.othersClaimCountPoliciesComprehensive)).toFixed("2")));
 										}else if(claimParamType=="NIC") {
 
-											$(".nic_r"+period).text(convertToLaksh((
-					                    	  				parseFloat(obj.nicTpComprehensive)+
-					                    	  			   parseFloat(obj.nicTpTp)+
-					                    	  			   parseFloat(obj.nicTpOthers)+
-															 parseFloat(obj.nicOdComprehensive)+
-					                    	  			   parseFloat(obj.nicOdTp)+
-															 parseFloat(obj.nicOdOthers)).toFixed("2")));
-															 
-															 $(".nicOd_r"+period).text(convertToLaksh((
-					                    	  				parseFloat(obj.nicOdComprehensive)+
-					                    	  			   parseFloat(obj.nicOdTp)+
-					                    	  			   parseFloat(obj.nicTp)).toFixed("2")));
-
-                                                         	$(".nicTp_r"+period).text(convertToLaksh(parseFloat(obj.nicTp).toFixed("2")));
-					                    	  				 
-				
+											$(".nic_r"+period).text(convertToLaksh((parseFloat(obj.nicTpComprehensive)+parseFloat(obj.nicTpTp)+parseFloat(obj.nicTpOthers)+parseFloat(obj.nicOdComprehensive)+parseFloat(obj.nicOdTp)+parseFloat(obj.nicOdOthers)).toFixed("2")));
+											$(".nicOd_r"+period).text(convertToLaksh((parseFloat(obj.nicOdComprehensive)+parseFloat(obj.nicOdTp)+parseFloat(obj.nicTp)).toFixed("2")));
+                                            $(".nicTp_r"+period).text(convertToLaksh(parseFloat(obj.nicTp).toFixed("2")));
+										}
+										if(isGepDataFetched=="Y"){
+											$(".lRatio_r"+period).text((parseFloat(((obj.catGicOdComprehensive+obj.theftGicOdComprehensive+obj.othersGicOdComprehensive+obj.catGicTpComprehensive+obj.theftGicTpComprehensive+obj.othersGicOdTp)/ $("#show_3 > .gep_r"+period).text().replaceAll(",",""))*100).toFixed("2")||0)+'%');
+											$(".lRatioOd_r"+period).text((parseFloat((obj.catGicOdComprehensive+obj.theftGicOdComprehensive+obj.othersGicOdComprehensive/$(".extra_3 > .gepOd_r"+period).text().replaceAll(",","")) * 100).toFixed("2")||0)+'%');
+										}
 									}else if($("#includeBtn").css('background-color')!="rgb(255, 255, 255)"){
 										if(claimParamType=="GIC"){
 											$(".gicOdCat_r"+period).text(convertToLaksh(parseFloat(obj.catGicOdComprehensive).toFixed("2")));
 					                    	$(".gicOdTheft_r"+period).text(convertToLaksh(parseFloat(obj.theftGicOdComprehensive).toFixed("2")));
 					                    	$(".gicOdOthers_r"+period).text(convertToLaksh(parseFloat(obj.othersGicOdComprehensive).toFixed("2")));
-					                    	$(".gicTp_r"+period).text(convertToLaksh((
-					                    	  				parseFloat(obj.catGicTpComprehensive)+
-					                    	  			   parseFloat(obj.theftGicTpComprehensive)+
-					                    	  			   parseFloat(obj.othersGicTpComprehensive)).toFixed("2")));
-											$(".gic_r"+period).text(convertToLaksh((parseFloat(obj.catGicOdComprehensive)+parseFloat(obj.theftGicOdComprehensive)+parseFloat(obj.othersGicOdComprehensive)+parseFloat(obj.catGicTpComprehensive)+
-											parseFloat(obj.theftGicTpComprehensive)+
-											parseFloat(obj.othersGicTpComprehensive)).toFixed("2")));
-					                    	
-											
-											$(".claimSev_r"+period).text(convertToLaksh((
-					                    	  				parseFloat(obj.catGicOdComprehensive)+
-					                    	  			   parseFloat(obj.theftGicOdComprehensive)+
-															 parseFloat(obj.othersGicOdComprehensive)+
-															 parseFloat(obj.catGicTpComprehensive)+
-															 parseFloat(obj.theftGicTpComprehensive)+
-															 parseFloat(obj.othersGicOdTp)/
-															 parseFloat(obj.catClaimCountPoliciesComprehensive)+
-															 parseFloat(obj.theftClaimCountPoliciesComprehensive)+
-					                    	  			   parseFloat(obj.othersClaimCountPoliciesComprehensive)).toFixed("2")));
+					                    	$(".gicTp_r"+period).text(convertToLaksh((parseFloat(obj.catGicTpComprehensive)+parseFloat(obj.theftGicTpComprehensive)+parseFloat(obj.othersGicTpComprehensive)).toFixed("2")));
+											$(".gic_r"+period).text(convertToLaksh((parseFloat(obj.catGicOdComprehensive)+parseFloat(obj.theftGicOdComprehensive)+parseFloat(obj.othersGicOdComprehensive)+parseFloat(obj.catGicTpComprehensive)+parseFloat(obj.theftGicTpComprehensive)+parseFloat(obj.othersGicTpComprehensive)).toFixed("2")));
+					                    	$(".claimSev_r"+period).text(convertToLaksh((parseFloat(obj.catGicOdComprehensive)+parseFloat(obj.theftGicOdComprehensive)+parseFloat(obj.othersGicOdComprehensive)+parseFloat(obj.catGicTpComprehensive)+parseFloat(obj.theftGicTpComprehensive)+parseFloat(obj.othersGicOdTp)/parseFloat(obj.catClaimCountPoliciesComprehensive)+parseFloat(obj.theftClaimCountPoliciesComprehensive)+parseFloat(obj.othersClaimCountPoliciesComprehensive)).toFixed("2")));
+											$(".claimSevCat_r"+period).text(convertToLaksh((parseFloat(obj.catGicOdComprehensive)+parseFloat(obj.catGicTpComprehensive)/parseFloat(obj.catClaimCountPoliciesComprehensive)).toFixed("2")));
+					                    	$(".claimSevTheft_r"+period).text(convertToLaksh((parseFloat(obj.theftGicOdComprehensive)+parseFloat(obj.theftGicTpComprehensive)/parseFloat(obj.theftClaimCountPoliciesComprehensive)).toFixed("2")));
+											$(".claimSevOthers_r"+period).text(convertToLaksh((parseFloat(obj.othersGicOdComprehensive)+parseFloat(obj.othersGicOdTp)/parseFloat(obj.othersClaimCountPoliciesComprehensive)).toFixed("2")));
 
-															 $(".claimSevCat_r"+period).text(convertToLaksh((
-					                    	  				parseFloat(obj.catGicOdComprehensive)+
-					                    	  			   parseFloat(obj.catGicTpComprehensive)/
-															 parseFloat(obj.catClaimCountPoliciesComprehensive)).toFixed("2")));
-													
-					                    	  			   $(".claimSevTheft_r"+period).text(convertToLaksh((
-					                    	  				parseFloat(obj.theftGicOdComprehensive)+
-					                    	  			   parseFloat(obj.theftGicTpComprehensive)/
-															 parseFloat(obj.theftClaimCountPoliciesComprehensive)).toFixed("2")));
-
-															 $(".claimSevOthers_r"+period).text(convertToLaksh((
-					                    	  				parseFloat(obj.othersGicOdComprehensive)+
-					                    	  			   parseFloat(obj.othersGicOdTp)/
-															 parseFloat(obj.othersClaimCountPoliciesComprehensive)).toFixed("2")));
-
-															} else if(claimParamType=="NIC") {
-
-                                                                $(".nic_r"+period).text(convertToLaksh(parseFloat(obj.nicComprehensive).toFixed("2")));
-                                                                $(".nicOd_r"+period).text(convertToLaksh(parseFloat(obj.nicOdComprehensive).toFixed("2")));
-                                                                $(".nicTp_r"+period).text(convertToLaksh(parseFloat(obj.nicTp).toFixed("2")));
-
-                                                                  }		 
-
-										}
+										} else if(claimParamType=="NIC") {
+                                            $(".nic_r"+period).text(convertToLaksh(parseFloat(obj.nicComprehensive).toFixed("2")));
+                                            $(".nicOd_r"+period).text(convertToLaksh(parseFloat(obj.nicOdComprehensive).toFixed("2")));
+                                            $(".nicTp_r"+period).text(convertToLaksh(parseFloat(obj.nicTp).toFixed("2")));
+                                        }		
+										if(isGepDataFetched=="Y"){
+											$(".lRatio_r"+period).text((parseFloat(((obj.catGicOdComprehensive+obj.theftGicOdComprehensive+obj.othersGicOdComprehensive+obj.catGicTpComprehensive+obj.theftGicTpComprehensive+obj.othersGicOdTp)/ $("#show_3 > .gep_r"+period).text().replaceAll(",",""))*100).toFixed("2")||0)+'%');
+											$(".lRatioOd_r"+period).text((parseFloat((obj.catGicOdComprehensive+obj.theftGicOdComprehensive+obj.othersGicOdComprehensive/$(".extra_3 > .gepOd_r"+period).text().replaceAll(",","")) * 100).toFixed("2") || 0)+'%');
+										} 
 									}
-									if(isSingleLineDataFetched=="Y"){
-			    	                		
-			    	                
-											$(".lRatio_r"+period).text(convertToLaksh( 
-											parseFloat(obj.catGicOdComprehensive)+
-					                    	  			   parseFloat(obj.theftGicOdComprehensive)+
-															 parseFloat(obj.othersGicOdComprehensive)+
-															 parseFloat(obj.catGicTpComprehensive)+
-															 parseFloat(obj.theftGicTpComprehensive)+
-															 parseFloat(obj.othersGicOdTp).toFixed("2")));
-
-
-																$(".lRatioOd_r"+period).text(convertToLaksh((
-					                    	  				parseFloat(obj.catGicOdComprehensive)+
-					                    	  			   parseFloat(obj.theftGicOdComprehensive)+
-					                    	  			   parseFloat(obj.othersGicOdComprehensive)).toFixed("2")));
-
-                                                                
-			    	                	}
-						
 			                    	jQuery("#pre-loader").remove();
-			                      });
+			                    });
 			                      
 							}
-							}));
+						}));
 	        }
 		
 		
@@ -4230,7 +4091,7 @@ $('#iTest').selectize({
 	                    jQuery("#pre-loader").remove();
 	                  },
 	                  error: function (e) {
-	                	  jQuery("#pre-loader").remove();
+	                	jQuery("#pre-loader").remove();
 	                  alert(e);
 	                  }
 	              });
@@ -4834,8 +4695,10 @@ $('#iTest').selectize({
             			callClaimApi(1,from1,to1);
             			callSingleLineApi(1,from1,to1,"GIC");
                 		callSingleLineApi(1,from1,to1,"NIC");
-                		callReserveSingleLineApi(1,from1,to1,"GIC");
-                		callReserveSingleLineApi(1,from1,to1,"NIC");
+						if($("#includeBtn").css('background-color') == "rgb(255, 255, 255)"){
+							callReserveSingleLineApi(1,from1,to1,"GIC");
+							callReserveSingleLineApi(1,from1,to1,"NIC");
+						}
             		 }
 					 if ($("#r12Btn").css('background-color')!="rgb(255, 255, 255)"){
 						callgetR12GicNic(1,from1,to1);
@@ -4865,8 +4728,10 @@ $('#iTest').selectize({
 						callClaimApi(2,from2,to2);
 						callSingleLineApi(2,from2,to2,"GIC");
 						callSingleLineApi(2,from2,to2,"NIC");
-						callReserveSingleLineApi(2,from2,to2,"GIC");
-						callReserveSingleLineApi(2,from2,to2,"NIC");
+						if($("#includeBtn").css('background-color') == "rgb(255, 255, 255)"){
+							callReserveSingleLineApi(2,from2,to2,"GIC");
+							callReserveSingleLineApi(2,from2,to2,"NIC");
+						}
            			}
 					if ($("#r12Btn").css('background-color')!="rgb(255, 255, 255)"){
 						callgetR12GicNic(2,from2,to2);
@@ -4895,8 +4760,10 @@ $('#iTest').selectize({
 						callClaimApi(3,from3,to3);
 						callSingleLineApi(3,from3,to3,"GIC");
 						callSingleLineApi(3,from3,to3,"NIC");
-						callReserveSingleLineApi(3,from3,to3,"GIC");
-						callReserveSingleLineApi(3,from3,to3,"NIC");
+						if($("#includeBtn").css('background-color') == "rgb(255, 255, 255)"){
+							callReserveSingleLineApi(3,from3,to3,"GIC");
+							callReserveSingleLineApi(3,from3,to3,"NIC");
+						}
            			}
 					if ($("#r12Btn").css('background-color')!="rgb(255, 255, 255)"){
 						callgetR12GicNic(3,from3,to3);
