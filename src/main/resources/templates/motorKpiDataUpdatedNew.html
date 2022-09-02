@@ -1231,10 +1231,10 @@ padding-top: 150px;
 									<tr class="hiddenRow extra_10"><td class="sub-sub">CAT</td><td class="claimFreqCat_r1"></td><td class="claimFreqCat_r2"></td><td class="claimFreqCat_r3"></td></tr>
 									<tr class="hiddenRow extra_10"><td class="sub-sub">THEFT</td><td class="claimFreqTheft_r1"></td><td class="claimFreqTheft_r2"></td><td class="claimFreqTheft_r3"></td></tr>
 									<tr class="hiddenRow extra_10"><td class="sub-sub">OTHERS</td><td class="claimFreqOthers_r1"></td><td class="claimFreqOthers_r2"></td><td class="claimFreqOthers_r3"></td></tr>
-									<tr href="#" id="show_11"><td>CLAIM SEVERITY OD<span style="float:right;">(In lakhs)</span></td><td class="claimSev_r"></td><td class="claimSev_r2"></td><td class="claimSev_r3"></td></tr>
-									<tr class="hiddenRow extra_11"><td class="sub-sub">CAT</td><td class="claimSevCat_r"></td><td class="claimSevCat_r2"></td><td class="claimSevCat_r3"></td></tr>
-									<tr class="hiddenRow extra_11"><td class="sub-sub">THEFT</td><td class="claimSevTheft_r"></td><td class="claimSevTheft_r2"></td><td class="claimSevTheft_r3"></td></tr>
-									<tr class="hiddenRow extra_11"><td class="sub-sub">OTHERS</td><td class="claimSevOthers_r"></td><td class="claimSevOthers_r2"></td><td class="claimSevOthers_r3"></td></tr>
+									<tr href="#" id="show_11"><td>CLAIM SEVERITY OD<span style="float:right;">(In lakhs)</span></td><td class="claimSev_r1"></td><td class="claimSev_r2"></td><td class="claimSev_r3"></td></tr>
+									<tr class="hiddenRow extra_11"><td class="sub-sub">CAT</td><td class="claimSevCat_r1"></td><td class="claimSevCat_r2"></td><td class="claimSevCat_r3"></td></tr>
+									<tr class="hiddenRow extra_11"><td class="sub-sub">THEFT</td><td class="claimSevTheft_r1"></td><td class="claimSevTheft_r2"></td><td class="claimSevTheft_r3"></td></tr>
+									<tr class="hiddenRow extra_11"><td class="sub-sub">OTHERS</td><td class="claimSevOthers_r1"></td><td class="claimSevOthers_r2"></td><td class="claimSevOthers_r3"></td></tr>
 									<!-- <tr><td>EXPENSE RATIO</td><td class="expenseRatio_r1"></td><td class="expenseRatio_r2"></td><td class="expenseRatio_r3"></td></tr>
 									 -->
 									 <!-- <tr href="#" id="show_12"><td>LOSS RATIO (GIC/GWP)</td><td class="lossRatio_r1"></td><td class="lossRatio_r2"></td><td class="lossRatio_r3"></td></tr>
@@ -4008,22 +4008,32 @@ $('#iTest').selectize({
 											*/
 											//$(".claimSev_r"+period).text(convertToLaksh(((gicCatAll+gicTheftAll+gicOthersAll)/(registeredClaimscatCount+registeredClaimstheftCount+registeredClaimstOthersCount)).toFixed("2")));
 											//$(".claimSev_r"+period).text(parseFloat($(".claimSevCat_r"+period).text())+parseFloat($(".claimSevTheft_r"+period).text())+parseFloat($(".claimSevOthers_r"+period).text()));
-											$(".claimSev_r"+period).text(((($(".gic_r"+period).text().replaceAll(",","") * 100000)/registeredClaimsCount).toFixed("2")));
+											var claimSev_r = ((($(".gic_r"+period).text().replaceAll(",","") * 100000)/registeredClaimsCount).toFixed("2"));
+											$(".claimSev_r"+period).text(isNaN(claimSev_r)? 0 : claimSev_r );
+                                            console.log(isNaN(claimSev_r)? 0 : claimSev_r);
 
-											$(".claimSevCat_r"+period).text((parseFloat((catAddon + parseFloat(obj.catGicTpComprehensiveDep.toPrecision())+
+									
+											var claimSevCat_r = (parseFloat((catAddon + parseFloat(obj.catGicTpComprehensiveDep.toPrecision())+
 											parseFloat(obj.catGicTpComprehensiveNcb.toPrecision())+
 											parseFloat(obj.catGicTpComprehensiveOtherAddon.toPrecision())+
-											parseFloat(obj.catGicTpComprehensiveNoAddon.toPrecision())) / registeredClaimscatCount).toFixed("2")));
-											$(".claimSevTheft_r"+period).text((parseFloat((theftAddon + parseFloat(obj.theftGicTpComprehensiveDep.toPrecision())+
+											parseFloat(obj.catGicTpComprehensiveNoAddon.toPrecision())) / registeredClaimscatCount).toFixed("2"));
+
+											$(".claimSevCat_r"+period).text(isNaN(claimSevCat_r)? 0 : claimSevCat_r);
+
+											var claimSevTheft_r = (parseFloat((theftAddon + parseFloat(obj.theftGicTpComprehensiveDep.toPrecision())+
 											parseFloat(obj.theftGicTpComprehensiveNcb.toPrecision())+
 											parseFloat(obj.theftGicTpComprehensiveOtherAddon.toPrecision())+
-											parseFloat(obj.theftGicTpComprehensiveNoAddon.toPrecision())) / registeredClaimstheftCount).toFixed("2")));
-											$(".claimSevOthers_r"+period).text((parseFloat((othersAddon + parseFloat(obj.othersGicTpComprehensiveDep.toPrecision())+
+											parseFloat(obj.theftGicTpComprehensiveNoAddon.toPrecision())) / registeredClaimstheftCount).toFixed("2"));
+
+											$(".claimSevTheft_r"+period).text(isNaN(claimSevTheft_r)? 0 : claimSevTheft_r);
+
+											var claimSevOthers_r = (parseFloat((othersAddon + parseFloat(obj.othersGicTpComprehensiveDep.toPrecision())+
 											parseFloat(obj.othersGicTpComprehensiveNcb.toPrecision())+
 											parseFloat(obj.othersGicTpComprehensiveOtherAddon.toPrecision())+
-											parseFloat(obj.othersGicTpComprehensiveNoAddon.toPrecision())) / registeredClaimstOthersCount).toFixed("2")));
-											
-										}
+											parseFloat(obj.othersGicTpComprehensiveNoAddon.toPrecision())) / registeredClaimstOthersCount).toFixed("2"));
+
+											$(".claimSevOthers_r"+period).text(isNaN(claimSevOthers_r)? 0 : claimSevOthers_r);
+
 			                    		  
 			                    	  }else if($("#excludeBtn").css('background-color')!="rgb(255, 255, 255)"){
 			                    		  
@@ -4188,6 +4198,7 @@ $('#iTest').selectize({
 			                      
 			                    	 
 			                    	  jQuery("#pre-loader").remove();
+									}
 			                      });
 			                      
 							}
