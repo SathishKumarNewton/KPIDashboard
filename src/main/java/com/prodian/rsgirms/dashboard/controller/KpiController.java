@@ -703,7 +703,7 @@ public class KpiController {
 						vals += ",";
 					}
 				}
-				queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.BRANCH_CODE) in (" + vals + ")";
+				queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.BRANCH_CODE) in (" + vals + ")";
 			}
 			
 			if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
@@ -715,7 +715,7 @@ public class KpiController {
 						vals += ",";
 					}
 				}
-				queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.AGENT_CODE) in (" + vals + ")";
+				queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.AGENT_CODE) in (" + vals + ")";
 			}
 			
 			if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
@@ -739,7 +739,7 @@ public class KpiController {
 						vals += ",";
 					}
 				}
-				queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.FUEL_TYPE) in (" + vals + ")";
+				queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.FUEL_TYPE) in (" + vals + ")";
 			}
 			
 			if (filterRequest != null && filterRequest.getMotorNcbFlag() != null
@@ -751,7 +751,7 @@ public class KpiController {
 						vals += ",";
 					}
 				}
-				queryStr += " and TRIM(GEP_POLICY_FACT_DENORMAL.NCB) in (" + vals + ")";
+				queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NCB) in (" + vals + ")";
 			}
 
 
