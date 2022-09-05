@@ -3118,6 +3118,18 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 			}
 			queryStr += " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.BUSINESS_TYPE) in (" + vals + ")";
 		}
+		if (filterRequest != null && filterRequest.getPolicyTypes() != null
+				&& !filterRequest.getPolicyTypes().isEmpty()) {
+			String vals = "";
+			for (int i = 0; i < filterRequest.getPolicyTypes().size(); i++) {
+				vals += "'" + filterRequest.getPolicyTypes().get(i).trim() + "'";
+				if (i != filterRequest.getPolicyTypes().size() - 1) {
+					vals += ",";
+				}
+			}
+			
+			queryStr += " and TRIM(RSA_DWH_COVERCODE_MASTER.CATEGORY) in (" + vals + ")";
+		}
 		if (filterRequest != null && filterRequest.getChannelNow() != null
 				&& !filterRequest.getChannelNow().isEmpty()) {
 			String vals = "";
