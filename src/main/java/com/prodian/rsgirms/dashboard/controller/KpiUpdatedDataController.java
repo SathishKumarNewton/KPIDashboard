@@ -5258,8 +5258,6 @@ public GicNicPsqlFunction getR12GicNic(HttpServletRequest req, UserMatrixMasterR
 				}
 			}
 			queryStr += " and (BUSINESS_TYPE) in (" + vals + ")";
-		}else{
-			queryStr += " and (BUSINESS_TYPE) in ('Renewal')";
 		}
 
 		if (filterRequest != null && filterRequest.getChannelNow() != null && !filterRequest.getChannelNow().isEmpty()) {
@@ -5271,8 +5269,6 @@ public GicNicPsqlFunction getR12GicNic(HttpServletRequest req, UserMatrixMasterR
 				}
 			}
 			queryStr += " and (CHANNEL) in (" + vals + ")";
-		}else{
-			queryStr += " and (CHANNEL) in ('OEM')";
 		}
 
 		if (filterRequest != null && filterRequest.getSubChannelNow() != null
@@ -5285,8 +5281,6 @@ public GicNicPsqlFunction getR12GicNic(HttpServletRequest req, UserMatrixMasterR
 				}
 			}
 			queryStr += " and (SUB_CHANNEL) in (" + vals + ")";
-		}else{
-			queryStr += " and (SUB_CHANNEL) in ('Honda Assure')";
 		}
 
 		if (filterRequest != null && filterRequest.getMakeNow() != null
@@ -5299,8 +5293,6 @@ public GicNicPsqlFunction getR12GicNic(HttpServletRequest req, UserMatrixMasterR
 				}
 			}
 			queryStr += " and (MAKE) in (" + vals + ")";
-		}else{
-			queryStr += " and (MAKE) in ('Honda Motors Ltd.')";
 		}
 
 		if (filterRequest != null && filterRequest.getModelGroupNow() != null
@@ -5313,8 +5305,6 @@ public GicNicPsqlFunction getR12GicNic(HttpServletRequest req, UserMatrixMasterR
 				}
 			}
 			queryStr += " and (MODELGROUP) in (" + vals + ")";
-		}else{
-			queryStr += " and (MODELGROUP) in ('WRV')";
 		}
 
 		if (filterRequest != null && filterRequest.getFuelTypeNow() != null
@@ -5327,8 +5317,6 @@ public GicNicPsqlFunction getR12GicNic(HttpServletRequest req, UserMatrixMasterR
 				}
 			}
 			queryStr += " and upper(coalesce(FUELTYPE,'N')) in (" + vals + ")";
-		}else{
-			queryStr += " and upper(coalesce(FUELTYPE,'N')) in ('DIESEL')";
 		}
 
 		if (filterRequest != null && filterRequest.getStateGroupNow() != null
@@ -5341,8 +5329,6 @@ public GicNicPsqlFunction getR12GicNic(HttpServletRequest req, UserMatrixMasterR
 				}
 			}
 			queryStr += " and (STATE_GROUPING) in (" + vals + ")";
-		}else{
-			queryStr += " and (STATEGROUPING) in ('Rest of Tamilnadu')";
 		}
 
 		if (filterRequest != null && filterRequest.getNcbNow() != null
@@ -5355,8 +5341,6 @@ public GicNicPsqlFunction getR12GicNic(HttpServletRequest req, UserMatrixMasterR
 				}
 			}
 			queryStr += " and (ncb_flag) in (" + vals + ")";
-		}else{
-			queryStr += " and (ncb_flag) in ('N')";
 		}
 
 	System.out.println(":::::::::::::::::::::::::: TYPE QUERY ::::::::::::::::::::"+ queryStr);
@@ -5370,10 +5354,19 @@ public GicNicPsqlFunction getR12GicNic(HttpServletRequest req, UserMatrixMasterR
 	String date = getFinCondQueryForPsql(Integer.valueOf(fromMonth),Integer.valueOf(toMonth),Integer.valueOf(fromYear),Integer.valueOf(toYear));
 	System.out.println(":::::::::::::::::::::::::: TYPE YEAR ::::::::::::::::::::"+ date);
 	System.out.println("-----call---- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::callR12GicNic ---- Start");
-	GicNicPsqlFunction result = gicNicPsqlRepository.callR12GicNic(queryStr, date);
+	GicNicPsqlFunction result = null;
+		if(filterRequest.getAddOnNew().equals("Include")){
+			result = gicNicPsqlRepository.calc_new_r12_gic_nic_include(queryStr, date);
+		}else if(filterRequest.getAddOnNew().equals("Exclude")){
+			result = gicNicPsqlRepository.calc_new_r12_gic_nic_exclude(queryStr, date);
+		}else if(filterRequest.getAddOnNew().equals("Only Addon")){
+			result = gicNicPsqlRepository.calc_new_r12_gic_nic_only_addon(queryStr, date);
+		}
+	
 	System.out.println("-----call---- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::callR12GicNic ---- Success ::::"+ result.toString());
+
 	return result;
-		
+
 	} catch (Exception e) {
 		System.out.println("kylinDataSource initialize error, ex: " + e);
 		System.out.println();
@@ -5399,8 +5392,6 @@ public AcqPsqlFunction getcR12Acq(HttpServletRequest req, UserMatrixMasterReques
 				}
 			}
 			queryStr += " and (BUSINESS_TYPE) in (" + vals + ")";
-		}else{
-			queryStr += " and (BUSINESS_TYPE) in ('Renewal')";
 		}
 
 		if (filterRequest != null && filterRequest.getChannelNow() != null && !filterRequest.getChannelNow().isEmpty()) {
@@ -5412,8 +5403,6 @@ public AcqPsqlFunction getcR12Acq(HttpServletRequest req, UserMatrixMasterReques
 				}
 			}
 			queryStr += " and (CHANNEL) in (" + vals + ")";
-		}else{
-			queryStr += " and (CHANNEL) in ('OEM')";
 		}
 
 		if (filterRequest != null && filterRequest.getSubChannelNow() != null
@@ -5426,8 +5415,6 @@ public AcqPsqlFunction getcR12Acq(HttpServletRequest req, UserMatrixMasterReques
 				}
 			}
 			queryStr += " and (SUB_CHANNEL) in (" + vals + ")";
-		}else{
-			queryStr += " and (SUB_CHANNEL) in ('Honda Assure')";
 		}
 
 		if (filterRequest != null && filterRequest.getMakeNow() != null
@@ -5440,8 +5427,6 @@ public AcqPsqlFunction getcR12Acq(HttpServletRequest req, UserMatrixMasterReques
 				}
 			}
 			queryStr += " and (MAKE) in (" + vals + ")";
-		}else{
-			queryStr += " and (MAKE) in ('Honda Motors Ltd.')";
 		}
 
 		if (filterRequest != null && filterRequest.getModelGroupNow() != null
@@ -5454,8 +5439,6 @@ public AcqPsqlFunction getcR12Acq(HttpServletRequest req, UserMatrixMasterReques
 				}
 			}
 			queryStr += " and (MODELGROUP) in (" + vals + ")";
-		}else{
-			queryStr += " and (MODELGROUP) in ('WRV')";
 		}
 
 		if (filterRequest != null && filterRequest.getFuelTypeNow() != null
@@ -5468,8 +5451,6 @@ public AcqPsqlFunction getcR12Acq(HttpServletRequest req, UserMatrixMasterReques
 				}
 			}
 			queryStr += " and upper(coalesce(FUELTYPE,'N')) in (" + vals + ")";
-		}else{
-			queryStr += " and upper(coalesce(FUELTYPE,'N')) in ('DIESEL')";
 		}
 
 		if (filterRequest != null && filterRequest.getStateGroupNow() != null
@@ -5482,8 +5463,6 @@ public AcqPsqlFunction getcR12Acq(HttpServletRequest req, UserMatrixMasterReques
 				}
 			}
 			queryStr += " and (STATE_GROUPING) in (" + vals + ")";
-		}else{
-			queryStr += " and (STATEGROUPING) in ('Rest of Tamilnadu')";
 		}
 
 		if (filterRequest != null && filterRequest.getNcbNow() != null
@@ -5496,8 +5475,6 @@ public AcqPsqlFunction getcR12Acq(HttpServletRequest req, UserMatrixMasterReques
 				}
 			}
 			queryStr += " and (ncb_flag) in (" + vals + ")";
-		}else{
-			queryStr += " and (ncb_flag) in ('N')";
 		}
 
 		System.out.println(":::::::::::::::::::::::::: TYPE QUERY ::::::::::::::::::::"+ queryStr);
@@ -5511,7 +5488,15 @@ public AcqPsqlFunction getcR12Acq(HttpServletRequest req, UserMatrixMasterReques
 		String date = getFinCondQueryForPsql(Integer.valueOf(fromMonth),Integer.valueOf(toMonth),Integer.valueOf(fromYear),Integer.valueOf(toYear));
 		System.out.println(":::::::::::::::::::::::::: TYPE YEAR ::::::::::::::::::::"+ date);
 	System.out.println("-----call---- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::callR12AcqFunction ---- Start");
-	AcqPsqlFunction result = gicNicPsqlRepository.callR12AcqFunction(queryStr, date);
+	AcqPsqlFunction result = null;
+	// AcqPsqlFunction result = gicNicPsqlRepository.callR12AcqFunction(queryStr, date);
+	if(filterRequest.getAddOnNew().equals("Include")){
+		result = gicNicPsqlRepository.calc_new_r12_acq_loss_include(queryStr, date);
+	}else if(filterRequest.getAddOnNew().equals("Exclude")){
+		result = gicNicPsqlRepository.calc_new_r12_acq_loss_exclude(queryStr, date);
+	}else if(filterRequest.getAddOnNew().equals("Only Addon")){
+		result = gicNicPsqlRepository.calc_new_r12_acq_loss_only_addon(queryStr, date);
+	}
 	System.out.println("-----call---- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::callR12AcqFunction ---- Success ::::"+ result.toString());
 	return result;
 		
@@ -5541,8 +5526,6 @@ public GwpNwpPsqlFunction getR12GwpNwp(HttpServletRequest req, UserMatrixMasterR
 				}
 			}
 			queryStr += " and (BUSINESS_TYPE) in (" + vals + ")";
-		}else{
-			queryStr += " and (BUSINESS_TYPE) in ('Renewal')";
 		}
 
 		if (filterRequest != null && filterRequest.getChannelNow() != null && !filterRequest.getChannelNow().isEmpty()) {
@@ -5554,8 +5537,6 @@ public GwpNwpPsqlFunction getR12GwpNwp(HttpServletRequest req, UserMatrixMasterR
 				}
 			}
 			queryStr += " and (CHANNEL) in (" + vals + ")";
-		}else{
-			queryStr += " and (CHANNEL) in ('OEM')";
 		}
 
 		if (filterRequest != null && filterRequest.getSubChannelNow() != null
@@ -5568,8 +5549,6 @@ public GwpNwpPsqlFunction getR12GwpNwp(HttpServletRequest req, UserMatrixMasterR
 				}
 			}
 			queryStr += " and (SUB_CHANNEL) in (" + vals + ")";
-		}else{
-			queryStr += " and (SUB_CHANNEL) in ('Honda Assure')";
 		}
 
 		if (filterRequest != null && filterRequest.getMakeNow() != null
@@ -5582,8 +5561,6 @@ public GwpNwpPsqlFunction getR12GwpNwp(HttpServletRequest req, UserMatrixMasterR
 				}
 			}
 			queryStr += " and (MAKE) in (" + vals + ")";
-		}else{
-			queryStr += " and (MAKE) in ('Honda Motors Ltd.')";
 		}
 
 		if (filterRequest != null && filterRequest.getModelGroupNow() != null
@@ -5596,8 +5573,6 @@ public GwpNwpPsqlFunction getR12GwpNwp(HttpServletRequest req, UserMatrixMasterR
 				}
 			}
 			queryStr += " and (MODELGROUP) in (" + vals + ")";
-		}else{
-			queryStr += " and (MODELGROUP) in ('WRV')";
 		}
 
 		if (filterRequest != null && filterRequest.getFuelTypeNow() != null
@@ -5610,8 +5585,6 @@ public GwpNwpPsqlFunction getR12GwpNwp(HttpServletRequest req, UserMatrixMasterR
 				}
 			}
 			queryStr += " and upper(coalesce(FUELTYPE,'N')) in (" + vals + ")";
-		}else{
-			queryStr += " and upper(coalesce(FUELTYPE,'N')) in ('DIESEL')";
 		}
 
 		if (filterRequest != null && filterRequest.getStateGroupNow() != null
@@ -5624,8 +5597,6 @@ public GwpNwpPsqlFunction getR12GwpNwp(HttpServletRequest req, UserMatrixMasterR
 				}
 			}
 			queryStr += " and (STATE_GROUPING) in (" + vals + ")";
-		}else{
-			queryStr += " and (STATEGROUPING) in ('Rest of Tamilnadu')";
 		}
 
 		if (filterRequest != null && filterRequest.getNcbNow() != null
@@ -5638,8 +5609,6 @@ public GwpNwpPsqlFunction getR12GwpNwp(HttpServletRequest req, UserMatrixMasterR
 				}
 			}
 			queryStr += " and (ncb_flag) in (" + vals + ")";
-		}else{
-			queryStr += " and (ncb_flag) in ('N')";
 		}
 
 	System.out.println(":::::::::::::::::::::::::: TYPE QUERY ::::::::::::::::::::"+ queryStr);
@@ -5653,7 +5622,15 @@ public GwpNwpPsqlFunction getR12GwpNwp(HttpServletRequest req, UserMatrixMasterR
 	String date = getFinCondQueryForPsql(Integer.valueOf(fromMonth),Integer.valueOf(toMonth),Integer.valueOf(fromYear),Integer.valueOf(toYear));
 	System.out.println(":::::::::::::::::::::::::: TYPE YEAR ::::::::::::::::::::"+ date);
 	System.out.println("-----call---- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::callR12GwpNwp ---- Start");
-	GwpNwpPsqlFunction result = gicNicPsqlRepository.callR12GwpNwp(queryStr, date);
+	// GwpNwpPsqlFunction result = gicNicPsqlRepository.callR12GwpNwp(queryStr, date);
+	GwpNwpPsqlFunction result = null;
+		if(filterRequest.getAddOnNew().equals("Include")){
+			result = gicNicPsqlRepository.calc_new_r12_gwp_nwp_include(queryStr, date);
+		}else if(filterRequest.getAddOnNew().equals("Exclude")){
+			result = gicNicPsqlRepository.calc_new_r12_gwp_nwp_exclude(queryStr, date);
+		}else if(filterRequest.getAddOnNew().equals("Only Addon")){
+			result = gicNicPsqlRepository.calc_new_r12_gwp_nwp_only_addon(queryStr, date);
+		}
 	System.out.println("-----call---- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::callR12GwpNwp ---- Success ::::"+ result.toString());
 	return result;
 		
@@ -5681,8 +5658,6 @@ public GepNepPsqlFunctions getR12GepNep(HttpServletRequest req, UserMatrixMaster
 				}
 			}
 			queryStr += " and (BUSINESS_TYPE) in (" + vals + ")";
-		}else{
-			queryStr += " and (BUSINESS_TYPE) in ('Renewal')";
 		}
 
 		if (filterRequest != null && filterRequest.getChannelNow() != null && !filterRequest.getChannelNow().isEmpty()) {
@@ -5694,8 +5669,6 @@ public GepNepPsqlFunctions getR12GepNep(HttpServletRequest req, UserMatrixMaster
 				}
 			}
 			queryStr += " and (CHANNEL) in (" + vals + ")";
-		}else{
-			queryStr += " and (CHANNEL) in ('OEM')";
 		}
 
 		if (filterRequest != null && filterRequest.getSubChannelNow() != null
@@ -5708,8 +5681,6 @@ public GepNepPsqlFunctions getR12GepNep(HttpServletRequest req, UserMatrixMaster
 				}
 			}
 			queryStr += " and (SUB_CHANNEL) in (" + vals + ")";
-		}else{
-			queryStr += " and (SUB_CHANNEL) in ('Honda Assure')";
 		}
 
 		if (filterRequest != null && filterRequest.getMakeNow() != null
@@ -5722,8 +5693,6 @@ public GepNepPsqlFunctions getR12GepNep(HttpServletRequest req, UserMatrixMaster
 				}
 			}
 			queryStr += " and (MAKE) in (" + vals + ")";
-		}else{
-			queryStr += " and (MAKE) in ('Honda Motors Ltd.')";
 		}
 
 		if (filterRequest != null && filterRequest.getModelGroupNow() != null
@@ -5736,8 +5705,6 @@ public GepNepPsqlFunctions getR12GepNep(HttpServletRequest req, UserMatrixMaster
 				}
 			}
 			queryStr += " and (MODELGROUP) in (" + vals + ")";
-		}else{
-			queryStr += " and (MODELGROUP) in ('WRV')";
 		}
 
 		if (filterRequest != null && filterRequest.getFuelTypeNow() != null
@@ -5750,8 +5717,6 @@ public GepNepPsqlFunctions getR12GepNep(HttpServletRequest req, UserMatrixMaster
 				}
 			}
 			queryStr += " and upper(coalesce(FUELTYPE,'N')) in (" + vals + ")";
-		}else{
-			queryStr += " and upper(coalesce(FUELTYPE,'N')) in ('DIESEL')";
 		}
 
 		if (filterRequest != null && filterRequest.getStateGroupNow() != null
@@ -5764,8 +5729,6 @@ public GepNepPsqlFunctions getR12GepNep(HttpServletRequest req, UserMatrixMaster
 				}
 			}
 			queryStr += " and (STATE_GROUPING) in (" + vals + ")";
-		}else{
-			queryStr += " and (STATEGROUPING) in ('Rest of Tamilnadu')";
 		}
 
 		if (filterRequest != null && filterRequest.getNcbNow() != null
@@ -5778,8 +5741,6 @@ public GepNepPsqlFunctions getR12GepNep(HttpServletRequest req, UserMatrixMaster
 				}
 			}
 			queryStr += " and (ncb_flag) in (" + vals + ")";
-		}else{
-			queryStr += " and (ncb_flag) in ('N')";
 		}
 
 		System.out.println(":::::::::::::::::::::::::: TYPE QUERY ::::::::::::::::::::"+ queryStr);
@@ -5793,7 +5754,15 @@ public GepNepPsqlFunctions getR12GepNep(HttpServletRequest req, UserMatrixMaster
 		String date = getFinCondQueryForPsql(Integer.valueOf(fromMonth),Integer.valueOf(toMonth),Integer.valueOf(fromYear),Integer.valueOf(toYear));
 		System.out.println(":::::::::::::::::::::::::: TYPE YEAR ::::::::::::::::::::"+ date);
 	System.out.println("-----call---- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::callR12GepNep ---- Start");
-	GepNepPsqlFunctions result = gicNicPsqlRepository.callR12GepNep(queryStr, date);
+	// GepNepPsqlFunctions result = gicNicPsqlRepository.callR12GepNep(queryStr, date);
+	GepNepPsqlFunctions result = null;
+		if(filterRequest.getAddOnNew().equals("Include")){
+			result = gicNicPsqlRepository.calc_new_r12_gep_nep_include(queryStr, date);
+		}else if(filterRequest.getAddOnNew().equals("Exclude")){
+			result = gicNicPsqlRepository.calc_new_r12_gep_nep_exclude(queryStr, date);
+		}else if(filterRequest.getAddOnNew().equals("Only Addon")){
+			result = gicNicPsqlRepository.calc_new_r12_gep_nep_only_addon(queryStr, date);
+		}
 	System.out.println("-----call---- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::callR12GepNep ---- Success ::::"+ result.toString());
 	return result;
 		

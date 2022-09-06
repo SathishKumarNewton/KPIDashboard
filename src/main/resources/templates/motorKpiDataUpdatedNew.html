@@ -3218,6 +3218,8 @@ $('#iTest').selectize({
 	        var acqCostOd="0.0",acqCostTp="0.0";
 			function callgetR12GicNic(period,fromDate,toDate){
 				var report = $('#reports').val();
+				var AddOnNew = getAddOnNew();
+				var PolicyTypeNew = getPolicyTypeNew();
 				var myInput;
 				if(report=='GENERAL'){
 					myInputs=$('#generalDiv').clone();
@@ -3230,6 +3232,8 @@ $('#iTest').selectize({
 				genDiv.push({name: 'fromDate',value:fromDate});
 				genDiv.push({name: 'toDate',value:toDate});
 				genDiv.push({name: 'reportType',value:report});
+				genDiv.push({name: 'addOnNew',value: AddOnNew});
+				genDiv.push({name: 'policyTypes',value: PolicyTypeNew});
 				jQuery("body").prepend('<section id="pre-loader"><img src="../../assets/images/Logo_Innerpage.png" alt="CompanyLogo" id="logo"></section>');
 				ajaxArray.push(
 					$.ajax({
@@ -3276,6 +3280,8 @@ $('#iTest').selectize({
 
 			function callR12AcqFunction(period,fromDate,toDate){
 				var report = $('#reports').val();
+				var AddOnNew = getAddOnNew();
+				var PolicyTypeNew = getPolicyTypeNew();
 				var myInput;
 				if(report=='GENERAL'){
 					myInputs=$('#generalDiv').clone();
@@ -3288,6 +3294,8 @@ $('#iTest').selectize({
 				genDiv.push({name: 'fromDate',value:fromDate});
 				genDiv.push({name: 'toDate',value:toDate});
 				genDiv.push({name: 'reportType',value:report});
+				genDiv.push({name: 'addOnNew',value: AddOnNew});
+				genDiv.push({name: 'policyTypes',value: PolicyTypeNew});
 				jQuery("body").prepend('<section id="pre-loader"><img src="../../assets/images/Logo_Innerpage.png" alt="CompanyLogo" id="logo"></section>');
 				ajaxArray.push(
 					$.ajax({
@@ -3304,9 +3312,9 @@ $('#iTest').selectize({
 						console.log('getcR12Acq');
 						console.log(responseJSON);
 						if(responseJSON){
-							$(".lossRatio_r"+period).text(parseFloat(responseJSON.lossratio).toFixed("2"));
-							$(".lossRatioOd_r"+period).text(parseFloat(responseJSON.odlossratio).toFixed("2"));
-							$(".lossRatioTp_r"+period).text(parseFloat(responseJSON.tplossratio).toFixed("2"));
+							$(".lRatio_r"+period).text(parseFloat(responseJSON.lossratio).toFixed("2"));
+							$(".lRatioOd_r"+period).text(parseFloat(responseJSON.odlossratio).toFixed("2"));
+							$(".lRatioTp_r"+period).text(parseFloat(responseJSON.tplossratio).toFixed("2"));
 							$(".acr_r"+period).text((parseFloat(responseJSON.acqcosttotal).toFixed("2") || 0)+'%');
 							$(".acrOd_r"+period).text((parseFloat(responseJSON.odacqcosttotal).toFixed("2") || 0)+'%');
 							$(".acrTp_r"+period).text((parseFloat(responseJSON.tpacqcosttotal).toFixed("2") || 0)+'%');  
@@ -3334,6 +3342,8 @@ $('#iTest').selectize({
 
 			function callR12GwpNwp(period,fromDate,toDate){
 				var report = $('#reports').val();
+				var AddOnNew = getAddOnNew();
+				var PolicyTypeNew = getPolicyTypeNew();
 				var myInput;
 				if(report=='GENERAL'){
 					myInputs=$('#generalDiv').clone();
@@ -3346,6 +3356,8 @@ $('#iTest').selectize({
 				genDiv.push({name: 'fromDate',value:fromDate});
 				genDiv.push({name: 'toDate',value:toDate});
 				genDiv.push({name: 'reportType',value:report});
+				genDiv.push({name: 'addOnNew',value: AddOnNew});
+				genDiv.push({name: 'policyTypes',value: PolicyTypeNew});
 				jQuery("body").prepend('<section id="pre-loader"><img src="../../assets/images/Logo_Innerpage.png" alt="CompanyLogo" id="logo"></section>');
 				ajaxArray.push(
 					$.ajax({
@@ -3393,6 +3405,8 @@ $('#iTest').selectize({
 
 			function callR12GepNep(period,fromDate,toDate){
 				var report = $('#reports').val();
+				var AddOnNew = getAddOnNew();
+				var PolicyTypeNew = getPolicyTypeNew();
 				var myInput;
 				if(report=='GENERAL'){
 					myInputs=$('#generalDiv').clone();
@@ -3405,6 +3419,8 @@ $('#iTest').selectize({
 				genDiv.push({name: 'fromDate',value:fromDate});
 				genDiv.push({name: 'toDate',value:toDate});
 				genDiv.push({name: 'reportType',value:report});
+				genDiv.push({name: 'addOnNew',value: AddOnNew});
+				genDiv.push({name: 'policyTypes',value: PolicyTypeNew});
 				console.log(genDiv);
 				jQuery("body").prepend('<section id="pre-loader"><img src="../../assets/images/Logo_Innerpage.png" alt="CompanyLogo" id="logo"></section>');
 				ajaxArray.push(
