@@ -368,14 +368,9 @@ public class KpiController {
 			String toMonth = toDate.split("/")[0];
 			String toYear = toDate.split("/")[1];
 			List<String> measureList = null;
-			
-		
-			
-			
-			
-			
-				String queryStr = "";
-			if(claimType.equalsIgnoreCase("R")){
+
+			String queryStr = "";
+			// if(claimType.equalsIgnoreCase("R")){
 					measureList = getgepBaseMeasures();
 					System.out.println("AddOn: "+ filterRequest.getAddOnNew());
 					if(filterRequest.getAddOnNew() == "Include") {
@@ -425,13 +420,13 @@ public class KpiController {
 								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_OTHER_ADDON) as NEP_OTHER_ADDON,"
 								+ "SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GIC_TP) as GIC_TP ";	
 					}
-						
 					
-			//		queryStr += "SELECT  SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEPCOVERAGE),SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEPCOVERAGE),SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_OD), SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_TP), SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_OD),  SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_TP), 0, 0, 0, SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.OD_EARNED_POLICIES ), 0, 0,  0, SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEPCOVERAGE*0.95) as GIC_TP ";
-					// queryStr +=frameMesaureQuery(Integer.valueOf(fromMonth), Integer.valueOf(toMonth), Integer.valueOf(fromYear) , Integer.valueOf(toYear), measureList,queryStr);
-			}else if(claimType.equalsIgnoreCase("U")){
+			// }
+
+			/*  This has been commented out because UW Changes
+			else if(claimType.equalsIgnoreCase("U")){
 					queryStr += "SELECT  SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEPCOVERAGE),SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEPCOVERAGE),SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_OD), SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEP_TP), SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_OD),  SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NEP_TP), 0, 0, 0, SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.OD_EARNED_POLICIES ), 0, 0,  0, SUM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.GEPCOVERAGE*0.95) as GIC_TP ";
-			}
+			}*/
 			
 			// else if(claimType.equalsIgnoreCase("R12") && gepReportType.equalsIgnoreCase("G")){
 			// 	measureList = getgepR12SevGicMeasures();
@@ -490,16 +485,6 @@ public class KpiController {
 				queryStr += " WHERE";
 				queryStr += getFinGepCondQuery(Integer.valueOf(fromMonth),Integer.valueOf(toMonth),Integer.valueOf(fromYear),Integer.valueOf(toYear));
 
-				// if (fromYear.equals(toYear)) {
-				// 	if (fromMonth.equals(toMonth)) {
-				// 		queryStr += " where ( gep_year= " + fromYear + " )";
-				// 	} else {
-				// 		queryStr += " WHERE (( gep_year=" + fromYear + " ))";
-				// 	}	
-				// } else {
-				// 		queryStr += " WHERE (( gep_year=" + fromYear + " ) or ( gep_year="
-				// 				+ toYear + " ))";
-				// }
 			}else if(claimType.equalsIgnoreCase("U")){
 				String finstartDate = fromYear + "-" + fromMonth + "-01";
 				String finEndDate = toYear + "-" + toMonth + "-31";
@@ -2758,10 +2743,11 @@ public class KpiController {
 	
 	
 	
-	@GetMapping("/getReserveSingleLineCubeGicDataNew/{claimParamType}")
+	@GetMapping("/getReserveSingleLineCubeGicDataNew/{claimType}/{claimParamType}")
 	@ResponseBody
 	public List<ReserverSingleLineCubeResponseNew> getReserveSingleLineCubeGicDataNew(HttpServletRequest req, UserMatrixMasterRequest filterRequest,
-			@PathVariable(value="claimParamType") String claimParamType)
+			@PathVariable(value="claimParamType") String claimParamType,
+			@PathVariable(value="claimType") String claimType)
 			throws SQLException {
 		Connection connection = null;
 		List<ReserverSingleLineCubeResponseNew> kpiResponseList = new ArrayList<ReserverSingleLineCubeResponseNew>();
@@ -2982,15 +2968,15 @@ public class KpiController {
 						
 
 			
-			/*if (fromYear.equals(toYear)) {
-				queryStr += " WHERE (( FINANCIAL_YEAR=" + fromYear + " and EFF_FIN_YEAR_MONTH >= '" + fromMonth
-						+ "' and EFF_FIN_YEAR_MONTH <='" + toMonth + "' ))";
-			} else {
-				queryStr += " WHERE (( FINANCIAL_YEAR=" + fromYear + " and EFF_FIN_YEAR_MONTH >= '" + fromMonth
-						+ "' ) or ( FINANCIAL_YEAR=" + toYear + " and EFF_FIN_YEAR_MONTH <='" + toMonth + "' ))";
-			}*/
+			String finstartDate = fromYear + "-" + fromMonth + "-01";
+			String finEndDate = toYear + "-" + toMonth + "-31";
 			
+			if(claimType.equalsIgnoreCase("R")){
 				queryStr += " WHERE ( CSL_MVMT_MONTH between " + fromYear +fromMonth+ " and " + toYear +toMonth+ " )";
+			}else if(claimType.equalsIgnoreCase("U")){
+				queryStr += " WHERE SUBSTRING(inception_date,1,10) >='"+finstartDate+"' and SUBSTRING(inception_date,1,10) <='"+finEndDate+"' ";
+			}
+			
 
 				
 				if (filterRequest != null && filterRequest.getPolicyTypes() != null

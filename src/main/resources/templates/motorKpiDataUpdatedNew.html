@@ -3148,9 +3148,9 @@ $('#iTest').selectize({
 					
 					var iApiURL="";
 					if ($("#uwYearBtn").css('background-color')!="rgb(255, 255, 255)"){
-						iApiURL="getInsCubeDataUpdatedNew";
+						iApiURL="getInsCubeDataUpdatedNew/U";
 					}else{
-						iApiURL="getInsCubeDataUpdatedNew";
+						iApiURL="getInsCubeDataUpdatedNew/R";
 					}
 					ajaxArray.push($.ajax({
 			                  type: "GET",
@@ -3474,9 +3474,10 @@ $('#iTest').selectize({
 					
 					var pApiURL="";
 					if ($("#uwYearBtn").css('background-color')!="rgb(255, 255, 255)"){
-						pApiURL="getUWPolicyCubeDataUpdatedNew";
+						//pApiURL="getUWPolicyCubeDataUpdatedNew";
+						pApiURL="getPolicyCubeDataUpdatedNew/U";
 					}else{
-						pApiURL="getPolicyCubeDataUpdatedNew";
+						pApiURL="getPolicyCubeDataUpdatedNew/R";
 					}
 					ajaxArray.push($.ajax({
 			                  type: "GET",
@@ -3576,9 +3577,10 @@ $('#iTest').selectize({
 
 				var cApiURL="";
 				if ($("#uwYearBtn").css('background-color')!="rgb(255, 255, 255)"){
-					cApiURL="getUWClaimsCubeDataUpdatedNew";
+					//cApiURL="getUWClaimsCubeDataUpdatedNew";
+					cApiURL="getClaimsCubeDataUpdatedNew/U";
 				}else{
-					cApiURL="getClaimsCubeDataUpdatedNew";
+					cApiURL="getClaimsCubeDataUpdatedNew/R";
 				}
 				
 				ajaxArray.push($.ajax({
@@ -3685,9 +3687,10 @@ $('#iTest').selectize({
 					
 					var sApiURL="";
 					if ($("#uwYearBtn").css('background-color')!="rgb(255, 255, 255)"){
-						sApiURL="getUWSingleLineCubeGicDataUpdatedNew/";
+						//sApiURL="getUWSingleLineCubeGicDataUpdatedNew/";
+						sApiURL="getSingleLineCubeGicDataUpdatedNew/U/";
 					}else{
-						sApiURL="getSingleLineCubeGicDataUpdatedNew/";
+						sApiURL="getSingleLineCubeGicDataUpdatedNew/R/";
 					}
 					
 						ajaxArray.push($.ajax({
@@ -3859,11 +3862,16 @@ $('#iTest').selectize({
 					genDiv.push({name: 'addOnNew',value:addOnNew});
 					genDiv.push({name: 'policyTypes',value:policyTypeNew});
 					jQuery("body").prepend('<section id="pre-loader"><img src="../../assets/images/Logo_Innerpage.png" alt="CompanyLogo" id="logo"></section>');
-					
+					var rsApiURL="";
+					if ($("#uwYearBtn").css('background-color')!="rgb(255, 255, 255)"){
+						rsApiURL="getReserveSingleLineCubeGicDataNew/U/";
+					}else{
+						rsApiURL="getReserveSingleLineCubeGicDataNew/R/";
+					}
 					ajaxArray.push($.ajax({
 			                  type: "GET",
 			                  contentType: "application/json",
-			                   url: "getReserveSingleLineCubeGicDataNew/"+claimParamType,
+			                   url: rsApiURL+claimParamType,
 			                  dataType: 'json',
 			                  cache: false,
 			                  timeout: 600000,
@@ -4887,12 +4895,22 @@ $('#iTest').selectize({
             		 $('#motorTable > tbody > tr > td:nth-child(2)').text('0.00');
             		 $('#healthTable > tbody > tr > td:nth-child(2)').text('0.00');
 					 if ($("#uwYearBtn").css('background-color')!="rgb(255, 255, 255)"){
-						getCubeGEPData(1,from1,to1);
+						/*getCubeGEPData(1,from1,to1);
 						callInsApi(1,from1,to1);
 						callPolicyApi(1,from1,to1);
 						callClaimApi(1,from1,to1);
 						callSingleLineApi(1,from1,to1,"GIC");
-						callSingleLineApi(1,from1,to1,"NIC");
+						callSingleLineApi(1,from1,to1,"NIC");*/
+						getCubeGEPData(1,from1,to1);
+						callInsApi(1,from1,to1);
+						callPolicyApi(1,from1,to1);
+            			callClaimApi(1,from1,to1);
+            			callSingleLineApi(1,from1,to1,"GIC");
+                		callSingleLineApi(1,from1,to1,"NIC");
+						if($("#includeBtn").css('background-color') == "rgb(255, 255, 255)"){
+							callReserveSingleLineApi(1,from1,to1,"GIC");
+							callReserveSingleLineApi(1,from1,to1,"NIC");
+						}
 					 }
             		 if ($("#periodBasedBtn").css('background-color')!="rgb(255, 255, 255)"){
 						getCubeGEPData(1,from1,to1);
@@ -4920,12 +4938,22 @@ $('#iTest').selectize({
            		 	$('#uwMotorTable > tbody > tr > td:nth-child(3)').text('0.00');
            		 	$('#uwHealthTable > tbody > tr > td:nth-child(3)').text('0.00');
 					if ($("#uwYearBtn").css('background-color')!="rgb(255, 255, 255)"){
+						/*getCubeGEPData(2,from2,to2);
+						callInsApi(2,from2,to2);
+						callPolicyApi(2,from2,to2);
+						callClaimApi(2,from2,to2);
+						callSingleLineApi(2,from2,to2,"GIC");
+						callSingleLineApi(2,from2,to2,"NIC");*/
 						getCubeGEPData(2,from2,to2);
 						callInsApi(2,from2,to2);
 						callPolicyApi(2,from2,to2);
 						callClaimApi(2,from2,to2);
 						callSingleLineApi(2,from2,to2,"GIC");
 						callSingleLineApi(2,from2,to2,"NIC");
+						if($("#includeBtn").css('background-color') == "rgb(255, 255, 255)"){
+							callReserveSingleLineApi(2,from2,to2,"GIC");
+							callReserveSingleLineApi(2,from2,to2,"NIC");
+						}
 					}
            			if ($("#periodBasedBtn").css('background-color')!="rgb(255, 255, 255)"){
 						getCubeGEPData(2,from2,to2);
@@ -4952,12 +4980,22 @@ $('#iTest').selectize({
            		 	$('#uwMotorTable > tbody > tr > td:nth-child(4)').text('0.00');
            		 	$('#uwHealthTable > tbody > tr > td:nth-child(4)').text('0.00');
 					if ($("#uwYearBtn").css('background-color')!="rgb(255, 255, 255)"){
+						/*getCubeGEPData(3,from3,to3);
+						callInsApi(3,from3,to3);
+						callPolicyApi(3,from3,to3);
+						callClaimApi(3,from3,to3);
+						callSingleLineApi(3,from3,to3,"GIC");
+						callSingleLineApi(3,from3,to3,"NIC");*/
 						getCubeGEPData(3,from3,to3);
 						callInsApi(3,from3,to3);
 						callPolicyApi(3,from3,to3);
 						callClaimApi(3,from3,to3);
 						callSingleLineApi(3,from3,to3,"GIC");
 						callSingleLineApi(3,from3,to3,"NIC");
+						if($("#includeBtn").css('background-color') == "rgb(255, 255, 255)"){
+							callReserveSingleLineApi(3,from3,to3,"GIC");
+							callReserveSingleLineApi(3,from3,to3,"NIC");
+						}
 					}
            			if ($("#periodBasedBtn").css('background-color')!="rgb(255, 255, 255)"){
 						getCubeGEPData(3,from3,to3);

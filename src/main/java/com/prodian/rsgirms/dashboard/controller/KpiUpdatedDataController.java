@@ -327,9 +327,9 @@ public class KpiUpdatedDataController {
 	}
 	
 	
-	@GetMapping("/getPolicyCubeDataUpdatedNew")
+	@GetMapping("/getPolicyCubeDataUpdatedNew/{claimType}")
 	@ResponseBody
-	public List<PolicyCubeResponseNew> getPolicyCubeDataNew(HttpServletRequest req, UserMatrixMasterRequest filterRequest)
+	public List<PolicyCubeResponseNew> getPolicyCubeDataNew(HttpServletRequest req, UserMatrixMasterRequest filterRequest,@PathVariable(value="claimType") String claimType)
 			throws SQLException {
 		Connection connection = null;
 		List<PolicyCubeResponseNew> kpiResponseList = new ArrayList<PolicyCubeResponseNew>();
@@ -477,27 +477,19 @@ public class KpiUpdatedDataController {
 				
 			}
 			
-			/*if (fromYear.equals(toYear)) {
-				queryStr += " WHERE (( FINANCIAL_YEAR=" + fromYear + " and EFF_FIN_YEAR_MONTH >= '" + fromMonth
-						+ "' and EFF_FIN_YEAR_MONTH <='" + toMonth + "' ))";
-			} else {
-				queryStr += " WHERE (( FINANCIAL_YEAR=" + fromYear + " and EFF_FIN_YEAR_MONTH >= '" + fromMonth
-						+ "' ) or ( FINANCIAL_YEAR=" + toYear + " and EFF_FIN_YEAR_MONTH <='" + toMonth + "' ))";
-			}*/
-
-			// New Query Changes
-//			if (fromYear.equals(toYear)) {
-//				queryStr += " WHERE (( FINANCIAL_YEAR='" + fromYear + "''))";
-//			} else {
-//				queryStr += " WHERE (( FINANCIAL_YEAR='" + toYear + "' ))";
-//			}
-
-			/*String finstartDate = fromYear + "-" + fromMonth + "-01";
-			String finEndDate = toYear + "-" + toMonth + "-01";*/
 			
-			//queryStr += " WHERE fin_date >='"+finstartDate+"' and fin_date <='"+finEndDate+"' ";
-			queryStr += " WHERE ";
+			String finstartDate = fromYear + "-" + fromMonth + "-01";
+			String finEndDate = toYear + "-" + toMonth + "-31";
+			
+			
+			if(claimType.equalsIgnoreCase("R")){
+				queryStr += " WHERE ";
 			queryStr += getFinCondQuery(Integer.valueOf(fromMonth),Integer.valueOf(toMonth),Integer.valueOf(fromYear),Integer.valueOf(toYear));
+
+			}else if(claimType.equalsIgnoreCase("U")){
+				
+				queryStr += " WHERE SUBSTRING(inception_date,1,10) >='"+finstartDate+"' and SUBSTRING(inception_date,1,10) <='"+finEndDate+"' ";
+			}
 			
 			if (filterRequest != null && filterRequest.getPolicyTypes() != null
 					&& !filterRequest.getPolicyTypes().isEmpty()) {
@@ -867,9 +859,9 @@ public class KpiUpdatedDataController {
 	}
 	
 	
-	@GetMapping("/getInsCubeDataUpdatedNew")
+	@GetMapping("/getInsCubeDataUpdatedNew/{claimType}")
 	@ResponseBody
-	public List<InsCubeResponseNew> getInsCubeDataNew(HttpServletRequest req, UserMatrixMasterRequest filterRequest)
+	public List<InsCubeResponseNew> getInsCubeDataNew(HttpServletRequest req, UserMatrixMasterRequest filterRequest,@PathVariable(value="claimType") String claimType)
 			throws SQLException {
 		Connection connection = null;
 		List<InsCubeResponseNew> kpiResponseList = new ArrayList<InsCubeResponseNew>();
@@ -1093,60 +1085,19 @@ public class KpiUpdatedDataController {
 						+ "FROM ( SELECT  SUM(INS_GWP) as INS_GWP  ,SUM(INS_GWP_OD) as INS_GWP_OD  ,SUM(INS_GWP_TP) as INS_GWP_TP  ,SUM(INS_GWP_DISCOUNT_OD) as INS_GWP_DISCOUNT_OD  ,SUM(INS_NWP) as INS_NWP  ,SUM(INS_NWP_OD) as INS_NWP_OD  ,SUM(INS_NWP_TP) as INS_NWP_TP  ,SUM(INS_NWP_DISCOUNT_OD) as INS_NWP_DISCOUNT_OD  ,SUM(INS_GWP_DEP) as INS_GWP_DEP  ,SUM(INS_GWP_NCB) as INS_GWP_NCB  ,SUM(INS_GWP_OTHERADDON) as INS_GWP_OTHERADDON  ,SUM(INS_NWP_DEP) as INS_NWP_DEP  ,SUM(INS_NWP_NCB) as INS_NWP_NCB  ,SUM(INS_NWP_OTHERADDON) as INS_NWP_OTHERADDON  , CATEGORY, uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code  FROM RSDB.RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_CURRENT as RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW  LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL  LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE  LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE  LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE  LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE  LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY  LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE  LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE ";
 			}
 			
-//			 queryStr = "SELECT "
-//					+"SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP ELSE 0 END) as INS_GWP_POLICY_COMP, "
-//					+ "SUM(case when aa.CATEGORY='TP' THEN INS_GWP ELSE 0 END) as INS_GWP_POLICY_TP, "
-//					+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP ELSE 0 END) as INS_GWP_POLICY_others, "
-//					+ "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_OD ELSE 0 END) as INS_GWP_OD_POLICY_COMP, "
-//					+ "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_OD ELSE 0 END) as INS_GWP_OD_POLICY_TP, "
-//					+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_OD ELSE 0 END) as INS_GWP_OD_POLICY_others, "
-//					+ "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_TP ELSE 0 END) as INS_GWP_TP_POLICY_COMP, "
-//					+ "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_TP ELSE 0 END) as INS_GWP_TP_POLICY_TP, "
-//					+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_TP ELSE 0 END) as INS_GWP_TP_POLICY_others, "
-//					+ "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_DISCOUNT_OD ELSE 0 END) as INS_GWP_DISCOUNT_OD_POLICY_COMP, "
-//					+ "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_DISCOUNT_OD ELSE 0 END) as INS_GWP_DISCOUNT_OD_POLICY_TP, "
-//					+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_DISCOUNT_OD ELSE 0 END) as INS_GWP_DISCOUNT_OD_POLICY_others,  SUM(case when aa.CATEGORY='Comprehensive' THEN ((INS_GWP *(1-od_quota_share-od_obligatory))+(INS_GWP*od_quota_share*od_RI_COMMISSION)) ELSE 0 END) as INS_NWP_POLICY_COMP, "
-//					+ "SUM(case when aa.CATEGORY='TP' THEN ((INS_GWP *(1-od_quota_share-od_obligatory))+(INS_GWP*od_quota_share*od_RI_COMMISSION)) ELSE 0 END) as INS_NWP_POLICY_TP, "
-//					+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN ((INS_GWP *(1-od_quota_share-od_obligatory))+(INS_GWP*od_quota_share*od_RI_COMMISSION)) ELSE 0 END) as INS_NWP_POLICY_others, "
-//					+ "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_OD*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OD_POLICY_COMP, "
-//					+ "SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_OD*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OD_POLICY_TP,"
-//					+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_OD*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OD_POLICY_others, "
-//					+ "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_TP *(1-od_quota_share-od_obligatory))+(INS_GWP_TP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_TP_POLICY_COMP, "
-//					+ "SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_TP *(1-od_quota_share-od_obligatory))+(INS_GWP_TP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_TP_POLICY_TP, "
-//					+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_TP *(1-od_quota_share-od_obligatory))+(INS_GWP_TP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_TP_POLICY_others, "
-//					+ "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_DISCOUNT_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_DISCOUNT_OD*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DISCOUNT_OD_POLICY_COMP,  SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_DISCOUNT_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_DISCOUNT_OD*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DISCOUNT_OD_POLICY_TP,  SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_DISCOUNT_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_DISCOUNT_OD*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DISCOUNT_OD_POLICY_others, "
-//					+ "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_COMP, "
-//					+ "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_TP, "
-//					+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_others, "
-//					+ "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_COMP, "
-//					+ "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_TP, "
-//					+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_others, "
-//					+ "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_COMP, "
-//					+ "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_NCB_POLICY_TP, "
-//					+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_others, "
-//					+ "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_COMP, "
-//					+ "SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_TP, "
-//					+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_others, "
-//					+ "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_NCB *(1-od_quota_share-od_obligatory))+(INS_GWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_COMP, "
-//					+ "SUM(case when aa.CATEGORY='TP' THEN (INS_NWP_NCB *(1-od_quota_share-od_obligatory))+(INS_NWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_TP, "
-//					+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_NWP_NCB *(1-od_quota_share-od_obligatory))+(INS_NWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_others, "
-//					+ "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_COMP,  SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_TP,  SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_others  FROM ( SELECT  SUM(INS_GWP) as INS_GWP  ,SUM(INS_GWP_OD) as INS_GWP_OD  ,SUM(INS_GWP_TP) as INS_GWP_TP  ,SUM(INS_GWP_DISCOUNT_OD) as INS_GWP_DISCOUNT_OD  ,SUM(INS_NWP) as INS_NWP  ,SUM(INS_NWP_OD) as INS_NWP_OD  ,SUM(INS_NWP_TP) as INS_NWP_TP  ,SUM(INS_NWP_DISCOUNT_OD) as INS_NWP_DISCOUNT_OD  ,SUM(INS_GWP_DEP) as INS_GWP_DEP  ,SUM(INS_GWP_NCB) as INS_GWP_NCB  ,SUM(INS_GWP_OTHERADDON) as INS_GWP_OTHERADDON  ,SUM(INS_NWP_DEP) as INS_NWP_DEP  ,SUM(INS_NWP_NCB) as INS_NWP_NCB  ,SUM(INS_NWP_OTHERADDON) as INS_NWP_OTHERADDON  , CATEGORY, uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code  FROM RSDB.RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_CURRENT as RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW  LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL  LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE  LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE  LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE  LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE  LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY  LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE  LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE";
-			
-			/*if (fromYear.equals(toYear)) {
-				queryStr += " WHERE (( FINANCIAL_YEAR=" + fromYear + " and EFF_FIN_YEAR_MONTH >= '" + fromMonth
-						+ "' and EFF_FIN_YEAR_MONTH <='" + toMonth + "' ))";
-			} else {
-				queryStr += " WHERE (( FINANCIAL_YEAR=" + fromYear + " and EFF_FIN_YEAR_MONTH >= '" + fromMonth
-						+ "' ) or ( FINANCIAL_YEAR=" + toYear + " and EFF_FIN_YEAR_MONTH <='" + toMonth + "' ))";
-			}*/
 			
 			String finstartDate = fromYear + "-" + fromMonth + "-01";
 			String finEndDate = toYear + "-" + toMonth + "-31";
 			
-			queryStr += " WHERE  ";
-			// queryStr += " WHERE SUBSTRING(inception_date,1,10) >='"+finstartDate+"' and SUBSTRING(inception_date,1,10) <='"+finEndDate+ "'";
-			queryStr += getFinCondQuery(Integer.valueOf(fromMonth),Integer.valueOf(toMonth),Integer.valueOf(fromYear),Integer.valueOf(toYear));
+			
+			if(claimType.equalsIgnoreCase("R")){
+				queryStr += " WHERE  ";
+				queryStr += getFinCondQuery(Integer.valueOf(fromMonth),Integer.valueOf(toMonth),Integer.valueOf(fromYear),Integer.valueOf(toYear));
 
+			}else if(claimType.equalsIgnoreCase("U")){
+				
+				queryStr += " WHERE SUBSTRING(inception_date,1,10) >='"+finstartDate+"' and SUBSTRING(inception_date,1,10) <='"+finEndDate+"' ";
+			}
 			
 			if (filterRequest != null && filterRequest.getPolicyTypes() != null
 					&& !filterRequest.getPolicyTypes().isEmpty()) {
@@ -1530,9 +1481,9 @@ public class KpiUpdatedDataController {
 		return kpiResponseList;
 	}
 	
-	@GetMapping("/getClaimsCubeDataUpdatedNew")
+	@GetMapping("/getClaimsCubeDataUpdatedNew/{claimType}")
 	@ResponseBody
-	public List<ClaimsCubeResponseNew> getClaimsCubeDataNew(HttpServletRequest req, UserMatrixMasterRequest filterRequest)
+	public List<ClaimsCubeResponseNew> getClaimsCubeDataNew(HttpServletRequest req, UserMatrixMasterRequest filterRequest,@PathVariable(value="claimType") String claimType)
 			throws SQLException {
 		Connection connection = null;
 		List<ClaimsCubeResponseNew> kpiResponseList = new ArrayList<ClaimsCubeResponseNew>();
@@ -1657,18 +1608,23 @@ public class KpiUpdatedDataController {
 						+ "FROM (  SELECT  CLM_NATURE_OF_CLAIM as NATURE_OF_CLAIM,CLM_CLAIM_TYPE,CLM_CLAIM_NO,sum(CLAIM_COUNT)CLAIM_COUNT,ADDON_TYPE,category FROM RSDB.RSA_KPI_FACT_CLAIMS_FINAL_CURRENT as RSA_KPI_FACT_CLAIMS_FINAL_NOW  LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_FINAL_NOW.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME  AND  RSA_KPI_FACT_CLAIMS_FINAL_NOW.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL  LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_CLAIMS_FINAL_NOW.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE  LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_CLAIMS_FINAL_NOW.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE  LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_CLAIMS_FINAL_NOW.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE  LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_CLAIMS_FINAL_NOW.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE  LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_FINAL_NOW.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_FINAL_NOW.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY  LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_CLAIMS_FINAL_NOW.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE  LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_CLAIMS_FINAL_NOW.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_CLAIMS_FINAL_NOW.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_CLAIMS_FINAL_NOW.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_CLAIMS_FINAL_NOW.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE ";
 				
 			}
-			/*if (fromYear.equals(toYear)) {
-				queryStr += " WHERE (( FINANCIAL_YEAR=" + fromYear + " and EFF_FIN_YEAR_MONTH >= '" + fromMonth
-						+ "' and EFF_FIN_YEAR_MONTH <='" + toMonth + "' ))";
-			} else {
-				queryStr += " WHERE (( FINANCIAL_YEAR=" + fromYear + " and EFF_FIN_YEAR_MONTH >= '" + fromMonth
-						+ "' ) or ( FINANCIAL_YEAR=" + toYear + " and EFF_FIN_YEAR_MONTH <='" + toMonth + "' ))";
-			}*/
 			
-			queryStr += " WHERE CLM_MOVEMENT_DATE>='" + claimMovementStartDate + "' AND CLM_MOVEMENT_DATE<='"
-					+ claimMovementEndDate + "'";
+
+			String finstartDate = fromYear + "-" + fromMonth + "-01";
+			String finEndDate = toYear + "-" + toMonth + "-31";
 			
-			//queryStr += " WHERE ( CSL_MVMT_MONTH between= " + fromYear +fromMonth+ " and " + toYear +toMonth+ " )";
+			
+			if(claimType.equalsIgnoreCase("R")){
+				queryStr += " WHERE CLM_MOVEMENT_DATE>='" + claimMovementStartDate + "' AND CLM_MOVEMENT_DATE<='"
+				+ claimMovementEndDate + "'";
+
+			}else if(claimType.equalsIgnoreCase("U")){
+				
+				queryStr += " WHERE SUBSTRING(inception_date,1,10) >='"+finstartDate+"' and SUBSTRING(inception_date,1,10) <='"+finEndDate+"' ";
+			}
+			
+			
+			
 
 			if (filterRequest != null && filterRequest.getPolicyTypes() != null
 					&& !filterRequest.getPolicyTypes().isEmpty()) {
@@ -2020,10 +1976,11 @@ public class KpiUpdatedDataController {
 
 
 
-@GetMapping("/getSingleLineCubeGicDataUpdatedNew/{claimParamType}")
+@GetMapping("/getSingleLineCubeGicDataUpdatedNew/{claimType}/{claimParamType}")
 @ResponseBody
 public List<SingleLineCubeResponseNew> getSingleLineCubeDataNew(HttpServletRequest req, UserMatrixMasterRequest filterRequest,
-		@PathVariable(value="claimParamType") String claimParamType)
+		@PathVariable(value="claimParamType") String claimParamType,
+		@PathVariable(value="claimType") String claimType)
 		throws SQLException {
 	Connection connection = null;
 	double nicTp = 0;
@@ -2176,7 +2133,7 @@ public List<SingleLineCubeResponseNew> getSingleLineCubeDataNew(HttpServletReque
 			// + "0 as nic_od_policy_tp,"
 			// + "0 as nic_od_policy_others "
 			// + "FROM ( SELECT  sum(csl_gic) csl_gic,uw_year,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.PRODUCT_CODE,'NONE' BAND,category,csl_claim_type,CSL_CLAIM_NO  FROM RSDB.RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW_CURRENT as RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL  LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE  LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE  LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE  LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE  LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY  LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE  LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE  LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE ";
-			 nicTp = getNicTp( Integer.valueOf(fromMonth),  Integer.valueOf(toMonth), Integer.valueOf(fromYear) , Integer.valueOf(toYear), filterRequest);
+			 nicTp = getNicTp( Integer.valueOf(fromMonth),  Integer.valueOf(toMonth), Integer.valueOf(fromYear) , Integer.valueOf(toYear), filterRequest, claimType);
 			// New Query Changed
 			queryStr	="SELECT"
 					+ " 0 NIC_policy_comp,"
@@ -2220,26 +2177,16 @@ public List<SingleLineCubeResponseNew> getSingleLineCubeDataNew(HttpServletReque
 					" ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE ";
 			
 			
-					/*+ " WHERE ( CSL_MVMT_MONTH between 201804 and 201903 ) group by uw_year,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.PRODUCT_CODE,'NONE',category,CSL_CLAIM_NO) A ,  "
-					+ " (select underwriting_year,XGEN_PRODUCTCODE,band,SUM(OBLIGATORY) OBLIGATORY,SUM(QUOTA_SHARE) QUOTA_SHARE from RSA_DWH_RI_OBLIGATORY_MASTER1 group by underwriting_year,XGEN_PRODUCTCODE,band) B  "
-					+ " where B.underwriting_year=A.uw_year AND A.PRODUCT_CODE=B.XGEN_PRODUCTCODE AND A.BAND=B.band ";	*/				
-			/*queryStr += "SELECT  sum(case when category='Comprehensive' then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) NIC_policy_comp,  sum(case when category='TP' then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) NIC_policy_tp,  sum(case when coalesce(A.CATEGORY,'Others')='Others' then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) NIC_policy_others,  sum(case WHEN (CSL_CLAIM_NO LIKE 'TP%' and category='Comprehensive') THEN csl_gic*(1-QUOTA_SHARE-OBLIGATORY) ELSE 0 end) nic_tp_policy_comp,  sum(case WHEN (CSL_CLAIM_NO LIKE 'TP%' and category='TP') THEN csl_gic*(1-QUOTA_SHARE-OBLIGATORY) ELSE 0 end) nic_tp_policy_tp,   sum(case WHEN (CSL_CLAIM_NO LIKE 'TP%' and coalesce(A.CATEGORY,'Others')='Others') THEN csl_gic*(1-QUOTA_SHARE-OBLIGATORY) ELSE 0 end) nic_tp_policy_others, 0 nic_od_policy_comp,0 nic_od_policy_tp,0 nic_od_policy_others FROM ( SELECT  sum(csl_gic) csl_gic,uw_year,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.PRODUCT_CODE,'NONE' BAND,category,CSL_CLAIM_NO   FROM RSDB.RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL as RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL  LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL   LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE   LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE   LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE   LEFT JOIN RSDB.KPI_MODEL_MASTER_NW as KPI_MODEL_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.MAKE = KPI_MODEL_MASTER_NW.MAKE AND RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.MODELCODE = KPI_MODEL_MASTER_NW.MODEL_CODE   LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE   LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.OA_CODE = KPI_OA_MASTER_NW.OA_CODE   LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY   LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE  LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.CITY_CODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE   LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE  WHERE ( CSL_MVMT_MONTH between 201804 and 201903 ) and  CSL_CLAIM_NO LIKE  'TP%' group by uw_year,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.PRODUCT_CODE,'NONE',category,CSL_CLAIM_NO) A ,   (select underwriting_year,XGEN_PRODUCTCODE,band,SUM(OBLIGATORY) OBLIGATORY,SUM(QUOTA_SHARE) QUOTA_SHARE from RSA_DWH_RI_OBLIGATORY_MASTER1 group by underwriting_year,XGEN_PRODUCTCODE,band) B   where B.underwriting_year=A.uw_year AND A.PRODUCT_CODE=B.XGEN_PRODUCTCODE AND A.BAND=B.band"+ 
-						" union all "+
-						"SELECT  0 NIC_policy_comp,  0 NIC_policy_tp, 0 NIC_policy_others,  0 nic_tp_policy_comp,  0 nic_tp_policy_tp,   0 nic_tp_policy_others,  sum(case WHEN (category='Comprehensive') then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) nic_od_policy_comp,  sum(case WHEN ( category='TP') then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) nic_od_policy_tp,  sum(case WHEN (coalesce(A.CATEGORY,'Others')='Others') then csl_gic*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) nic_od_policy_others FROM ( SELECT  sum(csl_gic) csl_gic,uw_year,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.PRODUCT_CODE,'NONE' BAND,category,CSL_CLAIM_NO   FROM RSDB.RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL as RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL  LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL   LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE   LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE   LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE   LEFT JOIN RSDB.KPI_MODEL_MASTER_NW as KPI_MODEL_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.MAKE = KPI_MODEL_MASTER_NW.MAKE AND RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.MODELCODE = KPI_MODEL_MASTER_NW.MODEL_CODE   LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE   LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.OA_CODE = KPI_OA_MASTER_NW.OA_CODE   LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY   LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE  LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.CITY_CODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE   LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE  WHERE ( CSL_MVMT_MONTH between 201804 and 201903 ) and CSL_CLAIM_NO NOT LIKE 'TP%' group by uw_year,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL.PRODUCT_CODE,'NONE',category,CSL_CLAIM_NO) A ,   (select underwriting_year,XGEN_PRODUCTCODE,band,SUM(OBLIGATORY) OBLIGATORY,SUM(QUOTA_SHARE) QUOTA_SHARE from RSA_DWH_RI_OBLIGATORY_MASTER1 group by underwriting_year,XGEN_PRODUCTCODE,band) B   where B.underwriting_year=A.uw_year AND A.PRODUCT_CODE=B.XGEN_PRODUCTCODE AND A.BAND=B.band ";*/
 		}
 		
-					
-
-		
-		/*if (fromYear.equals(toYear)) {
-			queryStr += " WHERE (( FINANCIAL_YEAR=" + fromYear + " and EFF_FIN_YEAR_MONTH >= '" + fromMonth
-					+ "' and EFF_FIN_YEAR_MONTH <='" + toMonth + "' ))";
-		} else {
-			queryStr += " WHERE (( FINANCIAL_YEAR=" + fromYear + " and EFF_FIN_YEAR_MONTH >= '" + fromMonth
-					+ "' ) or ( FINANCIAL_YEAR=" + toYear + " and EFF_FIN_YEAR_MONTH <='" + toMonth + "' ))";
-		}*/
-		
-			queryStr += " WHERE ( CSL_MVMT_MONTH between " + fromYear + fromMonth + " and " + toYear + toMonth + " )";
+			String finstartDate = fromYear + "-" + fromMonth + "-01";
+			String finEndDate = toYear + "-" + toMonth + "-31";
+			
+			if(claimType.equalsIgnoreCase("R")){
+				queryStr += " WHERE ( CSL_MVMT_MONTH between " + fromYear + fromMonth + " and " + toYear + toMonth + " )";
+			}else if(claimType.equalsIgnoreCase("U")){
+				queryStr += " WHERE SUBSTRING(inception_date,1,10) >='"+finstartDate+"' and SUBSTRING(inception_date,1,10) <='"+finEndDate+"' ";
+			}
 			
 
 		if (filterRequest != null && filterRequest.getPolicyTypes() != null
@@ -3043,7 +2990,7 @@ return list;
 
 
 
-public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Integer toYear,UserMatrixMasterRequest filterRequest) throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException{
+public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Integer toYear,UserMatrixMasterRequest filterRequest, String claimType) throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException{
 
 	Connection connection = null;
 	double nicTp=0;
@@ -3104,8 +3051,16 @@ public double getNicTp(Integer fromMonth, Integer toMonth,Integer fromYear , Int
 		// 	queryStr += " WHERE (( gep_year=" + fromYear + " ) or ( gep_year="
 		// 			+ toYear + " ))";
 		// }
-		queryStr += " WHERE";
-		queryStr += getFinGepCondQuery(Integer.valueOf(fromMonth),Integer.valueOf(toMonth),Integer.valueOf(fromYear),Integer.valueOf(toYear));
+		
+		String finstartDate = fromYear + "-" + fromMonth + "-01";
+		String finEndDate = toYear + "-" + toMonth + "-31";
+			
+		if(claimType.equalsIgnoreCase("R")){
+			queryStr += " WHERE";
+			queryStr += getFinGepCondQuery(Integer.valueOf(fromMonth),Integer.valueOf(toMonth),Integer.valueOf(fromYear),Integer.valueOf(toYear));
+		}else if(claimType.equalsIgnoreCase("U")){
+			queryStr += " WHERE SUBSTRING(inception_date,1,10) >='"+finstartDate+"' and SUBSTRING(inception_date,1,10) <='"+finEndDate+"' ";
+		}
 		
 		if (filterRequest != null && filterRequest.getBTypeNow() != null
 				&& !filterRequest.getBTypeNow().isEmpty()) {
