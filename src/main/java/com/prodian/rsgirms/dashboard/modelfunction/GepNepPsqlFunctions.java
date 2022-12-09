@@ -10,9 +10,4 @@ public interface GepNepPsqlFunctions {
 	double getNepodsum();
 	double getNeptpsum();
 	
-	
-	
-
-	
-	
 }

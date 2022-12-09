@@ -62,7 +62,7 @@ public class UserMatrixMasterRequest {
 	private String sumInsured;
 
 	private String maxAges;
-	
+
 	private String fromDate;
 	private String toDate;
 	private String uwMonth;
@@ -80,7 +80,7 @@ public class UserMatrixMasterRequest {
 	private String generalBusinessType;
 	private List<String> generalProduct;
 	private List<String> generalCampaign;
-	
+
 	private List<String> motorChannel;
 	private List<String> motorSubChannel;
 	private List<String> motorRegion;
@@ -110,7 +110,7 @@ public class UserMatrixMasterRequest {
 	private String motorWithQst;
 	private List<String> motorFuelType;
 	private List<String> motorNcbFlag;
-	
+
 	private List<String> healthChannel;
 	private List<String> healthSubChannel;
 	private List<String> healthIntermediaryName;
@@ -134,15 +134,20 @@ public class UserMatrixMasterRequest {
 	private List<String> healthPreExistingDisease;
 	private String healthFamilySize;
 
-	
 	private List<String> channelNow;
 	private List<String> subChannelNow;
 	private List<String> bTypeNow;
 	private List<String> makeNow;
 	private List<String> modelGroupNow;
-	 private List<String>fuelTypeNow;
-	 private List<String> stateGroupNow;
-	 private List<String> ncbNow;
-	 
-	 private List<String> motorCarType;
+	private List<String> fuelTypeNow;
+	private List<String> stateGroupNow;
+	private List<String> ncbNow;
+
+	private List<String> motorCarType;
+	
+//	private List<String> channelNew;
+//	private List<String> policyTypeNew;
+//	private List<String> categorisation;
+//	private List<String> engineCapacity;
+//	private List<String> vehicleAge;
 }
