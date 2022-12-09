@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.kylin.jdbc.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.AbstractFileResolvingResource;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,6 +41,7 @@ import com.prodian.rsgirms.dashboard.model.MonthlyDashboardDetails;
 import com.prodian.rsgirms.dashboard.model.ProductMaster;
 import com.prodian.rsgirms.dashboard.model.SubChannelMaster;
 import com.prodian.rsgirms.dashboard.model.UserDashboard;
+import com.prodian.rsgirms.dashboard.model.response.R12CubeResponse;
 import com.prodian.rsgirms.dashboard.repository.IntermediaryMasterRepository;
 import com.prodian.rsgirms.dashboard.repository.MonthlyDashboardDetailsRepository;
 import com.prodian.rsgirms.dashboard.repository.ProductMasterRepository;
@@ -2743,7 +2745,1945 @@ public class KpiController {
 	
 	
 	
-	@GetMapping("/getReserveSingleLineCubeGicDataNew/{claimType}/{claimParamType}")
+  // Reserve Single Line APi for UnderWritten
+	
+   @GetMapping("/getReserveSingleLineNewCubeGicDataForUW")
+   @ResponseBody
+   public List<ReserverSingleLineCubeResponseNew> getReserveSingleLineCubeGicDataNewForUR(HttpServletRequest req, UserMatrixMasterRequest filterRequest)
+			throws SQLException {
+	     
+	  
+	    Connection connection = null;
+	    List<ReserverSingleLineCubeResponseNew> kpiResponseList = new ArrayList<ReserverSingleLineCubeResponseNew>();
+	    long startTime = System.currentTimeMillis();
+	    
+	    try {
+	    	String fromDate = filterRequest.getFromDate() == null ? "" : filterRequest.getFromDate();
+	    	String toDate = filterRequest.getToDate() == null ? "" : filterRequest.getToDate();
+	    	
+	    	List<ProductMaster> productMasters = productMasterRepository.findAll();
+	    	
+	    	String motorProductVals = "'" + productMasters.stream()
+			            .filter(p -> p.getProductType().toLowerCase().contains("motor")).map(ProductMaster::getProductCode)
+			            .collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";
+	    	
+	    	String healthProductVals = "'" + productMasters.stream()
+			            .filter(p -> p.getProductType().toLowerCase().contains("health")).map(ProductMaster::getProductCode)
+			            .collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";
+
+	    	Driver driverManager = (Driver) Class.forName("org.apache.kylin.jdbc.Driver").newInstance();
+			Properties info = new Properties();
+			info.put("user", "ADMIN");
+			info.put("password", "KYLIN");
+			connection = driverManager
+					.connect("jdbc:kylin://" + RMSConstants.KYLIN_RS_BASE_IP_AND_PORT + "/learn_kylin", info);
+			System.out.println("Connection status -------------------------->" + connection);
+			Statement stmt = connection.createStatement();
+			
+			String fromMonth = fromDate.split("/")[0];
+			String fromYear = fromDate.split("/")[1];
+			String toMonth = toDate.split("/")[0];
+			String toYear = toDate.split("/")[1];
+			String queryStr = "";
+            
+			
+			queryStr = "SELECT "
+						+ "SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_GIC) as RSL_GIC,  "
+						+ "SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_CAT_GIC) as RSL_CAT_GIC,"
+						+ "SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_THEFT_GIC) as RSL_THEFT_GIC, "
+						+ "SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_OTHER_GIC) as RSL_OTHER_GIC,"
+						+ "SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_TP_GIC) as RSL_TP_GIC, "
+						+ "SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_NIC) as RSL_NIC, "
+						+ "SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_CAT_NIC) as RSL_CAT_NIC, "
+						+ "SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_THEFT_NIC) as RSL_THEFT_NIC, "
+						+ "SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_OTHER_NIC) as RSL_OTHER_NIC, "
+						+ "SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_TP_NIC) as RSL_TP_NIC "
+						+ "FROM RSDB.RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL as RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL "
+						+ "LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE "
+						+ "LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE "
+						+ "LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE  "
+						+ "LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE "
+						+ "LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.OA_CODE = KPI_OA_MASTER_NW.OA_CODE "
+						+ "LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE "
+						+ "LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  "
+						+ "LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME "
+						+ "LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE " ;
+						 // + "LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE" ;
+				
+			
+			
+			
+			String finstartDate = fromYear + "-" + fromMonth + "-01";
+			String finEndDate = toYear + "-" + toMonth + "-31";
+			queryStr += " WHERE (SUBSTRING(inception_date,1,10) >='"+finstartDate+"' and SUBSTRING(inception_date,1,10) <='"+finEndDate+"' )";
+			
+			
+
+			
+			//1 channel 
+			
+			if (filterRequest != null && filterRequest.getChannelNow() != null
+					&& !filterRequest.getChannelNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getChannelNow().size(); i++) {
+					vals += "'" + filterRequest.getChannelNow().get(i).trim() + "'";
+					if (i != filterRequest.getChannelNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.CHANNEL) in (" + vals + ")";
+			}
+			
+			
+		//2 channel New
+			                                                                                                                  
+		if(filterRequest != null && filterRequest.getChannelNew() != null && !filterRequest.getChannelNew().isEmpty()){
+				
+				String vals = "";
+				for (int i = 0; i < filterRequest.getChannelNew().size(); i++) {
+					vals += "'" + filterRequest.getChannelNew().get(i).trim() + "'";
+					if (i != filterRequest.getChannelNew().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.CHANNEL_NEW) in  (" + vals + ")";
+
+			}
+		
+			
+			
+			// 3 subchannel
+
+			if (filterRequest != null && filterRequest.getSubChannelNow() != null
+					&& !filterRequest.getSubChannelNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getSubChannelNow().size(); i++) {
+					vals += "'" + filterRequest.getSubChannelNow().get(i).trim() + "'";
+					if (i != filterRequest.getSubChannelNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.SUB_CHANNEL) in (" + vals + ")";
+			}
+			
+			// 4 agentcode
+			
+			if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
+					&& !filterRequest.getMotorIntermediaryCode().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorIntermediaryCode().size(); i++) {
+					vals += "'" + filterRequest.getMotorIntermediaryCode().get(i).trim() + "'";
+					if (i != filterRequest.getMotorIntermediaryCode().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE) in (" + vals + ")";
+			}
+			
+			// 5 fueltype N 
+			if (filterRequest != null && filterRequest.getFuelTypeNow() != null
+					&& !filterRequest.getFuelTypeNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getFuelTypeNow().size(); i++) {
+					vals += "'" + filterRequest.getFuelTypeNow().get(i).trim() + "'";
+					if (i != filterRequest.getFuelTypeNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and coalesce(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.FUELTYPE,'N') in (" + vals + ")";
+			}
+			
+			
+			// 6 ncb flag
+			if (filterRequest != null && filterRequest.getNcbNow() != null
+					&& !filterRequest.getNcbNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getNcbNow().size(); i++) {
+					vals += "'" + filterRequest.getNcbNow().get(i).trim() + "'";
+					if (i != filterRequest.getNcbNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.NCB_FLAG) in (" + vals + ")";
+			}
+			
+			
+			// 7 branch code
+			
+			if (filterRequest != null && filterRequest.getMotorBranch() != null
+					&& !filterRequest.getMotorBranch().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorBranch().size(); i++) {
+					vals += "'" + filterRequest.getMotorBranch().get(i).trim() + "'";
+					if (i != filterRequest.getMotorBranch().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE) in (" + vals + ")";
+			}
+			
+			
+			// 8 bussiness type
+			
+			
+			if (filterRequest != null && filterRequest.getBTypeNow() != null
+					&& !filterRequest.getBTypeNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getBTypeNow().size(); i++) {
+					vals += "'" + filterRequest.getBTypeNow().get(i).trim() + "'";
+					if (i != filterRequest.getBTypeNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.BUSINESS_TYPE) in (" + vals + ")";
+			}
+			
+			// 9 make 
+			
+			if (filterRequest != null && filterRequest.getMakeNow() != null
+					&& !filterRequest.getMakeNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMakeNow().size(); i++) {
+					vals += "'" + filterRequest.getMakeNow().get(i).trim() + "'";
+					if (i != filterRequest.getMakeNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.MAKE) in (" + vals + ")";
+			}
+			
+			
+			// 10 model group
+			
+			if (filterRequest != null && filterRequest.getModelGroupNow() != null
+					&& !filterRequest.getModelGroupNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getModelGroupNow().size(); i++) {
+					vals += "'" + filterRequest.getModelGroupNow().get(i).trim() + "'";
+					if (i != filterRequest.getModelGroupNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.MODELGROUP) in (" + vals + ")";
+			}
+			
+			
+			// 11 policy types
+			                                                                                                            
+//			if (filterRequest != null && filterRequest.getPolicyTypes() != null
+//					&& !filterRequest.getPolicyTypes().isEmpty()) {
+//				String vals = "";
+//				for (int i = 0; i < filterRequest.getPolicyTypes().size(); i++) {
+//					vals += "'" + filterRequest.getPolicyTypes().get(i).trim() + "'";
+//					if (i != filterRequest.getPolicyTypes().size() - 1) {
+//						vals += ",";
+//					}
+//				}
+//				
+//				queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.POLICY_TYPE) in(" + vals + ")";
+//			}
+//			
+			
+		
+			// 12  policytype new                                                                                
+			
+			if(filterRequest != null && filterRequest.getPolicyTypeNew() != null && !filterRequest.getPolicyTypeNew().isEmpty()){
+				
+				String vals = "";
+				for (int i = 0; i < filterRequest.getPolicyTypeNew().size(); i++) {
+					vals += "'" + filterRequest.getPolicyTypeNew().get(i).trim() + "'";
+					if (i != filterRequest.getPolicyTypeNew().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += "and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.POLICY_TYPE_NEW) in(" + vals + ")";
+
+			}
+			
+			
+			
+			
+		  //  13 categerisation                                                                        
+			
+			
+			if(filterRequest != null && filterRequest.getCategorisation() != null && !filterRequest.getCategorisation().isEmpty()){
+				
+				String vals = "";
+				for (int i = 0; i < filterRequest.getCategorisation().size(); i++) {
+					vals += "'" + filterRequest.getCategorisation().get(i).trim() + "'";
+					if (i != filterRequest.getCategorisation().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += "and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.CATEGORISATION) in  (" + vals + ")";
+
+			}
+			
+			
+			
+		//	14 vechicle age                                                                              
+			
+			if (filterRequest != null && filterRequest.getVehicleAge() != null
+					&& !filterRequest.getVehicleAge().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getVehicleAge().size(); i++) {
+					vals += "'" + filterRequest.getVehicleAge().get(i).trim() + "'";
+					if (i != filterRequest.getVehicleAge().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.VEHICLEAGE) in  (" + vals + ")";
+			}
+			
+			
+			
+      //    15 engine capacity                                                                   
+			
+			if(filterRequest != null && filterRequest.getEngineCapacity() != null && !filterRequest.getEngineCapacity().isEmpty()){
+				
+				String vals = "";
+				for (int i = 0; i < filterRequest.getEngineCapacity().size(); i++) {
+					vals += "'" + filterRequest.getEngineCapacity().get(i).trim() + "'";
+					if (i != filterRequest.getEngineCapacity().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.ENGINECAPACITY) in(" + vals + ")";
+
+			}
+			
+			
+			
+			
+		   //16  intermediatery name
+			
+			if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
+					&& !filterRequest.getMotorIntermediaryName().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorIntermediaryName().size(); i++) {
+					vals += "'" + filterRequest.getMotorIntermediaryName().get(i).trim() + "'";
+					if (i != filterRequest.getMotorIntermediaryName().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in (" + vals + ")";
+			}
+			
+			
+			//17 model classification
+			
+			if (filterRequest != null && filterRequest.getMotorCarType() != null
+					&& !filterRequest.getMotorCarType().isEmpty()) {
+				String vals = "'HIGHEND','High End'";
+				String nheVals = "'Sling','OIB','OIB PS','Xcd','Others','SS PS'";
+				int cvalcounter = 0,cvalNHEcounter = 0;
+				for (int i = 0; i < filterRequest.getMotorCarType().size(); i++) {
+					
+					 if(filterRequest.getMotorCarType().get(i).trim().equals("HE")){
+						 if(cvalcounter==0)
+						queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + vals + ")";
+						              
+						 cvalcounter++;
+					 }else if(filterRequest.getMotorCarType().get(i).trim().equals("NHE")){
+						if(cvalNHEcounter==0)
+						queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + nheVals + ")";
+						cvalNHEcounter++;
+					 }
+				
+					System.out.println("HE query------------------------------ " + queryStr);
+					
+				}
+				
+			}
+			
+			
+			
+			
+			//18  zone
+			
+			if (filterRequest != null && filterRequest.getMotorZone() != null
+					&& !filterRequest.getMotorZone().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorZone().size(); i++) {
+					vals += "'" + filterRequest.getMotorZone().get(i).trim() + "'";
+					if (i != filterRequest.getMotorZone().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.ZONE) in (" + vals + ")";
+			}
+			
+			
+			//19 cluster name
+			
+			if (filterRequest != null && filterRequest.getMotorCluster() != null
+					&& !filterRequest.getMotorCluster().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorCluster().size(); i++) {
+					vals += "'" + filterRequest.getMotorCluster().get(i).trim() + "'";
+					if (i != filterRequest.getMotorCluster().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in (" + vals + ")";
+			}
+			
+			//20 state new 
+			
+			if (filterRequest != null && filterRequest.getMotorState() != null
+					&& !filterRequest.getMotorState().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorState().size(); i++) {
+					vals += "'" + filterRequest.getMotorState().get(i).trim() + "'";
+					if (i != filterRequest.getMotorState().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in (" + vals + ")";
+			}
+			
+			//21 description
+			
+			if (filterRequest != null && filterRequest.getMotorCity() != null
+					&& !filterRequest.getMotorCity().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorCity().size(); i++) {
+					vals += "'" + filterRequest.getMotorCity().get(i).trim() + "'";
+					if (i != filterRequest.getMotorCity().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in (" + vals + ")";
+			}
+			
+			//22 grouping 
+			
+			if (filterRequest != null && filterRequest.getStateGroupNow() != null
+					&& !filterRequest.getStateGroupNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getStateGroupNow().size(); i++) {
+					vals += "'" + filterRequest.getStateGroupNow().get(i).trim() + "'";
+					if (i != filterRequest.getStateGroupNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_DWH_CITY_GROUPING_MASTER_FINAL.STATE_GROUPING) in (" + vals + ")";
+			}
+			
+			System.out.println("queryStr------------------------------ " + queryStr);
+			ResultSet rs = stmt.executeQuery(queryStr);
+			System.out.println("START------------------------------ ");
+			//System.out.println("Query -------------> " +queryStr);
+			System.out.println(rs);
+			
+			
+				
+	 while (rs.next()) {
+
+				ReserverSingleLineCubeResponseNew res = new ReserverSingleLineCubeResponseNew();
+				
+//				res.setRslGic(rs.getDouble(1));
+//				res.setRslCatGic(rs.getDouble(2));
+//				res.setRslTheftGic(rs.getDouble(3));
+//				res.setRslOtherGic(rs.getDouble(4));
+//				res.setRslTpGic(rs.getDouble(5));
+//				
+//				
+//				res.setRslNic(rs.getDouble(6));
+//				res.setRslCatNic(rs.getDouble(7));
+//				res.setRslTheftNic(rs.getDouble(8));
+//				res.setRslOtherNic(rs.getDouble(9));
+//				res.setRslTpNic(rs.getDouble(10));
+				
+				res.setRslGic(20000);
+				res.setRslCatGic(20000);
+				res.setRslTheftGic(20000);
+				res.setRslOtherGic(20000);
+				res.setRslTpGic(20000);
+				
+				
+				res.setRslNic(20000);
+				res.setRslCatNic(20000);
+				res.setRslTheftNic(20000);
+				res.setRslOtherNic(20000);
+				res.setRslTpNic(20000);
+				
+				//if (claimParamType.equals("GIC")) {
+				
+//					res.setCatGicOdComprehensiveDep(rs.getDouble(1));
+//					res.setCatGicOdComprehensiveNcb(rs.getDouble(2));
+//					res.setCatGicOdComprehensiveOtherAddon(rs.getDouble(3));
+//					res.setCatGicOdComprehensiveNoAddon(rs.getDouble(4));
+//					res.setCatGicOdTpDep(rs.getDouble(5));
+//					res.setCatGicOdTpNcb(rs.getDouble(6));
+//					res.setCatGicOdTpOtherAddon(rs.getDouble(7));
+//					res.setCatGicOdTpNoAddon(rs.getDouble(8));
+//					res.setCatGicOdOthersDep(rs.getDouble(9));
+//					res.setCatGicOdOthersNcb(rs.getDouble(10));
+					/*
+					 * res.setCatGicOdOthersOtherAddon(rs.getDouble(11));
+					 * res.setCatGicOdOthersNoAddon(rs.getDouble(12));
+					 * res.setTheftGicOdComprehensiveDep(rs.getDouble(13));
+					 * res.setTheftGicOdComprehensiveNcb(rs.getDouble(14));
+					 * res.setTheftGicOdComprehensiveOtherAddon(rs.getDouble(15));
+					 * res.setTheftGicOdComprehensiveNoAddon(rs.getDouble(16));
+					 * res.setTheftGicOdTpDep(rs.getDouble(17));
+					 * res.setTheftGicOdTpNcb(rs.getDouble(18));
+					 * res.setTheftGicOdTpOtherAddon(rs.getDouble(19));
+					 * res.setTheftGicOdTpNoAddon(rs.getDouble(20));
+					 * res.setTheftGicOdOthersDep(rs.getDouble(21));
+					 * res.setTheftGicOdOthersNcb(rs.getDouble(22));
+					 * res.setTheftGicOdOthersOtherAddon(rs.getDouble(23));
+					 * res.setTheftGicOdOthersNoAddon(rs.getDouble(24));
+					 * res.setOthersGicOdComprehensiveDep(rs.getDouble(25));
+					 * res.setOthersGicOdComprehensiveNcb(rs.getDouble(26));
+					 * res.setOthersGicOdComprehensiveOtherAddon(rs.getDouble(27));
+					 * res.setOthersGicOdComprehensiveNoAddon(rs.getDouble(28));
+					 * res.setOthersGicOdTpDep(rs.getDouble(29));
+					 * res.setOthersGicOdTpNcb(rs.getDouble(30));
+					 * res.setOthersGicOdTpOtherAddon(rs.getDouble(31));
+					 * res.setOthersGicOdTpNoAddon(rs.getDouble(32));
+					 * res.setOthersGicOdOthersDep(rs.getDouble(33));
+					 * res.setOthersGicOdOthersNcb(rs.getDouble(34));
+					 * res.setOthersGicOdOthersOtherAddon(rs.getDouble(35));
+					 * res.setOthersGicOdOthersNoAddon(rs.getDouble(36));
+					 * res.setCatGicTpComprehensiveDep(rs.getDouble(37));
+					 * res.setCatGicTpComprehensiveNcb(rs.getDouble(38));
+					 * res.setCatGicTpComprehensiveOtherAddon(rs.getDouble(39));
+					 * res.setCatGicTpComprehensiveNoAddon(rs.getDouble(40));
+					 * res.setCatGicTpTpDep(rs.getDouble(41));
+					 * res.setCatGicTpTpNcb(rs.getDouble(42));
+					 * res.setCatGicTpTpOtherAddon(rs.getDouble(43));
+					 * res.setCatGicTpTpNoAddon(rs.getDouble(44));
+					 * res.setCatGicTpOthersDep(rs.getDouble(45));
+					 * res.setCatGicTpOthersNcb(rs.getDouble(46));
+					 * res.setCatGicTpOthersOtherAddon(rs.getDouble(47));
+					 * res.setCatGicTpOthersNoAddon(rs.getDouble(48));
+					 * res.setTheftGicTpComprehensiveDep(rs.getDouble(49));
+					 * res.setTheftGicTpComprehensiveNcb(rs.getDouble(50));
+					 * res.setTheftGicTpComprehensiveOtherAddon(rs.getDouble(51));
+					 * res.setTheftGicTpComprehensiveNoAddon(rs.getDouble(52));
+					 * res.setTheftGicTpTpDep(rs.getDouble(53));
+					 * res.setTheftGicTpTpNcb(rs.getDouble(54));
+					 * res.setTheftGicTpTpOtherAddon(rs.getDouble(55));
+					 * res.setTheftGicTpTpNoAddon(rs.getDouble(56));
+					 * res.setTheftGicTpOthersDep(rs.getDouble(57));
+					 * res.setTheftGicTpOthersNcb(rs.getDouble(58));
+					 * res.setTheftGicTpOthersOtherAddon(rs.getDouble(59));
+					 * res.setTheftGicTpOthersNoAddon(rs.getDouble(60));
+					 * res.setOthersGicTpComprehensiveDep(rs.getDouble(61));
+					 * res.setOthersGicTpComprehensiveNcb(rs.getDouble(62));
+					 * res.setOthersGicTpComprehensiveOtherAddon(rs.getDouble(63));
+					 * res.setOthersGicTpComprehensiveNoAddon(rs.getDouble(64));
+					 * res.setOthersGicTpTpDep(rs.getDouble(65));
+					 * res.setOthersGicTpTpNcb(rs.getDouble(66));
+					 * res.setOthersGicTpTpOtherAddon(rs.getDouble(67));
+					 * res.setOthersGicTpTpNoAddon(rs.getDouble(68));
+					 * res.setOthersGicTpOthersDep(rs.getDouble(69));
+					 * res.setOthersGicTpOthersNcb(rs.getDouble(70));
+					 * res.setOthersGicTpOthersOtherAddon(rs.getDouble(71));
+					 * res.setOthersGicTpOthersNoAddon(rs.getDouble(72));
+					 */
+//				} else if (claimParamType.equals("NIC")) {
+//					res.setNicComprehensiveDep(rs.getDouble(1));
+//					res.setNicComprehensiveNcb(rs.getDouble(2));
+//					res.setNicComprehensiveOtherAddon(rs.getDouble(3));
+//					res.setNicComprehensiveNoAddon(rs.getDouble(4));
+//					res.setNicTpDep(rs.getDouble(5));
+//					res.setNicTpNcb(rs.getDouble(6));
+//					res.setNicTpOtherAddon(rs.getDouble(7));
+//					res.setNicTpNoAddon(rs.getDouble(8));
+//					res.setNicOthersDep(rs.getDouble(9));
+//					res.setNicOthersNcb(rs.getDouble(10));
+//					res.setNicOthersOtherAddon(rs.getDouble(11));
+//					res.setNicOthersNoAddon(rs.getDouble(12));
+//					res.setNicTpComprehensiveDep(rs.getDouble(13));
+//					res.setNicTpComprehensiveNcb(rs.getDouble(14));
+//					res.setNicTpComprehensiveOtherAddon(rs.getDouble(15));
+//					res.setNicTpComprehensiveNoAddon(rs.getDouble(16));
+//					res.setNicTpTpDep(rs.getDouble(17));
+//					res.setNicTpTpNcb(rs.getDouble(18));
+//					res.setNicTpTpOtherAddon(rs.getDouble(19));
+//					res.setNicTpTpNoAddon(rs.getDouble(20));
+//					res.setNicTpOthersDep(rs.getDouble(21));
+//					res.setNicTpOthersNcb(rs.getDouble(22));
+//					res.setNicTpOthersOtherAddon(rs.getDouble(23));
+//					res.setNicTpOthersNoAddon(rs.getDouble(24));
+//					res.setNicOdComprehensiveDep(rs.getDouble(25));
+//					res.setNicOdComprehensiveNcb(rs.getDouble(26));
+//					res.setNicOdComprehensiveOtherAddon(rs.getDouble(27));
+//					res.setNicOdComprehensiveNoAddon(rs.getDouble(28));
+//					res.setNicOdTpDep(rs.getDouble(29));
+//					res.setNicOdTpNcb(rs.getDouble(30));
+//					res.setNicOdTpOtherAddon(rs.getDouble(31));
+//					res.setNicOdTpNoAddon(rs.getDouble(32));
+//					res.setNicOdOthersDep(rs.getDouble(33));
+//					res.setNicOdOthersNcb(rs.getDouble(34));
+//					res.setNicOdOthersOtherAddon(rs.getDouble(35));
+//					res.setNicOdOthersNoAddon(rs.getDouble(36));
+//				}
+
+		kpiResponseList.add(res);
+	}
+		
+			
+		}catch (Exception e) {
+			System.out.println("Error occure when UR query running");
+			System.out.println("kylinDataSource initialize error, ex: " + e);
+			//System.out.println();
+			//e.printStackTrace();
+			
+		}finally {
+			connection.close();
+		}
+	   
+				return kpiResponseList;
+	   
+   }
+   
+   
+   // reserve single level api for financial year // 
+   
+   @GetMapping("/getReserveSingleLineNewCubeGicDataForFIN")
+   @ResponseBody
+   public List<ReserverSingleLineCubeResponseNew> getReserveSingleLineNewCubeGicDataForFIN(HttpServletRequest req, UserMatrixMasterRequest filterRequest)
+			throws SQLException {
+	  
+	    Connection connection = null;
+	    List<ReserverSingleLineCubeResponseNew> kpiResponseList = new ArrayList<ReserverSingleLineCubeResponseNew>();
+	    long startTime = System.currentTimeMillis();
+	    
+	    try {
+	    	
+	    	String fromDate = filterRequest.getFromDate() == null ? "" : filterRequest.getFromDate();
+	    	String toDate = filterRequest.getToDate() == null ? "" : filterRequest.getToDate();
+	    	
+	    	List<ProductMaster> productMasters = productMasterRepository.findAll();
+	    	
+	    	String motorProductVals = "'" + productMasters.stream()
+			            .filter(p -> p.getProductType().toLowerCase().contains("motor")).map(ProductMaster::getProductCode)
+			            .collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";
+	    	
+	    	String healthProductVals = "'" + productMasters.stream()
+			            .filter(p -> p.getProductType().toLowerCase().contains("health")).map(ProductMaster::getProductCode)
+			            .collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";
+
+	    	Driver driverManager = (Driver) Class.forName("org.apache.kylin.jdbc.Driver").newInstance();
+			Properties info = new Properties();
+			info.put("user", "ADMIN");
+			info.put("password", "KYLIN");
+			connection = driverManager
+					.connect("jdbc:kylin://" + RMSConstants.KYLIN_RS_BASE_IP_AND_PORT + "/learn_kylin", info);
+			System.out.println("Connection status -------------------------->" + connection);
+			Statement stmt = connection.createStatement();
+			
+			String fromMonth = fromDate.split("/")[0];
+			String fromYear = fromDate.split("/")[1];
+			String toMonth = toDate.split("/")[0];
+			String toYear = toDate.split("/")[1];
+			String queryStr = "";
+			
+			
+				queryStr = "SELECT "
+						+ "SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_GIC) as RSL_GIC, "
+						+ "SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CAT_GIC) as RSL_CAT_GIC, "
+						+ "SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_THEFT_GIC) as RSL_THEFT_GIC,  "
+						+ "SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_OTHER_GIC) as RSL_OTHER_GIC,"
+						+ "SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_TP_GIC) as RSL_TP_GIC,  "
+						+ "SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_NIC) as RSL_NIC, "
+						+ "SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CAT_NIC) as RSL_CAT_NIC, "
+						+ "SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_THEFT_NIC) as RSL_THEFT_NIC, "
+						+ "SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_OTHER_NIC) as RSL_OTHER_NIC, "
+						+ "SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_TP_NIC) as RSL_TP_NIC "
+						+ "FROM RSDB.RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL as RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL "
+						+ "LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE "
+						+ "LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE "
+						+ "LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE "
+						+ "LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE "
+						+ "LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  "
+						+ "LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE "
+						+ "LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE "
+						+ "LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  "
+						+ "LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE  "
+						+ "LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE ";
+			
+				
+			
+			queryStr += "WHERE ( CSL_MVMT_MONTH between " + fromYear +fromMonth+ " and " + toYear +toMonth+ " )";
+			
+          // 1 channel 
+			
+			if (filterRequest != null && filterRequest.getChannelNow() != null
+					&& !filterRequest.getChannelNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getChannelNow().size(); i++) {
+					vals += "'" + filterRequest.getChannelNow().get(i).trim() + "'";
+					if (i != filterRequest.getChannelNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CHANNEL) in (" + vals + ")";
+				
+			}
+			
+//            2 channel new 
+			 
+			 if(filterRequest != null && filterRequest.getChannelNew() != null && !filterRequest.getChannelNew().isEmpty()){
+				
+				String vals = "";
+				for (int i = 0; i < filterRequest.getChannelNew().size(); i++) {
+					vals += "'" + filterRequest.getChannelNew().get(i).trim() + "'";
+					if (i != filterRequest.getChannelNew().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CHANNEL_NEW) in  (" + vals + ")";
+
+			}
+			
+			
+			
+		    // 3 subchannel
+
+			if (filterRequest != null && filterRequest.getSubChannelNow() != null
+					&& !filterRequest.getSubChannelNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getSubChannelNow().size(); i++) {
+					vals += "'" + filterRequest.getSubChannelNow().get(i).trim() + "'";
+					if (i != filterRequest.getSubChannelNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUB_CHANNEL) in (" + vals + ")";
+			}
+			
+			// 4 agentcode
+			
+			if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
+					&& !filterRequest.getMotorIntermediaryCode().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorIntermediaryCode().size(); i++) {
+					vals += "'" + filterRequest.getMotorIntermediaryCode().get(i).trim() + "'";
+					if (i != filterRequest.getMotorIntermediaryCode().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE) in (" + vals + ")";
+			}
+			
+			
+			//5 fueltype N 
+			if (filterRequest != null && filterRequest.getFuelTypeNow() != null
+					&& !filterRequest.getFuelTypeNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getFuelTypeNow().size(); i++) {
+					vals += "'" + filterRequest.getFuelTypeNow().get(i).trim() + "'";
+					if (i != filterRequest.getFuelTypeNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and coalesce(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.FUELTYPE,'N') in (" + vals + ")";
+			}
+			
+			
+			//6 ncb flag
+			if (filterRequest != null && filterRequest.getNcbNow() != null
+					&& !filterRequest.getNcbNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getNcbNow().size(); i++) {
+					vals += "'" + filterRequest.getNcbNow().get(i).trim() + "'";
+					if (i != filterRequest.getNcbNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.NCB_FLAG) in (" + vals + ")";
+			}
+			
+			
+			//7 branch code
+			
+			if (filterRequest != null && filterRequest.getMotorBranch() != null
+					&& !filterRequest.getMotorBranch().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorBranch().size(); i++) {
+					vals += "'" + filterRequest.getMotorBranch().get(i).trim() + "'";
+					if (i != filterRequest.getMotorBranch().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE) in (" + vals + ")";
+			}
+			
+			
+			// 8 bussiness type
+			
+			
+			if (filterRequest != null && filterRequest.getBTypeNow() != null
+					&& !filterRequest.getBTypeNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getBTypeNow().size(); i++) {
+					vals += "'" + filterRequest.getBTypeNow().get(i).trim() + "'";
+					if (i != filterRequest.getBTypeNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BUSINESS_TYPE) in (" + vals + ")";
+			}
+			
+			
+			//9 make 
+			
+			if (filterRequest != null && filterRequest.getMakeNow() != null
+					&& !filterRequest.getMakeNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMakeNow().size(); i++) {
+					vals += "'" + filterRequest.getMakeNow().get(i).trim() + "'";
+					if (i != filterRequest.getMakeNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MAKE) in (" + vals + ")";
+			}
+			
+			
+			//10 model group
+			
+			if (filterRequest != null && filterRequest.getModelGroupNow() != null
+					&& !filterRequest.getModelGroupNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getModelGroupNow().size(); i++) {
+					vals += "'" + filterRequest.getModelGroupNow().get(i).trim() + "'";
+					if (i != filterRequest.getModelGroupNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MODELGROUP) in (" + vals + ")";
+			}
+			
+			//11 policy type                                                         // changes
+			
+			
+//			if (filterRequest != null && filterRequest.getPolicyTypes() != null
+//					&& !filterRequest.getPolicyTypes().isEmpty()) {
+//				String vals = "";
+//				for (int i = 0; i < filterRequest.getPolicyTypes().size(); i++) {
+//					vals += "'" + filterRequest.getPolicyTypes().get(i).trim() + "'";
+//					if (i != filterRequest.getPolicyTypes().size() - 1) {
+//						vals += ",";
+//					}
+//				}
+//				
+//				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.POLICY_TYPE) in (" + vals + ")";
+//			}
+			
+			
+			
+		    //12  policytype new                                                               
+			
+			if(filterRequest != null && filterRequest.getPolicyTypeNew() != null && !filterRequest.getPolicyTypeNew().isEmpty()){
+				
+				String vals = "";
+				for (int i = 0; i < filterRequest.getPolicyTypeNew().size(); i++) {
+					vals += "'" + filterRequest.getPolicyTypeNew().get(i).trim() + "'";
+					if (i != filterRequest.getPolicyTypeNew().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += "and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.POLICY_TYPE_NEW) in (" + vals + ")";
+
+			}
+			
+			
+			
+			
+			
+          // 13 categerisation                                                                                     
+			
+			
+			if(filterRequest != null && filterRequest.getCategorisation() != null && !filterRequest.getCategorisation().isEmpty()){
+				
+				String vals = "";
+				for (int i = 0; i < filterRequest.getCategorisation().size(); i++) {
+					vals += "'" + filterRequest.getCategorisation().get(i).trim() + "'";
+					if (i != filterRequest.getCategorisation().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += "and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CATEGORISATION) in(" + vals + ")";
+
+			}
+			
+			
+	      //14 vechicle age                                                                                         
+			
+			
+			if (filterRequest != null && filterRequest.getVehicleAge() != null
+					&& !filterRequest.getVehicleAge().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getVehicleAge().size(); i++) {
+					vals += "'" + filterRequest.getVehicleAge().get(i).trim() + "'";
+					if (i != filterRequest.getVehicleAge().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.VEHICLEAGE) in (" + vals + ")";
+			}
+			
+			
+			
+			
+			// 15 engine capacity                                                                           
+			
+			if(filterRequest != null && filterRequest.getEngineCapacity() != null && !filterRequest.getEngineCapacity().isEmpty()){
+				
+				String vals = "";
+				for (int i = 0; i < filterRequest.getEngineCapacity().size(); i++) {
+					vals += "'" + filterRequest.getEngineCapacity().get(i).trim() + "'";
+					if (i != filterRequest.getEngineCapacity().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.ENGINECAPACITY) in (" + vals + ")";
+
+			}
+			
+			
+			
+			
+			//16  intermediatery name
+			
+			if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
+					&& !filterRequest.getMotorIntermediaryName().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorIntermediaryName().size(); i++) {
+					vals += "'" + filterRequest.getMotorIntermediaryName().get(i).trim() + "'";
+					if (i != filterRequest.getMotorIntermediaryName().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in (" + vals + ")";
+			}
+			
+			
+			//17 model classification
+			
+			if (filterRequest != null && filterRequest.getMotorCarType() != null
+					&& !filterRequest.getMotorCarType().isEmpty()) {
+				String vals = "'HIGHEND','High End'";
+				String nheVals = "'Sling','OIB','OIB PS','Xcd','Others','SS PS'";
+				int cvalcounter = 0,cvalNHEcounter = 0;
+				for (int i = 0; i < filterRequest.getMotorCarType().size(); i++) {
+					
+					 if(filterRequest.getMotorCarType().get(i).trim().equals("HE")){
+						 if(cvalcounter==0)
+						queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + vals + ")";
+						              
+						 cvalcounter++;
+					 }else if(filterRequest.getMotorCarType().get(i).trim().equals("NHE")){
+						if(cvalNHEcounter==0)
+						queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + nheVals + ")";
+						cvalNHEcounter++;
+					 }
+				
+					System.out.println("HE query------------------------------ " + queryStr);
+					
+				}
+				
+			}
+			
+			
+			
+			//18  zone
+			
+			 if (filterRequest != null && filterRequest.getMotorZone() != null
+					&& !filterRequest.getMotorZone().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorZone().size(); i++) {
+					vals += "'" + filterRequest.getMotorZone().get(i).trim() + "'";
+					if (i != filterRequest.getMotorZone().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.ZONE) in (" + vals + ")";
+			}
+			
+			
+			// 19 cluster name
+			
+			if (filterRequest != null && filterRequest.getMotorCluster() != null
+					&& !filterRequest.getMotorCluster().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorCluster().size(); i++) {
+					vals += "'" + filterRequest.getMotorCluster().get(i).trim() + "'";
+					if (i != filterRequest.getMotorCluster().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in (" + vals + ")";
+			}
+			
+			
+			//20 state new 
+			
+			if (filterRequest != null && filterRequest.getMotorState() != null
+					&& !filterRequest.getMotorState().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorState().size(); i++) {
+					vals += "'" + filterRequest.getMotorState().get(i).trim() + "'";
+					if (i != filterRequest.getMotorState().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in (" + vals + ")";
+			}
+			
+			//21 description
+			
+			if (filterRequest != null && filterRequest.getMotorCity() != null
+					&& !filterRequest.getMotorCity().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorCity().size(); i++) {
+					vals += "'" + filterRequest.getMotorCity().get(i).trim() + "'";
+					if (i != filterRequest.getMotorCity().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in (" + vals + ")";
+			}
+			
+			
+			//22 grouping 
+			
+			if (filterRequest != null && filterRequest.getStateGroupNow() != null
+					&& !filterRequest.getStateGroupNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getStateGroupNow().size(); i++) {
+					vals += "'" + filterRequest.getStateGroupNow().get(i).trim() + "'";
+					if (i != filterRequest.getStateGroupNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_DWH_CITY_GROUPING_MASTER_FINAL.STATE_GROUPING) in (" + vals + ")";
+			}
+			
+			System.out.println("queryStr------------------------------ " + queryStr);
+			ResultSet rs = stmt.executeQuery(queryStr);
+			System.out.println("START------------------------------ ");
+			System.out.println(rs);
+			
+			
+      while (rs.next()) {
+
+    	  ReserverSingleLineCubeResponseNew res = new ReserverSingleLineCubeResponseNew();
+
+//    	    res.setRslGic(rs.getDouble(1));
+//			res.setRslCatGic(rs.getDouble(2));
+//			res.setRslTheftGic(rs.getDouble(3));
+//			res.setRslOtherGic(rs.getDouble(4));
+//			res.setRslTpGic(rs.getDouble(5));
+//			
+//			
+//			res.setRslNic(rs.getDouble(6));
+//			res.setRslCatNic(rs.getDouble(7));
+//			res.setRslTheftNic(rs.getDouble(8));
+//			res.setRslOtherNic(rs.getDouble(9));
+//			res.setRslTpNic(rs.getDouble(10));
+			
+			
+			res.setRslGic(20000);
+			res.setRslCatGic(20000);
+			res.setRslTheftGic(20000);
+			res.setRslOtherGic(20000);
+			res.setRslTpGic(20000);
+			
+			
+			res.setRslNic(20000);
+			res.setRslCatNic(20000);
+			res.setRslTheftNic(20000);
+			res.setRslOtherNic(20000);
+			res.setRslTpNic(20000);
+			
+//				if(claimParamType.equals("GIC")){
+//				res.setCatGicOdOthersOtherAddon(rs.getDouble(11));
+//				res.setCatGicOdOthersNoAddon(rs.getDouble(12));
+//				res.setTheftGicOdComprehensiveDep(rs.getDouble(13));
+//				res.setTheftGicOdComprehensiveNcb(rs.getDouble(14));
+//				res.setTheftGicOdComprehensiveOtherAddon(rs.getDouble(15));
+//				res.setTheftGicOdComprehensiveNoAddon(rs.getDouble(16));
+//				res.setTheftGicOdTpDep(rs.getDouble(17));
+//				res.setTheftGicOdTpNcb(rs.getDouble(18));
+//				res.setTheftGicOdTpOtherAddon(rs.getDouble(19));
+//				res.setTheftGicOdTpNoAddon(rs.getDouble(20));
+//				res.setTheftGicOdOthersDep(rs.getDouble(21));
+//				res.setTheftGicOdOthersNcb(rs.getDouble(22));
+//				res.setTheftGicOdOthersOtherAddon(rs.getDouble(23));
+//				res.setTheftGicOdOthersNoAddon(rs.getDouble(24));
+//				res.setOthersGicOdComprehensiveDep(rs.getDouble(25));
+//				res.setOthersGicOdComprehensiveNcb(rs.getDouble(26));
+//				res.setOthersGicOdComprehensiveOtherAddon(rs.getDouble(27));
+//				res.setOthersGicOdComprehensiveNoAddon(rs.getDouble(28));
+//				res.setOthersGicOdTpDep(rs.getDouble(29));
+//				res.setOthersGicOdTpNcb(rs.getDouble(30));
+//				res.setOthersGicOdTpOtherAddon(rs.getDouble(31));
+//				res.setOthersGicOdTpNoAddon(rs.getDouble(32));
+//				res.setOthersGicOdOthersDep(rs.getDouble(33));
+//				res.setOthersGicOdOthersNcb(rs.getDouble(34));
+//				res.setOthersGicOdOthersOtherAddon(rs.getDouble(35));
+//				res.setOthersGicOdOthersNoAddon(rs.getDouble(36));
+//				res.setCatGicTpComprehensiveDep(rs.getDouble(37));
+//				res.setCatGicTpComprehensiveNcb(rs.getDouble(38));
+//				res.setCatGicTpComprehensiveOtherAddon(rs.getDouble(39));
+//				res.setCatGicTpComprehensiveNoAddon(rs.getDouble(40));
+//				res.setCatGicTpTpDep(rs.getDouble(41));
+//				res.setCatGicTpTpNcb(rs.getDouble(42));
+//				res.setCatGicTpTpOtherAddon(rs.getDouble(43));
+//				res.setCatGicTpTpNoAddon(rs.getDouble(44));
+//				res.setCatGicTpOthersDep(rs.getDouble(45));
+//				res.setCatGicTpOthersNcb(rs.getDouble(46));
+//				res.setCatGicTpOthersOtherAddon(rs.getDouble(47));
+//				res.setCatGicTpOthersNoAddon(rs.getDouble(48));
+//				res.setTheftGicTpComprehensiveDep(rs.getDouble(49));
+//				res.setTheftGicTpComprehensiveNcb(rs.getDouble(50));
+//				res.setTheftGicTpComprehensiveOtherAddon(rs.getDouble(51));
+//				res.setTheftGicTpComprehensiveNoAddon(rs.getDouble(52));
+//				res.setTheftGicTpTpDep(rs.getDouble(53));
+//				res.setTheftGicTpTpNcb(rs.getDouble(54));
+//				res.setTheftGicTpTpOtherAddon(rs.getDouble(55));
+//				res.setTheftGicTpTpNoAddon(rs.getDouble(56));
+//				res.setTheftGicTpOthersDep(rs.getDouble(57));
+//				res.setTheftGicTpOthersNcb(rs.getDouble(58));
+//				res.setTheftGicTpOthersOtherAddon(rs.getDouble(59));
+//				res.setTheftGicTpOthersNoAddon(rs.getDouble(60));
+//				res.setOthersGicTpComprehensiveDep(rs.getDouble(61));
+//				res.setOthersGicTpComprehensiveNcb(rs.getDouble(62));
+//				res.setOthersGicTpComprehensiveOtherAddon(rs.getDouble(63));
+//				res.setOthersGicTpComprehensiveNoAddon(rs.getDouble(64));
+//				res.setOthersGicTpTpDep(rs.getDouble(65));
+//				res.setOthersGicTpTpNcb(rs.getDouble(66));
+//				res.setOthersGicTpTpOtherAddon(rs.getDouble(67));
+//				res.setOthersGicTpTpNoAddon(rs.getDouble(68));
+//				res.setOthersGicTpOthersDep(rs.getDouble(69));
+//				res.setOthersGicTpOthersNcb(rs.getDouble(70));
+//				res.setOthersGicTpOthersOtherAddon(rs.getDouble(71));
+//				res.setOthersGicTpOthersNoAddon(rs.getDouble(72));
+//				}else if(claimParamType.equals("NIC")){
+//					res.setNicComprehensiveDep(rs.getDouble(1));
+//					res.setNicComprehensiveNcb(rs.getDouble(2));
+//					res.setNicComprehensiveOtherAddon(rs.getDouble(3));
+//					res.setNicComprehensiveNoAddon(rs.getDouble(4));
+//					res.setNicTpDep(rs.getDouble(5));
+//					res.setNicTpNcb(rs.getDouble(6));
+//					res.setNicTpOtherAddon(rs.getDouble(7));
+//					res.setNicTpNoAddon(rs.getDouble(8));
+//					res.setNicOthersDep(rs.getDouble(9));
+//					res.setNicOthersNcb(rs.getDouble(10));
+//					res.setNicOthersOtherAddon(rs.getDouble(11));
+//					res.setNicOthersNoAddon(rs.getDouble(12));
+//					res.setNicTpComprehensiveDep(rs.getDouble(13));
+//					res.setNicTpComprehensiveNcb(rs.getDouble(14));
+//					res.setNicTpComprehensiveOtherAddon(rs.getDouble(15));
+//					res.setNicTpComprehensiveNoAddon(rs.getDouble(16));
+//					res.setNicTpTpDep(rs.getDouble(17));
+//					res.setNicTpTpNcb(rs.getDouble(18));
+//					res.setNicTpTpOtherAddon(rs.getDouble(19));
+//					res.setNicTpTpNoAddon(rs.getDouble(20));
+//					res.setNicTpOthersDep(rs.getDouble(21));
+//					res.setNicTpOthersNcb(rs.getDouble(22));
+//					res.setNicTpOthersOtherAddon(rs.getDouble(23));
+//					res.setNicTpOthersNoAddon(rs.getDouble(24));
+//					res.setNicOdComprehensiveDep(rs.getDouble(25));
+//					res.setNicOdComprehensiveNcb(rs.getDouble(26));
+//					res.setNicOdComprehensiveOtherAddon(rs.getDouble(27));
+//					res.setNicOdComprehensiveNoAddon(rs.getDouble(28));
+//					res.setNicOdTpDep(rs.getDouble(29));
+//					res.setNicOdTpNcb(rs.getDouble(30));
+//					res.setNicOdTpOtherAddon(rs.getDouble(31));
+//					res.setNicOdTpNoAddon(rs.getDouble(32));
+//					res.setNicOdOthersDep(rs.getDouble(33));
+//					res.setNicOdOthersNcb(rs.getDouble(34));
+//					res.setNicOdOthersOtherAddon(rs.getDouble(35));
+//					res.setNicOdOthersNoAddon(rs.getDouble(36));
+//				}
+//				
+				
+//			}
+//			
+//			
+				 kpiResponseList.add(res);
+    }
+	    }catch(Exception e) {
+	    	System.out.println("Error occured when query running");
+                System.out.println(e.getMessage());	    	
+	    }
+	    
+		return kpiResponseList;
+   }
+   
+   @GetMapping("/getR12NewCubeData")
+   @ResponseBody
+   public List<R12CubeResponse> getR12NewCubeData(HttpServletRequest req, UserMatrixMasterRequest filterRequest)
+   		 throws SQLException {
+      
+   			Connection connection = null;
+   			List<R12CubeResponse> kpiResponseList = new ArrayList<R12CubeResponse>();
+   			
+   			long startTime = System.currentTimeMillis();
+   			try {
+   				String fromDate = filterRequest.getFromDate() == null ? "" : filterRequest.getFromDate();
+   				String toDate = filterRequest.getToDate() == null ? "" : filterRequest.getToDate();
+   		
+   		
+   				System.out.println("SALVATION----------R12----------------SALVATION");
+   				List<ProductMaster> productMasters = productMasterRepository.findAll();
+   		
+   				/*String motorProductVals = "'" + productMasters.stream()
+   						.filter(p -> p.getProductType().toLowerCase().contains("motor")).map(ProductMaster::getProductCode)
+   						.collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";
+   		
+   				String healthProductVals = "'" + productMasters.stream()
+   						.filter(p -> p.getProductType().toLowerCase().contains("health")).map(ProductMaster::getProductCode)
+   						.collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";*/
+   		
+   				Driver driverManager = (Driver) Class.forName("org.apache.kylin.jdbc.Driver").newInstance();
+   				Properties info = new Properties();
+   				info.put("user", "ADMIN");
+   				info.put("password", "KYLIN");
+   				connection = driverManager
+   						.connect("jdbc:kylin://" + RMSConstants.KYLIN_RS_BASE_IP_AND_PORT + "/learn_kylin", info);
+   				System.out.println("Connection status -------------------------->" + connection);
+   		
+   				Statement stmt = connection.createStatement();
+   		
+   				String fromMonth = fromDate.split("/")[0];
+   				String fromYear = fromDate.split("/")[1];
+   				String toMonth = toDate.split("/")[0];
+   				String toYear = toDate.split("/")[1];
+   		
+   				String queryStr = "";
+   				System.out.println("Query filterRequest: " + (filterRequest.getAddOnNew().equals( "Include")));
+   		
+   				queryStr += "SELECT" 
+   				+" SUM(GEP_OD) AS GEP_OD,"
+   				+" SUM(GEP_TP) AS GEP_TP,"
+   				+" SUM(NEP_OD) AS NEP_OD,"
+   				+" SUM(NEP_TP) AS NEP_TP,"
+   				+" SUM(DISCOUNT_GEP_OD) AS DISCOUNT_GEP_OD,"
+   				+" SUM(DISCOUNT_NEP_OD) AS DISCOUNT_NEP_OD,"
+   				+" SUM(GEP_DEP_OD) AS GEP_DEP_OD,"
+   				+" SUM(GEP_DEP_TP) AS GEP_DEP_TP,"
+   				+" SUM(GEP_NCB_OD) AS GEP_NCB_OD,"
+   				+" SUM(GEP_NCB_TP) AS GEP_NCB_TP,"
+   				+" SUM(GEP_OTHER_ADDON_OD) AS GEP_OTHER_ADDON_OD,"
+   				+" SUM(GEP_OTHER_ADDON_TP) AS GEP_OTHER_ADDON_TP,"
+   				+" SUM(NEP_DEP_OD) AS NEP_DEP_OD,"
+   				+" SUM(NEP_DEP_TP) AS NEP_DEP_TP,"
+   				+" SUM(NEP_NCB_OD) AS NEP_NCB_OD,"
+   				+" SUM(NEP_NCB_TP) AS NEP_NCB_TP,"
+   				+" SUM(NEP_OTHER_ADDON_OD) AS NEP_OTHER_ADDON_OD,"
+   				+" SUM(NEP_OTHER_ADDON_TP) AS NEP_OTHER_ADDON_TP,"
+   				+" SUM(EARNED_POLICIES_OD) AS EARNED_POLICIES_OD,"
+   				+" SUM(EARNED_POLICIES_TP) AS EARNED_POLICIES_TP,"
+   				+" SUM(ADDON_EARNED_POLICIES_OD) AS ADDON_EARNED_POLICIES_OD,"
+   				+" SUM(ADDON_EARNED_POLICIES_TP) AS ADDON_EARNED_POLICIES_TP,"
+   				+" SUM(GIC_TPULR) AS GIC_TPULR,"
+   				+" SUM(GIC_TPULR_DEP) AS GIC_TPULR_DEP,"
+   				+" SUM(GIC_TPULR_NCB) AS GIC_TPULR_NCB,"
+   				+" SUM(GIC_TPULR_OTHER_ADDON) AS GIC_TPULR_OTHER_ADDON,"
+   				+" SUM(NIC_TPULR) AS NIC_TPULR,"
+   				+" SUM(NIC_TPULR_DEP) AS NIC_TPULR_DEP,"
+   				+" SUM(NIC_TPULR_NCB) AS NIC_TPULR_NCB,"
+   				+" SUM(NIC_TPULR_OTHER_ADDON) AS NIC_TPULR_OTHER_ADDON,"
+   				+" SUM(GWP_OD) AS GWP_OD,"
+   				+" SUM(GWP_TP) AS GWP_TP,"
+   				+" SUM(NWP_OD) AS NWP_OD,"
+   				+" SUM(NWP_TP) AS NWP_TP,"
+   				+" SUM(GWP_DEP_OD) AS GWP_DEP_OD,"
+   				+" SUM(GWP_DEP_TP) AS GWP_DEP_TP,"
+   				+" SUM(GWP_NCB_OD) AS GWP_NCB_OD,"
+   				+" SUM(GWP_NCB_TP) AS GWP_NCB_TP,"
+   				+" SUM(GWP_OTHER_ADDON_OD) AS GWP_OTHER_ADDON_OD,"
+   				+" SUM(GWP_OTHER_ADDON_TP) AS GWP_OTHER_ADDON_TP,"
+   				+" SUM(NWP_DEP_OD) AS NWP_DEP_OD,"
+   				+" SUM(NWP_DEP_TP) AS NWP_DEP_TP,"
+   				+" SUM(NWP_NCB_OD) AS NWP_NCB_OD,"
+   				+" SUM(NWP_NCB_TP) AS NWP_NCB_TP,"
+   				+" SUM(NWP_OTHER_ADDON_OD) AS NWP_OTHER_ADDON_OD,"
+   				+" SUM(NWP_OTHER_ADDON_TP) AS NWP_OTHER_ADDON_TP,"
+   				+" SUM(POLICY_COUNT_OD) AS POLICY_COUNT_OD,"
+   				+" SUM(POLICY_COUNT_TP) AS POLICY_COUNT_TP,"
+   				+" SUM(POLICY_COUNT_OTHERS) AS POLICY_COUNT_OTHERS,"
+   				+" SUM(ADDON_POLICY_COUNT_OD) AS ADDON_POLICY_COUNT_OD,"
+   				+" SUM(ADDON_POLICY_COUNT_TP) AS ADDON_POLICY_COUNT_TP,"
+   				+" SUM(ADDON_POLICY_COUNT_OTHERS) AS ADDON_POLICY_COUNT_OTHERS,"
+   				+" SUM(ACQ_COST_OD) AS ACQ_COST_OD,"
+   				+" SUM(ACQ_COST_TP) AS ACQ_COST_TP,"
+   				+" SUM(ADDON_ACQ_COST_OD) AS ADDON_ACQ_COST_OD,"
+   				+" SUM(ADDON_ACQ_COST_TP) AS ADDON_ACQ_COST_TP,"
+   				+" SUM(CAT_CLAIM_COUNT) AS CAT_CLAIM_COUNT,"
+   				+" SUM(THEFT_CLAIM_COUNT) AS THEFT_CLAIM_COUNT,"
+   				+" SUM(OTHER_CLAIM_COUNT) AS OTHER_CLAIM_COUNT,"
+   				+" SUM(CLAIM_COUNT_TP) AS CLAIM_COUNT_TP,"
+   				+" SUM(ADDON_CAT_COUNT) AS ADDON_CAT_COUNT,"
+   				+" SUM(ADDON_THEFT_COUNT) AS ADDON_THEFT_COUNT,"
+   				+" SUM(ADDON_OTHER_COUNT) AS ADDON_OTHER_COUNT,"
+   				+" SUM(ADDON_CLAIM_COUNT_TP) AS ADDON_CLAIM_COUNT_TP,"
+   				+" SUM(CAT_GIC) AS CAT_GIC,"
+   				+" SUM(THEFT_GIC) AS THEFT_GIC,"
+   				+" SUM(OTHER_GIC) AS OTHER_GIC,"
+   				+" SUM(GIC_TP) AS GIC_TP,"
+   				+" SUM(CAT_NIC) AS CAT_NIC,"
+   				+" SUM(THEFT_NIC) AS THEFT_NIC,"
+   				+" SUM(OTHER_NIC) AS OTHER_NIC,"
+   				+" SUM(NIC_TP) AS NIC_TP,"
+   				+" SUM(ADDON_CAT_GIC) AS ADDON_CAT_GIC,"
+   				+" SUM(ADDON_THEFT_GIC) AS ADDON_THEFT_GIC,"
+   				+" SUM(ADDON_OTHER_GIC) AS ADDON_OTHER_GIC,"
+   				+" SUM(ADDON_GIC_TP) AS ADDON_GIC_TP,"
+   				+" SUM(ADDON_CAT_NIC) AS ADDON_CAT_NIC,"
+   				+" SUM(ADDON_THEFT_NIC) AS ADDON_THEFT_NIC,"
+   				+" SUM(ADDON_OTHER_NIC) AS ADDON_OTHER_NIC,"
+   				+" SUM(ADDON_NIC_TP) AS ADDON_NIC_TP,"
+   				+" SUM(ESTIMATED_GIC) AS ESTIMATED_GIC,"
+   				+" SUM(ESTIMATED_CAT_GIC) AS ESTIMATED_CAT_GIC,"
+   				+" SUM(ESTIMATED_THEFT_GIC) AS ESTIMATED_THEFT_GIC,"
+   				+" SUM(ESTIMATED_OTHER_GIC) AS ESTIMATED_OTHER_GIC,"
+   				+" SUM(ESTIMATED_TP_GIC) AS ESTIMATED_TP_GIC,"
+   				+" SUM(ESTIMATED_ADDON_GIC) AS ESTIMATED_ADDON_GIC,"
+   				+" SUM(ESTIMATED_ADDON_CAT_GIC) AS ESTIMATED_ADDON_CAT_GIC,"
+   				+" SUM(ESTIMATED_ADDON_THEFT_GIC) AS ESTIMATED_ADDON_THEFT_GIC,"
+   				+" SUM(ESTIMATED_ADDON_OTHER_GIC) AS ESTIMATED_ADDON_OTHER_GIC,"
+   				+" SUM(ESTIMATED_ADDON_TP_GIC) AS ESTIMATED_ADDON_TP_GIC,"
+   				+" SUM(ESTIMATED_LOSS_RATIO) AS ESTIMATED_LOSS_RATIO,"
+   				+" SUM(ESTIMATED_OD_LOSS_RATIO) AS ESTIMATED_OD_LOSS_RATIO,"
+   				+" SUM(ESTIMATED_TP_LOSS_RATIO) AS ESTIMATED_TP_LOSS_RATIO,"
+   				+" SUM(ESTIMATED_TPULR_LOSS_RATIO) AS ESTIMATED_TPULR_LOSS_RATIO,"
+   				+" SUM(ESTIMATED_ADDON_LOSS_RATIO) AS ESTIMATED_ADDON_LOSS_RATIO,"
+   				+" SUM(ESTIMATED_ADDON_OD_LOSS_RATIO) AS ESTIMATED_ADDON_OD_LOSS_RATIO,"
+   				+" SUM(ESTIMATED_ADDON_TP_LOSS_RATIO) AS ESTIMATED_ADDON_TP_LOSS_RATIO,"
+   				+" SUM(ESTIMATED_ADDON_TPULR_LOSS_RATIO) AS ESTIMATED_ADDON_TPULR_LOSS_RATIO,"
+   				+" AVG(R12_FREQ) AS R12_FREQ,"
+   				+" AVG(R12_CAT_FREQ) AS R12_CAT_FREQ,"
+   				+" AVG(R12_THEFT_FREQ) AS R12_THEFT_FREQ,"
+   				+" AVG(R12_OTHERS_FREQ) AS R12_OTHERS_FREQ,"
+   				+" AVG(R12_TP_FREQ) AS R12_TP_FREQ,"
+   				+" AVG(R12_ADDON_FREQ) AS R12_ADDON_FREQ,"
+   				+" AVG(R12_ADDON_CAT_FREQ) AS R12_ADDON_CAT_FREQ,"
+   				+" AVG(R12_ADDON_THEFT_FREQ) AS R12_ADDON_THEFT_FREQ,"
+   				+" AVG(R12_ADDON_OTHERS_FREQ) AS R12_ADDON_OTHERS_FREQ,"
+   				+" AVG(R12_ADDON_TP_FREQ) AS R12_ADDON_TP_FREQ,"
+   				+" AVG(R12_SEVERITY) AS R12_SEVERITY,"
+   				+" AVG(R12_CAT_SEVERITY) AS R12_CAT_SEVERITY,"
+   				+" AVG(R12_THEFT_SEVERITY) AS R12_THEFT_SEVERITY,"
+   				+" AVG(R12_OTHERS_SEVERITY) AS R12_OTHERS_SEVERITY,"
+   				+" AVG(R12_TP_SEVERITY) AS R12_TP_SEVERITY,"
+   				+" AVG(R12_ADDON_SEVERITY) AS R12_ADDON_SEVERITY,"
+   				+" AVG(R12_ADDON_CAT_SEVERITY) AS R12_ADDON_CAT_SEVERITY,"
+   				+" AVG(R12_ADDON_THEFT_SEVERITY) AS R12_ADDON_THEFT_SEVERITY,"
+   				+" AVG(R12_ADDON_OTHERS_SEVERITY) AS R12_ADDON_OTHERS_SEVERITY,"
+   				+" AVG(R12_ADDON_TP_SEVERITY) AS R12_ADDON_TP_SEVERITY,"
+   				+" AVG(R12_LOSS_RATIO) AS R12_LOSS_RATIO,"
+   				+" AVG(R12_OD_LOSS_RATIO) AS R12_OD_LOSS_RATIO,"
+   				+" AVG(R12_TP_LOSS_RATIO) AS R12_TP_LOSS_RATIO,"
+   				+" AVG(R12_TPULR_LOSS_RATIO) AS R12_TPULR_LOSS_RATIO,"
+   				+" AVG(R12_ADDON_LOSS_RATIO) AS R12_ADDON_LOSS_RATIO,"
+   				+" AVG(R12_ADDON_OD_LOSS_RATIO) AS R12_ADDON_OD_LOSS_RATIO,"
+   				+" AVG(R12_ADDON_TP_LOSS_RATIO) AS R12_ADDON_TP_LOSS_RATIO,"
+   				+" AVG(R12_ADDON_TPULR_LOSS_RATIO) AS R12_ADDON_TPULR_LOSS_RATIO,"
+   				+" ((SUM(CAT_CLAIM_COUNT)+SUM(THEFT_CLAIM_COUNT)+SUM(OTHER_CLAIM_COUNT))/(SUM(POLICY_COUNT_OD)))*100 AS FREQ,"
+   				+" ((SUM(CAT_CLAIM_COUNT))/(SUM(POLICY_COUNT_OD)))*100 AS CAT_FREQ,"
+   				+" ((SUM(THEFT_CLAIM_COUNT))/(SUM(POLICY_COUNT_OD)))*100 AS THEFT_FREQ,"
+   				+" ((SUM(OTHER_CLAIM_COUNT))/(SUM(POLICY_COUNT_OD)))*100 AS OTHER_FREQ,"
+   				+" ((SUM(CAT_GIC)+SUM(THEFT_GIC)+SUM(OTHER_GIC))/(SUM(CAT_CLAIM_COUNT)+SUM(THEFT_CLAIM_COUNT)+SUM(OTHER_CLAIM_COUNT))) AS SEVERITY,"
+   				+" ((SUM(CAT_GIC))/(SUM(CAT_CLAIM_COUNT)+SUM(THEFT_CLAIM_COUNT)+SUM(OTHER_CLAIM_COUNT))) AS CAT_SEVERITY,"
+   				+" ((SUM(THEFT_GIC))/(SUM(CAT_CLAIM_COUNT)+SUM(THEFT_CLAIM_COUNT)+SUM(OTHER_CLAIM_COUNT))) AS THEFT_SEVERITY,"
+   				+" ((SUM(OTHER_GIC))/(SUM(CAT_CLAIM_COUNT)+SUM(THEFT_CLAIM_COUNT)+SUM(OTHER_CLAIM_COUNT))) AS OTHER_SEVERITY,"
+   				+" ((SUM(CAT_GIC)+SUM(THEFT_GIC)+SUM(OTHER_GIC)+SUM(GIC_TPULR))/(SUM(GEP_OD)+SUM(GEP_TP)))*100 AS LOSS_RATIO,"
+   				+" ((SUM(CAT_GIC)+SUM(THEFT_GIC)+SUM(OTHER_GIC))/(SUM(GEP_OD)))*100 AS OD_LOSS_RATIO,"
+   				+" ((SUM(GIC_TPULR))/(SUM(GEP_TP)))*100 AS TPulr_LOSS_RATIO,"
+   				+" ((SUM(GIC_TP))/(SUM(GEP_TP)))*100 AS TP_LOSS_RATIO"
+   				+" FROM RSDB.POLICY_GROUP_LEVEL_FACT_TABLE as POLICY_GROUP_LEVEL_FACT_TABLE"
+   				+" LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER"
+   				+" ON POLICY_GROUP_LEVEL_FACT_TABLE.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE"
+   				+" LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER"
+   				+" ON POLICY_GROUP_LEVEL_FACT_TABLE.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE"
+   				+" LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER"
+   				+" ON POLICY_GROUP_LEVEL_FACT_TABLE.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE"
+   				+" LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER"
+   				+" ON POLICY_GROUP_LEVEL_FACT_TABLE.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE";
+   									
+   				String finstartDate = fromYear + "-" + fromMonth + "-01";
+   				String finEndDate = toYear + "-" + toMonth + "-31";
+   				
+   				queryStr += " WHERE  GEP_YEAR in ('"+fromYear+"') and  GEP_MONTH in ('01','02','03','04','05','06','07','08','09','10','11','12')";
+   		
+   				System.out.println("R12Query" + queryStr);
+   				
+   				// if (filterRequest != null && filterRequest.getPolicyTypes() != null
+   				// 		&& !filterRequest.getPolicyTypes().isEmpty()) {
+   				// 	String vals = "";
+   				// 	for (int i = 0; i < filterRequest.getPolicyTypes().size(); i++) {
+   				// 		vals += "'" + filterRequest.getPolicyTypes().get(i).trim() + "'";
+   				// 		if (i != filterRequest.getPolicyTypes().size() - 1) {
+   				// 			vals += ",";
+   				// 		}
+   				// 	}
+   					
+   				// 	queryStr += "and TRIM (POLICY_GROUP_LEVEL_FACT_TABLE.POLICY_TYPE) in  (" + vals + ")";
+   				// }
+   		
+   				if(filterRequest != null && filterRequest.getPolicyTypeNew() != null && !filterRequest.getPolicyTypeNew().isEmpty()){
+   					
+   					String vals = "";
+   					for (int i = 0; i < filterRequest.getPolicyTypeNew().size(); i++) {
+   						vals += "'" + filterRequest.getPolicyTypeNew().get(i).trim() + "'";
+   						if (i != filterRequest.getPolicyTypeNew().size() - 1) {
+   							vals += ",";
+   						}
+   					}
+   					queryStr += "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.POLICY_TYPE_NEW) in  (" + vals + ")";
+   		
+   				}
+   		
+   				if(filterRequest != null && filterRequest.getChannelNew() != null && !filterRequest.getChannelNew().isEmpty()){
+   					
+   					String vals = "";
+   					for (int i = 0; i < filterRequest.getChannelNew().size(); i++) {
+   						vals += "'" + filterRequest.getChannelNew().get(i).trim() + "'";
+   						if (i != filterRequest.getChannelNew().size() - 1) {
+   							vals += ",";
+   						}
+   					}
+   					queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.CHANNEL_NEW) in  (" + vals + ")";
+   		
+   				}
+   		
+   				if(filterRequest != null && filterRequest.getCategorisation() != null && !filterRequest.getCategorisation().isEmpty()){
+   					
+   					String vals = "";
+   					for (int i = 0; i < filterRequest.getCategorisation().size(); i++) {
+   						vals += "'" + filterRequest.getCategorisation().get(i).trim() + "'";
+   						if (i != filterRequest.getCategorisation().size() - 1) {
+   							vals += ",";
+   						}
+   					}
+   					queryStr += "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.CATEGORISATION) in(" + vals + ")";
+   		
+   				}
+   		
+   				if(filterRequest != null && filterRequest.getEngineCapacity() != null && !filterRequest.getEngineCapacity().isEmpty()){
+   					
+   					String vals = "";
+   					for (int i = 0; i < filterRequest.getEngineCapacity().size(); i++) {
+   						vals += "'" + filterRequest.getEngineCapacity().get(i).trim() + "'";
+   						if (i != filterRequest.getEngineCapacity().size() - 1) {
+   							vals += ",";
+   						}
+   					}
+   					queryStr += " and (POLICY_GROUP_LEVEL_FACT_TABLE.ENGINECAPACITY) in (" + vals + ")";
+   		
+   				}
+   				if (filterRequest != null && filterRequest.getVehicleAge() != null
+   						&& !filterRequest.getVehicleAge().isEmpty()) {
+   					String vals = "";
+   					for (int i = 0; i < filterRequest.getVehicleAge().size(); i++) {
+   						vals += "'" + filterRequest.getVehicleAge().get(i).trim() + "'";
+   						if (i != filterRequest.getVehicleAge().size() - 1) {
+   							vals += ",";
+   						}
+   					}
+   					queryStr += "and (POLICY_GROUP_LEVEL_FACT_TABLE.VEHICLEAGE) in (" + vals + ")";
+   				}
+   		
+   				
+   				if (filterRequest != null && filterRequest.getBTypeNow() != null
+   						&& !filterRequest.getBTypeNow().isEmpty()) {
+   					String vals = "";
+   					for (int i = 0; i < filterRequest.getBTypeNow().size(); i++) {
+   						vals += "'" + filterRequest.getBTypeNow().get(i).trim() + "'";
+   						if (i != filterRequest.getBTypeNow().size() - 1) {
+   							vals += ",";
+   						}
+   					}
+   					queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.BUSINESS_TYPE) in (" + vals + ")";
+   				}
+   				if (filterRequest != null && filterRequest.getChannelNow() != null
+   						&& !filterRequest.getChannelNow().isEmpty()) {
+   					String vals = "";
+   					for (int i = 0; i < filterRequest.getChannelNow().size(); i++) {
+   						vals += "'" + filterRequest.getChannelNow().get(i).trim() + "'";
+   						if (i != filterRequest.getChannelNow().size() - 1) {
+   							vals += ",";
+   						}
+   					}
+   					queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.CHANNEL) in (" + vals + ")";
+   				}
+   				if (filterRequest != null && filterRequest.getSubChannelNow() != null
+   						&& !filterRequest.getSubChannelNow().isEmpty()) {
+   					String vals = "";
+   					for (int i = 0; i < filterRequest.getSubChannelNow().size(); i++) {
+   						vals += "'" + filterRequest.getSubChannelNow().get(i).trim() + "'";
+   						if (i != filterRequest.getSubChannelNow().size() - 1) {
+   							vals += ",";
+   						}
+   					}
+   					queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.SUB_CHANNEL) in  (" + vals + ")";
+   				}
+   				if (filterRequest != null && filterRequest.getMakeNow() != null
+   						&& !filterRequest.getMakeNow().isEmpty()) {
+   					String vals = "";
+   					for (int i = 0; i < filterRequest.getMakeNow().size(); i++) {
+   						vals += "'" + filterRequest.getMakeNow().get(i).trim() + "'";
+   						if (i != filterRequest.getMakeNow().size() - 1) {
+   							vals += ",";
+   						}
+   					}
+   					queryStr += "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.MAKE) in  (" + vals + ")";
+   				}
+   				if (filterRequest != null && filterRequest.getModelGroupNow() != null
+   						&& !filterRequest.getModelGroupNow().isEmpty()) {
+   					String vals = "";
+   					for (int i = 0; i < filterRequest.getModelGroupNow().size(); i++) {
+   						vals += "'" + filterRequest.getModelGroupNow().get(i).trim() + "'";
+   						if (i != filterRequest.getModelGroupNow().size() - 1) {
+   							vals += ",";
+   						}
+   					}
+   					queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.MODELGROUP) in (" + vals + ")";
+   				}
+   				if (filterRequest != null && filterRequest.getFuelTypeNow() != null
+   						&& !filterRequest.getFuelTypeNow().isEmpty()) {
+   					String vals = "";
+   					for (int i = 0; i < filterRequest.getFuelTypeNow().size(); i++) {
+   						vals += "'" + filterRequest.getFuelTypeNow().get(i).trim() + "'";
+   						if (i != filterRequest.getFuelTypeNow().size() - 1) {
+   							vals += ",";
+   						}
+   					}
+   					queryStr += "and coalesce(POLICY_GROUP_LEVEL_FACT_TABLE.FUEL_TYPE,'N') in   (" + vals + ")";
+   				}
+   				if (filterRequest != null && filterRequest.getStateGroupNow() != null
+   						&& !filterRequest.getStateGroupNow().isEmpty()) {
+   					String vals = "";
+   					for (int i = 0; i < filterRequest.getStateGroupNow().size(); i++) {
+   						vals += "'" + filterRequest.getStateGroupNow().get(i).trim() + "'";
+   						if (i != filterRequest.getStateGroupNow().size() - 1) {
+   							vals += ",";
+   						}
+   					}
+   					queryStr += "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.STATE_GROUPING) in (" + vals + ")";
+   				}
+   				
+   				if (filterRequest != null && filterRequest.getNcbNow() != null
+   						&& !filterRequest.getNcbNow().isEmpty()) {
+   					String vals = "";
+   					for (int i = 0; i < filterRequest.getNcbNow().size(); i++) {
+   						vals += "'" + filterRequest.getNcbNow().get(i).trim() + "'";
+   						if (i != filterRequest.getNcbNow().size() - 1) {
+   							vals += ",";
+   						}
+   					}
+   					queryStr += "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.NCB_FLAG) in 	  (" + vals + ")";
+   				}
+   				
+   				/*latest*/
+   				/*if (filterRequest != null && filterRequest.getNcbNow() != null
+   						&& !filterRequest.getNcbNow().isEmpty()) {
+   					
+   					
+   					String Nvals = "and (RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_PREM)= '0'";
+   					String Yvals = "and (RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_PREM)<> '0'";
+   					int cvalcounter = 0,cvalNcounter = 0;
+   					for (int i = 0; i < filterRequest.getNcbNow().size(); i++) {
+   						
+   						 if(filterRequest.getNcbNow().get(i).trim().contains("N")){
+   							 if(cvalcounter==0)
+   							queryStr += Nvals;
+   							 cvalcounter++;
+   						 }else if(filterRequest.getNcbNow().get(i).trim().contains("Y")){
+   							if(cvalNcounter==0)
+   							queryStr += Yvals;
+   							cvalNcounter++;
+   						 }
+   					
+   						System.out.println("NCB NEW POLICY query------------------------------ " + queryStr);
+   						
+   					}
+   					
+   					
+   					
+   				}*/
+   				
+   				
+   				/*String vals = "";
+   				for (int i = 0; i < filterRequest.getMotorNcbFlag().size(); i++) {
+   					vals += "'" + filterRequest.getMotorNcbFlag().get(i).trim() + "'";
+   					if (i != filterRequest.getMotorNcbFlag().size() - 1) {
+   						vals += ",";
+   					}
+   				}
+   				queryStr += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_FLAG) in (" + vals + ")";
+   				
+   				
+   				queryStr += "  ";*/			
+   				
+   				// if (filterRequest != null && filterRequest.getMotorChannel() != null
+   				// 		&& !filterRequest.getMotorChannel().isEmpty()) {
+   				// 	String vals = "";
+   				// 	for (int i = 0; i < filterRequest.getMotorChannel().size(); i++) {
+   				// 		vals += "'" + filterRequest.getMotorChannel().get(i).trim() + "'";
+   				// 		if (i != filterRequest.getMotorChannel().size() - 1) {
+   				// 			vals += ",";
+   				// 		}
+   				// 	}
+   				// 	queryStr += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.CHANNEL) in (" + vals + ")";
+   				// }
+   		
+   		
+   				// if (filterRequest != null && filterRequest.getMotorSubChannel() != null
+   				// 		&& !filterRequest.getMotorSubChannel().isEmpty()) {
+   				// 	String vals = "";
+   				// 	for (int i = 0; i < filterRequest.getMotorSubChannel().size(); i++) {
+   				// 		vals += "'" + filterRequest.getMotorSubChannel().get(i).trim() + "'";
+   				// 		if (i != filterRequest.getMotorSubChannel().size() - 1) {
+   				// 			vals += ",";
+   				// 		}
+   				// 	}
+   				// 	queryStr += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.SUB_CHANNEL) in (" + vals + ")";
+   				// }
+   		
+   				if (filterRequest != null && filterRequest.getMotorZone() != null
+   						&& !filterRequest.getMotorZone().isEmpty()) {
+   					String vals = "";
+   					for (int i = 0; i < filterRequest.getMotorZone().size(); i++) {
+   						vals += "'" + filterRequest.getMotorZone().get(i).trim() + "'";
+   						if (i != filterRequest.getMotorZone().size() - 1) {
+   							vals += ",";
+   						}
+   					}
+   					queryStr += " and TRIM(KPI_BRANCH_MASTER.ZONE) in (" + vals + ")";
+   				}
+   				
+   				if (filterRequest != null && filterRequest.getMotorCluster() != null
+   						&& !filterRequest.getMotorCluster().isEmpty()) {
+   					String vals = "";
+   					for (int i = 0; i < filterRequest.getMotorCluster().size(); i++) {
+   						vals += "'" + filterRequest.getMotorCluster().get(i).trim() + "'";
+   						if (i != filterRequest.getMotorCluster().size() - 1) {
+   							vals += ",";
+   						}
+   					}
+   					queryStr += " and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in (" + vals + ")";
+   				}
+   		
+   				if (filterRequest != null && filterRequest.getMotorState() != null
+   						&& !filterRequest.getMotorState().isEmpty()) {
+   					String vals = "";
+   					for (int i = 0; i < filterRequest.getMotorState().size(); i++) {
+   						vals += "'" + filterRequest.getMotorState().get(i).trim() + "'";
+   						if (i != filterRequest.getMotorState().size() - 1) {
+   							vals += ",";
+   						}
+   					}
+   					queryStr += " and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in (" + vals + ")";
+   				}
+   		
+   				if (filterRequest != null && filterRequest.getMotorCity() != null
+   						&& !filterRequest.getMotorCity().isEmpty()) {
+   					String vals = "";
+   					for (int i = 0; i < filterRequest.getMotorCity().size(); i++) {
+   						vals += "'" + filterRequest.getMotorCity().get(i).trim() + "'";
+   						if (i != filterRequest.getMotorCity().size() - 1) {
+   							vals += ",";
+   						}
+   					}
+   					queryStr += " and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in (" + vals + ")";
+   				}
+   			
+   		
+   				if (filterRequest != null && filterRequest.getMotorBranch() != null
+   						&& !filterRequest.getMotorBranch().isEmpty()) {
+   					String vals = "";
+   					for (int i = 0; i < filterRequest.getMotorBranch().size(); i++) {
+   						vals += "'" + filterRequest.getMotorBranch().get(i).trim() + "'";
+   						if (i != filterRequest.getMotorBranch().size() - 1) {
+   							vals += ",";
+   						}
+   					}
+   					queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.BRANCH_CODE) in (" + vals + ")";
+   				}
+   				
+   				if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
+   						&& !filterRequest.getMotorIntermediaryCode().isEmpty()) {
+   					String vals = "";
+   					for (int i = 0; i < filterRequest.getMotorIntermediaryCode().size(); i++) {
+   						vals += "'" + filterRequest.getMotorIntermediaryCode().get(i).trim() + "'";
+   						if (i != filterRequest.getMotorIntermediaryCode().size() - 1) {
+   							vals += ",";
+   						}
+   					}
+   					queryStr += "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.AGENT_CODE) in  (" + vals + ")";
+   				}
+   				
+   				if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
+   						&& !filterRequest.getMotorIntermediaryName().isEmpty()) {
+   					String vals = "";
+   					for (int i = 0; i < filterRequest.getMotorIntermediaryName().size(); i++) {
+   						vals += "'" + filterRequest.getMotorIntermediaryName().get(i).trim() + "'";
+   						if (i != filterRequest.getMotorIntermediaryName().size() - 1) {
+   							vals += ",";
+   						}
+   					}
+   					queryStr += " and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in  (" + vals + ")";
+   				}
+   		
+   				// if (filterRequest != null && filterRequest.getMotorFuelType() != null
+   				// 		&& !filterRequest.getMotorFuelType().isEmpty()) {
+   				// 	String vals = "";
+   				// 	for (int i = 0; i < filterRequest.getMotorFuelType().size(); i++) {
+   				// 		vals += "'" + filterRequest.getMotorFuelType().get(i).trim() + "'";
+   				// 		if (i != filterRequest.getMotorFuelType().size() - 1) {
+   				// 			vals += ",";
+   				// 		}
+   				// 	}
+   				// 	queryStr += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.FUELTYPE) in (" + vals + ")";
+   				// }
+   				
+   				/*if (filterRequest != null && filterRequest.getMotorNcbFlag() != null
+   						&& !filterRequest.getMotorNcbFlag().isEmpty()) {
+   					
+   					
+   					String Nvals = "and (RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_PREM)= '0'";
+   					String Yvals = "and (RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_PREM)<> '0'";
+   					int cvalcounter = 0,cvalNcounter = 0;
+   					for (int i = 0; i < filterRequest.getMotorNcbFlag().size(); i++) {
+   						
+   						 if(filterRequest.getMotorNcbFlag().get(i).trim().contains("N")){
+   							 if(cvalcounter==0)
+   							queryStr += Nvals;
+   							 cvalcounter++;
+   						 }else if(filterRequest.getMotorNcbFlag().get(i).trim().contains("Y")){
+   							if(cvalNcounter==0)
+   							queryStr += Yvals;
+   							cvalNcounter++;
+   						 }
+   					
+   						System.out.println("NCB NEW POLICY query------------------------------ " + queryStr);
+   						
+   					}
+   					
+   				}*/
+   				
+   				/*String vals = "";
+   				for (int i = 0; i < filterRequest.getMotorNcbFlag().size(); i++) {
+   					vals += "'" + filterRequest.getMotorNcbFlag().get(i).trim() + "'";
+   					if (i != filterRequest.getMotorNcbFlag().size() - 1) {
+   						vals += ",";
+   					}
+   				}
+   				queryStr += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_FLAG) in (" + vals + ")";
+   				
+   				
+   				queryStr += "  ";*/
+   				
+   				if (filterRequest != null && filterRequest.getMotorCarType() != null
+   						&& !filterRequest.getMotorCarType().isEmpty()) {
+   					String vals = "'HIGHEND','High End'";
+   					String nheVals = "'Sling','OIB','OIB PS','Xcd','Others','SS PS'";
+   					int cvalcounter = 0,cvalNHEcounter = 0;
+   					for (int i = 0; i < filterRequest.getMotorCarType().size(); i++) {
+   						
+   						 if(filterRequest.getMotorCarType().get(i).trim().equals("HE")){
+   							 if(cvalcounter==0)
+   							queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.MODELCLASSIFICATION) in  (" + vals + ")";
+   							 cvalcounter++;
+   						 }else if(filterRequest.getMotorCarType().get(i).trim().equals("NHE")){
+   							if(cvalNHEcounter==0)
+   							queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.MODELCLASSIFICATION) in (" + nheVals + ")";
+   							cvalNHEcounter++;
+   						 }
+   					
+   						System.out.println("HE query------------------------------ " + queryStr);
+   						
+   					}
+   					
+   				}
+   				
+   				
+   		
+   				// if(filterRequest.getAddOnNew().equals("Include")){
+   				// 	queryStr += " group by ADDON_TYPE,category ) x";
+   				// }else if(filterRequest.getAddOnNew().equals("Exclude")){
+   				// 	queryStr += " group by ADDON_TYPE,category ) x ) mm";
+   				// }else if(filterRequest.getAddOnNew().equals("Only Addon")){
+   				// 	queryStr += " group by ADDON_TYPE,category ) x) mm";
+   				// }
+   		
+   				System.out.println("R12 queryStr------------------------------ " + queryStr);
+   				ResultSet rs = stmt.executeQuery(queryStr);
+   				System.out.println("START------------------------------ ");
+   		
+   				
+   				while (rs.next()) {
+   		
+   					R12CubeResponse res = new R12CubeResponse();
+   					res.setGepOd(rs.getDouble(1));
+   					res.setGepTp(rs.getDouble(2));
+   					res.setNepOd(rs.getDouble(3));
+   					res.setNepTp(rs.getDouble(4));
+   					res.setDiscountGepOd(rs.getDouble(5));
+   					res.setDiscountNepOd(rs.getDouble(6));;
+   					res.setGepDepOd(rs.getDouble(7));
+   					res.setGepDepTp(rs.getDouble(8));
+   					res.setGepNcbOd(rs.getDouble(9));
+   					res.setGepNcbTp(rs.getDouble(10));
+   					res.setGepOtherAddonOd(rs.getDouble(11));
+   					res.setGepOtherAddonTp(rs.getDouble(12));
+   					res.setNepDepOd(rs.getDouble(13));
+   					res.setNepDepTp(rs.getDouble(14));
+   					res.setNepNcbOd(rs.getDouble(15));
+   					res.setNepNcbTp(rs.getDouble(16));
+   					res.setNepOtherAddonOd(rs.getDouble(17));
+   					res.setNepOtherAddonTp(rs.getDouble(18));
+   					res.setEarnedPoliciesOd(rs.getDouble(19));
+   					res.setEarnedPoliciesTp(rs.getDouble(20));
+   					res.setAddonEarnedPoliciesOd(rs.getDouble(21));
+   					res.setAddonEarnedPoliciesTp(rs.getDouble(22));
+   					res.setGicTpUlr(rs.getDouble(23));
+   					res.setGicTpUlrDep(rs.getDouble(24));
+   					res.setGicTpUlrNcb(rs.getDouble(25));
+   					res.setGicTpUlrOtherAddon(rs.getDouble(26));
+   					res.setNicTpUlr(rs.getDouble(27));
+   					res.setNicTpUlrDep(rs.getDouble(28));
+   					res.setNicTpUlrNcb(rs.getDouble(29));
+   					res.setNicTpUlrOtherAddon(rs.getDouble(29));
+   					res.setGwpOd(rs.getDouble(30));
+   					res.setGwpTp(rs.getDouble(31));
+   					res.setNwpOd(rs.getDouble(32));
+   					res.setNwpTp(rs.getDouble(33));
+   					res.setGwpDepOd(rs.getDouble(34));
+   					res.setGwpDepTp(rs.getDouble(35));
+   					res.setGwpNcbOd(rs.getDouble(36));
+   					res.setGwpNcbTp(rs.getDouble(37));
+   					res.setGwpOtherAddonOd(rs.getDouble(38));
+   					res.setGwpOtherAddonTp(rs.getDouble(39));
+   					res.setNwpDepOd(rs.getDouble(40));
+   					res.setNwpDepTp(rs.getDouble(41));
+   					res.setNwpNcbOd(rs.getDouble(42));
+   					res.setNwpNcbTp(rs.getDouble(43));
+   					res.setNwpOtherAddonOd(rs.getDouble(44));
+   					res.setNwpOtherAddonTp(rs.getDouble(45));
+   					res.setPolicyCountTp(rs.getDouble(46));
+   					res.setPolicyCountOd(rs.getDouble(47));
+   					res.setPolicyCountOthers(rs.getDouble(48));
+   					res.setAddonPolicyCountTp(rs.getDouble(49));
+   					res.setAddonPolicyCountOd(rs.getDouble(50));
+   					res.setAddonPolicyCountOthers(rs.getDouble(51));
+   					res.setAcqCostOd(rs.getDouble(52));
+   					res.setAcqCostTp(rs.getDouble(53));
+   					res.setAddonAcqCostOd(rs.getDouble(54));
+   					res.setAddonAcqCostTp(rs.getDouble(55));
+   					res.setCatClaimCount(rs.getDouble(56));
+   					res.setTheftClaimCount(rs.getDouble(57));
+   					res.setOtherClaimCount(rs.getDouble(58));
+   					res.setAddonCatCount(rs.getDouble(59));
+   					res.setAddonTheftCount(rs.getDouble(60));
+   					res.setAddonOtherCount(rs.getDouble(61));
+   					res.setAddonClaimCountTp(rs.getDouble(62));
+   					res.setCatGic(rs.getDouble(63));
+   					res.setTheftGic(rs.getDouble(64));
+   					res.setOtherGic(rs.getDouble(65));
+   					res.setGicTp(rs.getDouble(66));
+   					res.setCatNic(rs.getDouble(67));
+   					res.setTheftNic(rs.getDouble(68));
+   					res.setOtherNic(rs.getDouble(69));
+   					res.setNicTp(rs.getDouble(70));
+   					res.setAddonCatGic(rs.getDouble(71));
+   					res.setAddonTheftGic(rs.getDouble(72));
+   					res.setAddonOtherGic(rs.getDouble(73));
+   					res.setAddonGicTp(rs.getDouble(74));
+   					res.setAddonCatNic(rs.getDouble(75));
+   					res.setAddonTheftNic(rs.getDouble(76));
+   					res.setAddonOtherNic(rs.getDouble(77));
+   					res.setAddonNicTp(rs.getDouble(78));
+   					res.setEstimatedGic(rs.getDouble(79));
+   					res.setEstimatedCatGic(rs.getDouble(80));
+   					res.setEstimatedTheftGic(rs.getDouble(81));
+   					res.setEstimatedOtherGic(rs.getDouble(82));
+   					res.setEstimatedTpGic(rs.getDouble(83));
+   					res.setEstimatedAddonGic(rs.getDouble(84));
+   					res.setEstimatedAddonCatGic(rs.getDouble(85));
+   					res.setEstimatedAddonTheftGic(rs.getDouble(86));
+   					res.setEstimatedAddonOtherGic(rs.getDouble(87));
+   					res.setEstimatedAddonTpGic(rs.getDouble(88));
+   					res.setEstimatedLossRatio(rs.getDouble(89));
+   					res.setEstimatedOdLossRatio(rs.getDouble(90));
+   					res.setEstimatedTpLossRatio(rs.getDouble(91));
+   					res.setEstimatedTpUlrLossRatio(rs.getDouble(92));
+   					res.setEstimatedAddonLossRatio(rs.getDouble(93));
+   					res.setEstimatedAddonOdLossRatio(rs.getDouble(94));
+   					res.setEstimatedAddonTpLossRatio(rs.getDouble(95));
+   					res.setEstimatedAddonTpUlrLossRatio(rs.getDouble(96));
+   					res.setR12Freq(rs.getDouble(97));
+   					res.setR12CatFreq(rs.getDouble(98));
+   					res.setR12TheftFreq(rs.getDouble(99));
+   					res.setR12OthersFreq(rs.getDouble(100));
+   					res.setR12TpFreq(rs.getDouble(101));
+   					res.setR12AddonFreq(rs.getDouble(102));
+   					res.setR12AddonCatFreq(rs.getDouble(103));
+   					res.setR12AddonTheftFreq(rs.getDouble(104));
+   					res.setR12AddonOthersFreq(rs.getDouble(105));
+   					res.setR12AddonTpFreq(rs.getDouble(106));
+   					res.setR12Severity(rs.getDouble(107));
+   					res.setR12CatSeverity(rs.getDouble(108));
+   					res.setR12TheftSeverity(rs.getDouble(109));
+   					res.setR12OthersSeverity(rs.getDouble(110));
+   					res.setR12TpSeverity(rs.getDouble(111));
+   					res.setR12AddonSeverity(rs.getDouble(112));
+   					res.setR12AddonCatSeverity(rs.getDouble(113));
+   					res.setR12AddonTheftSeverity(rs.getDouble(114));
+   					res.setR12AddonOthersSeverity(rs.getDouble(115));
+   					res.setR12AddonTpSeverity(rs.getDouble(116));
+   					res.setR12LossRatio(rs.getDouble(117));
+   					res.setR12OdLossRatio(rs.getDouble(118));
+   					res.setR12TpLossRatio(rs.getDouble(119));
+   					res.setR12TpUlrLossRatio(rs.getDouble(120));
+   					res.setR12AddonLossRatio(rs.getDouble(121));
+   					res.setR12AddonOdLossRatio(rs.getDouble(122));
+   					res.setR12AddonTpLossRatio(rs.getDouble(123));
+   					res.setR12AddonTpUlrLossRatio(rs.getDouble(124));
+   					res.setFreq(rs.getDouble(125));
+   					res.setCatFreq(rs.getDouble(126));
+   					res.setTheftFreq(rs.getDouble(127));
+   					res.setOtherFreq(rs.getDouble(128));
+   					res.setSeverity(rs.getDouble(129));
+   					res.setCatSeverity(rs.getDouble(130));
+   					res.setTheftSeverity(rs.getDouble(131));
+   					res.setOtherSeverity(rs.getDouble(132));
+   					res.setLossRatio(rs.getDouble(133));
+   					res.setOdLossRatio(rs.getDouble(134));
+   					res.setTpUlrLossRatio(rs.getDouble(135));
+   					res.setTpLossRatio(rs.getDouble(136));
+   					kpiResponseList.add(res);
+   		
+   		
+   				}
+   		
+   				System.out.println("Query execution time " + (System.currentTimeMillis() - startTime));
+   			} catch (Exception e) {
+   				System.out.println("kylinDataSource initialize error, ex: " + e);
+   				System.out.println();
+   				e.printStackTrace();
+   			} finally {
+   				connection.close();
+   			}
+   			System.out.println("response list------------------------------ " + kpiResponseList);
+   		
+   			return kpiResponseList;
+   		}
+   
+   
+   
+    @GetMapping("/getReserveSingleLineCubeGicDataNew/{claimType}/{claimParamType}")
 	@ResponseBody
 	public List<ReserverSingleLineCubeResponseNew> getReserveSingleLineCubeGicDataNew(HttpServletRequest req, UserMatrixMasterRequest filterRequest,
 			@PathVariable(value="claimParamType") String claimParamType,
@@ -2977,20 +4917,11 @@ public class KpiController {
 				queryStr += " WHERE SUBSTRING(inception_date,1,10) >='"+finstartDate+"' and SUBSTRING(inception_date,1,10) <='"+finEndDate+"' ";
 			}
 			
+			
+			
+			
 
-				
-				if (filterRequest != null && filterRequest.getPolicyTypes() != null
-						&& !filterRequest.getPolicyTypes().isEmpty()) {
-					String vals = "";
-					for (int i = 0; i < filterRequest.getPolicyTypes().size(); i++) {
-						vals += "'" + filterRequest.getPolicyTypes().get(i).trim() + "'";
-						if (i != filterRequest.getPolicyTypes().size() - 1) {
-							vals += ",";
-						}
-					}
-
-					queryStr += " and TRIM(RSA_DWH_COVERCODE_MASTER.CATEGORY) in (" + vals + ")";
-				}
+	
 				
 				if (filterRequest != null && filterRequest.getBTypeNow() != null
 						&& !filterRequest.getBTypeNow().isEmpty()) {
@@ -3003,6 +4934,7 @@ public class KpiController {
 					}
 					queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BUSINESS_TYPE) in (" + vals + ")";
 				}
+				
 				if (filterRequest != null && filterRequest.getChannelNow() != null
 						&& !filterRequest.getChannelNow().isEmpty()) {
 					String vals = "";
@@ -3056,7 +4988,7 @@ public class KpiController {
 							vals += ",";
 						}
 					}
-					queryStr += " and coalesce(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.FUELTYPE,'N') in (" + vals + ")";
+					queryStr += " and coalesce(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.FUELTYPE,'N') in (" + vals + ")";
 				}
 				if (filterRequest != null && filterRequest.getStateGroupNow() != null
 						&& !filterRequest.getStateGroupNow().isEmpty()) {
@@ -3265,120 +5197,120 @@ public class KpiController {
 
 			while (rs.next()) {
 
-				ReserverSingleLineCubeResponseNew res = new ReserverSingleLineCubeResponseNew();
-				if(claimParamType.equals("GIC")){
-				res.setCatGicOdComprehensiveDep(rs.getDouble(1));
-				res.setCatGicOdComprehensiveNcb(rs.getDouble(2));
-				res.setCatGicOdComprehensiveOtherAddon(rs.getDouble(3));
-				res.setCatGicOdComprehensiveNoAddon(rs.getDouble(4));
-				res.setCatGicOdTpDep(rs.getDouble(5));
-				res.setCatGicOdTpNcb(rs.getDouble(6));
-				res.setCatGicOdTpOtherAddon(rs.getDouble(7));
-				res.setCatGicOdTpNoAddon(rs.getDouble(8));
-				res.setCatGicOdOthersDep(rs.getDouble(9));
-				res.setCatGicOdOthersNcb(rs.getDouble(10));
-				res.setCatGicOdOthersOtherAddon(rs.getDouble(11));
-				res.setCatGicOdOthersNoAddon(rs.getDouble(12));
-				res.setTheftGicOdComprehensiveDep(rs.getDouble(13));
-				res.setTheftGicOdComprehensiveNcb(rs.getDouble(14));
-				res.setTheftGicOdComprehensiveOtherAddon(rs.getDouble(15));
-				res.setTheftGicOdComprehensiveNoAddon(rs.getDouble(16));
-				res.setTheftGicOdTpDep(rs.getDouble(17));
-				res.setTheftGicOdTpNcb(rs.getDouble(18));
-				res.setTheftGicOdTpOtherAddon(rs.getDouble(19));
-				res.setTheftGicOdTpNoAddon(rs.getDouble(20));
-				res.setTheftGicOdOthersDep(rs.getDouble(21));
-				res.setTheftGicOdOthersNcb(rs.getDouble(22));
-				res.setTheftGicOdOthersOtherAddon(rs.getDouble(23));
-				res.setTheftGicOdOthersNoAddon(rs.getDouble(24));
-				res.setOthersGicOdComprehensiveDep(rs.getDouble(25));
-				res.setOthersGicOdComprehensiveNcb(rs.getDouble(26));
-				res.setOthersGicOdComprehensiveOtherAddon(rs.getDouble(27));
-				res.setOthersGicOdComprehensiveNoAddon(rs.getDouble(28));
-				res.setOthersGicOdTpDep(rs.getDouble(29));
-				res.setOthersGicOdTpNcb(rs.getDouble(30));
-				res.setOthersGicOdTpOtherAddon(rs.getDouble(31));
-				res.setOthersGicOdTpNoAddon(rs.getDouble(32));
-				res.setOthersGicOdOthersDep(rs.getDouble(33));
-				res.setOthersGicOdOthersNcb(rs.getDouble(34));
-				res.setOthersGicOdOthersOtherAddon(rs.getDouble(35));
-				res.setOthersGicOdOthersNoAddon(rs.getDouble(36));
-				res.setCatGicTpComprehensiveDep(rs.getDouble(37));
-				res.setCatGicTpComprehensiveNcb(rs.getDouble(38));
-				res.setCatGicTpComprehensiveOtherAddon(rs.getDouble(39));
-				res.setCatGicTpComprehensiveNoAddon(rs.getDouble(40));
-				res.setCatGicTpTpDep(rs.getDouble(41));
-				res.setCatGicTpTpNcb(rs.getDouble(42));
-				res.setCatGicTpTpOtherAddon(rs.getDouble(43));
-				res.setCatGicTpTpNoAddon(rs.getDouble(44));
-				res.setCatGicTpOthersDep(rs.getDouble(45));
-				res.setCatGicTpOthersNcb(rs.getDouble(46));
-				res.setCatGicTpOthersOtherAddon(rs.getDouble(47));
-				res.setCatGicTpOthersNoAddon(rs.getDouble(48));
-				res.setTheftGicTpComprehensiveDep(rs.getDouble(49));
-				res.setTheftGicTpComprehensiveNcb(rs.getDouble(50));
-				res.setTheftGicTpComprehensiveOtherAddon(rs.getDouble(51));
-				res.setTheftGicTpComprehensiveNoAddon(rs.getDouble(52));
-				res.setTheftGicTpTpDep(rs.getDouble(53));
-				res.setTheftGicTpTpNcb(rs.getDouble(54));
-				res.setTheftGicTpTpOtherAddon(rs.getDouble(55));
-				res.setTheftGicTpTpNoAddon(rs.getDouble(56));
-				res.setTheftGicTpOthersDep(rs.getDouble(57));
-				res.setTheftGicTpOthersNcb(rs.getDouble(58));
-				res.setTheftGicTpOthersOtherAddon(rs.getDouble(59));
-				res.setTheftGicTpOthersNoAddon(rs.getDouble(60));
-				res.setOthersGicTpComprehensiveDep(rs.getDouble(61));
-				res.setOthersGicTpComprehensiveNcb(rs.getDouble(62));
-				res.setOthersGicTpComprehensiveOtherAddon(rs.getDouble(63));
-				res.setOthersGicTpComprehensiveNoAddon(rs.getDouble(64));
-				res.setOthersGicTpTpDep(rs.getDouble(65));
-				res.setOthersGicTpTpNcb(rs.getDouble(66));
-				res.setOthersGicTpTpOtherAddon(rs.getDouble(67));
-				res.setOthersGicTpTpNoAddon(rs.getDouble(68));
-				res.setOthersGicTpOthersDep(rs.getDouble(69));
-				res.setOthersGicTpOthersNcb(rs.getDouble(70));
-				res.setOthersGicTpOthersOtherAddon(rs.getDouble(71));
-				res.setOthersGicTpOthersNoAddon(rs.getDouble(72));
-				}else if(claimParamType.equals("NIC")){
-					res.setNicComprehensiveDep(rs.getDouble(1));
-					res.setNicComprehensiveNcb(rs.getDouble(2));
-					res.setNicComprehensiveOtherAddon(rs.getDouble(3));
-					res.setNicComprehensiveNoAddon(rs.getDouble(4));
-					res.setNicTpDep(rs.getDouble(5));
-					res.setNicTpNcb(rs.getDouble(6));
-					res.setNicTpOtherAddon(rs.getDouble(7));
-					res.setNicTpNoAddon(rs.getDouble(8));
-					res.setNicOthersDep(rs.getDouble(9));
-					res.setNicOthersNcb(rs.getDouble(10));
-					res.setNicOthersOtherAddon(rs.getDouble(11));
-					res.setNicOthersNoAddon(rs.getDouble(12));
-					res.setNicTpComprehensiveDep(rs.getDouble(13));
-					res.setNicTpComprehensiveNcb(rs.getDouble(14));
-					res.setNicTpComprehensiveOtherAddon(rs.getDouble(15));
-					res.setNicTpComprehensiveNoAddon(rs.getDouble(16));
-					res.setNicTpTpDep(rs.getDouble(17));
-					res.setNicTpTpNcb(rs.getDouble(18));
-					res.setNicTpTpOtherAddon(rs.getDouble(19));
-					res.setNicTpTpNoAddon(rs.getDouble(20));
-					res.setNicTpOthersDep(rs.getDouble(21));
-					res.setNicTpOthersNcb(rs.getDouble(22));
-					res.setNicTpOthersOtherAddon(rs.getDouble(23));
-					res.setNicTpOthersNoAddon(rs.getDouble(24));
-					res.setNicOdComprehensiveDep(rs.getDouble(25));
-					res.setNicOdComprehensiveNcb(rs.getDouble(26));
-					res.setNicOdComprehensiveOtherAddon(rs.getDouble(27));
-					res.setNicOdComprehensiveNoAddon(rs.getDouble(28));
-					res.setNicOdTpDep(rs.getDouble(29));
-					res.setNicOdTpNcb(rs.getDouble(30));
-					res.setNicOdTpOtherAddon(rs.getDouble(31));
-					res.setNicOdTpNoAddon(rs.getDouble(32));
-					res.setNicOdOthersDep(rs.getDouble(33));
-					res.setNicOdOthersNcb(rs.getDouble(34));
-					res.setNicOdOthersOtherAddon(rs.getDouble(35));
-					res.setNicOdOthersNoAddon(rs.getDouble(36));
-				}
-				
-				kpiResponseList.add(res);
+//				ReserverSingleLineCubeResponseNew res = new ReserverSingleLineCubeResponseNew();
+//				if(claimParamType.equals("GIC")){
+//				res.setCatGicOdComprehensiveDep(rs.getDouble(1));
+//				res.setCatGicOdComprehensiveNcb(rs.getDouble(2));
+//				res.setCatGicOdComprehensiveOtherAddon(rs.getDouble(3));
+//				res.setCatGicOdComprehensiveNoAddon(rs.getDouble(4));
+//				res.setCatGicOdTpDep(rs.getDouble(5));
+//				res.setCatGicOdTpNcb(rs.getDouble(6));
+//				res.setCatGicOdTpOtherAddon(rs.getDouble(7));
+//				res.setCatGicOdTpNoAddon(rs.getDouble(8));
+//				res.setCatGicOdOthersDep(rs.getDouble(9));
+//				res.setCatGicOdOthersNcb(rs.getDouble(10));
+//				res.setCatGicOdOthersOtherAddon(rs.getDouble(11));
+//				res.setCatGicOdOthersNoAddon(rs.getDouble(12));
+//				res.setTheftGicOdComprehensiveDep(rs.getDouble(13));
+//				res.setTheftGicOdComprehensiveNcb(rs.getDouble(14));
+//				res.setTheftGicOdComprehensiveOtherAddon(rs.getDouble(15));
+//				res.setTheftGicOdComprehensiveNoAddon(rs.getDouble(16));
+//				res.setTheftGicOdTpDep(rs.getDouble(17));
+//				res.setTheftGicOdTpNcb(rs.getDouble(18));
+//				res.setTheftGicOdTpOtherAddon(rs.getDouble(19));
+//				res.setTheftGicOdTpNoAddon(rs.getDouble(20));
+//				res.setTheftGicOdOthersDep(rs.getDouble(21));
+//				res.setTheftGicOdOthersNcb(rs.getDouble(22));
+//				res.setTheftGicOdOthersOtherAddon(rs.getDouble(23));
+//				res.setTheftGicOdOthersNoAddon(rs.getDouble(24));
+//				res.setOthersGicOdComprehensiveDep(rs.getDouble(25));
+//				res.setOthersGicOdComprehensiveNcb(rs.getDouble(26));
+//				res.setOthersGicOdComprehensiveOtherAddon(rs.getDouble(27));
+//				res.setOthersGicOdComprehensiveNoAddon(rs.getDouble(28));
+//				res.setOthersGicOdTpDep(rs.getDouble(29));
+//				res.setOthersGicOdTpNcb(rs.getDouble(30));
+//				res.setOthersGicOdTpOtherAddon(rs.getDouble(31));
+//				res.setOthersGicOdTpNoAddon(rs.getDouble(32));
+//				res.setOthersGicOdOthersDep(rs.getDouble(33));
+//				res.setOthersGicOdOthersNcb(rs.getDouble(34));
+//				res.setOthersGicOdOthersOtherAddon(rs.getDouble(35));
+//				res.setOthersGicOdOthersNoAddon(rs.getDouble(36));
+//				res.setCatGicTpComprehensiveDep(rs.getDouble(37));
+//				res.setCatGicTpComprehensiveNcb(rs.getDouble(38));
+//				res.setCatGicTpComprehensiveOtherAddon(rs.getDouble(39));
+//				res.setCatGicTpComprehensiveNoAddon(rs.getDouble(40));
+//				res.setCatGicTpTpDep(rs.getDouble(41));
+//				res.setCatGicTpTpNcb(rs.getDouble(42));
+//				res.setCatGicTpTpOtherAddon(rs.getDouble(43));
+//				res.setCatGicTpTpNoAddon(rs.getDouble(44));
+//				res.setCatGicTpOthersDep(rs.getDouble(45));
+//				res.setCatGicTpOthersNcb(rs.getDouble(46));
+//				res.setCatGicTpOthersOtherAddon(rs.getDouble(47));
+//				res.setCatGicTpOthersNoAddon(rs.getDouble(48));
+//				res.setTheftGicTpComprehensiveDep(rs.getDouble(49));
+//				res.setTheftGicTpComprehensiveNcb(rs.getDouble(50));
+//				res.setTheftGicTpComprehensiveOtherAddon(rs.getDouble(51));
+//				res.setTheftGicTpComprehensiveNoAddon(rs.getDouble(52));
+//				res.setTheftGicTpTpDep(rs.getDouble(53));
+//				res.setTheftGicTpTpNcb(rs.getDouble(54));
+//				res.setTheftGicTpTpOtherAddon(rs.getDouble(55));
+//				res.setTheftGicTpTpNoAddon(rs.getDouble(56));
+//				res.setTheftGicTpOthersDep(rs.getDouble(57));
+//				res.setTheftGicTpOthersNcb(rs.getDouble(58));
+//				res.setTheftGicTpOthersOtherAddon(rs.getDouble(59));
+//				res.setTheftGicTpOthersNoAddon(rs.getDouble(60));
+//				res.setOthersGicTpComprehensiveDep(rs.getDouble(61));
+//				res.setOthersGicTpComprehensiveNcb(rs.getDouble(62));
+//				res.setOthersGicTpComprehensiveOtherAddon(rs.getDouble(63));
+//				res.setOthersGicTpComprehensiveNoAddon(rs.getDouble(64));
+//				res.setOthersGicTpTpDep(rs.getDouble(65));
+//				res.setOthersGicTpTpNcb(rs.getDouble(66));
+//				res.setOthersGicTpTpOtherAddon(rs.getDouble(67));
+//				res.setOthersGicTpTpNoAddon(rs.getDouble(68));
+//				res.setOthersGicTpOthersDep(rs.getDouble(69));
+//				res.setOthersGicTpOthersNcb(rs.getDouble(70));
+//				res.setOthersGicTpOthersOtherAddon(rs.getDouble(71));
+//				res.setOthersGicTpOthersNoAddon(rs.getDouble(72));
+//				}else if(claimParamType.equals("NIC")){
+//					res.setNicComprehensiveDep(rs.getDouble(1));
+//					res.setNicComprehensiveNcb(rs.getDouble(2));
+//					res.setNicComprehensiveOtherAddon(rs.getDouble(3));
+//					res.setNicComprehensiveNoAddon(rs.getDouble(4));
+//					res.setNicTpDep(rs.getDouble(5));
+//					res.setNicTpNcb(rs.getDouble(6));
+//					res.setNicTpOtherAddon(rs.getDouble(7));
+//					res.setNicTpNoAddon(rs.getDouble(8));
+//					res.setNicOthersDep(rs.getDouble(9));
+//					res.setNicOthersNcb(rs.getDouble(10));
+//					res.setNicOthersOtherAddon(rs.getDouble(11));
+//					res.setNicOthersNoAddon(rs.getDouble(12));
+//					res.setNicTpComprehensiveDep(rs.getDouble(13));
+//					res.setNicTpComprehensiveNcb(rs.getDouble(14));
+//					res.setNicTpComprehensiveOtherAddon(rs.getDouble(15));
+//					res.setNicTpComprehensiveNoAddon(rs.getDouble(16));
+//					res.setNicTpTpDep(rs.getDouble(17));
+//					res.setNicTpTpNcb(rs.getDouble(18));
+//					res.setNicTpTpOtherAddon(rs.getDouble(19));
+//					res.setNicTpTpNoAddon(rs.getDouble(20));
+//					res.setNicTpOthersDep(rs.getDouble(21));
+//					res.setNicTpOthersNcb(rs.getDouble(22));
+//					res.setNicTpOthersOtherAddon(rs.getDouble(23));
+//					res.setNicTpOthersNoAddon(rs.getDouble(24));
+//					res.setNicOdComprehensiveDep(rs.getDouble(25));
+//					res.setNicOdComprehensiveNcb(rs.getDouble(26));
+//					res.setNicOdComprehensiveOtherAddon(rs.getDouble(27));
+//					res.setNicOdComprehensiveNoAddon(rs.getDouble(28));
+//					res.setNicOdTpDep(rs.getDouble(29));
+//					res.setNicOdTpNcb(rs.getDouble(30));
+//					res.setNicOdTpOtherAddon(rs.getDouble(31));
+//					res.setNicOdTpNoAddon(rs.getDouble(32));
+//					res.setNicOdOthersDep(rs.getDouble(33));
+//					res.setNicOdOthersNcb(rs.getDouble(34));
+//					res.setNicOdOthersOtherAddon(rs.getDouble(35));
+//					res.setNicOdOthersNoAddon(rs.getDouble(36));
+//				}
+//				
+//				kpiResponseList.add(res);
 			}
 
 			System.out.println("Query execution time " + (System.currentTimeMillis() - startTime));
@@ -3767,6 +5699,99 @@ public List<String> getSubChannelByChannel()
 	System.out.println("list size-->"+list.size());
 	return list;
 }*/
+
+ /* SELECT  
+SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_GIC) as RSL_GIC,  
+SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_CAT_GIC) as RSL_CAT_GIC,  
+SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_THEFT_GIC) as RSL_THEFT_GIC,  
+SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_OTHER_GIC) as RSL_OTHER_GIC,
+SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_TP_GIC) as RSL_TP_GIC,  
+SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_NIC) as RSL_NIC,  
+SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_CAT_NIC) as RSL_CAT_NIC,  
+SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_THEFT_NIC) as RSL_THEFT_NIC,  
+SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_OTHER_NIC) as RSL_OTHER_NIC,  
+SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_TP_NIC) as RSL_TP_NIC
+FROM RSDB.RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL as RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL
+LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE  
+LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE  
+LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE  
+LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE  
+LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  
+LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  
+LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  
+LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  
+LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE  
+LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE
+WHERE (SUBSTRING(inception_date,1,10) >='2019-04-01' and SUBSTRING(inception_date,1,10) <='2020-03-31')
+and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.CHANNEL) in ('')
+and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.CHANNEL_NEW) in ('')
+and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.SUB_CHANNEL) in ('')
+and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE) in ('')
+and coalesce(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.FUELTYPE,'N') in ('')
+and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.NCB_FLAG) in ('')
+and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE) in ('')
+and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.BUSINESS_TYPE) in ('')
+and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.MAKE) in ('')
+and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.MODELGROUP) in ('')
+and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.POLICY_TYPE) in ('')
+and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.POLICY_TYPE_NEW) in ('')
+and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.CATEGORISATION) in ('')
+and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.VEHICLEAGE) in ('')
+and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.ENGINECAPACITY) in ('')
+and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in ('')
+and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in ('')
+and TRIM(KPI_BRANCH_MASTER.ZONE) in ('')
+and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in ('')
+and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in ('')
+and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in ('')
+and TRIM(RSA_DWH_CITY_GROUPING_MASTER_FINAL.STATE_GROUPING) in ('');    */
+
+
+/* SELECT  
+SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_GIC) as RSL_GIC,  
+SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CAT_GIC) as RSL_CAT_GIC,  
+SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_THEFT_GIC) as RSL_THEFT_GIC,  
+SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_OTHER_GIC) as RSL_OTHER_GIC,
+SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_TP_GIC) as RSL_TP_GIC,  
+SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_NIC) as RSL_NIC,  
+SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CAT_NIC) as RSL_CAT_NIC,  
+SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_THEFT_NIC) as RSL_THEFT_NIC,  
+SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_OTHER_NIC) as RSL_OTHER_NIC,  
+SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_TP_NIC) as RSL_TP_NIC
+FROM RSDB.RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL as RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL
+LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE  
+LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE  
+LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE  
+LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE  
+LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  
+LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  
+LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  
+LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  
+LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE  
+LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE
+WHERE ( CSL_MVMT_MONTH between 201904 and 202003 )
+and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CHANNEL) in ('')
+and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CHANNEL_NEW) in ('')
+and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUB_CHANNEL) in ('')
+and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE) in ('')
+and coalesce(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.FUELTYPE,'N') in ('')
+and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.NCB_FLAG) in ('')
+and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE) in ('')
+and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BUSINESS_TYPE) in ('')
+and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MAKE) in ('')
+and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MODELGROUP) in ('')
+and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.POLICY_TYPE) in ('')
+and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.POLICY_TYPE_NEW) in ('')
+and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CATEGORISATION) in ('')
+and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.VEHICLEAGE) in ('')
+and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.ENGINECAPACITY) in ('')
+and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in ('')
+and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in ('')
+and TRIM(KPI_BRANCH_MASTER.ZONE) in ('')
+and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in ('')
+and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in ('')
+and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in ('')
+and TRIM(RSA_DWH_CITY_GROUPING_MASTER_FINAL.STATE_GROUPING) in (''); */
 
 
 }
