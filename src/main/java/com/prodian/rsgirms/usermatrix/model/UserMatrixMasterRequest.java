@@ -145,4 +145,16 @@ public class UserMatrixMasterRequest {
 	 private List<String> ncbNow;
 	 
 	 private List<String> motorCarType;
+	 
+	 private List<String> channelNew;
+	 private List<String> policyTypeNew;
+	 private List<String> categorisation;
+	 private List<String> vehicleAge;
+	 private List<String> engineCapacity;
+	 
+	 
+	 
+	 
+	 
+	 
 }
