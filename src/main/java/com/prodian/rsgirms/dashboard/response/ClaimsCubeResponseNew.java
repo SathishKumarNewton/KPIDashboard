@@ -11,17 +11,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ClaimsCubeResponseNew {
 	
-	private double catClaimCountPoliciesComprehensive;
-	private double catClaimCountPoliciesTp;
-	private double catClaimCountPoliciesOthers;
+	private double claimCount;
+	private double addOnClaimCount;
 	
-	private double theftClaimCountPoliciesComprehensive;
-	private double theftClaimCountPoliciesTp;
-	private double theftClaimCountPoliciesOthers;
+	private double catClaimCount;
+	private double addOnCatClaimCount;
 	
-	private double othersClaimCountPoliciesComprehensive;
-	private double othersClaimCountPoliciesTp;
-	private double othersClaimCountPoliciesOthers;
+	private double theftClaimCount;
+	private double addOnTheftClaimCount;
+	
+	private double otherClaimCount;
+	private double addOnOtherClaimCount;
+	
+	private double claimCountTp;
+	private double addOnClaimCountTp;
 	
 	
 	

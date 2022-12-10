@@ -20,6 +20,16 @@ public class PolicyCubeResponseNew {
 	private double acqCostOthers;
 	private double acqCost;
 	private double livesCovered;
+	private double addonWrittenPolicies;
+	private double addonWrittenPoliciesComprehensive;
+	private double addonWrittenPoliciesTp;
+	private double addonWrittenPoliciesOthers;
+	private double addonAcqCost;
+	private double addonAcqCostComprehensive;
+	private double addonAcqCostTp;
+	private double addonAcqCostOthers;
+	
+
 	
 	
 }

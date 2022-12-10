@@ -17,53 +17,49 @@ public class GepCubeResponseFinal {
 	private double gepTp;
 	private double nepOd;
 	private double nepTp;
-	private double gepNildep;
+	
+	private double discountGepOd;
+	private double discountGepTp;
+	
+	private double gepDep;
+	private double gepDepOd;
+	private double gepDepTp;
+	
 	private double gepNcb;
+	private double gepNcbOd;
+	private double gepNcbTp;
+	
 	private double gepOtherAddon;
-	private double gepOdEarnedPolicies;
-	private double gepDepEarnedPolicies;
-	private double gepNcbEarnedPolicies;
-	private double gepOtherAddonEarnedPolicies;
-	private double nepNildep;
+	private double gepOtherAddonOd;
+	private double gepOtherAddonTp;
+	
+	private double nepDep;
+	private double nepDepOd;
+	private double nepDepTp;
+	
 	private double nepNcb;
+	private double nepNcbOd;
+	private double nepNcbTp;
+	
 	private double nepOtherAddon;
+	private double nepOtherAddonOd;
+	private double nepOtherAddonTp;
 	
-	private double gepFreqCatOdr12;
-	private double gepFreqTheftOdr12;
-	private double gepFreqOthersOdr12;
+	private double earnedPolicies;
+	private double earnedPoliciesOd;
+	private double earnedPoliciesTp;
 	
-	private double gepFreqCatDepr12;
-	private double gepFreqTheftDepr12;
-	private double gepFreqOthersDepr12;
+	private double addonEarnedPolicies;
+	private double addonEarnedPoliciesOd;
+	private double addonEarnedPoliciesTp;
 	
-	private double gepFreqCatNcbr12;
-	private double gepFreqTheftNcbr12;
-	private double gepFreqOthersNcbr12;
+	private double gicTpulr;
+	private double gicTpulrDep;
+	private double gicTpulrNcb;
+	private double gicTpulrOtherAddon;
 	
-	private double gepFreqCatOtherAddonr12;
-	private double gepFreqTheftOtherAddonr12;
-	private double gepFreqOthersOtherAddonr12;
-	
-	private double gepSevCatr12;
-	private double gepSevTheftr12;
-	private double gepSevOthersr12;
-	
-	private double gepGicCatOdr12;
-	private double gepGicTheftOdr12;
-	private double gepGicOthersOdr12;
-	
-	private double gepGicCatDepr12;
-	private double gepGicTheftDepr12;
-	private double gepGicOthersDepr12;
-	
-	private double gepGicTheftNcbr12;
-	private double gepGicOthersNcbr12;
-	private double gepGicCatNcbr12;
-	
-	private double gepGicCatOtherAddonr12;	
-	private double gepGictheftOtherAddonr12;
-	private double gepGicOthersOtherAddonr12;
-	
-	private double gicTp;
-	
+	private double nicTpulr;
+	private double nicTpulrDep;
+	private double nicTpulrNcb;
+	private double nicTpulrOtherAddon;
 }
