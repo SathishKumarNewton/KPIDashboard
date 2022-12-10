@@ -7896,7 +7896,6 @@ public class KpiUpdatedDataController {
 	}
 
 	/////////////////// ------------------R12 Query
-	/////////////////// --------------------////////////////////////
 
 	@GetMapping("/getR12NewCubeData")
 	@ResponseBody

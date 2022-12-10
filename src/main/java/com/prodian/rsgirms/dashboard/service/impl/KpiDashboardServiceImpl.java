@@ -18,8 +18,11 @@ import com.prodian.rsgirms.dashboard.model.BranchMaster;
 import com.prodian.rsgirms.dashboard.model.BusinessTypeMaster;
 import com.prodian.rsgirms.dashboard.model.BusinessTypeMasterNow;
 import com.prodian.rsgirms.dashboard.model.CampaignMaster;
+import com.prodian.rsgirms.dashboard.model.CategorisationMaster;
 import com.prodian.rsgirms.dashboard.model.ChannelMaster;
+import com.prodian.rsgirms.dashboard.model.ChannelMasterNew;
 import com.prodian.rsgirms.dashboard.model.ChannelMasterNow;
+import com.prodian.rsgirms.dashboard.model.EngineCapacityMaster;
 import com.prodian.rsgirms.dashboard.model.FinMonthMaster;
 import com.prodian.rsgirms.dashboard.model.FinYearMaster;
 import com.prodian.rsgirms.dashboard.model.FuelTypeMasterNow;
@@ -31,17 +34,22 @@ import com.prodian.rsgirms.dashboard.model.ModelMaster;
 import com.prodian.rsgirms.dashboard.model.OaMaster;
 import com.prodian.rsgirms.dashboard.model.PolicyCategoryMaster;
 import com.prodian.rsgirms.dashboard.model.PolicyTypeMaster;
+import com.prodian.rsgirms.dashboard.model.PolicyTypeNew;
 import com.prodian.rsgirms.dashboard.model.ProductMaster;
 import com.prodian.rsgirms.dashboard.model.StateGroupMasterNow;
 import com.prodian.rsgirms.dashboard.model.SubChannelMaster;
 import com.prodian.rsgirms.dashboard.model.SubChannelMasterNow;
 import com.prodian.rsgirms.dashboard.model.SublineMaster;
+import com.prodian.rsgirms.dashboard.model.VehicleAgeMaster;
 import com.prodian.rsgirms.dashboard.repository.BranchMasterRepository;
 import com.prodian.rsgirms.dashboard.repository.BusinessTypeMasterNowRepository;
 import com.prodian.rsgirms.dashboard.repository.BusinessTypeMasterRepository;
 import com.prodian.rsgirms.dashboard.repository.CampaignMasterRepository;
+import com.prodian.rsgirms.dashboard.repository.CategorisationMasterRepository;
+import com.prodian.rsgirms.dashboard.repository.ChannelMasterNewRepository;
 import com.prodian.rsgirms.dashboard.repository.ChannelMasterNowRepository;
 import com.prodian.rsgirms.dashboard.repository.ChannelMasterRepository;
+import com.prodian.rsgirms.dashboard.repository.EngineCapacityMasterRepository;
 import com.prodian.rsgirms.dashboard.repository.FinMonthMasterRepository;
 import com.prodian.rsgirms.dashboard.repository.FinYearMasterRepository;
 import com.prodian.rsgirms.dashboard.repository.FuelTypeMasterNowRepository;
@@ -53,11 +61,13 @@ import com.prodian.rsgirms.dashboard.repository.ModelMasterRepository;
 import com.prodian.rsgirms.dashboard.repository.OaMasterRepository;
 import com.prodian.rsgirms.dashboard.repository.PolicyCategoryMasterRepository;
 import com.prodian.rsgirms.dashboard.repository.PolicyTypeMasterRepository;
+import com.prodian.rsgirms.dashboard.repository.PolicyTypeNewRepository;
 import com.prodian.rsgirms.dashboard.repository.ProductMasterRepository;
 import com.prodian.rsgirms.dashboard.repository.StateGroupMasterNowRepository;
 import com.prodian.rsgirms.dashboard.repository.SubChannelMasterNowRepository;
 import com.prodian.rsgirms.dashboard.repository.SubChannelMasterRepository;
 import com.prodian.rsgirms.dashboard.repository.SublineMasterRepository;
+import com.prodian.rsgirms.dashboard.repository.VehicleAgeMasterRepository;
 import com.prodian.rsgirms.dashboard.response.GwpResponse;
 import com.prodian.rsgirms.dashboard.response.KpiFiltersResponse;
 import com.prodian.rsgirms.dashboard.service.KpiDashboardService;
@@ -196,6 +206,21 @@ public class KpiDashboardServiceImpl implements KpiDashboardService {
 	
 	@Autowired
 	private BusinessTypeMasterNowRepository businessTypeMasterNowRepository;
+
+	@Autowired
+	private ChannelMasterNewRepository channelMasterNewRepository;
+
+	@Autowired
+	private PolicyTypeNewRepository policyTypeNewRepository;
+
+	@Autowired
+	private CategorisationMasterRepository categorisationMasterRepository;
+
+	@Autowired
+	private EngineCapacityMasterRepository engineCapacityMasterRepository;
+
+	@Autowired
+	private VehicleAgeMasterRepository vehicleAgeMasterRepository;
 	
 	
 	public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
@@ -302,13 +327,24 @@ public class KpiDashboardServiceImpl implements KpiDashboardService {
 		List<String> subChannelMasters = subChannelMasterRepository.getUniqueSubChannels();
 		List<SublineMaster> sublineMasters = sublineMasterRepository.findAll();
 		List<BranchMaster> branchMasters = branchMasterRepository.findAll();
-		/*List<IntermediaryMaster> intermediaryMasters = intermediaryMasterRepository.findAll();*/
-		List<IntermediaryMaster> intermediaryMasters = intermediaryMasterRepository.findByIntermediaryCode("AG021209");
+		List<IntermediaryMaster> intermediaryMasters = intermediaryMasterRepository.findAll();
+		//List<IntermediaryMaster> intermediaryMasters = intermediaryMasterRepository.findByIntermediaryCode("AG021209");
 		
 		List<ChannelMasterNow> channelMastersNow = channelMasterNowRepository.findAll();
 		List<SubChannelMasterNow> subChannelMastersNow = subChannelMasterNowRepository.findAll();
 		List<MakeMasterNow> makeMastersNow = makeMasterNowRepository.findAll();
 		List<String> list = modelGroupMasterNowRepository.getModelGroups();
+		List<CategorisationMaster> categorisationMasters = categorisationMasterRepository.findAll();
+		List<ChannelMasterNew> channelMasterNews = channelMasterNewRepository.findAll();
+		List<EngineCapacityMaster> engineCapacityMasters = engineCapacityMasterRepository.findAll();
+		List<PolicyTypeNew> policyTypeNews = policyTypeNewRepository.findAll();
+		List<VehicleAgeMaster> vehicleAgeMasters = vehicleAgeMasterRepository.findAll();
+        System.out.println("Size"+channelMasterNews.size());
+		System.out.println("Size"+engineCapacityMasters.size());
+		System.out.println("Size"+policyTypeNews.size());
+		System.out.println("Size"+vehicleAgeMasters.size());
+		System.out.println("Size"+categorisationMasters.size());
+
 		List<ModelGroupMasterNow> modelGroupMastersNow = new ArrayList<>();
 		for(String modelGrp : list){
 			ModelGroupMasterNow mgObj = new ModelGroupMasterNow();
@@ -331,8 +367,7 @@ public class KpiDashboardServiceImpl implements KpiDashboardService {
 		res.setModelGroupMastersNow(modelGroupMastersNow);
 		res.setBusinessTypeMastersNow(businessTypeMastersNow);
 		res.setFuelTypeMastersNow(fuelTypeMastersNow);
-		res.setStateGroupMastersNow(stateGroupMastersNow);
-		
+		res.setStateGroupMastersNow(stateGroupMastersNow);		
 		res.setBusinessTypeMasters(businessTypeMasters);
 		res.setCampaignMasters(campaignMasters);
 		res.setChannelMasters(channelMasters);
@@ -348,6 +383,11 @@ public class KpiDashboardServiceImpl implements KpiDashboardService {
 		res.setProductMasters(productMasters);
 		res.setBranchMasters(branchMasters);
 		res.setIntermediaryMasters(intermediaryMasters);
+		res.setChannelMasterNews(channelMasterNews);
+		res.setEngineCapacityMasters(engineCapacityMasters);
+		res.setCategorisationMasters(categorisationMasters);
+		res.setPolicyTypeNews(policyTypeNews);
+		res.setVehicleAgeMasters(vehicleAgeMasters);
 		return res;
 	}
 
