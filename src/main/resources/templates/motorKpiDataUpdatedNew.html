@@ -267,11 +267,13 @@
 			color: black;
 			border-radius: 8px;
 		}
+
 		@media screen and (max-width:400px) {
 			.row.cards.Reports {
-    			padding-right: 0 !important;
-    		}
-			.row{
+				padding-right: 0 !important;
+			}
+
+			.row {
 				margin-right: -23px;
 				margin-left: -23px;
 			}
@@ -379,7 +381,7 @@
 													<!-- <button class="resetText btn appyKpiFilter">APPLY FILTER</button> -->
 													<!-- <button class="resetText btn">RESET</button> -->
 													<btn class="btn report-toggler p-0"><span
-															class="fa fa-angle-down" ></span></btn>
+															class="fa fa-angle-down"></span></btn>
 												</div>
 											</div>
 											<!--  <div class="col-12 card-body report-card">
@@ -408,7 +410,9 @@
 																multiple="multiple">
 																<option value="">Channel New</option>
 																<option value="OEM">OEM</option>
-																<option value="Affinity,Branch Agency,Branch Business,Group,D2C,Mid Corporate,Retail Agency,Rural,SF">Non OEM</option>
+																<option
+																	value="Affinity,Branch Agency,Branch Business,Group,D2C,Mid Corporate,Retail Agency,Rural,SF">
+																	Non OEM</option>
 															</select>
 														</div>
 													</div>
@@ -429,7 +433,7 @@
 									</div>
 								</div>
 							</div>
-							
+
 							<div class="col-12 col-lg-12 col-xl-4 p-0 pt-md-3">
 								<div class="row cards Reports" style="padding-right: 2em;">
 									<div class="col-12">
@@ -635,7 +639,7 @@
 							</div>
 
 							<div class="col-12 col-lg-12 col-xl-4 p-0 pt-md-3">
-								<div class="row cards Reports" >
+								<div class="row cards Reports">
 									<div class="col-12">
 										<div class="row card-layout">
 											<!--Card -header-->
@@ -649,7 +653,7 @@
 															class="fa fa-angle-down"></span></btn>
 												</div>
 											</div>
-											
+
 											<div class="filters col-12 report-card">
 												<div class="row">
 													<div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
@@ -665,15 +669,15 @@
 															</select>
 														</div>
 													</div>
-													
+
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-							
-							
+
+
 
 						</div>
 
@@ -814,9 +818,9 @@
 													</div>
 												</div>
 											</div>
-											
 
-											
+
+
 
 											<div class="filters col-4 report-card">
 												<!--  <label class="h2">Sub Channel</label> -->
@@ -850,7 +854,7 @@
 												</div>
 											</div>
 
-											
+
 
 
 											<div class="filters col-4 report-card">
@@ -877,7 +881,8 @@
 																name="engineCapacityNow" multiple="multiple">
 																<option value="">Engine Capacity</option>
 																<option th:each="item : ${engineCapacity}"
-																	th:text="${item.engineCapacity}" th:value="${item.engineCapacity}">
+																	th:text="${item.engineCapacity}"
+																	th:value="${item.engineCapacity}">
 															</select>
 														</div>
 													</div>
@@ -892,7 +897,8 @@
 																name="vehicleAgeNow" multiple="multiple">
 																<option value="">Vehicle Age</option>
 																<option th:each="item : ${vehicleAge}"
-																	th:text="${item.vehicleAge}" th:value="${item.vehicleAge}">
+																	th:text="${item.vehicleAge}"
+																	th:value="${item.vehicleAge}">
 															</select>
 														</div>
 													</div>
@@ -947,7 +953,7 @@
 											</div>
 
 										</div>
-						
+
 										<div class="col-12 col-lg-12 col-xl-4 p-0 pt-md-2 ">
 											<div class="col-12">
 												<div id="addOnFilterDiv" style="margin-top: 1em;">
@@ -965,7 +971,7 @@
 												</div>
 											</div>
 										</div>
-										
+
 										<div class="col-12 col-lg-12 col-xl-4 p-0 pt-md-2 ">
 											<div class="col-12">
 												<div id="customClaimFilterDiv" style="margin-top: 1em;">
@@ -1046,7 +1052,7 @@
                                     </div> 
                                 </div>-->
 									</div>
-						
+
 									<!--Card Body-->
 								</div>
 							</div>
@@ -1876,7 +1882,7 @@
 													<td class="claimFreqOthers_r2"></td>
 													<td class="claimFreqOthers_r3"></td>
 												</tr>
-												
+
 												<tr href="#" id="show_10r">
 													<td>R12 CLAIM FREQUENCY OD</td>
 													<td class="r12claimFreq_r1"></td>
@@ -1901,7 +1907,7 @@
 													<td class="r12claimFreqOthers_r2"></td>
 													<td class="r12claimFreqOthers_r3"></td>
 												</tr>
-												
+
 												<tr href="#" id="show_11">
 													<td>CLAIM SEVERITY OD<span style="float:right;"></span></td>
 													<td class="claimSev_r1"></td>
@@ -1926,7 +1932,7 @@
 													<td class="claimSevOthers_r2"></td>
 													<td class="claimSevOthers_r3"></td>
 												</tr>
-												
+
 												<tr href="#" id="show_11r">
 													<td>R12 CLAIM SEVERITY OD<span style="float:right;"></span></td>
 													<td class="r12claimSev_r1"></td>
@@ -1951,8 +1957,8 @@
 													<td class="r12claimSevOthers_r2"></td>
 													<td class="r12claimSevOthers_r3"></td>
 												</tr>
-												
-												
+
+
 												<!-- <tr><td>EXPENSE RATIO</td><td class="expenseRatio_r1"></td><td class="expenseRatio_r2"></td><td class="expenseRatio_r3"></td></tr>
 									 -->
 												<!-- <tr href="#" id="show_12"><td>LOSS RATIO (GIC/GWP)</td><td class="lossRatio_r1"></td><td class="lossRatio_r2"></td><td class="lossRatio_r3"></td></tr>
@@ -1976,8 +1982,8 @@
 													<td class="lRatioTp_r2"></td>
 													<td class="lRatioTp_r3"></td>
 												</tr>
-												
-													<tr href="#" id="show_12r">
+
+												<tr href="#" id="show_12r">
 													<td>R12 LOSS RATIO (GIC/GEP)</td>
 													<td class="r12lRatio_r1"></td>
 													<td class="r12lRatio_r2"></td>
@@ -1995,7 +2001,7 @@
 													<td class="r12lRatioTp_r2"></td>
 													<td class="r12lRatioTp_r3"></td>
 												</tr>
-												
+
 												<tr href="#" id="show_14">
 													<td>ESTIMATED LOSS RATIO</td>
 													<td class="elRatio_r1"></td>
@@ -2032,9 +2038,9 @@
 													<td class="acrTp_r2"></td>
 													<td class="acrTp_r3"></td>
 												</tr>
-												
-												
-												
+
+
+
 												<!-- <tr><td>CLAIM RATIO</td><td class="claimRatio_r1"></td><td class="claimRatio_r2"></td><td class="claimRatio_r3"></td></tr>
 									<tr><td>COR</td><td class="cor_r1"></td><td class="cor_r2"></td><td class="cor_r3"></td></tr>
 									<tr><td>EXPENSES</td><td class="expense_r1"></td><td class="expense_r2"></td><td class="expense_r3"></td></tr>
@@ -3134,47 +3140,47 @@
 	<script>
 		///Common Header and sidebar loaded dynamically
 		jQuery(document).ready(function () {
-			
+
 			//setTimeout(function() {
 
 			jQuery("#pre-loader").remove();
 			//},5000);
 
 		});
-		
+
 		//showing and hiding table row
-		
-		$(document).ready(function() { 
+
+		$(document).ready(function () {
 
 			$("#show_10r").hide("fast")
 			$("#show_11r").hide("fast")
 			$("#show_12r").hide("fast")
-			 $("#show_14").hide("fast")
+			$("#show_14").hide("fast")
 
 			$("#r12Btn").click(function () {
 				$("#show_10r").show("fast")
 				$("#show_11r").show("fast")
 				$("#show_12r").show("fast")
-				 $("#show_14").show("fast")
-				
-				});
+				$("#show_14").show("fast")
+
+			});
 			$("#uwYearBtn").click(function () {
 				$("#show_10r").hide("fast")
 				$("#show_11r").hide("fast")
 				$("#show_12r").hide("fast")
-				 $("#show_14").hide("fast") 
-				
+				$("#show_14").hide("fast")
+
 			});
 			$("#periodBasedBtn").click(function () {
 				$("#show_10r").hide("fast")
 				$("#show_11r").hide("fast")
 				$("#show_12r").hide("fast")
-				 $("#show_14").hide("fast")
-				
+				$("#show_14").hide("fast")
+
 			});
 
 		});
-		
+
 		var uwYearToogle = true
 		var uwYearToogleBg;
 		var uwYearToogleColor;
@@ -3599,16 +3605,16 @@
 			$('#sidebar').fadeOut();
 			$(".mobile-view-toggler-on").show();
 		});
-		
-		
+
+
 
 		///Report Toggle < 968px
 		$(".report-toggler").click(function () {
 
-			if($(this).children().hasClass("fa fa-angle-down")){
-			 	$(this).children().removeClass("fa fa-angle-down").addClass("fa fa-angle-up");
-			}else{
- 				$(this).children().removeClass("fa fa-angle-up").addClass("fa fa-angle-down");
+			if ($(this).children().hasClass("fa fa-angle-down")) {
+				$(this).children().removeClass("fa fa-angle-down").addClass("fa fa-angle-up");
+			} else {
+				$(this).children().removeClass("fa fa-angle-up").addClass("fa fa-angle-down");
 			}
 			// $(".report-card").toggle();
 			$(this).parent().parent().parent().find(".report-card").toggle();
@@ -4600,6 +4606,7 @@ sortField: 'text'
 			}));
 		}
 
+
 		var isInsDataFetched = "N";
 		var insGwpPolicy;
 		var insGwpPolicyComprehensive;
@@ -4627,7 +4634,8 @@ sortField: 'text'
 		var insNwpOtherAddonPolicy;
 		var insNwpOtherAddonPolicyComprehensive;
 		var insNwpOtherAddonPolicyTp;
-		
+
+		var callInsApiAjaxResObj;
 		function callInsApi(period, fromDate, toDate) {
 
 			var report = $('#reports').val();
@@ -4665,10 +4673,11 @@ sortField: 'text'
 				data: genDiv,
 				success: function (data) {
 
-					responseJSON = data;
-					console.log('d');
-					console.log(responseJSON);
-					
+					// responseJSON = data;
+					callInsApiAjaxResObj = data;
+					console.log('insApi');
+					console.log(callInsApiAjaxResObj);
+
 					var gwp = "0.0", gwpOd = "0.0", gwpTp = "0.0", gwpDiscount = "0.00";
 					var nwp = "0.0", nwpOd = "0.0", nwpTp = "0.0", nwpDiscount = "0.00";
 					$.each(data, function (ind, obj) {
@@ -4679,7 +4688,7 @@ sortField: 'text'
 						insGwpDiscountPolicyComprehensive = obj.insGwpDiscountPolicyComprehensive;
 						insNwpDiscountPolicyComprehensive = obj.insNwpDiscountPolicyComprehensive;
 						insGwpDepPolicy = obj.insGwpDepPolicy;
-						insGwpDepPolicyComprehensive =obj.insGwpDepPolicyComprehensive;
+						insGwpDepPolicyComprehensive = obj.insGwpDepPolicyComprehensive;
 						insGwpDepPolicyTp = obj.insGwpDepPolicyTp;
 						insGwpNcbPolicy = obj.insGwpNcbPolicy;
 						insGwpNcbPolicyComprehensive = obj.insGwpNcbPolicyComprehensive;
@@ -4687,7 +4696,7 @@ sortField: 'text'
 						insGwpOtherAddonPolicy = obj.insGwpOtherAddonPolicy;
 						insGwpOtherAddonPolicyComprehensive = obj.insGwpOtherAddonPolicyComprehensive;
 						insGwpOtherAddonPolicyTp = obj.insGwpOtherAddonPolicyTp;
-						
+
 						insNwpPolicy = obj.insNwpPolicy;
 						insNwpPolicyComprehensive = obj.insNwpPolicyComprehensive;
 						insNwpPolicyTp = obj.insNwpPolicyTp;
@@ -4700,27 +4709,27 @@ sortField: 'text'
 						insNwpOtherAddonPolicy = obj.insNwpOtherAddonPolicy;
 						insNwpOtherAddonPolicyComprehensive = obj.insNwpOtherAddonPolicyComprehensive;
 						insNwpOtherAddonPolicyTp = obj.insNwpOtherAddonPolicyTp;
-						
+
 						isInsDataFetched = "Y";
-						
+
 						$(".gwp_r" + period).text(parseFloat("0.00"));
 						$(".gwpOd_r" + period).text(parseFloat("0.00"));
 						$(".gwpTp_r" + period).text(parseFloat("0.00"));
 						$(".nwp_r" + period).text(parseFloat("0.00"));
 						$(".nwpOd_r" + period).text(parseFloat("0.00"));
 						$(".nwpTp_r" + period).text(parseFloat("0.00"));
-						
+
 						if ($("#includeBtn").css('background-color') != "rgb(255, 255, 255)") {
-							
+
 							if ($("#comprehensiveBtn").css('background-color') != "rgb(255, 255, 255)") {
-alert("i c");
+								alert("i c");
 								$(".gwp_r" + period).text(convertToLaksh(parseFloat(obj.insGwpPolicyComprehensive).toFixed("2")));
 								$(".gwpOd_r" + period).text(convertToLaksh(parseFloat(obj.insGwpPolicyComprehensive).toFixed("2")));
 								$(".gwpTp_r" + period).text(convertToLaksh(parseFloat("0.00")));
 								$(".nwp_r" + period).text(convertToLaksh(parseFloat(obj.insNwpPolicyComprehensive).toFixed("2")));
 								$(".nwpOd_r" + period).text(convertToLaksh(parseFloat(obj.insNwpPolicyComprehensive).toFixed("2")));
 								$(".nwpTp_r" + period).text(convertToLaksh(parseFloat("0.00")));
-								
+
 								if (isPolicyDataFetched == "Y") {
 
 									var acqOdVal = (((acqCostOd) / ($(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
@@ -4755,7 +4764,7 @@ alert("i c");
 								}
 								jQuery("#pre-loader").remove();
 
-							}else if($("#tpBtn").css('background-color') != "rgb(255, 255, 255)"){
+							} else if ($("#tpBtn").css('background-color') != "rgb(255, 255, 255)") {
 								alert("i t");
 								$(".gwp_r" + period).text(convertToLaksh(parseFloat(obj.insGwpPolicyTp).toFixed("2")));
 								$(".gwpOd_r" + period).text(convertToLaksh(parseFloat("0.00")));
@@ -4763,7 +4772,7 @@ alert("i c");
 								$(".nwp_r" + period).text(convertToLaksh(parseFloat(obj.insNwpPolicyTp).toFixed("2")));
 								$(".nwpOd_r" + period).text(convertToLaksh(parseFloat("0.00")));
 								$(".nwpTp_r" + period).text(convertToLaksh(parseFloat(obj.insNwpPolicyTp).toFixed("2")));
-								
+
 								if (isPolicyDataFetched == "Y") {
 
 									var acqOdVal = (((acqCostOd) / ($(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
@@ -4797,8 +4806,8 @@ alert("i c");
 									}*/
 								}
 								jQuery("#pre-loader").remove();
-								
-							}else{
+
+							} else {
 								alert("i");
 								$(".gwp_r" + period).text(convertToLaksh(parseFloat(obj.insGwpPolicyComprehensive + obj.insGwpPolicyTp)));
 								$(".gwpOd_r" + period).text(convertToLaksh(parseFloat(obj.insGwpPolicyComprehensive)));
@@ -4806,7 +4815,7 @@ alert("i c");
 								$(".nwp_r" + period).text(convertToLaksh(parseFloat(obj.insNwpPolicyComprehensive + obj.insNwpPolicyTp)));
 								$(".nwpOd_r" + period).text(convertToLaksh(parseFloat(obj.insNwpPolicyComprehensive)));
 								$(".nwpTp_r" + period).text(convertToLaksh(parseFloat(obj.insNwpPolicyTp)));
-								
+
 								if (isPolicyDataFetched == "Y") {
 
 									var acqOdVal = (((acqCostOd) / ($(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
@@ -4840,187 +4849,27 @@ alert("i c");
 									}*/
 								}
 								jQuery("#pre-loader").remove();
-								
-								
+
+
 							}
 						}
-						
-						
+
+
 						if ($("#excludeBtn").css('background-color') != "rgb(255, 255, 255)") {
 
-								if ($("#comprehensiveBtn").css('background-color') != "rgb(255, 255, 255)") {
-									alert("e c");
-									var odGwp = (obj.insGwpPolicyComprehensive) - (obj.insGwpDepPolicyComprehensive + obj.insGwpNcbPolicyComprehensive + obj.insGwpOtherAddonPolicyComprehensive);
-									
-									var odNwp = (obj.insNwpPolicyComprehensive) - (obj.insNwpDepPolicyComprehensive + obj.insNwpNcbPolicyComprehensive + obj.insNwpOtherAddonPolicyComprehensive); 
-									
-									$(".gwp_r" + period).text(convertToLaksh(parseFloat(odGwp).toFixed("2")));
-									$(".gwpOd_r" + period).text(convertToLaksh(parseFloat(odGwp).toFixed("2")));
-									$(".gwpTp_r" + period).text(convertToLaksh(parseFloat("0.00")));
-									$(".nwp_r" + period).text(convertToLaksh(parseFloat(odNwp).toFixed("2")));
-									$(".nwpOd_r" + period).text(convertToLaksh(parseFloat(odNwp).toFixed("2")));
-									$(".nwpTp_r" + period).text(convertToLaksh(parseFloat("0.00")));
-									
-									if (isPolicyDataFetched == "Y") {
-
-										var acqOdVal = (((acqCostOd) / ($(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
-										acqOdVal = isFinite(acqOdVal) ? acqOdVal : 0;
-										$(".acrOd_r" + period).text((+acqOdVal || 0) + '%');
-										if ($(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "") != 0) {
-											var acqTpVal = (((acqCostTp) / ($(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
-											acqTpVal = isFinite(acqTpVal) ? acqTpVal : 0;
-											$(".acrTp_r" + period).text((+acqTpVal || 0) + '%');
-
-										} else {
-											$(".acrTp_r" + period).text(0);
-										}
-										var acqVal = (((parseFloat(acqCostOd) + parseFloat(acqCostTp * 100)) / ($("#show_1 > .gwp_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
-										acqVal = isFinite(acqVal) ? acqVal : 0;
-										$(".acr_r" + period).text((+acqVal || 0) + '%');
-									}
-									if (isSingleLineDataFetched == "Y") {
-
-										$(".lossRatioOd_r" + period).text((((parseFloat($(".gicOdCat_r" + period).text().replaceAll(",", "")) + parseFloat($(".gicOdTheft_r" + period).text().replaceAll(",", "")) + parseFloat($(".gicOdOthers_r" + period).text().replaceAll(",", ""))) / $(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "")) * 100).toFixed("2") + '%');
-										var lrTp = (($(".gicTp_r" + period).text().replaceAll(",", "") / $(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "")) * 100).toFixed("2");
-										$(".lossRatioTp_r" + period).text((+lrTp || 0) + '%');
-										$(".lossRatio_r" + period).text((($(".gic_r" + period).text().replaceAll(",", "") / $("#show_1 > .gwp_r" + period).text().replaceAll(",", "")) * 100).toFixed("2") + '%');
-									}
-									if (isGepDataFetched == "Y") {
-
-										/*if($("#r12Btn").css('background-color')!="rgb(255, 255, 255)"){
-											$(".lossRatioOd_r"+period).text( ((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")))/$(".extra_1 > .gwpOd_r"+period).text().replaceAll(",","")).toFixed("2"));  
-											$(".lossRatioTp_r"+period).text(($(".gicTp_r"+period).text().replaceAll(",","")/$(".extra_1 > .gwpTp_r"+period).text().replaceAll(",","")).toFixed("2"));
-											$(".lossRatio_r"+period).text(($(".gic_r"+period).text().replaceAll(",","")/$("#show_1 > .gwp_r"+period).text().replaceAll(",","")).toFixed("2"));
-										}*/
-									}
-									jQuery("#pre-loader").remove();
-								
-								
-							}else if($("#tpBtn").css('background-color') != "rgb(255, 255, 255)"){
-								alert("e t");
-								var tpGwp = (obj.insGwpPolicyTp) - (obj.insGwpDepPolicyTp + obj.insGwpNcbPolicyTp + obj.insGwpOtherAddonPolicyTp);
-								
-								var tpNwp = (obj.insNwpPolicyTp) - (obj.insNwpDepPolicyTp + obj.insNwpNcbPolicyTp + obj.insNwpOtherAddonPolicyTp); 
-								
-								$(".gwp_r" + period).text(convertToLaksh(parseFloat(tpGwp).toFixed("2")));
-								$(".gwpOd_r" + period).text(convertToLaksh(parseFloat("0.00")));
-								$(".gwpTp_r" + period).text(convertToLaksh(parseFloat(tpGwp).toFixed("2")));
-								$(".nwp_r" + period).text(convertToLaksh(parseFloat(tpNwp).toFixed("2")));
-								$(".nwpOd_r" + period).text(convertToLaksh(parseFloat("0.00")));
-								$(".nwpTp_r" + period).text(convertToLaksh(parseFloat(tpNwp).toFixed("2")));
-								
-								if (isPolicyDataFetched == "Y") {
-
-									var acqOdVal = (((acqCostOd) / ($(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
-									acqOdVal = isFinite(acqOdVal) ? acqOdVal : 0;
-									$(".acrOd_r" + period).text((+acqOdVal || 0) + '%');
-									if ($(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "") != 0) {
-										var acqTpVal = (((acqCostTp) / ($(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
-										acqTpVal = isFinite(acqTpVal) ? acqTpVal : 0;
-										$(".acrTp_r" + period).text((+acqTpVal || 0) + '%');
-
-									} else {
-										$(".acrTp_r" + period).text(0);
-									}
-									var acqVal = (((parseFloat(acqCostOd) + parseFloat(acqCostTp * 100)) / ($("#show_1 > .gwp_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
-									acqVal = isFinite(acqVal) ? acqVal : 0;
-									$(".acr_r" + period).text((+acqVal || 0) + '%');
-								}
-								if (isSingleLineDataFetched == "Y") {
-
-									$(".lossRatioOd_r" + period).text((((parseFloat($(".gicOdCat_r" + period).text().replaceAll(",", "")) + parseFloat($(".gicOdTheft_r" + period).text().replaceAll(",", "")) + parseFloat($(".gicOdOthers_r" + period).text().replaceAll(",", ""))) / $(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "")) * 100).toFixed("2") + '%');
-									var lrTp = (($(".gicTp_r" + period).text().replaceAll(",", "") / $(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "")) * 100).toFixed("2");
-									$(".lossRatioTp_r" + period).text((+lrTp || 0) + '%');
-									$(".lossRatio_r" + period).text((($(".gic_r" + period).text().replaceAll(",", "") / $("#show_1 > .gwp_r" + period).text().replaceAll(",", "")) * 100).toFixed("2") + '%');
-								}
-								if (isGepDataFetched == "Y") {
-
-									/*if($("#r12Btn").css('background-color')!="rgb(255, 255, 255)"){
-										$(".lossRatioOd_r"+period).text( ((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")))/$(".extra_1 > .gwpOd_r"+period).text().replaceAll(",","")).toFixed("2"));  
-										$(".lossRatioTp_r"+period).text(($(".gicTp_r"+period).text().replaceAll(",","")/$(".extra_1 > .gwpTp_r"+period).text().replaceAll(",","")).toFixed("2"));
-										$(".lossRatio_r"+period).text(($(".gic_r"+period).text().replaceAll(",","")/$("#show_1 > .gwp_r"+period).text().replaceAll(",","")).toFixed("2"));
-									}*/
-								}
-								jQuery("#pre-loader").remove();
-								
-							}else{
-								alert("e");
-								var allG = obj.insGwpDepPolicyComprehensive + obj.insGwpDepPolicyTp + obj.insGwpNcbPolicyComprehensive + obj.insGwpNcbPolicyTp + obj.insGwpOtherAddonPolicyComprehensive + obj.insGwpOtherAddonPolicyTp;
-								
-								var allGwp = (obj.insGwpPolicyTp + obj.insGwpPolicyComprehensive) - allG; 
-								
-								var odGwp = (obj.insGwpPolicyComprehensive) - (obj.insGwpDepPolicyComprehensive + obj.insGwpNcbPolicyComprehensive + obj.insGwpOtherAddonPolicyComprehensive);
-								
-								var odNwp = (obj.insNwpPolicyComprehensive) - (obj.insNwpDepPolicyComprehensive + obj.insNwpNcbPolicyComprehensive + obj.insNwpOtherAddonPolicyComprehensive);
-								
-								var allN = obj.insNwpDepPolicyComprehensive + obj.insNwpDepPolicyTp + obj.insNwpNcbPolicyComprehensive + obj.insNwpNcbPolicyTp + obj.insNwpOtherAddonPolicyComprehensive + obj.insNwpOtherAddonPolicyTp;
-								
-								var allNwp = (obj.insNwpPolicyTp + obj.insNwpPolicyComprehensive) - allN;
-								
-								var tpGwp = (obj.insGwpPolicyTp) - (obj.insGwpDepPolicyTp + obj.insGwpNcbPolicyTp + obj.insGwpOtherAddonPolicyTp);
-								
-								var tpNwp = (obj.insNwpPolicyTp) - (obj.insNwpDepPolicyTp + obj.insNwpNcbPolicyTp + obj.insNwpOtherAddonPolicyTp);
-							
-								$(".gwp_r" + period).text(convertToLaksh(parseFloat(allGwp).toFixed("2")));
-								$(".gwpOd_r" + period).text(convertToLaksh(parseFloat(odGwp).toFixed("2")));
-								$(".gwpTp_r" + period).text(convertToLaksh(parseFloat(tpGwp).toFixed("2")));
-								$(".nwp_r" + period).text(convertToLaksh(parseFloat(allNwp).toFixed("2")));
-								$(".nwpOd_r" + period).text(convertToLaksh(parseFloat(odNwp).toFixed("2")));
-								$(".nwpTp_r" + period).text(convertToLaksh(parseFloat(tpNwp).toFixed("2")));
-								
-								if (isPolicyDataFetched == "Y") {
-
-									var acqOdVal = (((acqCostOd) / ($(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
-									acqOdVal = isFinite(acqOdVal) ? acqOdVal : 0;
-									$(".acrOd_r" + period).text((+acqOdVal || 0) + '%');
-									if ($(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "") != 0) {
-										var acqTpVal = (((acqCostTp) / ($(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
-										acqTpVal = isFinite(acqTpVal) ? acqTpVal : 0;
-										$(".acrTp_r" + period).text((+acqTpVal || 0) + '%');
-
-									} else {
-										$(".acrTp_r" + period).text(0);
-									}
-									var acqVal = (((parseFloat(acqCostOd) + parseFloat(acqCostTp * 100)) / ($("#show_1 > .gwp_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
-									acqVal = isFinite(acqVal) ? acqVal : 0;
-									$(".acr_r" + period).text((+acqVal || 0) + '%');
-								}
-								if (isSingleLineDataFetched == "Y") {
-
-									$(".lossRatioOd_r" + period).text((((parseFloat($(".gicOdCat_r" + period).text().replaceAll(",", "")) + parseFloat($(".gicOdTheft_r" + period).text().replaceAll(",", "")) + parseFloat($(".gicOdOthers_r" + period).text().replaceAll(",", ""))) / $(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "")) * 100).toFixed("2") + '%');
-									var lrTp = (($(".gicTp_r" + period).text().replaceAll(",", "") / $(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "")) * 100).toFixed("2");
-									$(".lossRatioTp_r" + period).text((+lrTp || 0) + '%');
-									$(".lossRatio_r" + period).text((($(".gic_r" + period).text().replaceAll(",", "") / $("#show_1 > .gwp_r" + period).text().replaceAll(",", "")) * 100).toFixed("2") + '%');
-								}
-								if (isGepDataFetched == "Y") {
-
-									/*if($("#r12Btn").css('background-color')!="rgb(255, 255, 255)"){
-										$(".lossRatioOd_r"+period).text( ((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")))/$(".extra_1 > .gwpOd_r"+period).text().replaceAll(",","")).toFixed("2"));  
-										$(".lossRatioTp_r"+period).text(($(".gicTp_r"+period).text().replaceAll(",","")/$(".extra_1 > .gwpTp_r"+period).text().replaceAll(",","")).toFixed("2"));
-										$(".lossRatio_r"+period).text(($(".gic_r"+period).text().replaceAll(",","")/$("#show_1 > .gwp_r"+period).text().replaceAll(",","")).toFixed("2"));
-									}*/
-								}
-								jQuery("#pre-loader").remove();
-								
-							}
-						}
-						
-						
-						if ($("#onlyAddOnBtn").css('background-color') != "rgb(255, 255, 255)") {
-							
 							if ($("#comprehensiveBtn").css('background-color') != "rgb(255, 255, 255)") {
-								alert("o c");
-								var odGwp = obj.insGwpDepPolicyComprehensive + obj.insGwpNcbPolicyComprehensive + obj.insGwpOtherAddonPolicyComprehensive;
-								
-								var odNwp = obj.insNwpDepPolicyComprehensive + obj.insNwpNcbPolicyComprehensive + obj.insNwpOtherAddonPolicyComprehensive; 
-								
+								alert("e c");
+								var odGwp = (obj.insGwpPolicyComprehensive) - (obj.insGwpDepPolicyComprehensive + obj.insGwpNcbPolicyComprehensive + obj.insGwpOtherAddonPolicyComprehensive);
+
+								var odNwp = (obj.insNwpPolicyComprehensive) - (obj.insNwpDepPolicyComprehensive + obj.insNwpNcbPolicyComprehensive + obj.insNwpOtherAddonPolicyComprehensive);
+
 								$(".gwp_r" + period).text(convertToLaksh(parseFloat(odGwp).toFixed("2")));
 								$(".gwpOd_r" + period).text(convertToLaksh(parseFloat(odGwp).toFixed("2")));
 								$(".gwpTp_r" + period).text(convertToLaksh(parseFloat("0.00")));
 								$(".nwp_r" + period).text(convertToLaksh(parseFloat(odNwp).toFixed("2")));
 								$(".nwpOd_r" + period).text(convertToLaksh(parseFloat(odNwp).toFixed("2")));
 								$(".nwpTp_r" + period).text(convertToLaksh(parseFloat("0.00")));
-								
+
 								if (isPolicyDataFetched == "Y") {
 
 									var acqOdVal = (((acqCostOd) / ($(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
@@ -5054,21 +4903,21 @@ alert("i c");
 									}*/
 								}
 								jQuery("#pre-loader").remove();
-							
-								
-							}else if($("#tpBtn").css('background-color') != "rgb(255, 255, 255)"){
-								alert("o t");
-								var tpGwp = obj.insGwpDepPolicyTp + obj.insGwpNcbPolicyTp + obj.insGwpOtherAddonPolicyTp;
-								
-								var tpNwp = obj.insNwpDepPolicyTp + obj.insNwpNcbPolicyTp + obj.insNwpOtherAddonPolicyTp; 
-								
+
+
+							} else if ($("#tpBtn").css('background-color') != "rgb(255, 255, 255)") {
+								alert("e t");
+								var tpGwp = (obj.insGwpPolicyTp) - (obj.insGwpDepPolicyTp + obj.insGwpNcbPolicyTp + obj.insGwpOtherAddonPolicyTp);
+
+								var tpNwp = (obj.insNwpPolicyTp) - (obj.insNwpDepPolicyTp + obj.insNwpNcbPolicyTp + obj.insNwpOtherAddonPolicyTp);
+
 								$(".gwp_r" + period).text(convertToLaksh(parseFloat(tpGwp).toFixed("2")));
 								$(".gwpOd_r" + period).text(convertToLaksh(parseFloat("0.00")));
 								$(".gwpTp_r" + period).text(convertToLaksh(parseFloat(tpGwp).toFixed("2")));
 								$(".nwp_r" + period).text(convertToLaksh(parseFloat(tpNwp).toFixed("2")));
 								$(".nwpOd_r" + period).text(convertToLaksh(parseFloat("0.00")));
 								$(".nwpTp_r" + period).text(convertToLaksh(parseFloat(tpNwp).toFixed("2")));
-								
+
 								if (isPolicyDataFetched == "Y") {
 
 									var acqOdVal = (((acqCostOd) / ($(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
@@ -5102,30 +4951,190 @@ alert("i c");
 									}*/
 								}
 								jQuery("#pre-loader").remove();
-								
-								
-							}else{
-								alert("o ");
-								var allG = obj.insGwpDepPolicyComprehensive + obj.insGwpDepPolicyTp + obj.insGwpNcbPolicyComprehensive + obj.insGwpNcbPolicyTp + obj.insGwpOtherAddonPolicyComprehensive + obj.insGwpOtherAddonPolicyTp; 
-								
-								var odGwp = obj.insGwpDepPolicyComprehensive + obj.insGwpNcbPolicyComprehensive + obj.insGwpOtherAddonPolicyComprehensive;
-								
-								var odNwp = obj.insNwpDepPolicyComprehensive + obj.insNwpNcbPolicyComprehensive + obj.insNwpOtherAddonPolicyComprehensive;
-								
+
+							} else {
+								alert("e");
+								var allG = obj.insGwpDepPolicyComprehensive + obj.insGwpDepPolicyTp + obj.insGwpNcbPolicyComprehensive + obj.insGwpNcbPolicyTp + obj.insGwpOtherAddonPolicyComprehensive + obj.insGwpOtherAddonPolicyTp;
+
+								var allGwp = (obj.insGwpPolicyTp + obj.insGwpPolicyComprehensive) - allG;
+
+								var odGwp = (obj.insGwpPolicyComprehensive) - (obj.insGwpDepPolicyComprehensive + obj.insGwpNcbPolicyComprehensive + obj.insGwpOtherAddonPolicyComprehensive);
+
+								var odNwp = (obj.insNwpPolicyComprehensive) - (obj.insNwpDepPolicyComprehensive + obj.insNwpNcbPolicyComprehensive + obj.insNwpOtherAddonPolicyComprehensive);
+
 								var allN = obj.insNwpDepPolicyComprehensive + obj.insNwpDepPolicyTp + obj.insNwpNcbPolicyComprehensive + obj.insNwpNcbPolicyTp + obj.insNwpOtherAddonPolicyComprehensive + obj.insNwpOtherAddonPolicyTp;
-								
+
+								var allNwp = (obj.insNwpPolicyTp + obj.insNwpPolicyComprehensive) - allN;
+
+								var tpGwp = (obj.insGwpPolicyTp) - (obj.insGwpDepPolicyTp + obj.insGwpNcbPolicyTp + obj.insGwpOtherAddonPolicyTp);
+
+								var tpNwp = (obj.insNwpPolicyTp) - (obj.insNwpDepPolicyTp + obj.insNwpNcbPolicyTp + obj.insNwpOtherAddonPolicyTp);
+
+								$(".gwp_r" + period).text(convertToLaksh(parseFloat(allGwp).toFixed("2")));
+								$(".gwpOd_r" + period).text(convertToLaksh(parseFloat(odGwp).toFixed("2")));
+								$(".gwpTp_r" + period).text(convertToLaksh(parseFloat(tpGwp).toFixed("2")));
+								$(".nwp_r" + period).text(convertToLaksh(parseFloat(allNwp).toFixed("2")));
+								$(".nwpOd_r" + period).text(convertToLaksh(parseFloat(odNwp).toFixed("2")));
+								$(".nwpTp_r" + period).text(convertToLaksh(parseFloat(tpNwp).toFixed("2")));
+
+								if (isPolicyDataFetched == "Y") {
+
+									var acqOdVal = (((acqCostOd) / ($(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
+									acqOdVal = isFinite(acqOdVal) ? acqOdVal : 0;
+									$(".acrOd_r" + period).text((+acqOdVal || 0) + '%');
+									if ($(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "") != 0) {
+										var acqTpVal = (((acqCostTp) / ($(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
+										acqTpVal = isFinite(acqTpVal) ? acqTpVal : 0;
+										$(".acrTp_r" + period).text((+acqTpVal || 0) + '%');
+
+									} else {
+										$(".acrTp_r" + period).text(0);
+									}
+									var acqVal = (((parseFloat(acqCostOd) + parseFloat(acqCostTp * 100)) / ($("#show_1 > .gwp_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
+									acqVal = isFinite(acqVal) ? acqVal : 0;
+									$(".acr_r" + period).text((+acqVal || 0) + '%');
+								}
+								if (isSingleLineDataFetched == "Y") {
+
+									$(".lossRatioOd_r" + period).text((((parseFloat($(".gicOdCat_r" + period).text().replaceAll(",", "")) + parseFloat($(".gicOdTheft_r" + period).text().replaceAll(",", "")) + parseFloat($(".gicOdOthers_r" + period).text().replaceAll(",", ""))) / $(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "")) * 100).toFixed("2") + '%');
+									var lrTp = (($(".gicTp_r" + period).text().replaceAll(",", "") / $(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "")) * 100).toFixed("2");
+									$(".lossRatioTp_r" + period).text((+lrTp || 0) + '%');
+									$(".lossRatio_r" + period).text((($(".gic_r" + period).text().replaceAll(",", "") / $("#show_1 > .gwp_r" + period).text().replaceAll(",", "")) * 100).toFixed("2") + '%');
+								}
+								if (isGepDataFetched == "Y") {
+
+									/*if($("#r12Btn").css('background-color')!="rgb(255, 255, 255)"){
+										$(".lossRatioOd_r"+period).text( ((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")))/$(".extra_1 > .gwpOd_r"+period).text().replaceAll(",","")).toFixed("2"));  
+										$(".lossRatioTp_r"+period).text(($(".gicTp_r"+period).text().replaceAll(",","")/$(".extra_1 > .gwpTp_r"+period).text().replaceAll(",","")).toFixed("2"));
+										$(".lossRatio_r"+period).text(($(".gic_r"+period).text().replaceAll(",","")/$("#show_1 > .gwp_r"+period).text().replaceAll(",","")).toFixed("2"));
+									}*/
+								}
+								jQuery("#pre-loader").remove();
+
+							}
+						}
+
+
+						if ($("#onlyAddOnBtn").css('background-color') != "rgb(255, 255, 255)") {
+
+							if ($("#comprehensiveBtn").css('background-color') != "rgb(255, 255, 255)") {
+								alert("o c");
+								var odGwp = obj.insGwpDepPolicyComprehensive + obj.insGwpNcbPolicyComprehensive + obj.insGwpOtherAddonPolicyComprehensive;
+
+								var odNwp = obj.insNwpDepPolicyComprehensive + obj.insNwpNcbPolicyComprehensive + obj.insNwpOtherAddonPolicyComprehensive;
+
+								$(".gwp_r" + period).text(convertToLaksh(parseFloat(odGwp).toFixed("2")));
+								$(".gwpOd_r" + period).text(convertToLaksh(parseFloat(odGwp).toFixed("2")));
+								$(".gwpTp_r" + period).text(convertToLaksh(parseFloat("0.00")));
+								$(".nwp_r" + period).text(convertToLaksh(parseFloat(odNwp).toFixed("2")));
+								$(".nwpOd_r" + period).text(convertToLaksh(parseFloat(odNwp).toFixed("2")));
+								$(".nwpTp_r" + period).text(convertToLaksh(parseFloat("0.00")));
+
+								if (isPolicyDataFetched == "Y") {
+
+									var acqOdVal = (((acqCostOd) / ($(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
+									acqOdVal = isFinite(acqOdVal) ? acqOdVal : 0;
+									$(".acrOd_r" + period).text((+acqOdVal || 0) + '%');
+									if ($(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "") != 0) {
+										var acqTpVal = (((acqCostTp) / ($(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
+										acqTpVal = isFinite(acqTpVal) ? acqTpVal : 0;
+										$(".acrTp_r" + period).text((+acqTpVal || 0) + '%');
+
+									} else {
+										$(".acrTp_r" + period).text(0);
+									}
+									var acqVal = (((parseFloat(acqCostOd) + parseFloat(acqCostTp * 100)) / ($("#show_1 > .gwp_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
+									acqVal = isFinite(acqVal) ? acqVal : 0;
+									$(".acr_r" + period).text((+acqVal || 0) + '%');
+								}
+								if (isSingleLineDataFetched == "Y") {
+
+									$(".lossRatioOd_r" + period).text((((parseFloat($(".gicOdCat_r" + period).text().replaceAll(",", "")) + parseFloat($(".gicOdTheft_r" + period).text().replaceAll(",", "")) + parseFloat($(".gicOdOthers_r" + period).text().replaceAll(",", ""))) / $(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "")) * 100).toFixed("2") + '%');
+									var lrTp = (($(".gicTp_r" + period).text().replaceAll(",", "") / $(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "")) * 100).toFixed("2");
+									$(".lossRatioTp_r" + period).text((+lrTp || 0) + '%');
+									$(".lossRatio_r" + period).text((($(".gic_r" + period).text().replaceAll(",", "") / $("#show_1 > .gwp_r" + period).text().replaceAll(",", "")) * 100).toFixed("2") + '%');
+								}
+								if (isGepDataFetched == "Y") {
+
+									/*if($("#r12Btn").css('background-color')!="rgb(255, 255, 255)"){
+										$(".lossRatioOd_r"+period).text( ((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")))/$(".extra_1 > .gwpOd_r"+period).text().replaceAll(",","")).toFixed("2"));  
+										$(".lossRatioTp_r"+period).text(($(".gicTp_r"+period).text().replaceAll(",","")/$(".extra_1 > .gwpTp_r"+period).text().replaceAll(",","")).toFixed("2"));
+										$(".lossRatio_r"+period).text(($(".gic_r"+period).text().replaceAll(",","")/$("#show_1 > .gwp_r"+period).text().replaceAll(",","")).toFixed("2"));
+									}*/
+								}
+								jQuery("#pre-loader").remove();
+
+
+							} else if ($("#tpBtn").css('background-color') != "rgb(255, 255, 255)") {
+								alert("o t");
+								var tpGwp = obj.insGwpDepPolicyTp + obj.insGwpNcbPolicyTp + obj.insGwpOtherAddonPolicyTp;
+
+								var tpNwp = obj.insNwpDepPolicyTp + obj.insNwpNcbPolicyTp + obj.insNwpOtherAddonPolicyTp;
+
+								$(".gwp_r" + period).text(convertToLaksh(parseFloat(tpGwp).toFixed("2")));
+								$(".gwpOd_r" + period).text(convertToLaksh(parseFloat("0.00")));
+								$(".gwpTp_r" + period).text(convertToLaksh(parseFloat(tpGwp).toFixed("2")));
+								$(".nwp_r" + period).text(convertToLaksh(parseFloat(tpNwp).toFixed("2")));
+								$(".nwpOd_r" + period).text(convertToLaksh(parseFloat("0.00")));
+								$(".nwpTp_r" + period).text(convertToLaksh(parseFloat(tpNwp).toFixed("2")));
+
+								if (isPolicyDataFetched == "Y") {
+
+									var acqOdVal = (((acqCostOd) / ($(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
+									acqOdVal = isFinite(acqOdVal) ? acqOdVal : 0;
+									$(".acrOd_r" + period).text((+acqOdVal || 0) + '%');
+									if ($(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "") != 0) {
+										var acqTpVal = (((acqCostTp) / ($(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
+										acqTpVal = isFinite(acqTpVal) ? acqTpVal : 0;
+										$(".acrTp_r" + period).text((+acqTpVal || 0) + '%');
+
+									} else {
+										$(".acrTp_r" + period).text(0);
+									}
+									var acqVal = (((parseFloat(acqCostOd) + parseFloat(acqCostTp * 100)) / ($("#show_1 > .gwp_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
+									acqVal = isFinite(acqVal) ? acqVal : 0;
+									$(".acr_r" + period).text((+acqVal || 0) + '%');
+								}
+								if (isSingleLineDataFetched == "Y") {
+
+									$(".lossRatioOd_r" + period).text((((parseFloat($(".gicOdCat_r" + period).text().replaceAll(",", "")) + parseFloat($(".gicOdTheft_r" + period).text().replaceAll(",", "")) + parseFloat($(".gicOdOthers_r" + period).text().replaceAll(",", ""))) / $(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "")) * 100).toFixed("2") + '%');
+									var lrTp = (($(".gicTp_r" + period).text().replaceAll(",", "") / $(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "")) * 100).toFixed("2");
+									$(".lossRatioTp_r" + period).text((+lrTp || 0) + '%');
+									$(".lossRatio_r" + period).text((($(".gic_r" + period).text().replaceAll(",", "") / $("#show_1 > .gwp_r" + period).text().replaceAll(",", "")) * 100).toFixed("2") + '%');
+								}
+								if (isGepDataFetched == "Y") {
+
+									/*if($("#r12Btn").css('background-color')!="rgb(255, 255, 255)"){
+										$(".lossRatioOd_r"+period).text( ((parseFloat($(".gicOdCat_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdTheft_r"+period).text().replaceAll(",",""))+parseFloat($(".gicOdOthers_r"+period).text().replaceAll(",","")))/$(".extra_1 > .gwpOd_r"+period).text().replaceAll(",","")).toFixed("2"));  
+										$(".lossRatioTp_r"+period).text(($(".gicTp_r"+period).text().replaceAll(",","")/$(".extra_1 > .gwpTp_r"+period).text().replaceAll(",","")).toFixed("2"));
+										$(".lossRatio_r"+period).text(($(".gic_r"+period).text().replaceAll(",","")/$("#show_1 > .gwp_r"+period).text().replaceAll(",","")).toFixed("2"));
+									}*/
+								}
+								jQuery("#pre-loader").remove();
+
+
+							} else {
+								alert("o ");
+								var allG = obj.insGwpDepPolicyComprehensive + obj.insGwpDepPolicyTp + obj.insGwpNcbPolicyComprehensive + obj.insGwpNcbPolicyTp + obj.insGwpOtherAddonPolicyComprehensive + obj.insGwpOtherAddonPolicyTp;
+
+								var odGwp = obj.insGwpDepPolicyComprehensive + obj.insGwpNcbPolicyComprehensive + obj.insGwpOtherAddonPolicyComprehensive;
+
+								var odNwp = obj.insNwpDepPolicyComprehensive + obj.insNwpNcbPolicyComprehensive + obj.insNwpOtherAddonPolicyComprehensive;
+
+								var allN = obj.insNwpDepPolicyComprehensive + obj.insNwpDepPolicyTp + obj.insNwpNcbPolicyComprehensive + obj.insNwpNcbPolicyTp + obj.insNwpOtherAddonPolicyComprehensive + obj.insNwpOtherAddonPolicyTp;
+
 								var tpGwp = obj.insGwpDepPolicyTp + obj.insGwpNcbPolicyTp + obj.insGwpOtherAddonPolicyTp;
 								alert(tpGwp);
-								
+
 								var tpNwp = obj.insNwpDepPolicyTp + obj.insNwpNcbPolicyTp + obj.insNwpOtherAddonPolicyTp;
-							
+
 								$(".gwp_r" + period).text(convertToLaksh(parseFloat(allG).toFixed("2")));
 								$(".gwpOd_r" + period).text(convertToLaksh(parseFloat(odGwp).toFixed("2")));
 								$(".gwpTp_r" + period).text(convertToLaksh(parseFloat(tpGwp).toFixed("2")));
 								$(".nwp_r" + period).text(convertToLaksh(parseFloat(allN).toFixed("2")));
 								$(".nwpOd_r" + period).text(convertToLaksh(parseFloat(odNwp).toFixed("2")));
 								$(".nwpTp_r" + period).text(convertToLaksh(parseFloat(tpNwp).toFixed("2")));
-								
+
 								if (isPolicyDataFetched == "Y") {
 
 									var acqOdVal = (((acqCostOd) / ($(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
@@ -5159,7 +5168,7 @@ alert("i c");
 									}*/
 								}
 								jQuery("#pre-loader").remove();
-								
+
 							}
 						}
 
@@ -5423,9 +5432,9 @@ alert("i c");
 		}
 		var isPolicyDataFetched = "N";
 		var acqCostOd = "0.0", acqCostTp = "0.0", acqCost = "0.0";
+		var callPolicyApiAjaxResObj;
 		function callPolicyApi(period, fromDate, toDate) {
 
-			console.log
 			var report = $('#reports').val();
 			var AddOnNew = getAddOnNew();
 			var PolicyTypeNew = getPolicyTypeNew();
@@ -5447,9 +5456,9 @@ alert("i c");
 
 			var pApiURL = "";
 			if ($("#uwYearBtn").css('background-color') != "rgb(255, 255, 255)") {
-				pApiURL = "getPolicyNewCubeDataForUW";
+				pApiURL = "/getPolicyNewCubeDataForUW";
 			} else {
-				pApiURL = "getPolicyNewCubeDataForFIN";
+				pApiURL = "/getPolicyNewCubeDataForFIN";
 			}
 			ajaxArray.push($.ajax({
 				type: "GET",
@@ -5461,52 +5470,231 @@ alert("i c");
 				data: genDiv,
 				success: function (data) {
 					isPolicyDataFetched = "Y";
-					responseJSON = data;
-					console.log('ddddddddddddddddddddddddddddddddddddddddddddddddddd');
-					console.log(responseJSON);
+					callPolicyApiAjaxResObj = data;
+					console.log('policyapi');
+					console.log(callPolicyApiAjaxResObj);
 					$.each(data, function (ind, obj) {
 
 						$(".writtenPolicies_r" + period).text((obj.writtenPolicies).toFixed("0"));
 						$(".writtenPoliciesOd_r" + period).text((obj.writtenPoliciesComprehensive).toFixed("0"));
 						$(".writtenPoliciesTp_r" + period).text((obj.writtenPoliciesTp).toFixed("0"));
 						$(".writtenPoliciesOthers_r" + period).text((obj.writtenPoliciesOthers).toFixed("0"));
-						//$(".acr_r1"+period).text((obj.acqCost).toFixed("0")+'%');
-						//$(".acrOd_r"+period).text((obj.acqCostComprehensive).toFixed("0")+'%');
-						//$(".acrTp_r"+period).text((obj.acqCostTp).toFixed("0")+'%');
-						acqCostOd = obj.acqCostComprehensive;
-						acqCostTp = obj.acqCostTp;
-						acqCost = obj.acqCost;
+						$(".acr_r" + period).text((obj.acqCost).toFixed("0") + '%');
+						$(".acrOd_r" + period).text((obj.acqCostComprehensive).toFixed("0") + '%');
+						$(".acrTp_r" + period).text((obj.acqCostTp).toFixed("0") + '%');
 
 
-						if (isClaimsDataFetched == "Y") {
-							console.log("isClaimsDataFetched", registeredClaimscatCount, registeredClaimstheftCount, registeredClaimstOthersCount);
-							var clmFreqCat = (((registeredClaimscatCount) / (obj.writtenPolicies)) * 100).toFixed("2");
-							$(".claimFreqCat_r" + period).text((+clmFreqCat || 0) + '%');
-							var clmFreqTheft = (((registeredClaimstheftCount) / (obj.writtenPolicies)) * 100).toFixed("2");
-							$(".claimFreqTheft_r" + period).text((+clmFreqTheft || 0) + '%');
-							var clmFreqOthers = (((registeredClaimstOthersCount) / (obj.writtenPolicies)) * 100).toFixed("2");
-							$(".claimFreqOthers_r" + period).text((+clmFreqOthers || 0) + '%');
-							var clmFreq = (((registeredClaimscatCount + registeredClaimstheftCount + registeredClaimstOthersCount) / (obj.writtenPolicies)) * 100).toFixed("2");
-							$(".claimFreq_r" + period).text((+clmFreq || 0) + '%');
-						}
-						if (isInsDataFetched == "Y") {
-							var acrOdPVal = (((obj.acqCostComprehensive) / ($(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
-							acrOdPVal = isFinite(acrOdPVal) ? acrOdPVal : 0;
-							$(".acrOd_r" + period).text((+acrOdPVal || 0) + '%');
-							//$(".acrTp_r"+period).text(acqCostTp/$(".gwpTp_r"+period).text());
-							if ($(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "") != 0) {
-								var acrTpPVal = (((obj.acqCostTp) / ($(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
-								acrTpPVal = isFinite(acrTpPVal) ? acrTpPVal : 0;
-								$(".acrTp_r" + period).text((+acrTpPVal || 0) + '%');
+
+						if ($("#includeBtn").css('background-color') != "rgb(255, 255, 255)") {
+
+							if ($("#comprehensiveBtn").css('background-color') != "rgb(255, 255, 255)") {
+								$(".writtenPolicies_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesComprehensive);
+								$(".writtenPoliciesOd_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesComprehensive)
+
+								if (isInsDataFetched == "Y") {
+									console.log("include comprehensive isInsDataFetched", callInsApiAjaxResObj.insGwpPolicyComprehensive, callInsApiAjaxResObj.insGwpPolicyTp);
+									var acqCost = (((callPolicyApiAjaxResObj.acqCostComprehensive) / (callInsApiAjaxResObj.insGwpPolicyComprehensive)) * 100);
+									$(".acr_r" + period).text((+acqCost || 0) + '%');
+									//var acqCostOd = (((acqCostComprehensive) / (insGwpPolicyComprehensive)) * 100).toFixed("2");
+									$(".acrOd_r" + period).text((+acqCost) + '%');
+								}
+
+							} else if ($("#tpBtn").css('background-color') != "rgb(255, 255, 255)") {
+								$(".writtenPolicies_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesTp);
+								$(".writtenPoliciesTp_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesTp);
+
+								if (isInsDataFetched == "Y") {
+									console.log("include tp isInsDataFetched", callInsApiAjaxResObj.insGwpPolicyComprehensive, callInsApiAjaxResObj.insGwpPolicyTp);
+									var acqCost = (((callPolicyApiAjaxResObj.acqCostTp) / (callInsApiAjaxResObj.insGwpPolicyTp)) * 100);
+									$(".acr_r" + period).text((+acqCost || 0) + '%');
+									//var acqCostTp = (((acqCostTp) / (insGwpPolicyTp)) * 100).toFixed("2");
+									$(".acrTp_r" + period).text((+acqCost) + '%');
+								}
 							} else {
-								$(".acrTp_r" + period).text(0);
+								$(".writtenPolicies_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesOthers + callPolicyApiAjaxResObj.writtenPoliciesComprehensive + callPolicyApiAjaxResObj.writtenPoliciesTp);
+								$(".writtenPoliciesOd_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesComprehensive)
+								$(".writtenPoliciesTp_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesTp);
+								$(".writtenPoliciesOthers_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesOthers)
+
+								if (isInsDataFetched == "Y") {
+									console.log("include all isInsDataFetched", callInsApiAjaxResObj.insGwpPolicyComprehensive, callInsApiAjaxResObj.insGwpPolicyTp);
+									var acqCost = (((callPolicyApiAjaxResObj.acqCostTp + callPolicyApiAjaxResObj.acqCostComprehensive) / (callInsApiAjaxResObj.insGwpPolicyComprehensive + insGwpPolicyTp)) * 100);
+									$(".acr_r" + period).text((+acqCost || 0) + '%');
+									var acqCostOd = (((callPolicyApiAjaxResObj.acqCostComprehensive) / (callInsApiAjaxResObj.insGwpPolicyComprehensive)) * 100);
+									$(".acrOd_r" + period).text((+acqCostOd) + '%');
+									var acqCostTp = (((callPolicyApiAjaxResObj.acqCostTp) / (callInsApiAjaxResObj.insGwpPolicyTp)) * 100);
+									$(".acrTp_r" + period).text((+acqCostTp) + '%');
+								}
 							}
-							//$(".acr_r"+period).text(parseFloat(acqCostTp/$(".gwpTp_r"+period).text())+parseFloat(acqCostOd/$(".gwpOd_r"+period).text()));
-							//$(".acr_r"+period).text((parseFloat($(".extra_13 > .acrOd_r"+period).text())+parseFloat($(".extra_13 > .acrTp_r"+period).text())) );
-							var acrPVal = ((((obj.acqCostComprehensive) + (obj.acqCostTp)) / ($("#show_1 > .gwp_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
-							acrPVal = isFinite(acrPVal) ? acrPVal : 0;
-							$(".acr_r" + period).text((+acrPVal || 0) + '%');
 						}
+						else if ($("#excludeBtn").css('background-color') != "rgb(255, 255, 255)") {
+
+							if ($("#comprehensiveBtn").css('background-color') != "rgb(255, 255, 255)") {
+								$(".writtenPolicies_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesComprehensive - callPolicyApiAjaxResObj.addonWrittenPoliciesComprehensive);
+								$(".writtenPoliciesOd_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesComprehensive - callPolicyApiAjaxResObj.addonWrittenPoliciesComprehensive);
+
+								if (isInsDataFetched == "Y") {
+									console.log("exclude comprehensive isInsDataFetched", insGwpPolicyComprehensive, insGwpPolicyTp);
+									var acqCost = (((callPolicyApiAjaxResObj.acqCostComprehensive - callPolicyApiAjaxResObj.addonAcqCostComprehensive) / (callInsApiAjaxResObj.insGwpPolicyComprehensive - callInsApiAjaxResObj.insGwpDepPolicyComprehensive - callInsApiAjaxResObj.insGwpNcbPolicyComprehensive - callInsApiAjaxResObj.insGwpOtherAddonPolicyComprehensive)) * 100);
+									$(".acr_r" + period).text((+acqCost || 0) + '%');
+									//var acqCostOd = (((acqCostComprehensive) / (insGwpPolicyComprehensive)) * 100).toFixed("2");
+									$(".acrOd_r" + period).text((+acqCost) + '%');
+								}
+
+							} else if ($("#tpBtn").css('background-color') != "rgb(255, 255, 255)") {
+								$(".writtenPolicies_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesTp - callPolicyApiAjaxResObj.addonWrittenPoliciesTp);
+								$(".writtenPoliciesTp_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesTp - callPolicyApiAjaxResObj.addonWrittenPoliciesTp);
+
+								if (isInsDataFetched == "Y") {
+									console.log("include tp isInsDataFetched", insGwpPolicyComprehensive, insGwpPolicyTp);
+									var acqCost = (((callPolicyApiAjaxResObj.acqCostTp - callPolicyApiAjaxResObj.addonAcqCostTp) / (callInsApiAjaxResObj.insGwpPolicyTp - callInsApiAjaxResObj.insGwpDepPolicyTp - callInsApiAjaxResObj.insGwpNcbPolicyTp - callInsApiAjaxResObj.insGwpOtherAddonPolicyTp)) * 100);
+									$(".acr_r" + period).text((+acqCost || 0) + '%');
+									//var acqCostTp = (((acqCostTp) / (insGwpPolicyTp)) * 100).toFixed("2");
+									$(".acrTp_r" + period).text((+acqCost) + '%');
+								}
+							} else {
+								$(".writtenPolicies_r" + period).text((callPolicyApiAjaxResObj.writtenPoliciesOthers + callPolicyApiAjaxResObj.writtenPoliciesComprehensive + callPolicyApiAjaxResObj.writtenPoliciesTp) - (callPolicyApiAjaxResObj.addonWrittenPoliciesComprehensive + callPolicyApiAjaxResObj.addonWrittenPoliciesTp + callPolicyApiAjaxResObj.addonWrittenPoliciesOthers));
+								$(".writtenPoliciesOd_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesComprehensive - callPolicyApiAjaxResObj.addonWrittenPoliciesComprehensive)
+								$(".writtenPoliciesTp_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesTp - callPolicyApiAjaxResObj.addonWrittenPoliciesTp);
+								$(".writtenPoliciesOthers_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesOthers - callPolicyApiAjaxResObj.addonWrittenPoliciesOthers)
+
+								if (isInsDataFetched == "Y") {
+									console.log("include all isInsDataFetched", insGwpPolicyComprehensive, insGwpPolicyTp);
+									var acqCost = (((callPolicyApiAjaxResObj.acqCostTpcallPolicyApiAjaxResObj.acqCostComprehensive - callPolicyApiAjaxResObj.addonAcqCostComprehensive - callPolicyApiAjaxResObj.addonAcqCostTp) / (callInsApiAjaxResObj.insGwpPolicyComprehensive + callInsApiAjaxResObj.insGwpPolicyTp - callInsApiAjaxResObj.insGwpDepPolicyComprehensive - callInsApiAjaxResObj.insGwpDepPolicyTp - callInsApiAjaxResObj.insGwpNcbPolicyComprehensive - callInsApiAjaxResObj.insGwpNcbPolicyTp - callInsApiAjaxResObj.insGwpOtherAddonPolicyComprehensive - callInsApiAjaxResObj.insGwpOtherAddonPolicyTp)) * 100);
+									$(".acr_r" + period).text((+acqCost || 0) + '%');
+									var acqCostOd = (((callPolicyApiAjaxResObj.acqCostComprehensive - callPolicyApiAjaxResObj.addonAcqCostComprehensive) / (callInsApiAjaxResObj.insGwpPolicyComprehensive - callInsApiAjaxResObj.insGwpDepPolicyComprehensive - callInsApiAjaxResObj.insGwpNcbPolicyComprehensive - callInsApiAjaxResObj.insGwpOtherAddonPolicyComprehensive)) * 100);
+									$(".acrOd_r" + period).text((+acqCostOd) + '%');
+									var acqCostTp = (((callPolicyApiAjaxResObj.acqCostTp - callPolicyApiAjaxResObj.addonAcqCostTp) / (callInsApiAjaxResObj.insGwpPolicyTp - callInsApiAjaxResObj.insGwpDepPolicyTp - callInsApiAjaxResObj.insGwpNcbPolicyTp - callInsApiAjaxResObj.insGwpOtherAddonPolicyTp)) * 100);
+									$(".acrTp_r" + period).text((+acqCostTp) + '%');
+								}
+							}
+						} else if ($("#onlyAddOnBtn").css('background-color') != "rgb(255, 255, 255)") {
+
+							if ($("#comprehensiveBtn").css('background-color') != "rgb(255, 255, 255)") {
+								$(".writtenPolicies_r" + period).text(callPolicyApiAjaxResObj.addonWrittenPoliciesComprehensive);
+								$(".writtenPoliciesOd_r" + period).text(callPolicyApiAjaxResObj.addonWrittenPoliciesComprehensive)
+
+								if (isInsDataFetched == "Y") {
+									console.log("addon comprehensive isInsDataFetched", callInsApiAjaxResObj.insGwpPolicyComprehensive, callInsApiAjaxResObj.insGwpPolicyTp);
+									var acqCost = (((callPolicyApiAjaxResObj.addonAcqCostComprehensive) / (callInsApiAjaxResObj.insGwpDepPolicyComprehensive + callInsApiAjaxResObj.insGwpNcbPolicyComprehensive + callInsApiAjaxResObj.insGwpOtherAddonPolicyComprehensive)) * 100);
+									$(".acr_r" + period).text((+acqCost || 0) + '%');
+									//var acqCostOd = (((acqCostComprehensive) / (insGwpPolicyComprehensive)) * 100).toFixed("2");
+									$(".acrOd_r" + period).text((+acqCost) + '%');
+								}
+
+							} else if ($("#tpBtn").css('background-color') != "rgb(255, 255, 255)") {
+								$(".writtenPolicies_r" + period).text(callPolicyApiAjaxResObj.addonWrittenPoliciesTp);
+								$(".writtenPoliciesTp_r" + period).text(callPolicyApiAjaxResObj.addonWrittenPoliciesTp);
+
+								if (isInsDataFetched == "Y") {
+									console.log("addon tp isInsDataFetched", callInsApiAjaxResObj.insGwpPolicyComprehensive, callInsApiAjaxResObj.insGwpPolicyTp);
+									var acqCost = (((callPolicyApiAjaxResObj.addonAcqCostTp) / (callInsApiAjaxResObj.insGwpDepPolicyTp + callInsApiAjaxResObj.insGwpNcbPolicyTp + callInsApiAjaxResObj.insGwpOtherAddonPolicyTp)) * 100);
+									$(".acr_r" + period).text((+acqCost || 0) + '%');
+									//var acqCostTp = (((acqCostTp) / (insGwpPolicyTp)) * 100).toFixed("2");
+									$(".acrTp_r" + period).text((+acqCost) + '%');
+								}
+							} else {
+								$(".writtenPolicies_r" + period).text(callPolicyApiAjaxResObj.addonWrittenPoliciesOthers + callPolicyApiAjaxResObj.addonWrittenPoliciesComprehensive + callPolicyApiAjaxResObj.addonWrittenPoliciesTp);
+								$(".writtenPoliciesOd_r" + period).text(callPolicyApiAjaxResObj.addonWrittenPoliciesComprehensive)
+								$(".writtenPoliciesTp_r" + period).text(callPolicyApiAjaxResObj.addonWrittenPoliciesTp);
+								$(".writtenPoliciesOthers_r" + period).text(callPolicyApiAjaxResObj.addonWrittenPoliciesOthers)
+
+								if (isInsDataFetched == "Y") {
+									console.log("addon all isInsDataFetched", callInsApiAjaxResObj.insGwpPolicyComprehensive, callInsApiAjaxResObj.insGwpPolicyTp);
+									var acqCost = (((callPolicyApiAjaxResObj.addonAcqCostTp + callPolicyApiAjaxResObj.addonAcqCostComprehensive) / (callInsApiAjaxResObj.insGwpDepPolicyComprehensive + callInsApiAjaxResObj.insGwpNcbPolicyComprehensive + callInsApiAjaxResObj.insGwpOtherAddonPolicyComprehensive + callInsApiAjaxResObj.insGwpDepPolicyTp + callInsApiAjaxResObj.insGwpNcbPolicyTp + callInsApiAjaxResObj.insGwpOtherAddonPolicyTp)) * 100);
+									$(".acr_r" + period).text((+acqCost || 0) + '%');
+									var acqCostOd = (((callPolicyApiAjaxResObj.addonAcqCostComprehensive) / (callInsApiAjaxResObj.insGwpDepPolicyComprehensive + callInsApiAjaxResObj.insGwpNcbPolicyComprehensive + callInsApiAjaxResObj.insGwpOtherAddonPolicyComprehensive)) * 100);
+									$(".acrOd_r" + period).text((+acqCostOd) + '%');
+									var acqCostTp = (((callPolicyApiAjaxResObj.addonAcqCostTp) / (callInsApiAjaxResObj.insGwpDepPolicyTp + callInsApiAjaxResObj.insGwpNcbPolicyTp + callInsApiAjaxResObj.insGwpOtherAddonPolicyTp)) * 100);
+									$(".acrTp_r" + period).text((+acqCostTp) + '%');
+								}
+							}
+						}
+
+
+						// if (isClaimsDataFetched == "Y") {
+						// 	console.log("isClaimsDataFetched", registeredClaimscatCount, registeredClaimstheftCount, registeredClaimstOthersCount);
+						// 	var clmFreqCat = (((registeredClaimscatCount) / (obj.writtenPolicies)) * 100).toFixed("2");
+						// 	$(".claimFreqCat_r" + period).text((+clmFreqCat || 0) + '%');
+						// 	var clmFreqTheft = (((registeredClaimstheftCount) / (obj.writtenPolicies)) * 100).toFixed("2");
+						// 	$(".claimFreqTheft_r" + period).text((+clmFreqTheft || 0) + '%');
+						// 	var clmFreqOthers = (((registeredClaimstOthersCount) / (obj.writtenPolicies)) * 100).toFixed("2");
+						// 	$(".claimFreqOthers_r" + period).text((+clmFreqOthers || 0) + '%');
+						// 	var clmFreq = (((registeredClaimscatCount + registeredClaimstheftCount + registeredClaimstOthersCount) / (obj.writtenPolicies)) * 100).toFixed("2");
+						// 	$(".claimFreq_r" + period).text((+clmFreq || 0) + '%');
+						// }
+						// if (isInsDataFetched == "Y") {
+						// 	var acrOdPVal = (((obj.acqCostComprehensive) / ($(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
+						// 	acrOdPVal = isFinite(acrOdPVal) ? acrOdPVal : 0;
+						// 	$(".acrOd_r" + period).text((+acrOdPVal || 0) + '%');
+						// 	//$(".acrTp_r"+period).text(acqCostTp/$(".gwpTp_r"+period).text());
+						// 	if ($(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "") != 0) {
+						// 		var acrTpPVal = (((obj.acqCostTp) / ($(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
+						// 		acrTpPVal = isFinite(acrTpPVal) ? acrTpPVal : 0;
+						// 		$(".acrTp_r" + period).text((+acrTpPVal || 0) + '%');
+						// 	} else {
+						// 		$(".acrTp_r" + period).text(0);
+						// 	}
+						// 	//$(".acr_r"+period).text(parseFloat(acqCostTp/$(".gwpTp_r"+period).text())+parseFloat(acqCostOd/$(".gwpOd_r"+period).text()));
+						// 	//$(".acr_r"+period).text((parseFloat($(".extra_13 > .acrOd_r"+period).text())+parseFloat($(".extra_13 > .acrTp_r"+period).text())) );
+						// 	var acrPVal = ((((obj.acqCostComprehensive) + (obj.acqCostTp)) / ($("#show_1 > .gwp_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
+						// 	acrPVal = isFinite(acrPVal) ? acrPVal : 0;
+						// 	$(".acr_r" + period).text((+acrPVal || 0) + '%');
+						// }
+
+						jQuery("#pre-loader").remove();
+					});
+
+				}
+			}));
+		}
+
+
+
+var callR12ApiAjaxResObj;
+		function callR12NewCube(period, fromDate, toDate) {
+
+			var report = $('#reports').val();
+			var AddOnNew = getAddOnNew();
+			var PolicyTypeNew = getPolicyTypeNew();
+			var myInput;
+			if (report == 'GENERAL') {
+				myInputs = $('#generalDiv').clone();
+			} else if (report == 'MOTOR') {
+				myInputs = $('#dimensionFilterDiv').clone();
+			} else if (report == 'HEALTH') {
+				myInputs = $('#healthDiv').clone();
+			}
+			var genDiv = $('<form>').append(myInputs).serializeArray();
+			genDiv.push({ name: 'fromDate', value: fromDate });
+			genDiv.push({ name: 'toDate', value: toDate });
+			genDiv.push({ name: 'reportType', value: report });
+			genDiv.push({ name: 'addOnNew', value: AddOnNew });
+			genDiv.push({ name: 'policyTypes', value: PolicyTypeNew });
+			jQuery("body").prepend('<section id="pre-loader"><img src="../../assets/images/Logo_Innerpage.png" alt="CompanyLogo" id="logo"></section>');
+
+			var pApiURL = "";
+			if ($("#r12Btn").css('background-color') != "rgb(255, 255, 255)") {
+				pApiURL = "/getR12NewCubeData";
+			} 
+			ajaxArray.push($.ajax({
+				type: "GET",
+				contentType: "application/json",
+				url: pApiURL,
+				dataType: 'json',
+				cache: false,
+				timeout: 600000,
+				data: genDiv,
+				success: function (data) {
+					isPolicyDataFetched = "Y";
+					callR12ApiAjaxResObj = data;
+					console.log('ddddddddddddddddddddddddddddddddddddddddddddddddddd');
+					console.log(callR12ApiAjaxResObj);
+					$.each(data, function (ind, obj) {
+
+					
+
+						
 
 						jQuery("#pre-loader").remove();
 					});
@@ -5666,7 +5854,7 @@ alert("i c");
 			ajaxArray.push($.ajax({
 				type: "GET",
 				contentType: "application/json",
-				url: sApiURL ,
+				url: sApiURL,
 				dataType: 'json',
 				cache: false,
 				timeout: 600000,
@@ -6290,7 +6478,7 @@ alert("i c");
 
 		var channelArr = [];
 		$('#motorChannel').on('change', function () {
-			var control=$("#motorSubChannelSelect")[0].selectize.clearOptions();
+			var control = $("#motorSubChannelSelect")[0].selectize.clearOptions();
 			// console.log("control "+ control)
 
 			//alert( this.value );
@@ -6319,8 +6507,8 @@ alert("i c");
 
 		var channelArrNow = [];
 		$('#motorChannelNow').on('change', function () {
-			var control=$("#motorSubChannelSelect")[0].selectize.clearOptions();
-			
+			var control = $("#motorSubChannelSelect")[0].selectize.clearOptions();
+
 			channelArrNow = [];
 			//channelArr.push(this.value);
 			$("#motorChannelNow option").each(function () {
@@ -6345,9 +6533,9 @@ alert("i c");
 			});
 		});
 
-		
 
-	
+
+
 		$('#reportName').text($('#reports').val());
 
 		$('#reports').change(function (e) {
@@ -6856,10 +7044,10 @@ alert("i c");
 				$('#motorTable > tbody > tr > td:nth-child(2)').text('0.00');
 				$('#healthTable > tbody > tr > td:nth-child(2)').text('0.00');
 				if ($("#uwYearBtn").css('background-color') != "rgb(255, 255, 255)") {
-					
+
 					// getCubeGEPData(1, from1, to1);
 					callInsApi(1, from1, to1);
-					 //callPolicyApi(1, from1, to1);
+					callPolicyApi(1, from1, to1);
 					// callClaimApi(1, from1, to1);
 					// callSingleLineApi(1, from1, to1, "GIC");
 					// callSingleLineApi(1, from1, to1, "NIC");
@@ -6871,7 +7059,7 @@ alert("i c");
 				if ($("#periodBasedBtn").css('background-color') != "rgb(255, 255, 255)") {
 					//  getCubeGEPData(1, from1, to1);
 					callInsApi(1, from1, to1);
-					  //callPolicyApi(1, from1, to1);
+					callPolicyApi(1, from1, to1);
 					//  callClaimApi(1, from1, to1);
 					//  callSingleLineApi(1, from1, to1, "GIC");
 					//  callSingleLineApi(1, from1, to1, "NIC");
@@ -6881,10 +7069,7 @@ alert("i c");
 					// }
 				}
 				if ($("#r12Btn").css('background-color') != "rgb(255, 255, 255)") {
-					callgetR12GicNic(1, from1, to1);
-					callR12AcqFunction(1, from1, to1);
-					callR12GwpNwp(1, from1, to1);
-					callR12GepNep(1, from1, to1);
+					callR12NewCube(1, from1, to1);
 				}
 
 			}
