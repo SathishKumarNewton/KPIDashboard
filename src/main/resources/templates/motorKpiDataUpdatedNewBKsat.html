@@ -5454,13 +5454,6 @@ sortField: 'text'
 			"addonAcqCost": 0,
 			"livesCovered": 0
 		};
-		var inputBinding = { /// all api parameters should be here (Note: R12 also added)
-			"writtenPoliciesComprehensive": 0,
-			"writtenPoliciesTp": 0,
-			"writtenPoliciesOthers": 0,
-			"writtenPolicies": 0,
-		}
-
 		function callPolicyApi(period, fromDate, toDate) {
 
 			var report = $('#reports').val();
@@ -5497,61 +5490,185 @@ sortField: 'text'
 				timeout: 600000,
 				data: genDiv,
 				success: function (data) {
-					isPolicyDataFetched = true;
-					console.log(Policy);
-					Object.assign(Policy, data[0]);
-					console.log(Policy);
-					calculation(period);
+					isPolicyDataFetched = "Y";
+					callPolicyApiAjaxResObj = data;
+					console.log('policyapi');
+					console.log(callPolicyApiAjaxResObj);
+					$.each(data, function (ind, obj) {
+
+						$(".writtenPolicies_r" + period).text((obj.writtenPolicies).toFixed("0"));
+						$(".writtenPoliciesOd_r" + period).text((obj.writtenPoliciesComprehensive).toFixed("0"));
+						$(".writtenPoliciesTp_r" + period).text((obj.writtenPoliciesTp).toFixed("0"));
+						$(".writtenPoliciesOthers_r" + period).text((obj.writtenPoliciesOthers).toFixed("0"));
+						$(".acr_r" + period).text((obj.acqCost).toFixed("0") + '%');
+						$(".acrOd_r" + period).text((obj.acqCostComprehensive).toFixed("0") + '%');
+						$(".acrTp_r" + period).text((obj.acqCostTp).toFixed("0") + '%');
+
+
+
+						if ($("#includeBtn").css('background-color') != "rgb(255, 255, 255)") {
+
+							if ($("#comprehensiveBtn").css('background-color') != "rgb(255, 255, 255)") {
+								$(".writtenPolicies_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesComprehensive);
+								$(".writtenPoliciesOd_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesComprehensive)
+
+								if (isInsDataFetched == "Y") {
+									console.log("include comprehensive isInsDataFetched", callInsApiAjaxResObj.insGwpPolicyComprehensive, callInsApiAjaxResObj.insGwpPolicyTp);
+									var acqCost = (((callPolicyApiAjaxResObj.acqCostComprehensive) / (callInsApiAjaxResObj.insGwpPolicyComprehensive)) * 100);
+									$(".acr_r" + period).text((+acqCost || 0) + '%');
+									//var acqCostOd = (((acqCostComprehensive) / (insGwpPolicyComprehensive)) * 100).toFixed("2");
+									$(".acrOd_r" + period).text((+acqCost) + '%');
+								}
+
+							} else if ($("#tpBtn").css('background-color') != "rgb(255, 255, 255)") {
+								$(".writtenPolicies_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesTp);
+								$(".writtenPoliciesTp_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesTp);
+
+								if (isInsDataFetched == "Y") {
+									console.log("include tp isInsDataFetched", callInsApiAjaxResObj.insGwpPolicyComprehensive, callInsApiAjaxResObj.insGwpPolicyTp);
+									var acqCost = (((callPolicyApiAjaxResObj.acqCostTp) / (callInsApiAjaxResObj.insGwpPolicyTp)) * 100);
+									$(".acr_r" + period).text((+acqCost || 0) + '%');
+									//var acqCostTp = (((acqCostTp) / (insGwpPolicyTp)) * 100).toFixed("2");
+									$(".acrTp_r" + period).text((+acqCost) + '%');
+								}
+							} else {
+								$(".writtenPolicies_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesOthers + callPolicyApiAjaxResObj.writtenPoliciesComprehensive + callPolicyApiAjaxResObj.writtenPoliciesTp);
+								$(".writtenPoliciesOd_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesComprehensive)
+								$(".writtenPoliciesTp_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesTp);
+								$(".writtenPoliciesOthers_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesOthers)
+
+								if (isInsDataFetched == "Y") {
+									console.log("include all isInsDataFetched", callInsApiAjaxResObj.insGwpPolicyComprehensive, callInsApiAjaxResObj.insGwpPolicyTp);
+									var acqCost = (((callPolicyApiAjaxResObj.acqCostTp + callPolicyApiAjaxResObj.acqCostComprehensive) / (callInsApiAjaxResObj.insGwpPolicyComprehensive + insGwpPolicyTp)) * 100);
+									$(".acr_r" + period).text((+acqCost || 0) + '%');
+									var acqCostOd = (((callPolicyApiAjaxResObj.acqCostComprehensive) / (callInsApiAjaxResObj.insGwpPolicyComprehensive)) * 100);
+									$(".acrOd_r" + period).text((+acqCostOd) + '%');
+									var acqCostTp = (((callPolicyApiAjaxResObj.acqCostTp) / (callInsApiAjaxResObj.insGwpPolicyTp)) * 100);
+									$(".acrTp_r" + period).text((+acqCostTp) + '%');
+								}
+							}
+						}
+						else if ($("#excludeBtn").css('background-color') != "rgb(255, 255, 255)") {
+
+							if ($("#comprehensiveBtn").css('background-color') != "rgb(255, 255, 255)") {
+								$(".writtenPolicies_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesComprehensive - callPolicyApiAjaxResObj.addonWrittenPoliciesComprehensive);
+								$(".writtenPoliciesOd_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesComprehensive - callPolicyApiAjaxResObj.addonWrittenPoliciesComprehensive);
+
+								if (isInsDataFetched == "Y") {
+									console.log("exclude comprehensive isInsDataFetched", insGwpPolicyComprehensive, insGwpPolicyTp);
+									var acqCost = (((callPolicyApiAjaxResObj.acqCostComprehensive - callPolicyApiAjaxResObj.addonAcqCostComprehensive) / (callInsApiAjaxResObj.insGwpPolicyComprehensive - callInsApiAjaxResObj.insGwpDepPolicyComprehensive - callInsApiAjaxResObj.insGwpNcbPolicyComprehensive - callInsApiAjaxResObj.insGwpOtherAddonPolicyComprehensive)) * 100);
+									$(".acr_r" + period).text((+acqCost || 0) + '%');
+									//var acqCostOd = (((acqCostComprehensive) / (insGwpPolicyComprehensive)) * 100).toFixed("2");
+									$(".acrOd_r" + period).text((+acqCost) + '%');
+								}
+
+							} else if ($("#tpBtn").css('background-color') != "rgb(255, 255, 255)") {
+								$(".writtenPolicies_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesTp - callPolicyApiAjaxResObj.addonWrittenPoliciesTp);
+								$(".writtenPoliciesTp_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesTp - callPolicyApiAjaxResObj.addonWrittenPoliciesTp);
+
+								if (isInsDataFetched == "Y") {
+									console.log("include tp isInsDataFetched", insGwpPolicyComprehensive, insGwpPolicyTp);
+									var acqCost = (((callPolicyApiAjaxResObj.acqCostTp - callPolicyApiAjaxResObj.addonAcqCostTp) / (callInsApiAjaxResObj.insGwpPolicyTp - callInsApiAjaxResObj.insGwpDepPolicyTp - callInsApiAjaxResObj.insGwpNcbPolicyTp - callInsApiAjaxResObj.insGwpOtherAddonPolicyTp)) * 100);
+									$(".acr_r" + period).text((+acqCost || 0) + '%');
+									//var acqCostTp = (((acqCostTp) / (insGwpPolicyTp)) * 100).toFixed("2");
+									$(".acrTp_r" + period).text((+acqCost) + '%');
+								}
+							} else {
+								$(".writtenPolicies_r" + period).text((callPolicyApiAjaxResObj.writtenPoliciesOthers + callPolicyApiAjaxResObj.writtenPoliciesComprehensive + callPolicyApiAjaxResObj.writtenPoliciesTp) - (callPolicyApiAjaxResObj.addonWrittenPoliciesComprehensive + callPolicyApiAjaxResObj.addonWrittenPoliciesTp + callPolicyApiAjaxResObj.addonWrittenPoliciesOthers));
+								$(".writtenPoliciesOd_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesComprehensive - callPolicyApiAjaxResObj.addonWrittenPoliciesComprehensive)
+								$(".writtenPoliciesTp_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesTp - callPolicyApiAjaxResObj.addonWrittenPoliciesTp);
+								$(".writtenPoliciesOthers_r" + period).text(callPolicyApiAjaxResObj.writtenPoliciesOthers - callPolicyApiAjaxResObj.addonWrittenPoliciesOthers)
+
+								if (isInsDataFetched == "Y") {
+									console.log("include all isInsDataFetched", insGwpPolicyComprehensive, insGwpPolicyTp);
+									var acqCost = (((callPolicyApiAjaxResObj.acqCostTpcallPolicyApiAjaxResObj.acqCostComprehensive - callPolicyApiAjaxResObj.addonAcqCostComprehensive - callPolicyApiAjaxResObj.addonAcqCostTp) / (callInsApiAjaxResObj.insGwpPolicyComprehensive + callInsApiAjaxResObj.insGwpPolicyTp - callInsApiAjaxResObj.insGwpDepPolicyComprehensive - callInsApiAjaxResObj.insGwpDepPolicyTp - callInsApiAjaxResObj.insGwpNcbPolicyComprehensive - callInsApiAjaxResObj.insGwpNcbPolicyTp - callInsApiAjaxResObj.insGwpOtherAddonPolicyComprehensive - callInsApiAjaxResObj.insGwpOtherAddonPolicyTp)) * 100);
+									$(".acr_r" + period).text((+acqCost || 0) + '%');
+									var acqCostOd = (((callPolicyApiAjaxResObj.acqCostComprehensive - callPolicyApiAjaxResObj.addonAcqCostComprehensive) / (callInsApiAjaxResObj.insGwpPolicyComprehensive - callInsApiAjaxResObj.insGwpDepPolicyComprehensive - callInsApiAjaxResObj.insGwpNcbPolicyComprehensive - callInsApiAjaxResObj.insGwpOtherAddonPolicyComprehensive)) * 100);
+									$(".acrOd_r" + period).text((+acqCostOd) + '%');
+									var acqCostTp = (((callPolicyApiAjaxResObj.acqCostTp - callPolicyApiAjaxResObj.addonAcqCostTp) / (callInsApiAjaxResObj.insGwpPolicyTp - callInsApiAjaxResObj.insGwpDepPolicyTp - callInsApiAjaxResObj.insGwpNcbPolicyTp - callInsApiAjaxResObj.insGwpOtherAddonPolicyTp)) * 100);
+									$(".acrTp_r" + period).text((+acqCostTp) + '%');
+								}
+							}
+						} else if ($("#onlyAddOnBtn").css('background-color') != "rgb(255, 255, 255)") {
+
+							if ($("#comprehensiveBtn").css('background-color') != "rgb(255, 255, 255)") {
+								$(".writtenPolicies_r" + period).text(callPolicyApiAjaxResObj.addonWrittenPoliciesComprehensive);
+								$(".writtenPoliciesOd_r" + period).text(callPolicyApiAjaxResObj.addonWrittenPoliciesComprehensive)
+
+								if (isInsDataFetched == "Y") {
+									console.log("addon comprehensive isInsDataFetched", callInsApiAjaxResObj.insGwpPolicyComprehensive, callInsApiAjaxResObj.insGwpPolicyTp);
+									var acqCost = (((callPolicyApiAjaxResObj.addonAcqCostComprehensive) / (callInsApiAjaxResObj.insGwpDepPolicyComprehensive + callInsApiAjaxResObj.insGwpNcbPolicyComprehensive + callInsApiAjaxResObj.insGwpOtherAddonPolicyComprehensive)) * 100);
+									$(".acr_r" + period).text((+acqCost || 0) + '%');
+									//var acqCostOd = (((acqCostComprehensive) / (insGwpPolicyComprehensive)) * 100).toFixed("2");
+									$(".acrOd_r" + period).text((+acqCost) + '%');
+								}
+
+							} else if ($("#tpBtn").css('background-color') != "rgb(255, 255, 255)") {
+								$(".writtenPolicies_r" + period).text(callPolicyApiAjaxResObj.addonWrittenPoliciesTp);
+								$(".writtenPoliciesTp_r" + period).text(callPolicyApiAjaxResObj.addonWrittenPoliciesTp);
+
+								if (isInsDataFetched == "Y") {
+									console.log("addon tp isInsDataFetched", callInsApiAjaxResObj.insGwpPolicyComprehensive, callInsApiAjaxResObj.insGwpPolicyTp);
+									var acqCost = (((callPolicyApiAjaxResObj.addonAcqCostTp) / (callInsApiAjaxResObj.insGwpDepPolicyTp + callInsApiAjaxResObj.insGwpNcbPolicyTp + callInsApiAjaxResObj.insGwpOtherAddonPolicyTp)) * 100);
+									$(".acr_r" + period).text((+acqCost || 0) + '%');
+									//var acqCostTp = (((acqCostTp) / (insGwpPolicyTp)) * 100).toFixed("2");
+									$(".acrTp_r" + period).text((+acqCost) + '%');
+								}
+							} else {
+								$(".writtenPolicies_r" + period).text(callPolicyApiAjaxResObj.addonWrittenPoliciesOthers + callPolicyApiAjaxResObj.addonWrittenPoliciesComprehensive + callPolicyApiAjaxResObj.addonWrittenPoliciesTp);
+								$(".writtenPoliciesOd_r" + period).text(callPolicyApiAjaxResObj.addonWrittenPoliciesComprehensive)
+								$(".writtenPoliciesTp_r" + period).text(callPolicyApiAjaxResObj.addonWrittenPoliciesTp);
+								$(".writtenPoliciesOthers_r" + period).text(callPolicyApiAjaxResObj.addonWrittenPoliciesOthers)
+
+								if (isInsDataFetched == "Y") {
+									console.log("addon all isInsDataFetched", callInsApiAjaxResObj.insGwpPolicyComprehensive, callInsApiAjaxResObj.insGwpPolicyTp);
+									var acqCost = (((callPolicyApiAjaxResObj.addonAcqCostTp + callPolicyApiAjaxResObj.addonAcqCostComprehensive) / (callInsApiAjaxResObj.insGwpDepPolicyComprehensive + callInsApiAjaxResObj.insGwpNcbPolicyComprehensive + callInsApiAjaxResObj.insGwpOtherAddonPolicyComprehensive + callInsApiAjaxResObj.insGwpDepPolicyTp + callInsApiAjaxResObj.insGwpNcbPolicyTp + callInsApiAjaxResObj.insGwpOtherAddonPolicyTp)) * 100);
+									$(".acr_r" + period).text((+acqCost || 0) + '%');
+									var acqCostOd = (((callPolicyApiAjaxResObj.addonAcqCostComprehensive) / (callInsApiAjaxResObj.insGwpDepPolicyComprehensive + callInsApiAjaxResObj.insGwpNcbPolicyComprehensive + callInsApiAjaxResObj.insGwpOtherAddonPolicyComprehensive)) * 100);
+									$(".acrOd_r" + period).text((+acqCostOd) + '%');
+									var acqCostTp = (((callPolicyApiAjaxResObj.addonAcqCostTp) / (callInsApiAjaxResObj.insGwpDepPolicyTp + callInsApiAjaxResObj.insGwpNcbPolicyTp + callInsApiAjaxResObj.insGwpOtherAddonPolicyTp)) * 100);
+									$(".acrTp_r" + period).text((+acqCostTp) + '%');
+								}
+							}
+						}
+
+
+						// if (isClaimsDataFetched == "Y") {
+						// 	console.log("isClaimsDataFetched", registeredClaimscatCount, registeredClaimstheftCount, registeredClaimstOthersCount);
+						// 	var clmFreqCat = (((registeredClaimscatCount) / (obj.writtenPolicies)) * 100).toFixed("2");
+						// 	$(".claimFreqCat_r" + period).text((+clmFreqCat || 0) + '%');
+						// 	var clmFreqTheft = (((registeredClaimstheftCount) / (obj.writtenPolicies)) * 100).toFixed("2");
+						// 	$(".claimFreqTheft_r" + period).text((+clmFreqTheft || 0) + '%');
+						// 	var clmFreqOthers = (((registeredClaimstOthersCount) / (obj.writtenPolicies)) * 100).toFixed("2");
+						// 	$(".claimFreqOthers_r" + period).text((+clmFreqOthers || 0) + '%');
+						// 	var clmFreq = (((registeredClaimscatCount + registeredClaimstheftCount + registeredClaimstOthersCount) / (obj.writtenPolicies)) * 100).toFixed("2");
+						// 	$(".claimFreq_r" + period).text((+clmFreq || 0) + '%');
+						// }
+						// if (isInsDataFetched == "Y") {
+						// 	var acrOdPVal = (((obj.acqCostComprehensive) / ($(".extra_1 > .gwpOd_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
+						// 	acrOdPVal = isFinite(acrOdPVal) ? acrOdPVal : 0;
+						// 	$(".acrOd_r" + period).text((+acrOdPVal || 0) + '%');
+						// 	//$(".acrTp_r"+period).text(acqCostTp/$(".gwpTp_r"+period).text());
+						// 	if ($(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "") != 0) {
+						// 		var acrTpPVal = (((obj.acqCostTp) / ($(".extra_1 > .gwpTp_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
+						// 		acrTpPVal = isFinite(acrTpPVal) ? acrTpPVal : 0;
+						// 		$(".acrTp_r" + period).text((+acrTpPVal || 0) + '%');
+						// 	} else {
+						// 		$(".acrTp_r" + period).text(0);
+						// 	}
+						// 	//$(".acr_r"+period).text(parseFloat(acqCostTp/$(".gwpTp_r"+period).text())+parseFloat(acqCostOd/$(".gwpOd_r"+period).text()));
+						// 	//$(".acr_r"+period).text((parseFloat($(".extra_13 > .acrOd_r"+period).text())+parseFloat($(".extra_13 > .acrTp_r"+period).text())) );
+						// 	var acrPVal = ((((obj.acqCostComprehensive) + (obj.acqCostTp)) / ($("#show_1 > .gwp_r" + period).text().replaceAll(",", "") * 100000)) * 100).toFixed("2");
+						// 	acrPVal = isFinite(acrPVal) ? acrPVal : 0;
+						// 	$(".acr_r" + period).text((+acrPVal || 0) + '%');
+						// }
+
+						jQuery("#pre-loader").remove();
+					});
+
 				}
 			}));
 		}
-
-		function calculation(period){
-			if(isPolicyDataFetched){ // all api need to success
-				if($("#includeBtn").css('background-color') != "rgb(255, 255, 255)"){
-					include(period) // exclude, addOn
-				}
-			}
-		}
-
-		function include(period){
-			// Policy 
-			if($("#comprehensiveBtn").css('background-color') != "rgb(255, 255, 255)"){
-				inputBinding.writtenPoliciesComprehensive = Policy.writtenPoliciesComprehensive;
-				inputBinding.writtenPoliciesTp = 0;
-				inputBinding.writtenPoliciesOthers = 0;
-				inputBinding.writtenPolicies = Policy.writtenPoliciesComprehensive;
-				// A, H, 
-			} else if($("#tpBtn").css('background-color') != "rgb(255, 255, 255)"){
-				inputBinding.writtenPoliciesComprehensive = 0;
-				inputBinding.writtenPoliciesTp = Policy.writtenPoliciesTp;
-				inputBinding.writtenPoliciesOthers = 0;
-				inputBinding.writtenPolicies = Policy.writtenPoliciesTp;
-			} else if($("#allPolicyTypeBtn").css('background-color') != "rgb(255, 255, 255)"){
-				inputBinding.writtenPoliciesComprehensive = Policy.writtenPoliciesComprehensive;
-				inputBinding.writtenPoliciesTp = Policy.writtenPoliciesTp;
-				inputBinding.writtenPoliciesOthers = Policy.writtenPoliciesOthers;
-				inputBinding.writtenPolicies = Policy.writtenPoliciesComprehensive + Policy.writtenPoliciesOthers + Policy.writtenPoliciesTp; 
-			} else{
-				inputBinding.writtenPoliciesComprehensive = 0;
-				inputBinding.writtenPoliciesTp = 0;
-				inputBinding.writtenPoliciesOthers = 0;
-				inputBinding.writtenPolicies = 0;
-			}
-
-			/// ---- all includes formuls will be add
-
-			Binding(period);
-		}
-
-		function Binding(period){
-			$(".writtenPolicies_r" + period).text((inputBinding.writtenPolicies).toFixed("0"));
-			$(".writtenPoliciesOd_r" + period).text((inputBinding.writtenPoliciesComprehensive).toFixed("0"));
-			$(".writtenPoliciesTp_r" + period).text((inputBinding.writtenPoliciesTp).toFixed("0"));
-			$(".writtenPoliciesOthers_r" + period).text((inputBinding.writtenPoliciesOthers).toFixed("0"));	
-			jQuery("#pre-loader").remove();
-		}
-
 
 
 
