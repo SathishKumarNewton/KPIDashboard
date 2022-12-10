@@ -302,8 +302,8 @@ public class KpiDashboardServiceImpl implements KpiDashboardService {
 		List<String> subChannelMasters = subChannelMasterRepository.getUniqueSubChannels();
 		List<SublineMaster> sublineMasters = sublineMasterRepository.findAll();
 		List<BranchMaster> branchMasters = branchMasterRepository.findAll();
-		/*List<IntermediaryMaster> intermediaryMasters = intermediaryMasterRepository.findAll();*/
-		List<IntermediaryMaster> intermediaryMasters = intermediaryMasterRepository.findByIntermediaryCode("AG021209");
+		List<IntermediaryMaster> intermediaryMasters = intermediaryMasterRepository.findAll();
+//		List<IntermediaryMaster> intermediaryMasters = intermediaryMasterRepository.findByIntermediaryCode("AG021209");
 		
 		List<ChannelMasterNow> channelMastersNow = channelMasterNowRepository.findAll();
 		List<SubChannelMasterNow> subChannelMastersNow = subChannelMasterNowRepository.findAll();

@@ -12,12 +12,12 @@ public class RMSConstants {
 	public static final String mm_slash_dd_slash_yyyy = "MM/dd/yyyy";
 //	public static final String KYLIN_BASE_URL = "http://13.233.65.183:7070";
 //	public static final String KYLIN_BASE_IP_AND_PORT = "13.233.65.183:7070";
-    public static final String KYLIN_BASE_URL = "http://localhost:7070";
-	public static final String KYLIN_BASE_IP_AND_PORT = "localhost:7070";
-	public static final String KYLIN_RS_BASE_IP_AND_PORT = "localhost:7070";
-    // public static final String KYLIN_BASE_URL = "http://3.109.82.0:7071";
-	// public static final String KYLIN_BASE_IP_AND_PORT = "3.109.82.0:7071";
-	// public static final String KYLIN_RS_BASE_IP_AND_PORT = "3.109.82.0:7071";
+//    public static final String KYLIN_BASE_URL = "http://localhost:7070";
+//	public static final String KYLIN_BASE_IP_AND_PORT = "localhost:7070";
+//	public static final String KYLIN_RS_BASE_IP_AND_PORT = "localhost:7070";
+     public static final String KYLIN_BASE_URL = "http://3.109.82.0:7071";
+	 public static final String KYLIN_BASE_IP_AND_PORT = "3.109.82.0:7071";
+	 public static final String KYLIN_RS_BASE_IP_AND_PORT = "3.109.82.0:7071";
 	public static final String KYLIN_AUTH_KEY="Basic QURNSU46S1lMSU4=";
 	public static final String InProgress = "In Progress";
 	public static final String Completed = "Completed";

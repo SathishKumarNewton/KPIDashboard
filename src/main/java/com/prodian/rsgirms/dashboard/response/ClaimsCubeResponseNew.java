@@ -11,18 +11,31 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ClaimsCubeResponseNew {
 	
-	private double catClaimCountPoliciesComprehensive;
-	private double catClaimCountPoliciesTp;
-	private double catClaimCountPoliciesOthers;
+	private double claimCount;
+	private double addonClaimCount;
 	
-	private double theftClaimCountPoliciesComprehensive;
-	private double theftClaimCountPoliciesTp;
-	private double theftClaimCountPoliciesOthers;
+	private double catClaimCount;
+	private double addonCatClaimCount;
 	
-	private double othersClaimCountPoliciesComprehensive;
-	private double othersClaimCountPoliciesTp;
-	private double othersClaimCountPoliciesOthers;
+	private double theftClaimCount;
+	private double addonTheftClaimCount;
 	
+	private double otherClaimCount;
+	private double addonOtherClaimCount;
 	
+	private double claimCountTp;
+	private double addonClaimCountTp;
+	
+//	private double catClaimCountPoliciesComprehensive;
+//	private double catClaimCountPoliciesTp;
+//	private double catClaimCountPoliciesOthers;
+//	
+//	private double theftClaimCountPoliciesComprehensive;
+//	private double theftClaimCountPoliciesTp;
+//	private double theftClaimCountPoliciesOthers;
+//	
+//	private double othersClaimCountPoliciesComprehensive;
+//	private double othersClaimCountPoliciesTp;
+//	private double othersClaimCountPoliciesOthers;
 	
 }
