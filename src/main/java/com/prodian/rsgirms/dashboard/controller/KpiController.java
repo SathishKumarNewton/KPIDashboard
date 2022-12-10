@@ -2850,606 +2850,603 @@ public class KpiController {
 		return kpiResponseList;
 	}
 
-	@GetMapping("/getReserveSingleLineCubeGicDataNew/{claimType}/{claimParamType}")
-	@ResponseBody
-	public List<ReserverSingleLineCubeResponseNew> getReserveSingleLineCubeGicDataNew(HttpServletRequest req,
-			UserMatrixMasterRequest filterRequest, @PathVariable(value = "claimParamType") String claimParamType,
-			@PathVariable(value = "claimType") String claimType) throws SQLException {
-		Connection connection = null;
-		List<ReserverSingleLineCubeResponseNew> kpiResponseList = new ArrayList<ReserverSingleLineCubeResponseNew>();
-		long startTime = System.currentTimeMillis();
-		try {
-//			String fromDate = req.getParameter("fromDate") == null ? "" : req.getParameter("fromDate");
-//			String toDate = req.getParameter("toDate") == null ? "" : req.getParameter("toDate");
-			String fromDate = filterRequest.getFromDate() == null ? "" : filterRequest.getFromDate();
-			String toDate = filterRequest.getToDate() == null ? "" : filterRequest.getToDate();
-
-			List<ProductMaster> productMasters = productMasterRepository.findAll();
-
-			String motorProductVals = "'" + productMasters.stream()
-					.filter(p -> p.getProductType().toLowerCase().contains("motor")).map(ProductMaster::getProductCode)
-					.collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";
-
-			String healthProductVals = "'" + productMasters.stream()
-					.filter(p -> p.getProductType().toLowerCase().contains("health")).map(ProductMaster::getProductCode)
-					.collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";
-
-			Driver driverManager = (Driver) Class.forName("org.apache.kylin.jdbc.Driver").newInstance();
-			Properties info = new Properties();
-			info.put("user", "ADMIN");
-			info.put("password", "KYLIN");
-			connection = driverManager
-					.connect("jdbc:kylin://" + RMSConstants.KYLIN_RS_BASE_IP_AND_PORT + "/learn_kylin", info);
-			System.out.println("Connection status -------------------------->" + connection);
-			Statement stmt = connection.createStatement();
-
-			String fromMonth = fromDate.split("/")[0];
-			String fromYear = fromDate.split("/")[1];
-			String toMonth = toDate.split("/")[0];
-			String toYear = toDate.split("/")[1];
-			String queryStr = "";
-			// Query in error
-			if (claimParamType.equals("GIC")) {
-				queryStr = "SELECT  " + "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"
-						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
-						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
-						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
-						+ "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='DEP' THEN RSL_GIC ELSE 0 END)  as rsl_cat_gic_od_policy_comp_dep, "
-						+ "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"
-						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
-						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
-						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
-						+ "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='NCB'  THEN RSL_GIC ELSE 0 END)  as rsl_cat_gic_od_policy_comp_ncb,  "
-						+ "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"
-						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
-						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
-						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
-						+ "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='OTHER'  THEN RSL_GIC ELSE 0 END) as rsl_cat_gic_od_policy_comp_other_addon,  "
-						+ "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"
-						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
-						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
-						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
-						+ "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='NONE'  THEN RSL_GIC ELSE 0 END) as rsl_cat_gic_od_policy_comp_nil_addon,"
-						+ "0 as rsl_cat_gic_od_policy_tp_dep," + "0 as rsl_cat_gic_od_policy_tp_ncb,"
-						+ "0 as rsl_cat_gic_od_policy_tp_OTHER_ADDON," + "0 as rsl_cat_gic_od_policy_tp_NIL_ADDON,"
-						+ "0 as rsl_cat_gic_od_policy_others_dep," + "0 as rsl_cat_gic_od_policy_others_ncb,"
-						+ "0 as rsl_cat_gic_od_policy_others_other_addon,"
-						+ "0 as rsl_cat_gic_od_policy_others_nil_addon,  "
-						+ "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='DEP' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_od_policy_comp_dep,"
-						+ "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='NCB' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_od_policy_comp_ncb,  "
-						+ "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='OTHER' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_od_policy_comp_other_addon,  "
-						+ "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='NONE' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_od_policy_comp_nil_addon,"
-						+ "0 as rsl_theft_gic_od_policy_tp_dep," + "0 as rsl_theft_gic_od_policy_tp_ncb,"
-						+ "0 as rsl_theft_gic_od_policy_tp_other_addon," + "0 as rsl_theft_gic_od_policy_tp_nil_addon,"
-						+ "0 as rsl_theft_gic_od_policy_others_dep," + "0 as rsl_theft_gic_od_policy_others_ncb,"
-						+ "0 as rsl_theft_gic_od_policy_others_other_addon,"
-						+ "0 as rsl_theft_gic_od_policy_others_nil_addon,"
-						+ "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
-						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
-						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
-						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
-						+ "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='DEP' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_od_policy_comp_dep,  "
-						+ "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
-						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
-						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
-						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
-						+ "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='NCB' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_od_policy_comp_ncb,  "
-						+ "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
-						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
-						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
-						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
-						+ "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='OTHER' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_od_policy_comp_other_addon,  "
-						+ "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
-						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
-						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
-						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
-						+ "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='NONE' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_od_policy_comp_nil_addon,"
-						+ "0 as rsl_other_gic_od_policy_tp_dep," + "0 as rsl_other_gic_od_policy_tp_ncb,"
-						+ "0 as rsl_other_gic_od_policy_tp_other_addon," + "0 as rsl_other_gic_od_policy_tp_nil_addon,"
-						+ "0 as rsl_other_gic_od_policy_others_dep," + "0 as rsl_other_gic_od_policy_others_ncb,"
-						+ "0 as rsl_other_gic_od_policy_others_other_addon,"
-						+ "0 as rsl_other_gic_od_policy_others_nil_addon,"
-						+ "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"
-						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
-						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
-						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
-						+ "'APLV'))  AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='DEP' THEN RSL_GIC ELSE 0 END) as rsl_cat_gic_tp_policy_comp_dep,  "
-						+ "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"
-						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
-						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
-						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
-						+ "'APLV'))  AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='NCB' THEN RSL_GIC ELSE 0 END) as rsl_cat_gic_tp_policy_comp_ncb,  "
-						+ "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"
-						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
-						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
-						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
-						+ "'APLV'))  AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='OTHER' THEN RSL_GIC ELSE 0 END) as rsl_cat_gic_tp_policy_comp_other_addon,  "
-						+ "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB',"
-						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
-						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
-						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
-						+ "'APLV'))  AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='NONE' THEN RSL_GIC ELSE 0 END) as rsl_cat_gic_tp_policy_comp_nil_addon,"
-						+ "0 as rsl_cat_gic_tp_policy_tp_dep," + "0 as rsl_cat_gic_tp_policy_tp_ncb,"
-						+ "0 as rsl_cat_gic_tp_policy_tp_other_addon," + "0 as rsl_cat_gic_tp_policy_tp_nil_addon,"
-						+ "0 as rsl_cat_gic_tp_policy_others_dep," + "0 as rsl_cat_gic_tp_policy_others_ncb,"
-						+ "0 as rsl_cat_gic_tp_policy_others_other_addon,"
-						+ "0 as rsl_cat_gic_tp_policy_others_nil_addon,"
-						+ "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='DEP' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_tp_policy_comp_dep,  "
-						+ "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='NCB' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_tp_policy_comp_ncb,  "
-						+ "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='OTHER' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_tp_policy_comp_other_addon,  "
-						+ "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='NONE' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_tp_policy_comp_nil_addon,"
-						+ "0 as rsl_theft_gic_tp_policy_tp_dep," + "0 as rsl_theft_gic_tp_policy_tp_ncb,"
-						+ "0 as rsl_theft_gic_tp_policy_tp_other_addon," + "0 as rsl_theft_gic_tp_policy_tp_nil_addon,"
-						+ "0 as rsl_theft_gic_tp_policy_others_dep," + "0 as rsl_theft_gic_tp_policy_others_ncb,"
-						+ "0 as rsl_theft_gic_tp_policy_others_other_addon,"
-						+ "0 as rsl_theft_gic_tp_policy_others_nil_addon,"
-						+ "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
-						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
-						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
-						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
-						+ "'APLV')) AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='DEP' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_tp_policy_comp_dep,  "
-						+ "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
-						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
-						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
-						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
-						+ "'APLV')) AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='NCB' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_tp_policy_comp_ncb,  "
-						+ "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
-						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
-						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
-						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
-						+ "'APLV')) AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='OTHER' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_tp_policy_comp_other_addon,  "
-						+ "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
-						+ "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
-						+ "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
-						+ "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
-						+ "'APLV')) AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='NONE' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_tp_policy_comp_nil_addon,"
-						+ "0 as rsl_other_gic_tp_policy_tp_dep," + "0 as rsl_other_gic_tp_policy_tp_ncb,"
-						+ "0 as rsl_other_gic_tp_policy_tp_other_addon," + "0 as rsl_other_gic_tp_policy_tp_nil_addon,"
-						+ "0 as rsl_other_gic_tp_policy_others_dep," + "0 as rsl_other_gic_tp_policy_others_ncb,"
-						+ "0 as rsl_other_gic_tp_policy_others_other_addon,"
-						+ "0 as rsl_other_gic_tp_policy_others_nil_addon "
-						+ "from (  SELECT   RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CATASTROPHECODE  ,RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CLAIM_TYPE, CATASTROPHIC_MASTER.CAT_TYPE   ,RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_NATURE_OF_CLAIM,  CSL_CLAIM_NO, category,ADDON_TYPE, SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CLOSING_BALANCE+RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CLAIM_TRANS_AMT-RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_OPENING_TOTAL) RSL_GIC  FROM RSDB.RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL as RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL  LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL  LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE  LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE  LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE  LEFT JOIN RSDB.KPI_MODEL_MASTER_NW as KPI_MODEL_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MAKE = KPI_MODEL_MASTER_NW.MAKE AND RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MODELCODE = KPI_MODEL_MASTER_NW.MODEL_CODE  LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE  LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY  LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE  LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CITY_CODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE  LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE ";
-			} else if (claimParamType.equals("NIC")) {
-
-				queryStr = "SELECT  "
-						+ "sum(case when ADDON_TYPE='DEP' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) as rsl_NIC_policy_comp_dep,"
-						+ "sum(case when ADDON_TYPE='NCB' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) as rsl_NIC_policy_comp_ncb,"
-						+ "sum(case when ADDON_TYPE='OTHER' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) as rsl_NIC_policy_comp_other_addon,  "
-						+ "sum(case when ADDON_TYPE='NONE' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) as rsl_NIC_policy_comp_nil_addon,"
-						+ "0 as rsl_NIC_policy_tp_dep," + "0 as rsl_NIC_policy_tp_ncb,"
-						+ "0 as rsl_NIC_policy_tp_other_addon," + "0 as rsl_NIC_policy_tp_nil_addon,"
-						+ "0 as rsl_NIC_policy_others_dep," + "0 as rsl_NIC_policy_others_ncb,"
-						+ "0 as rsl_NIC_policy_others_other_addon," + "0 as rsl_NIC_policy_others_nil_addon,"
-						+ "sum(case when CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='DEP' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_tp_policy_comp_dep,"
-						+ "sum(case when CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='NCB' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_tp_policy_comp_ncb,"
-						+ "sum(case when CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='OTHER' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_tp_policy_comp_other_addon,  "
-						+ "sum(case when CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='NONE' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_tp_policy_comp_nil_addon,"
-						+ "0 as rsl_nic_tp_policy_tp_dep," + "0 as rsl_nic_tp_policy_tp_ncb,"
-						+ "0 as rsl_nic_tp_policy_tp_other_addon," + "0 as rsl_nic_tp_policy_tp_nil_addon,"
-						+ "0 as rsl_nic_tp_policy_others_dep," + "0 as rsl_nic_tp_policy_others_ncb,"
-						+ "0 as rsl_nic_tp_policy_others_other_addon," + "0 as rsl_nic_tp_policy_others_nil_addon,"
-						+ "sum(case when CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='DEP' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_od_policy_comp_dep,"
-						+ "sum(case when CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NCB' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_od_policy_comp_ncb,"
-						+ "sum(case when CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='OTHER' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_od_policy_comp_other_addon,  "
-						+ "sum(case when CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NONE' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_od_policy_comp_nil_addon,"
-						+ "0 as rsl_nic_od_policy_tp_dep," + "0 as rsl_nic_od_policy_tp_ncb,"
-						+ "0 as rsl_nic_od_policy_tp_other_addon," + "0 as rsl_nic_od_policy_tp_nil_addon,"
-						+ "0 as rsl_nic_od_policy_others_dep," + "0 as rsl_nic_od_policy_others_ncb,"
-						+ "0 as rsl_nic_od_policy_others_other_addon," + "0 as rsl_nic_od_policy_others_nil_addon "
-						+ "FROM ( SELECT  SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CLOSING_BALANCE+RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CLAIM_TRANS_AMT-RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_OPENING_TOTAL) RSL_GIC,CSL_CLAIM_NO,CSL_MVMT_MONTH,category,ADDON_TYPE,uw_year,RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.PRODUCT_CODE,'NONE' BAND   FROM RSDB.RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL as RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL    LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL  LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE    LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE    LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE    LEFT JOIN RSDB.KPI_MODEL_MASTER_NW as KPI_MODEL_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MAKE = KPI_MODEL_MASTER_NW.MAKE AND RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MODELCODE = KPI_MODEL_MASTER_NW.MODEL_CODE  LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE    LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.OA_CODE = KPI_OA_MASTER_NW.OA_CODE   LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY  LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE    LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE   LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CITY_CODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE  LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE ";
-
-			}
-
-			String finstartDate = fromYear + "-" + fromMonth + "-01";
-			String finEndDate = toYear + "-" + toMonth + "-31";
-
-			if (claimType.equalsIgnoreCase("R")) {
-				queryStr += " WHERE ( CSL_MVMT_MONTH between " + fromYear + fromMonth + " and " + toYear + toMonth
-						+ " )";
-			} else if (claimType.equalsIgnoreCase("U")) {
-				queryStr += " WHERE SUBSTRING(inception_date,1,10) >='" + finstartDate
-						+ "' and SUBSTRING(inception_date,1,10) <='" + finEndDate + "' ";
-			}
-
-			if (filterRequest != null && filterRequest.getPolicyTypes() != null
-					&& !filterRequest.getPolicyTypes().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getPolicyTypes().size(); i++) {
-					vals += "'" + filterRequest.getPolicyTypes().get(i).trim() + "'";
-					if (i != filterRequest.getPolicyTypes().size() - 1) {
-						vals += ",";
-					}
-				}
-
-				queryStr += " and TRIM(RSA_DWH_COVERCODE_MASTER.CATEGORY) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getBTypeNow() != null
-					&& !filterRequest.getBTypeNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getBTypeNow().size(); i++) {
-					vals += "'" + filterRequest.getBTypeNow().get(i).trim() + "'";
-					if (i != filterRequest.getBTypeNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BUSINESS_TYPE) in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getChannelNow() != null
-					&& !filterRequest.getChannelNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getChannelNow().size(); i++) {
-					vals += "'" + filterRequest.getChannelNow().get(i).trim() + "'";
-					if (i != filterRequest.getChannelNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CHANNEL) in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getSubChannelNow() != null
-					&& !filterRequest.getSubChannelNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getSubChannelNow().size(); i++) {
-					vals += "'" + filterRequest.getSubChannelNow().get(i).trim() + "'";
-					if (i != filterRequest.getSubChannelNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUB_CHANNEL) in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getMakeNow() != null && !filterRequest.getMakeNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMakeNow().size(); i++) {
-					vals += "'" + filterRequest.getMakeNow().get(i).trim() + "'";
-					if (i != filterRequest.getMakeNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MAKE) in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getModelGroupNow() != null
-					&& !filterRequest.getModelGroupNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getModelGroupNow().size(); i++) {
-					vals += "'" + filterRequest.getModelGroupNow().get(i).trim() + "'";
-					if (i != filterRequest.getModelGroupNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MODELGROUP) in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getFuelTypeNow() != null
-					&& !filterRequest.getFuelTypeNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getFuelTypeNow().size(); i++) {
-					vals += "'" + filterRequest.getFuelTypeNow().get(i).trim() + "'";
-					if (i != filterRequest.getFuelTypeNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and coalesce(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.FUELTYPE,'N') in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getStateGroupNow() != null
-					&& !filterRequest.getStateGroupNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getStateGroupNow().size(); i++) {
-					vals += "'" + filterRequest.getStateGroupNow().get(i).trim() + "'";
-					if (i != filterRequest.getStateGroupNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_DWH_CITY_GROUPING_MASTER_FINAL.STATE_GROUPING) in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getNcbNow() != null && !filterRequest.getNcbNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getNcbNow().size(); i++) {
-					vals += "'" + filterRequest.getNcbNow().get(i).trim() + "'";
-					if (i != filterRequest.getNcbNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.NCB_FLAG) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorChannel() != null
-					&& !filterRequest.getMotorChannel().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorChannel().size(); i++) {
-					vals += "'" + filterRequest.getMotorChannel().get(i).trim() + "'";
-					if (i != filterRequest.getMotorChannel().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CHANNEL) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorChannel() != null
-					&& !filterRequest.getMotorChannel().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorChannel().size(); i++) {
-					vals += "'" + filterRequest.getMotorChannel().get(i).trim() + "'";
-					if (i != filterRequest.getMotorChannel().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CHANNEL) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorSubChannel() != null
-					&& !filterRequest.getMotorSubChannel().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorSubChannel().size(); i++) {
-					vals += "'" + filterRequest.getMotorSubChannel().get(i).trim() + "'";
-					if (i != filterRequest.getMotorSubChannel().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUB_CHANNEL) in (" + vals + ")";
-			}
-
-			/*
-			 * if (filterRequest != null && filterRequest.getMotorRegion() != null &&
-			 * !filterRequest.getMotorRegion().isEmpty()) { String vals = ""; for (int i =
-			 * 0; i < filterRequest.getMotorRegion().size(); i++) { vals += "'" +
-			 * filterRequest.getMotorRegion().get(i).trim() + "'"; if (i !=
-			 * filterRequest.getMotorRegion().size() - 1) { vals += ","; } } queryStr +=
-			 * " and TRIM(KPI_BRANCH_MASTER.REGION) in (" + vals + ")"; }
-			 */
-
-			if (filterRequest != null && filterRequest.getMotorZone() != null
-					&& !filterRequest.getMotorZone().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorZone().size(); i++) {
-					vals += "'" + filterRequest.getMotorZone().get(i).trim() + "'";
-					if (i != filterRequest.getMotorZone().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(KPI_BRANCH_MASTER.ZONE) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorCluster() != null
-					&& !filterRequest.getMotorCluster().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorCluster().size(); i++) {
-					vals += "'" + filterRequest.getMotorCluster().get(i).trim() + "'";
-					if (i != filterRequest.getMotorCluster().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorState() != null
-					&& !filterRequest.getMotorState().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorState().size(); i++) {
-					vals += "'" + filterRequest.getMotorState().get(i).trim() + "'";
-					if (i != filterRequest.getMotorState().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorCity() != null
-					&& !filterRequest.getMotorCity().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorCity().size(); i++) {
-					vals += "'" + filterRequest.getMotorCity().get(i).trim() + "'";
-					if (i != filterRequest.getMotorCity().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorBranch() != null
-					&& !filterRequest.getMotorBranch().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorBranch().size(); i++) {
-					vals += "'" + filterRequest.getMotorBranch().get(i).trim() + "'";
-					if (i != filterRequest.getMotorBranch().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
-					&& !filterRequest.getMotorIntermediaryCode().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorIntermediaryCode().size(); i++) {
-					vals += "'" + filterRequest.getMotorIntermediaryCode().get(i).trim() + "'";
-					if (i != filterRequest.getMotorIntermediaryCode().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
-					&& !filterRequest.getMotorIntermediaryName().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorIntermediaryName().size(); i++) {
-					vals += "'" + filterRequest.getMotorIntermediaryName().get(i).trim() + "'";
-					if (i != filterRequest.getMotorIntermediaryName().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorFuelType() != null
-					&& !filterRequest.getMotorFuelType().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorFuelType().size(); i++) {
-					vals += "'" + filterRequest.getMotorFuelType().get(i).trim() + "'";
-					if (i != filterRequest.getMotorFuelType().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.FUELTYPE) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorNcbFlag() != null
-					&& !filterRequest.getMotorNcbFlag().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorNcbFlag().size(); i++) {
-					vals += "'" + filterRequest.getMotorNcbFlag().get(i).trim() + "'";
-					if (i != filterRequest.getMotorNcbFlag().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.NCB_FLAG) in (" + vals + ")";
-			}
-
-			if (claimParamType.equals("GIC")) {
-				queryStr += " group by RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CATASTROPHECODE ,RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CLAIM_TYPE,CATASTROPHIC_MASTER.CAT_TYPE ,RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_NATURE_OF_CLAIM,CSL_CLAIM_NO,category,ADDON_TYPE ) x ";
-			} else if (claimParamType.equals("NIC")) {
-				queryStr += " GROUP by   "
-						+ " uw_year,PRODUCT_CODE,CSL_CLAIM_NO,CSL_MVMT_MONTH,category,ADDON_TYPE ) A , "
-						+ " (select underwriting_year,XGEN_PRODUCTCODE,band,sum(OBLIGATORY) OBLIGATORY,sum(QUOTA_SHARE) QUOTA_SHARE,sum(RETENTION) RETENTION,sum(RI_COMMISSION) RI_COMMISSION from RSA_DWH_RI_OBLIGATORY_MASTER1 "
-						+ " group by underwriting_year,XGEN_PRODUCTCODE,band) B   "
-						+ " where B.underwriting_year=A.uw_year AND A.PRODUCT_CODE=B.XGEN_PRODUCTCODE AND A.BAND=B.band ";
-				/* " ) "; */
-			}
-
-			System.out.println("queryStr------------------------------ " + queryStr);
-			ResultSet rs = stmt.executeQuery(queryStr);
-			System.out.println("START------------------------------ ");
-
-			// jsArray = convertToJSON(rs);
-
-			while (rs.next()) {
-
-				ReserverSingleLineCubeResponseNew res = new ReserverSingleLineCubeResponseNew();
-				if (claimParamType.equals("GIC")) {
-					res.setCatGicOdComprehensiveDep(rs.getDouble(1));
-					res.setCatGicOdComprehensiveNcb(rs.getDouble(2));
-					res.setCatGicOdComprehensiveOtherAddon(rs.getDouble(3));
-					res.setCatGicOdComprehensiveNoAddon(rs.getDouble(4));
-					res.setCatGicOdTpDep(rs.getDouble(5));
-					res.setCatGicOdTpNcb(rs.getDouble(6));
-					res.setCatGicOdTpOtherAddon(rs.getDouble(7));
-					res.setCatGicOdTpNoAddon(rs.getDouble(8));
-					res.setCatGicOdOthersDep(rs.getDouble(9));
-					res.setCatGicOdOthersNcb(rs.getDouble(10));
-					res.setCatGicOdOthersOtherAddon(rs.getDouble(11));
-					res.setCatGicOdOthersNoAddon(rs.getDouble(12));
-					res.setTheftGicOdComprehensiveDep(rs.getDouble(13));
-					res.setTheftGicOdComprehensiveNcb(rs.getDouble(14));
-					res.setTheftGicOdComprehensiveOtherAddon(rs.getDouble(15));
-					res.setTheftGicOdComprehensiveNoAddon(rs.getDouble(16));
-					res.setTheftGicOdTpDep(rs.getDouble(17));
-					res.setTheftGicOdTpNcb(rs.getDouble(18));
-					res.setTheftGicOdTpOtherAddon(rs.getDouble(19));
-					res.setTheftGicOdTpNoAddon(rs.getDouble(20));
-					res.setTheftGicOdOthersDep(rs.getDouble(21));
-					res.setTheftGicOdOthersNcb(rs.getDouble(22));
-					res.setTheftGicOdOthersOtherAddon(rs.getDouble(23));
-					res.setTheftGicOdOthersNoAddon(rs.getDouble(24));
-					res.setOthersGicOdComprehensiveDep(rs.getDouble(25));
-					res.setOthersGicOdComprehensiveNcb(rs.getDouble(26));
-					res.setOthersGicOdComprehensiveOtherAddon(rs.getDouble(27));
-					res.setOthersGicOdComprehensiveNoAddon(rs.getDouble(28));
-					res.setOthersGicOdTpDep(rs.getDouble(29));
-					res.setOthersGicOdTpNcb(rs.getDouble(30));
-					res.setOthersGicOdTpOtherAddon(rs.getDouble(31));
-					res.setOthersGicOdTpNoAddon(rs.getDouble(32));
-					res.setOthersGicOdOthersDep(rs.getDouble(33));
-					res.setOthersGicOdOthersNcb(rs.getDouble(34));
-					res.setOthersGicOdOthersOtherAddon(rs.getDouble(35));
-					res.setOthersGicOdOthersNoAddon(rs.getDouble(36));
-					res.setCatGicTpComprehensiveDep(rs.getDouble(37));
-					res.setCatGicTpComprehensiveNcb(rs.getDouble(38));
-					res.setCatGicTpComprehensiveOtherAddon(rs.getDouble(39));
-					res.setCatGicTpComprehensiveNoAddon(rs.getDouble(40));
-					res.setCatGicTpTpDep(rs.getDouble(41));
-					res.setCatGicTpTpNcb(rs.getDouble(42));
-					res.setCatGicTpTpOtherAddon(rs.getDouble(43));
-					res.setCatGicTpTpNoAddon(rs.getDouble(44));
-					res.setCatGicTpOthersDep(rs.getDouble(45));
-					res.setCatGicTpOthersNcb(rs.getDouble(46));
-					res.setCatGicTpOthersOtherAddon(rs.getDouble(47));
-					res.setCatGicTpOthersNoAddon(rs.getDouble(48));
-					res.setTheftGicTpComprehensiveDep(rs.getDouble(49));
-					res.setTheftGicTpComprehensiveNcb(rs.getDouble(50));
-					res.setTheftGicTpComprehensiveOtherAddon(rs.getDouble(51));
-					res.setTheftGicTpComprehensiveNoAddon(rs.getDouble(52));
-					res.setTheftGicTpTpDep(rs.getDouble(53));
-					res.setTheftGicTpTpNcb(rs.getDouble(54));
-					res.setTheftGicTpTpOtherAddon(rs.getDouble(55));
-					res.setTheftGicTpTpNoAddon(rs.getDouble(56));
-					res.setTheftGicTpOthersDep(rs.getDouble(57));
-					res.setTheftGicTpOthersNcb(rs.getDouble(58));
-					res.setTheftGicTpOthersOtherAddon(rs.getDouble(59));
-					res.setTheftGicTpOthersNoAddon(rs.getDouble(60));
-					res.setOthersGicTpComprehensiveDep(rs.getDouble(61));
-					res.setOthersGicTpComprehensiveNcb(rs.getDouble(62));
-					res.setOthersGicTpComprehensiveOtherAddon(rs.getDouble(63));
-					res.setOthersGicTpComprehensiveNoAddon(rs.getDouble(64));
-					res.setOthersGicTpTpDep(rs.getDouble(65));
-					res.setOthersGicTpTpNcb(rs.getDouble(66));
-					res.setOthersGicTpTpOtherAddon(rs.getDouble(67));
-					res.setOthersGicTpTpNoAddon(rs.getDouble(68));
-					res.setOthersGicTpOthersDep(rs.getDouble(69));
-					res.setOthersGicTpOthersNcb(rs.getDouble(70));
-					res.setOthersGicTpOthersOtherAddon(rs.getDouble(71));
-					res.setOthersGicTpOthersNoAddon(rs.getDouble(72));
-				} else if (claimParamType.equals("NIC")) {
-					res.setNicComprehensiveDep(rs.getDouble(1));
-					res.setNicComprehensiveNcb(rs.getDouble(2));
-					res.setNicComprehensiveOtherAddon(rs.getDouble(3));
-					res.setNicComprehensiveNoAddon(rs.getDouble(4));
-					res.setNicTpDep(rs.getDouble(5));
-					res.setNicTpNcb(rs.getDouble(6));
-					res.setNicTpOtherAddon(rs.getDouble(7));
-					res.setNicTpNoAddon(rs.getDouble(8));
-					res.setNicOthersDep(rs.getDouble(9));
-					res.setNicOthersNcb(rs.getDouble(10));
-					res.setNicOthersOtherAddon(rs.getDouble(11));
-					res.setNicOthersNoAddon(rs.getDouble(12));
-					res.setNicTpComprehensiveDep(rs.getDouble(13));
-					res.setNicTpComprehensiveNcb(rs.getDouble(14));
-					res.setNicTpComprehensiveOtherAddon(rs.getDouble(15));
-					res.setNicTpComprehensiveNoAddon(rs.getDouble(16));
-					res.setNicTpTpDep(rs.getDouble(17));
-					res.setNicTpTpNcb(rs.getDouble(18));
-					res.setNicTpTpOtherAddon(rs.getDouble(19));
-					res.setNicTpTpNoAddon(rs.getDouble(20));
-					res.setNicTpOthersDep(rs.getDouble(21));
-					res.setNicTpOthersNcb(rs.getDouble(22));
-					res.setNicTpOthersOtherAddon(rs.getDouble(23));
-					res.setNicTpOthersNoAddon(rs.getDouble(24));
-					res.setNicOdComprehensiveDep(rs.getDouble(25));
-					res.setNicOdComprehensiveNcb(rs.getDouble(26));
-					res.setNicOdComprehensiveOtherAddon(rs.getDouble(27));
-					res.setNicOdComprehensiveNoAddon(rs.getDouble(28));
-					res.setNicOdTpDep(rs.getDouble(29));
-					res.setNicOdTpNcb(rs.getDouble(30));
-					res.setNicOdTpOtherAddon(rs.getDouble(31));
-					res.setNicOdTpNoAddon(rs.getDouble(32));
-					res.setNicOdOthersDep(rs.getDouble(33));
-					res.setNicOdOthersNcb(rs.getDouble(34));
-					res.setNicOdOthersOtherAddon(rs.getDouble(35));
-					res.setNicOdOthersNoAddon(rs.getDouble(36));
-				}
-
-				kpiResponseList.add(res);
-			}
-
-			System.out.println("Query execution time " + (System.currentTimeMillis() - startTime));
-		} catch (Exception e) {
-			System.out.println("kylinDataSource initialize error, ex: " + e);
-			System.out.println();
-			e.printStackTrace();
-		} finally {
-			connection.close();
-		}
-		return kpiResponseList;
-	}
-
+	/*
+	 * @GetMapping(
+	 * "/getReserveSingleLineCubeGicDataNew/{claimType}/{claimParamType}")
+	 * 
+	 * @ResponseBody public List<ReserverSingleLineCubeResponseNew>
+	 * getReserveSingleLineCubeGicDataNew(HttpServletRequest req,
+	 * UserMatrixMasterRequest filterRequest, @PathVariable(value =
+	 * "claimParamType") String claimParamType,
+	 * 
+	 * @PathVariable(value = "claimType") String claimType) throws SQLException {
+	 * Connection connection = null; List<ReserverSingleLineCubeResponseNew>
+	 * kpiResponseList = new ArrayList<ReserverSingleLineCubeResponseNew>(); long
+	 * startTime = System.currentTimeMillis(); try { // String fromDate =
+	 * req.getParameter("fromDate") == null ? "" : req.getParameter("fromDate"); //
+	 * String toDate = req.getParameter("toDate") == null ? "" :
+	 * req.getParameter("toDate"); String fromDate = filterRequest.getFromDate() ==
+	 * null ? "" : filterRequest.getFromDate(); String toDate =
+	 * filterRequest.getToDate() == null ? "" : filterRequest.getToDate();
+	 * 
+	 * List<ProductMaster> productMasters = productMasterRepository.findAll();
+	 * 
+	 * String motorProductVals = "'" + productMasters.stream() .filter(p ->
+	 * p.getProductType().toLowerCase().contains("motor")).map(ProductMaster::
+	 * getProductCode)
+	 * .collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) +
+	 * "'";
+	 * 
+	 * String healthProductVals = "'" + productMasters.stream() .filter(p ->
+	 * p.getProductType().toLowerCase().contains("health")).map(ProductMaster::
+	 * getProductCode)
+	 * .collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) +
+	 * "'";
+	 * 
+	 * Driver driverManager = (Driver)
+	 * Class.forName("org.apache.kylin.jdbc.Driver").newInstance(); Properties info
+	 * = new Properties(); info.put("user", "ADMIN"); info.put("password", "KYLIN");
+	 * connection = driverManager .connect("jdbc:kylin://" +
+	 * RMSConstants.KYLIN_RS_BASE_IP_AND_PORT + "/learn_kylin", info);
+	 * System.out.println("Connection status -------------------------->" +
+	 * connection); Statement stmt = connection.createStatement();
+	 * 
+	 * String fromMonth = fromDate.split("/")[0]; String fromYear =
+	 * fromDate.split("/")[1]; String toMonth = toDate.split("/")[0]; String toYear
+	 * = toDate.split("/")[1]; String queryStr = ""; // Query in error if
+	 * (claimParamType.equals("GIC")) { queryStr = "SELECT  " +
+	 * "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB'," +
+	 * "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+	 * +
+	 * "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+	 * +
+	 * "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+	 * +
+	 * "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='DEP' THEN RSL_GIC ELSE 0 END)  as rsl_cat_gic_od_policy_comp_dep, "
+	 * + "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB'," +
+	 * "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+	 * +
+	 * "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+	 * +
+	 * "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+	 * +
+	 * "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='NCB'  THEN RSL_GIC ELSE 0 END)  as rsl_cat_gic_od_policy_comp_ncb,  "
+	 * + "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB'," +
+	 * "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+	 * +
+	 * "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+	 * +
+	 * "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+	 * +
+	 * "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='OTHER'  THEN RSL_GIC ELSE 0 END) as rsl_cat_gic_od_policy_comp_other_addon,  "
+	 * + "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB'," +
+	 * "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+	 * +
+	 * "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+	 * +
+	 * "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+	 * +
+	 * "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='NONE'  THEN RSL_GIC ELSE 0 END) as rsl_cat_gic_od_policy_comp_nil_addon,"
+	 * + "0 as rsl_cat_gic_od_policy_tp_dep," + "0 as rsl_cat_gic_od_policy_tp_ncb,"
+	 * + "0 as rsl_cat_gic_od_policy_tp_OTHER_ADDON," +
+	 * "0 as rsl_cat_gic_od_policy_tp_NIL_ADDON," +
+	 * "0 as rsl_cat_gic_od_policy_others_dep," +
+	 * "0 as rsl_cat_gic_od_policy_others_ncb," +
+	 * "0 as rsl_cat_gic_od_policy_others_other_addon," +
+	 * "0 as rsl_cat_gic_od_policy_others_nil_addon,  " +
+	 * "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='DEP' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_od_policy_comp_dep,"
+	 * +
+	 * "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='NCB' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_od_policy_comp_ncb,  "
+	 * +
+	 * "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='OTHER' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_od_policy_comp_other_addon,  "
+	 * +
+	 * "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='NONE' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_od_policy_comp_nil_addon,"
+	 * + "0 as rsl_theft_gic_od_policy_tp_dep," +
+	 * "0 as rsl_theft_gic_od_policy_tp_ncb," +
+	 * "0 as rsl_theft_gic_od_policy_tp_other_addon," +
+	 * "0 as rsl_theft_gic_od_policy_tp_nil_addon," +
+	 * "0 as rsl_theft_gic_od_policy_others_dep," +
+	 * "0 as rsl_theft_gic_od_policy_others_ncb," +
+	 * "0 as rsl_theft_gic_od_policy_others_other_addon," +
+	 * "0 as rsl_theft_gic_od_policy_others_nil_addon," +
+	 * "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
+	 * +
+	 * "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+	 * +
+	 * "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+	 * +
+	 * "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+	 * +
+	 * "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='DEP' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_od_policy_comp_dep,  "
+	 * +
+	 * "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
+	 * +
+	 * "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+	 * +
+	 * "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+	 * +
+	 * "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+	 * +
+	 * "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='NCB' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_od_policy_comp_ncb,  "
+	 * +
+	 * "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
+	 * +
+	 * "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+	 * +
+	 * "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+	 * +
+	 * "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+	 * +
+	 * "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='OTHER' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_od_policy_comp_other_addon,  "
+	 * +
+	 * "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
+	 * +
+	 * "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+	 * +
+	 * "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+	 * +
+	 * "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+	 * +
+	 * "'APLV')) AND CSL_CLAIM_NO NOT LIKE 'TP%' and ADDON_TYPE='NONE' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_od_policy_comp_nil_addon,"
+	 * + "0 as rsl_other_gic_od_policy_tp_dep," +
+	 * "0 as rsl_other_gic_od_policy_tp_ncb," +
+	 * "0 as rsl_other_gic_od_policy_tp_other_addon," +
+	 * "0 as rsl_other_gic_od_policy_tp_nil_addon," +
+	 * "0 as rsl_other_gic_od_policy_others_dep," +
+	 * "0 as rsl_other_gic_od_policy_others_ncb," +
+	 * "0 as rsl_other_gic_od_policy_others_other_addon," +
+	 * "0 as rsl_other_gic_od_policy_others_nil_addon," +
+	 * "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB'," +
+	 * "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+	 * +
+	 * "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+	 * +
+	 * "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+	 * +
+	 * "'APLV'))  AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='DEP' THEN RSL_GIC ELSE 0 END) as rsl_cat_gic_tp_policy_comp_dep,  "
+	 * + "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB'," +
+	 * "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+	 * +
+	 * "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+	 * +
+	 * "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+	 * +
+	 * "'APLV'))  AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='NCB' THEN RSL_GIC ELSE 0 END) as rsl_cat_gic_tp_policy_comp_ncb,  "
+	 * + "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB'," +
+	 * "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+	 * +
+	 * "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+	 * +
+	 * "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+	 * +
+	 * "'APLV'))  AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='OTHER' THEN RSL_GIC ELSE 0 END) as rsl_cat_gic_tp_policy_comp_other_addon,  "
+	 * + "SUM(CASE WHEN (csl_claim_type in ('MUTA','PUBB'," +
+	 * "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+	 * +
+	 * "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+	 * +
+	 * "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+	 * +
+	 * "'APLV'))  AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='NONE' THEN RSL_GIC ELSE 0 END) as rsl_cat_gic_tp_policy_comp_nil_addon,"
+	 * + "0 as rsl_cat_gic_tp_policy_tp_dep," + "0 as rsl_cat_gic_tp_policy_tp_ncb,"
+	 * + "0 as rsl_cat_gic_tp_policy_tp_other_addon," +
+	 * "0 as rsl_cat_gic_tp_policy_tp_nil_addon," +
+	 * "0 as rsl_cat_gic_tp_policy_others_dep," +
+	 * "0 as rsl_cat_gic_tp_policy_others_ncb," +
+	 * "0 as rsl_cat_gic_tp_policy_others_other_addon," +
+	 * "0 as rsl_cat_gic_tp_policy_others_nil_addon," +
+	 * "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='DEP' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_tp_policy_comp_dep,  "
+	 * +
+	 * "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='NCB' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_tp_policy_comp_ncb,  "
+	 * +
+	 * "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='OTHER' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_tp_policy_comp_other_addon,  "
+	 * +
+	 * "SUM(CASE WHEN CSL_NATURE_OF_CLAIM='VTFO' AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='NONE' THEN RSL_GIC ELSE 0 END) as rsl_theft_gic_tp_policy_comp_nil_addon,"
+	 * + "0 as rsl_theft_gic_tp_policy_tp_dep," +
+	 * "0 as rsl_theft_gic_tp_policy_tp_ncb," +
+	 * "0 as rsl_theft_gic_tp_policy_tp_other_addon," +
+	 * "0 as rsl_theft_gic_tp_policy_tp_nil_addon," +
+	 * "0 as rsl_theft_gic_tp_policy_others_dep," +
+	 * "0 as rsl_theft_gic_tp_policy_others_ncb," +
+	 * "0 as rsl_theft_gic_tp_policy_others_other_addon," +
+	 * "0 as rsl_theft_gic_tp_policy_others_nil_addon," +
+	 * "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
+	 * +
+	 * "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+	 * +
+	 * "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+	 * +
+	 * "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+	 * +
+	 * "'APLV')) AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='DEP' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_tp_policy_comp_dep,  "
+	 * +
+	 * "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
+	 * +
+	 * "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+	 * +
+	 * "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+	 * +
+	 * "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+	 * +
+	 * "'APLV')) AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='NCB' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_tp_policy_comp_ncb,  "
+	 * +
+	 * "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
+	 * +
+	 * "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+	 * +
+	 * "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+	 * +
+	 * "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+	 * +
+	 * "'APLV')) AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='OTHER' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_tp_policy_comp_other_addon,  "
+	 * +
+	 * "SUM(CASE WHEN (CSL_NATURE_OF_CLAIM<>'VTFO' and (csl_claim_type not in ('MUTA','PUBB',"
+	 * +
+	 * "'VCAT','MCAT','HURR','ERTQ','MFLD','CFLD','TMPS','OFLD','FIKA','VARD','MFL3','PRVI','MFL4','KFLD','KMFD','CYCL','JCAT','KFL2','TSU',"
+	 * +
+	 * "'OCAT','FAST','BFLD','CAT1','NVAR','FANI','CCAT','UKND','AILA','KRC','MCT1','CCT2','ATFD','FLDG','TANE','CCT1','KAFL','COVD','UKFL',"
+	 * +
+	 * "'MH07','NSGA','GFL2','STRM','GAJA','WFLD','TFLD','CFL2','N-EQ','NISA','GCAT','GFLD','ERKO','CAMP','MFL2','YANT',"
+	 * +
+	 * "'APLV')) AND CSL_CLAIM_NO LIKE 'TP%' and ADDON_TYPE='NONE' ) THEN RSL_GIC ELSE 0 END) as rsl_other_gic_tp_policy_comp_nil_addon,"
+	 * + "0 as rsl_other_gic_tp_policy_tp_dep," +
+	 * "0 as rsl_other_gic_tp_policy_tp_ncb," +
+	 * "0 as rsl_other_gic_tp_policy_tp_other_addon," +
+	 * "0 as rsl_other_gic_tp_policy_tp_nil_addon," +
+	 * "0 as rsl_other_gic_tp_policy_others_dep," +
+	 * "0 as rsl_other_gic_tp_policy_others_ncb," +
+	 * "0 as rsl_other_gic_tp_policy_others_other_addon," +
+	 * "0 as rsl_other_gic_tp_policy_others_nil_addon " +
+	 * "from (  SELECT   RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CATASTROPHECODE  ,RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CLAIM_TYPE, CATASTROPHIC_MASTER.CAT_TYPE   ,RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_NATURE_OF_CLAIM,  CSL_CLAIM_NO, category,ADDON_TYPE, SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CLOSING_BALANCE+RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CLAIM_TRANS_AMT-RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_OPENING_TOTAL) RSL_GIC  FROM RSDB.RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL as RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL  LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL  LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE  LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE  LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE  LEFT JOIN RSDB.KPI_MODEL_MASTER_NW as KPI_MODEL_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MAKE = KPI_MODEL_MASTER_NW.MAKE AND RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MODELCODE = KPI_MODEL_MASTER_NW.MODEL_CODE  LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE  LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY  LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE  LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CITY_CODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE  LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE "
+	 * ; } else if (claimParamType.equals("NIC")) {
+	 * 
+	 * queryStr = "SELECT  " +
+	 * "sum(case when ADDON_TYPE='DEP' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) as rsl_NIC_policy_comp_dep,"
+	 * +
+	 * "sum(case when ADDON_TYPE='NCB' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) as rsl_NIC_policy_comp_ncb,"
+	 * +
+	 * "sum(case when ADDON_TYPE='OTHER' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) as rsl_NIC_policy_comp_other_addon,  "
+	 * +
+	 * "sum(case when ADDON_TYPE='NONE' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) as rsl_NIC_policy_comp_nil_addon,"
+	 * + "0 as rsl_NIC_policy_tp_dep," + "0 as rsl_NIC_policy_tp_ncb," +
+	 * "0 as rsl_NIC_policy_tp_other_addon," + "0 as rsl_NIC_policy_tp_nil_addon," +
+	 * "0 as rsl_NIC_policy_others_dep," + "0 as rsl_NIC_policy_others_ncb," +
+	 * "0 as rsl_NIC_policy_others_other_addon," +
+	 * "0 as rsl_NIC_policy_others_nil_addon," +
+	 * "sum(case when CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='DEP' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_tp_policy_comp_dep,"
+	 * +
+	 * "sum(case when CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='NCB' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_tp_policy_comp_ncb,"
+	 * +
+	 * "sum(case when CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='OTHER' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_tp_policy_comp_other_addon,  "
+	 * +
+	 * "sum(case when CSL_CLAIM_NO LIKE 'TP%' and category='TP' and ADDON_TYPE='NONE' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_tp_policy_comp_nil_addon,"
+	 * + "0 as rsl_nic_tp_policy_tp_dep," + "0 as rsl_nic_tp_policy_tp_ncb," +
+	 * "0 as rsl_nic_tp_policy_tp_other_addon," +
+	 * "0 as rsl_nic_tp_policy_tp_nil_addon," + "0 as rsl_nic_tp_policy_others_dep,"
+	 * + "0 as rsl_nic_tp_policy_others_ncb," +
+	 * "0 as rsl_nic_tp_policy_others_other_addon," +
+	 * "0 as rsl_nic_tp_policy_others_nil_addon," +
+	 * "sum(case when CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='DEP' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_od_policy_comp_dep,"
+	 * +
+	 * "sum(case when CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NCB' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_od_policy_comp_ncb,"
+	 * +
+	 * "sum(case when CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='OTHER' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_od_policy_comp_other_addon,  "
+	 * +
+	 * "sum(case when CSL_CLAIM_NO NOT LIKE 'TP%' and category='Comprehensive' and ADDON_TYPE='NONE' then RSL_GIC*(1-QUOTA_SHARE-OBLIGATORY) else 0 end) rsl_nic_od_policy_comp_nil_addon,"
+	 * + "0 as rsl_nic_od_policy_tp_dep," + "0 as rsl_nic_od_policy_tp_ncb," +
+	 * "0 as rsl_nic_od_policy_tp_other_addon," +
+	 * "0 as rsl_nic_od_policy_tp_nil_addon," + "0 as rsl_nic_od_policy_others_dep,"
+	 * + "0 as rsl_nic_od_policy_others_ncb," +
+	 * "0 as rsl_nic_od_policy_others_other_addon," +
+	 * "0 as rsl_nic_od_policy_others_nil_addon " +
+	 * "FROM ( SELECT  SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CLOSING_BALANCE+RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CLAIM_TRANS_AMT-RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_OPENING_TOTAL) RSL_GIC,CSL_CLAIM_NO,CSL_MVMT_MONTH,category,ADDON_TYPE,uw_year,RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.PRODUCT_CODE,'NONE' BAND   FROM RSDB.RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL as RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL    LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL  LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE    LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE    LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE    LEFT JOIN RSDB.KPI_MODEL_MASTER_NW as KPI_MODEL_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MAKE = KPI_MODEL_MASTER_NW.MAKE AND RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MODELCODE = KPI_MODEL_MASTER_NW.MODEL_CODE  LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE    LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.OA_CODE = KPI_OA_MASTER_NW.OA_CODE   LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY  LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE    LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE   LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CITY_CODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE  LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE "
+	 * ;
+	 * 
+	 * }
+	 * 
+	 * String finstartDate = fromYear + "-" + fromMonth + "-01"; String finEndDate =
+	 * toYear + "-" + toMonth + "-31";
+	 * 
+	 * if (claimType.equalsIgnoreCase("R")) { queryStr +=
+	 * " WHERE ( CSL_MVMT_MONTH between " + fromYear + fromMonth + " and " + toYear
+	 * + toMonth + " )"; } else if (claimType.equalsIgnoreCase("U")) { queryStr +=
+	 * " WHERE SUBSTRING(inception_date,1,10) >='" + finstartDate +
+	 * "' and SUBSTRING(inception_date,1,10) <='" + finEndDate + "' "; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getPolicyTypes() != null &&
+	 * !filterRequest.getPolicyTypes().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getPolicyTypes().size(); i++) { vals += "'" +
+	 * filterRequest.getPolicyTypes().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getPolicyTypes().size() - 1) { vals += ","; } }
+	 * 
+	 * queryStr += " and TRIM(RSA_DWH_COVERCODE_MASTER.CATEGORY) in (" + vals + ")";
+	 * }
+	 * 
+	 * if (filterRequest != null && filterRequest.getBTypeNow() != null &&
+	 * !filterRequest.getBTypeNow().isEmpty()) { String vals = ""; for (int i = 0; i
+	 * < filterRequest.getBTypeNow().size(); i++) { vals += "'" +
+	 * filterRequest.getBTypeNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getBTypeNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BUSINESS_TYPE) in (" + vals
+	 * + ")"; } if (filterRequest != null && filterRequest.getChannelNow() != null
+	 * && !filterRequest.getChannelNow().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getChannelNow().size(); i++) { vals += "'" +
+	 * filterRequest.getChannelNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getChannelNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CHANNEL) in (" + vals +
+	 * ")"; } if (filterRequest != null && filterRequest.getSubChannelNow() != null
+	 * && !filterRequest.getSubChannelNow().isEmpty()) { String vals = ""; for (int
+	 * i = 0; i < filterRequest.getSubChannelNow().size(); i++) { vals += "'" +
+	 * filterRequest.getSubChannelNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getSubChannelNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUB_CHANNEL) in (" + vals +
+	 * ")"; } if (filterRequest != null && filterRequest.getMakeNow() != null &&
+	 * !filterRequest.getMakeNow().isEmpty()) { String vals = ""; for (int i = 0; i
+	 * < filterRequest.getMakeNow().size(); i++) { vals += "'" +
+	 * filterRequest.getMakeNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMakeNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MAKE) in (" + vals + ")"; }
+	 * if (filterRequest != null && filterRequest.getModelGroupNow() != null &&
+	 * !filterRequest.getModelGroupNow().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getModelGroupNow().size(); i++) { vals += "'" +
+	 * filterRequest.getModelGroupNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getModelGroupNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MODELGROUP) in (" + vals +
+	 * ")"; } if (filterRequest != null && filterRequest.getFuelTypeNow() != null &&
+	 * !filterRequest.getFuelTypeNow().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getFuelTypeNow().size(); i++) { vals += "'" +
+	 * filterRequest.getFuelTypeNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getFuelTypeNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and coalesce(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.FUELTYPE,'N') in (" +
+	 * vals + ")"; } if (filterRequest != null && filterRequest.getStateGroupNow()
+	 * != null && !filterRequest.getStateGroupNow().isEmpty()) { String vals = "";
+	 * for (int i = 0; i < filterRequest.getStateGroupNow().size(); i++) { vals +=
+	 * "'" + filterRequest.getStateGroupNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getStateGroupNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_DWH_CITY_GROUPING_MASTER_FINAL.STATE_GROUPING) in (" + vals +
+	 * ")"; } if (filterRequest != null && filterRequest.getNcbNow() != null &&
+	 * !filterRequest.getNcbNow().isEmpty()) { String vals = ""; for (int i = 0; i <
+	 * filterRequest.getNcbNow().size(); i++) { vals += "'" +
+	 * filterRequest.getNcbNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getNcbNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.NCB_FLAG) in (" + vals +
+	 * ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorChannel() != null &&
+	 * !filterRequest.getMotorChannel().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getMotorChannel().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorChannel().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorChannel().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CHANNEL) in (" + vals +
+	 * ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorChannel() != null &&
+	 * !filterRequest.getMotorChannel().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getMotorChannel().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorChannel().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorChannel().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CHANNEL) in (" + vals +
+	 * ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorSubChannel() != null &&
+	 * !filterRequest.getMotorSubChannel().isEmpty()) { String vals = ""; for (int i
+	 * = 0; i < filterRequest.getMotorSubChannel().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorSubChannel().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorSubChannel().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUB_CHANNEL) in (" + vals +
+	 * ")"; }
+	 * 
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorRegion() != null &&
+	 * !filterRequest.getMotorRegion().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getMotorRegion().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorRegion().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorRegion().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(KPI_BRANCH_MASTER.REGION) in (" + vals + ")"; }
+	 * 
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorZone() != null &&
+	 * !filterRequest.getMotorZone().isEmpty()) { String vals = ""; for (int i = 0;
+	 * i < filterRequest.getMotorZone().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorZone().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorZone().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(KPI_BRANCH_MASTER.ZONE) in (" + vals + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorCluster() != null &&
+	 * !filterRequest.getMotorCluster().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getMotorCluster().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorCluster().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorCluster().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in (" + vals + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorState() != null &&
+	 * !filterRequest.getMotorState().isEmpty()) { String vals = ""; for (int i = 0;
+	 * i < filterRequest.getMotorState().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorState().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorState().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in (" + vals + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorCity() != null &&
+	 * !filterRequest.getMotorCity().isEmpty()) { String vals = ""; for (int i = 0;
+	 * i < filterRequest.getMotorCity().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorCity().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorCity().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in (" + vals + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorBranch() != null &&
+	 * !filterRequest.getMotorBranch().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getMotorBranch().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorBranch().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorBranch().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE) in (" + vals +
+	 * ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
+	 * && !filterRequest.getMotorIntermediaryCode().isEmpty()) { String vals = "";
+	 * for (int i = 0; i < filterRequest.getMotorIntermediaryCode().size(); i++) {
+	 * vals += "'" + filterRequest.getMotorIntermediaryCode().get(i).trim() + "'";
+	 * if (i != filterRequest.getMotorIntermediaryCode().size() - 1) { vals += ",";
+	 * } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE) in (" + vals +
+	 * ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
+	 * && !filterRequest.getMotorIntermediaryName().isEmpty()) { String vals = "";
+	 * for (int i = 0; i < filterRequest.getMotorIntermediaryName().size(); i++) {
+	 * vals += "'" + filterRequest.getMotorIntermediaryName().get(i).trim() + "'";
+	 * if (i != filterRequest.getMotorIntermediaryName().size() - 1) { vals += ",";
+	 * } } queryStr +=
+	 * " and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in (" + vals + ")";
+	 * }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorFuelType() != null &&
+	 * !filterRequest.getMotorFuelType().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getMotorFuelType().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorFuelType().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorFuelType().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.FUELTYPE) in (" + vals +
+	 * ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorNcbFlag() != null &&
+	 * !filterRequest.getMotorNcbFlag().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getMotorNcbFlag().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorNcbFlag().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorNcbFlag().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.NCB_FLAG) in (" + vals +
+	 * ")"; }
+	 * 
+	 * if (claimParamType.equals("GIC")) { queryStr +=
+	 * " group by RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CATASTROPHECODE ,RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CLAIM_TYPE,CATASTROPHIC_MASTER.CAT_TYPE ,RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_NATURE_OF_CLAIM,CSL_CLAIM_NO,category,ADDON_TYPE ) x "
+	 * ; } else if (claimParamType.equals("NIC")) { queryStr += " GROUP by   " +
+	 * " uw_year,PRODUCT_CODE,CSL_CLAIM_NO,CSL_MVMT_MONTH,category,ADDON_TYPE ) A , "
+	 * +
+	 * " (select underwriting_year,XGEN_PRODUCTCODE,band,sum(OBLIGATORY) OBLIGATORY,sum(QUOTA_SHARE) QUOTA_SHARE,sum(RETENTION) RETENTION,sum(RI_COMMISSION) RI_COMMISSION from RSA_DWH_RI_OBLIGATORY_MASTER1 "
+	 * + " group by underwriting_year,XGEN_PRODUCTCODE,band) B   " +
+	 * " where B.underwriting_year=A.uw_year AND A.PRODUCT_CODE=B.XGEN_PRODUCTCODE AND A.BAND=B.band "
+	 * ; " ) "; }
+	 * 
+	 * System.out.println("queryStr------------------------------ " + queryStr);
+	 * ResultSet rs = stmt.executeQuery(queryStr);
+	 * System.out.println("START------------------------------ ");
+	 * 
+	 * // jsArray = convertToJSON(rs);
+	 * 
+	 * while (rs.next()) {
+	 * 
+	 * ReserverSingleLineCubeResponseNew res = new
+	 * ReserverSingleLineCubeResponseNew(); if (claimParamType.equals("GIC")) {
+	 * res.setCatGicOdComprehensiveDep(rs.getDouble(1));
+	 * res.setCatGicOdComprehensiveNcb(rs.getDouble(2));
+	 * res.setCatGicOdComprehensiveOtherAddon(rs.getDouble(3));
+	 * res.setCatGicOdComprehensiveNoAddon(rs.getDouble(4));
+	 * res.setCatGicOdTpDep(rs.getDouble(5)); res.setCatGicOdTpNcb(rs.getDouble(6));
+	 * res.setCatGicOdTpOtherAddon(rs.getDouble(7));
+	 * res.setCatGicOdTpNoAddon(rs.getDouble(8));
+	 * res.setCatGicOdOthersDep(rs.getDouble(9));
+	 * res.setCatGicOdOthersNcb(rs.getDouble(10));
+	 * res.setCatGicOdOthersOtherAddon(rs.getDouble(11));
+	 * res.setCatGicOdOthersNoAddon(rs.getDouble(12));
+	 * res.setTheftGicOdComprehensiveDep(rs.getDouble(13));
+	 * res.setTheftGicOdComprehensiveNcb(rs.getDouble(14));
+	 * res.setTheftGicOdComprehensiveOtherAddon(rs.getDouble(15));
+	 * res.setTheftGicOdComprehensiveNoAddon(rs.getDouble(16));
+	 * res.setTheftGicOdTpDep(rs.getDouble(17));
+	 * res.setTheftGicOdTpNcb(rs.getDouble(18));
+	 * res.setTheftGicOdTpOtherAddon(rs.getDouble(19));
+	 * res.setTheftGicOdTpNoAddon(rs.getDouble(20));
+	 * res.setTheftGicOdOthersDep(rs.getDouble(21));
+	 * res.setTheftGicOdOthersNcb(rs.getDouble(22));
+	 * res.setTheftGicOdOthersOtherAddon(rs.getDouble(23));
+	 * res.setTheftGicOdOthersNoAddon(rs.getDouble(24));
+	 * res.setOthersGicOdComprehensiveDep(rs.getDouble(25));
+	 * res.setOthersGicOdComprehensiveNcb(rs.getDouble(26));
+	 * res.setOthersGicOdComprehensiveOtherAddon(rs.getDouble(27));
+	 * res.setOthersGicOdComprehensiveNoAddon(rs.getDouble(28));
+	 * res.setOthersGicOdTpDep(rs.getDouble(29));
+	 * res.setOthersGicOdTpNcb(rs.getDouble(30));
+	 * res.setOthersGicOdTpOtherAddon(rs.getDouble(31));
+	 * res.setOthersGicOdTpNoAddon(rs.getDouble(32));
+	 * res.setOthersGicOdOthersDep(rs.getDouble(33));
+	 * res.setOthersGicOdOthersNcb(rs.getDouble(34));
+	 * res.setOthersGicOdOthersOtherAddon(rs.getDouble(35));
+	 * res.setOthersGicOdOthersNoAddon(rs.getDouble(36));
+	 * res.setCatGicTpComprehensiveDep(rs.getDouble(37));
+	 * res.setCatGicTpComprehensiveNcb(rs.getDouble(38));
+	 * res.setCatGicTpComprehensiveOtherAddon(rs.getDouble(39));
+	 * res.setCatGicTpComprehensiveNoAddon(rs.getDouble(40));
+	 * res.setCatGicTpTpDep(rs.getDouble(41));
+	 * res.setCatGicTpTpNcb(rs.getDouble(42));
+	 * res.setCatGicTpTpOtherAddon(rs.getDouble(43));
+	 * res.setCatGicTpTpNoAddon(rs.getDouble(44));
+	 * res.setCatGicTpOthersDep(rs.getDouble(45));
+	 * res.setCatGicTpOthersNcb(rs.getDouble(46));
+	 * res.setCatGicTpOthersOtherAddon(rs.getDouble(47));
+	 * res.setCatGicTpOthersNoAddon(rs.getDouble(48));
+	 * res.setTheftGicTpComprehensiveDep(rs.getDouble(49));
+	 * res.setTheftGicTpComprehensiveNcb(rs.getDouble(50));
+	 * res.setTheftGicTpComprehensiveOtherAddon(rs.getDouble(51));
+	 * res.setTheftGicTpComprehensiveNoAddon(rs.getDouble(52));
+	 * res.setTheftGicTpTpDep(rs.getDouble(53));
+	 * res.setTheftGicTpTpNcb(rs.getDouble(54));
+	 * res.setTheftGicTpTpOtherAddon(rs.getDouble(55));
+	 * res.setTheftGicTpTpNoAddon(rs.getDouble(56));
+	 * res.setTheftGicTpOthersDep(rs.getDouble(57));
+	 * res.setTheftGicTpOthersNcb(rs.getDouble(58));
+	 * res.setTheftGicTpOthersOtherAddon(rs.getDouble(59));
+	 * res.setTheftGicTpOthersNoAddon(rs.getDouble(60));
+	 * res.setOthersGicTpComprehensiveDep(rs.getDouble(61));
+	 * res.setOthersGicTpComprehensiveNcb(rs.getDouble(62));
+	 * res.setOthersGicTpComprehensiveOtherAddon(rs.getDouble(63));
+	 * res.setOthersGicTpComprehensiveNoAddon(rs.getDouble(64));
+	 * res.setOthersGicTpTpDep(rs.getDouble(65));
+	 * res.setOthersGicTpTpNcb(rs.getDouble(66));
+	 * res.setOthersGicTpTpOtherAddon(rs.getDouble(67));
+	 * res.setOthersGicTpTpNoAddon(rs.getDouble(68));
+	 * res.setOthersGicTpOthersDep(rs.getDouble(69));
+	 * res.setOthersGicTpOthersNcb(rs.getDouble(70));
+	 * res.setOthersGicTpOthersOtherAddon(rs.getDouble(71));
+	 * res.setOthersGicTpOthersNoAddon(rs.getDouble(72)); } else if
+	 * (claimParamType.equals("NIC")) { res.setNicComprehensiveDep(rs.getDouble(1));
+	 * res.setNicComprehensiveNcb(rs.getDouble(2));
+	 * res.setNicComprehensiveOtherAddon(rs.getDouble(3));
+	 * res.setNicComprehensiveNoAddon(rs.getDouble(4));
+	 * res.setNicTpDep(rs.getDouble(5)); res.setNicTpNcb(rs.getDouble(6));
+	 * res.setNicTpOtherAddon(rs.getDouble(7));
+	 * res.setNicTpNoAddon(rs.getDouble(8)); res.setNicOthersDep(rs.getDouble(9));
+	 * res.setNicOthersNcb(rs.getDouble(10));
+	 * res.setNicOthersOtherAddon(rs.getDouble(11));
+	 * res.setNicOthersNoAddon(rs.getDouble(12));
+	 * res.setNicTpComprehensiveDep(rs.getDouble(13));
+	 * res.setNicTpComprehensiveNcb(rs.getDouble(14));
+	 * res.setNicTpComprehensiveOtherAddon(rs.getDouble(15));
+	 * res.setNicTpComprehensiveNoAddon(rs.getDouble(16));
+	 * res.setNicTpTpDep(rs.getDouble(17)); res.setNicTpTpNcb(rs.getDouble(18));
+	 * res.setNicTpTpOtherAddon(rs.getDouble(19));
+	 * res.setNicTpTpNoAddon(rs.getDouble(20));
+	 * res.setNicTpOthersDep(rs.getDouble(21));
+	 * res.setNicTpOthersNcb(rs.getDouble(22));
+	 * res.setNicTpOthersOtherAddon(rs.getDouble(23));
+	 * res.setNicTpOthersNoAddon(rs.getDouble(24));
+	 * res.setNicOdComprehensiveDep(rs.getDouble(25));
+	 * res.setNicOdComprehensiveNcb(rs.getDouble(26));
+	 * res.setNicOdComprehensiveOtherAddon(rs.getDouble(27));
+	 * res.setNicOdComprehensiveNoAddon(rs.getDouble(28));
+	 * res.setNicOdTpDep(rs.getDouble(29)); res.setNicOdTpNcb(rs.getDouble(30));
+	 * res.setNicOdTpOtherAddon(rs.getDouble(31));
+	 * res.setNicOdTpNoAddon(rs.getDouble(32));
+	 * res.setNicOdOthersDep(rs.getDouble(33));
+	 * res.setNicOdOthersNcb(rs.getDouble(34));
+	 * res.setNicOdOthersOtherAddon(rs.getDouble(35));
+	 * res.setNicOdOthersNoAddon(rs.getDouble(36)); }
+	 * 
+	 * kpiResponseList.add(res); }
+	 * 
+	 * System.out.println("Query execution time " + (System.currentTimeMillis() -
+	 * startTime)); } catch (Exception e) {
+	 * System.out.println("kylinDataSource initialize error, ex: " + e);
+	 * System.out.println(); e.printStackTrace(); } finally { connection.close(); }
+	 * return kpiResponseList; }
+	 */
 	public String frameMesaureQuery(Integer fromMonth, Integer toMonth, Integer fromYear, Integer toYear,
 			List<String> measureList, String endQuery) {
 		String query = "select ", monthPrefix = "", year = "";
@@ -3814,957 +3811,1830 @@ public class KpiController {
 	 * subChannelMasterRepository.findByChannelName("");
 	 * System.out.println("list size-->"+list.size()); return list; }
 	 */
-
-	@GetMapping("/getGepNewCubeMonthAscolumnDataUW")
-	@ResponseBody
-	public List<GepCubeResponseFinal> getGepNewCubeMonthAscolumnDataUW(HttpServletRequest req,
-			UserMatrixMasterRequest filterRequest) throws SQLException {
-		// System.out.println("----------------Called getGepNewCubeMonthAscolumnDataUW
-		// api -----------------");
-		Connection connection = null;
-		List<GepCubeResponseFinal> kpiResponseList = new ArrayList<GepCubeResponseFinal>();
-		long startTime = System.currentTimeMillis();
-		try {
-			// String fromDate = req.getParameter("fromDate") == null ? "" :
-			// req.getParameter("fromDate");
-			// String toDate = req.getParameter("toDate") == null ? "" :
-			// req.getParameter("toDate");
-			String fromDate = filterRequest.getFromDate() == null ? "" : filterRequest.getFromDate();
-			String toDate = filterRequest.getToDate() == null ? "" : filterRequest.getToDate();
-
-			List<ProductMaster> productMasters = productMasterRepository.findAll();
-
-			String motorProductVals = "'" + productMasters.stream()
-					.filter(p -> p.getProductType().toLowerCase().contains("motor")).map(ProductMaster::getProductCode)
-					.collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";
-
-			String healthProductVals = "'" + productMasters.stream()
-					.filter(p -> p.getProductType().toLowerCase().contains("health")).map(ProductMaster::getProductCode)
-					.collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";
-
-			Driver driverManager = (Driver) Class.forName("org.apache.kylin.jdbc.Driver").newInstance();
-			Properties info = new Properties();
-			info.put("user", "ADMIN");
-			info.put("password", "KYLIN");
-			connection = driverManager
-					.connect("jdbc:kylin://" + RMSConstants.KYLIN_RS_BASE_IP_AND_PORT + "/learn_kylin", info);
-			System.out.println("Connection status -------------------------->" + connection);
-			Statement stmt = connection.createStatement();
-
-			String fromMonth = fromDate.split("/")[0];
-			String fromYear = fromDate.split("/")[1];
-			String toMonth = toDate.split("/")[0];
-			String toYear = toDate.split("/")[1];
-			List<String> measureList = null;
-
-			String queryStr = "SELECT SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEPCOVERAGE) as GEP, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEPCOVERAGE) as NEP, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_OD) as GEP_OD, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_TP) as GEP_TP  , "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_OD) as NEP_OD, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_TP) as NEP_TP, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.DISCOUNT_GEP_OD) as DISCOUNT_GEP_OD, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.DISCOUNT_NEP_OD) as DISCOUNT_NEP_OD, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_DEP) as GEP_DEP, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_DEP_OD) as GEP_DEP_OD  , "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_DEP_TP) as GEP_DEP_TP, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_NCB) as GEP_NCB, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_NCB_OD) as GEP_NCB_OD, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_NCB_TP) as GEP_NCB_TP, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_OTHER_ADDON) as GEP_OTHER_ADDON, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_OTHER_ADDON_OD) as GEP_OTHER_ADDON_OD  , "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_OTHER_ADDON_TP) as GEP_OTHER_ADDON_TP, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_DEP) as NEP_DEP, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_DEP_OD) as NEP_DEP_OD  , "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_DEP_TP) as NEP_DEP_TP, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_NCB) as NEP_NCB, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_NCB_OD) as NEP_NCB_OD, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_NCB_TP) as NEP_NCB_TP, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_OTHER_ADDON) as NEP_OTHER_ADDON, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_OTHER_ADDON_OD) as NEP_OTHER_ADDON_OD  , "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_OTHER_ADDON_TP) as NEP_OTHER_ADDON_TP, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.EARNED_POLICIES) as EARNED_POLICIES, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.EARNED_POLICIES_OD) as EARNED_POLICIES_OD, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.EARNED_POLICIES_TP) as EARNED_POLICIES_TP, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.ADDON_EARNED_POLICIES) as ADDON_EARNED_POLICIES  , "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.ADDON_EARNED_POLICIES_OD) as ADDON_EARNED_POLICIES_OD, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.ADDON_EARNED_POLICIES_TP) as ADDON_EARNED_POLICIES_TP, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GIC_TPULR) as GIC_TPULR, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GIC_TPULR_DEP) as GIC_TPULR_DEP, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GIC_TPULR_NCB) as GIC_TPULR_NCB, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GIC_TPULR_OTHER_ADDON) as GIC_TPULR_OTHER_ADDON  , "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NIC_TPULR) as NIC_TPULR, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NIC_TPULR_DEP) as NIC_TPULR_DEP, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NIC_TPULR_NCB) as NIC_TPULR_NCB, "
-					+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NIC_TPULR_OTHER_ADDON) as NIC_TPULR_OTHER_ADDON "
-					+ "FROM RSDB.RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE as RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE "
-					+ "LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER "
-					+ "ON RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE "
-					+ "LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER "
-					+ "ON RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE "
-					+ "LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER "
-					+ "ON RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE "
-					+ "LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER "
-					+ "ON RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE "
-					+ "LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT "
-					+ "ON RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE "
-					+ "LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME " // --------care
-																																															// here---------
-					+ "LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE";
-		
-			measureList = getgepBaseMeasures();
-			System.out.println("AddOn: " + filterRequest.getAddOnNew());
+		// GepNep Api for UnderWritten
+		@GetMapping("/getGepNewCubeMonthAscolumnDataUW")
+		@ResponseBody
+		public List<GepCubeResponseFinal> getGepNewCubeMonthAscolumnDataUW(HttpServletRequest req,
+				UserMatrixMasterRequest filterRequest) throws SQLException {
+			// System.out.println("----------------Called getGepNewCubeMonthAscolumnDataUW
+			// api -----------------");
+			Connection connection = null;
+			List<GepCubeResponseFinal> kpiResponseList = new ArrayList<GepCubeResponseFinal>();
+			long startTime = System.currentTimeMillis();
+			try {
+				// String fromDate = req.getParameter("fromDate") == null ? "" :
+				// req.getParameter("fromDate");
+				// String toDate = req.getParameter("toDate") == null ? "" :
+				// req.getParameter("toDate");
+				String fromDate = filterRequest.getFromDate() == null ? "" : filterRequest.getFromDate();
+				String toDate = filterRequest.getToDate() == null ? "" : filterRequest.getToDate();
+	
+				List<ProductMaster> productMasters = productMasterRepository.findAll();
+	
+				String motorProductVals = "'" + productMasters.stream()
+						.filter(p -> p.getProductType().toLowerCase().contains("motor")).map(ProductMaster::getProductCode)
+						.collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";
+	
+				String healthProductVals = "'" + productMasters.stream()
+						.filter(p -> p.getProductType().toLowerCase().contains("health")).map(ProductMaster::getProductCode)
+						.collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";
+	
+				Driver driverManager = (Driver) Class.forName("org.apache.kylin.jdbc.Driver").newInstance();
+				Properties info = new Properties();
+				info.put("user", "ADMIN");
+				info.put("password", "KYLIN");
+				connection = driverManager
+						.connect("jdbc:kylin://" + RMSConstants.KYLIN_RS_BASE_IP_AND_PORT + "/learn_kylin", info);
+				System.out.println("Connection status -------------------------->" + connection);
+				Statement stmt = connection.createStatement();
+	
+				String fromMonth = fromDate.split("/")[0];
+				String fromYear = fromDate.split("/")[1];
+				String toMonth = toDate.split("/")[0];
+				String toYear = toDate.split("/")[1];
+				List<String> measureList = null;
+	
+				String queryStr = "SELECT SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEPCOVERAGE) as GEP, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEPCOVERAGE) as NEP, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_OD) as GEP_OD, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_TP) as GEP_TP  , "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_OD) as NEP_OD, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_TP) as NEP_TP, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.DISCOUNT_GEP_OD) as DISCOUNT_GEP_OD, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.DISCOUNT_NEP_OD) as DISCOUNT_NEP_OD, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_DEP) as GEP_DEP, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_DEP_OD) as GEP_DEP_OD  , "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_DEP_TP) as GEP_DEP_TP, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_NCB) as GEP_NCB, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_NCB_OD) as GEP_NCB_OD, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_NCB_TP) as GEP_NCB_TP, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_OTHER_ADDON) as GEP_OTHER_ADDON, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_OTHER_ADDON_OD) as GEP_OTHER_ADDON_OD  , "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_OTHER_ADDON_TP) as GEP_OTHER_ADDON_TP, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_DEP) as NEP_DEP, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_DEP_OD) as NEP_DEP_OD  , "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_DEP_TP) as NEP_DEP_TP, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_NCB) as NEP_NCB, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_NCB_OD) as NEP_NCB_OD, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_NCB_TP) as NEP_NCB_TP, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_OTHER_ADDON) as NEP_OTHER_ADDON, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_OTHER_ADDON_OD) as NEP_OTHER_ADDON_OD  , "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_OTHER_ADDON_TP) as NEP_OTHER_ADDON_TP, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.EARNED_POLICIES) as EARNED_POLICIES, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.EARNED_POLICIES_OD) as EARNED_POLICIES_OD, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.EARNED_POLICIES_TP) as EARNED_POLICIES_TP, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.ADDON_EARNED_POLICIES) as ADDON_EARNED_POLICIES  , "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.ADDON_EARNED_POLICIES_OD) as ADDON_EARNED_POLICIES_OD, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.ADDON_EARNED_POLICIES_TP) as ADDON_EARNED_POLICIES_TP, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GIC_TPULR) as GIC_TPULR, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GIC_TPULR_DEP) as GIC_TPULR_DEP, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GIC_TPULR_NCB) as GIC_TPULR_NCB, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GIC_TPULR_OTHER_ADDON) as GIC_TPULR_OTHER_ADDON  , "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NIC_TPULR) as NIC_TPULR, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NIC_TPULR_DEP) as NIC_TPULR_DEP, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NIC_TPULR_NCB) as NIC_TPULR_NCB, "
+						+ "SUM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NIC_TPULR_OTHER_ADDON) as NIC_TPULR_OTHER_ADDON "
+						+ "FROM RSDB.RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE as RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE "
+						+ "LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER "
+						+ "ON RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE "
+						+ "LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER "
+						+ "ON RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE "
+						+ "LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER "
+						+ "ON RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE "
+						+ "LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER "
+						+ "ON RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE "
+						+ "LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT "
+						+ "ON RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE "
+						+ "LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME " // --------care
+																																																// here---------
+						+ "LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE";
 			
-
-			String finstartDate = fromYear + "-" + fromMonth + "-01";
-			String finEndDate = toYear + "-" + toMonth + "-31";
-			queryStr += " WHERE (SUBSTRING(inception_date,1,10) >='" + finstartDate
-					+ "' and SUBSTRING(inception_date,1,10) <='" + finEndDate + "')";
-
-			/*
-			 * if(claimType.equalsIgnoreCase("R")){ queryStr += " WHERE"; queryStr +=
-			 * getFinGepCondQuery(Integer.valueOf(fromMonth),Integer.valueOf(toMonth),
-			 * Integer.valueOf(fromYear),Integer.valueOf(toYear));
-			 * 
-			 * }else if(claimType.equalsIgnoreCase("U")){
-			 * 
-			 * queryStr += " WHERE SUBSTRING(inception_date,1,10) >='"
-			 * +finstartDate+"' and SUBSTRING(inception_date,1,10) <='"+finEndDate+"' "; }
-			 */
-
-		
-			/*
-			 * if (filterRequest != null && filterRequest.getPolicyTypes() != null &&
-			 * !filterRequest.getPolicyTypes().isEmpty()) { String vals = ""; for (int i =
-			 * 0; i < filterRequest.getPolicyTypes().size(); i++) { vals += "'" +
-			 * filterRequest.getPolicyTypes().get(i).trim() + "'"; if (i !=
-			 * filterRequest.getPolicyTypes().size() - 1) { vals += ","; } } queryStr +=
-			 * " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.POLICY_TYPE) in ("
-			 * +vals+")"; }
-			 */
-
-			if (filterRequest != null && filterRequest.getBTypeNow() != null
-					&& !filterRequest.getBTypeNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getBTypeNow().size(); i++) {
-					vals += "'" + filterRequest.getBTypeNow().get(i).trim() + "'";
-					if (i != filterRequest.getBTypeNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.BUSINESS_TYPE) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getChannelNow() != null
-					&& !filterRequest.getChannelNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getChannelNow().size(); i++) {
-					vals += "'" + filterRequest.getChannelNow().get(i).trim() + "'";
-					if (i != filterRequest.getChannelNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.CHANNEL) in (" + vals + ")";
-			}
-
-
-			if (filterRequest != null && filterRequest.getSubChannelNow() != null
-					&& !filterRequest.getSubChannelNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getSubChannelNow().size(); i++) {
-					vals += "'" + filterRequest.getSubChannelNow().get(i).trim() + "'";
-					if (i != filterRequest.getSubChannelNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.SUB_CHANNEL) in 	(" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getMakeNow() != null && !filterRequest.getMakeNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMakeNow().size(); i++) {
-					vals += "'" + filterRequest.getMakeNow().get(i).trim() + "'";
-					if (i != filterRequest.getMakeNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.MAKE) in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getModelGroupNow() != null
-					&& !filterRequest.getModelGroupNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getModelGroupNow().size(); i++) {
-					vals += "'" + filterRequest.getModelGroupNow().get(i).trim() + "'";
-					if (i != filterRequest.getModelGroupNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.MODELGROUP) in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getFuelTypeNow() != null
-					&& !filterRequest.getFuelTypeNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getFuelTypeNow().size(); i++) {
-					vals += "'" + filterRequest.getFuelTypeNow().get(i).trim() + "'";
-					if (i != filterRequest.getFuelTypeNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and coalesce(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.FUELTYPE,'N') in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getStateGroupNow() != null
-					&& !filterRequest.getStateGroupNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getStateGroupNow().size(); i++) {
-					vals += "'" + filterRequest.getStateGroupNow().get(i).trim() + "'";
-					if (i != filterRequest.getStateGroupNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_DWH_CITY_GROUPING_MASTER_FINAL.STATE_GROUPING) in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getNcbNow() != null && !filterRequest.getNcbNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getNcbNow().size(); i++) {
-					vals += "'" + filterRequest.getNcbNow().get(i).trim() + "'";
-					if (i != filterRequest.getNcbNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NCB_FLAG) in (" + vals + ")";
-			}
-
-			/*
-			 * if (filterRequest != null && filterRequest.getMotorChannel() != null &&
-			 * !filterRequest.getMotorChannel().isEmpty()) { String vals = ""; for (int i =
-			 * 0; i < filterRequest.getMotorChannel().size(); i++) { vals += "'" +
-			 * filterRequest.getMotorChannel().get(i).trim() + "'"; if (i !=
-			 * filterRequest.getMotorChannel().size() - 1) { vals += ","; } } queryStr +=
-			 * " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.CHANNEL) in (" + vals + ")";
-			 * }
-			 * 
-			 * if (filterRequest != null && filterRequest.getMotorSubChannel() != null &&
-			 * !filterRequest.getMotorSubChannel().isEmpty()) { String vals = ""; for (int i
-			 * = 0; i < filterRequest.getMotorSubChannel().size(); i++) { vals += "'" +
-			 * filterRequest.getMotorSubChannel().get(i).trim() + "'"; if (i !=
-			 * filterRequest.getMotorSubChannel().size() - 1) { vals += ","; } } queryStr +=
-			 * " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.SUB_CHANNEL) in (" + vals +
-			 * ")"; }
-			 */
-
-			if (filterRequest != null && filterRequest.getMotorZone() != null
-					&& !filterRequest.getMotorZone().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorZone().size(); i++) {
-					vals += "'" + filterRequest.getMotorZone().get(i).trim() + "'";
-					if (i != filterRequest.getMotorZone().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(KPI_BRANCH_MASTER.ZONE) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorCluster() != null
-					&& !filterRequest.getMotorCluster().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorCluster().size(); i++) {
-					vals += "'" + filterRequest.getMotorCluster().get(i).trim() + "'";
-					if (i != filterRequest.getMotorCluster().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorState() != null
-					&& !filterRequest.getMotorState().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorState().size(); i++) {
-					vals += "'" + filterRequest.getMotorState().get(i).trim() + "'";
-					if (i != filterRequest.getMotorState().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorCity() != null
-					&& !filterRequest.getMotorCity().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorCity().size(); i++) {
-					vals += "'" + filterRequest.getMotorCity().get(i).trim() + "'";
-					if (i != filterRequest.getMotorCity().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorBranch() != null
-					&& !filterRequest.getMotorBranch().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorBranch().size(); i++) {
-					vals += "'" + filterRequest.getMotorBranch().get(i).trim() + "'";
-					if (i != filterRequest.getMotorBranch().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.BRANCH_CODE) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
-					&& !filterRequest.getMotorIntermediaryCode().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorIntermediaryCode().size(); i++) {
-					vals += "'" + filterRequest.getMotorIntermediaryCode().get(i).trim() + "'";
-					if (i != filterRequest.getMotorIntermediaryCode().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.AGENT_CODE) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
-					&& !filterRequest.getMotorIntermediaryName().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorIntermediaryName().size(); i++) {
-					vals += "'" + filterRequest.getMotorIntermediaryName().get(i).trim() + "'";
-					if (i != filterRequest.getMotorIntermediaryName().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in (" + vals + ")";
-			}
-
-			/*
-			 * if (filterRequest != null && filterRequest.getMotorFuelType() != null &&
-			 * !filterRequest.getMotorFuelType().isEmpty()) { String vals = ""; for (int i =
-			 * 0; i < filterRequest.getMotorFuelType().size(); i++) { vals += "'" +
-			 * filterRequest.getMotorFuelType().get(i).trim() + "'"; if (i !=
-			 * filterRequest.getMotorFuelType().size() - 1) { vals += ","; } } queryStr +=
-			 * " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.FUEL_TYPE) in (" + vals +
-			 * ")"; }
-			 * 
-			 * if (filterRequest != null && filterRequest.getMotorNcbFlag() != null &&
-			 * !filterRequest.getMotorNcbFlag().isEmpty()) { String vals = ""; for (int i =
-			 * 0; i < filterRequest.getMotorNcbFlag().size(); i++) { vals += "'" +
-			 * filterRequest.getMotorNcbFlag().get(i).trim() + "'"; if (i !=
-			 * filterRequest.getMotorNcbFlag().size() - 1) { vals += ","; } } queryStr +=
-			 * " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NCB) in (" + vals + ")"; }
-			 */
+				measureList = getgepBaseMeasures();
+				System.out.println("AddOn: " + filterRequest.getAddOnNew());
+				
+	
+				String finstartDate = fromYear + "-" + fromMonth + "-01";
+				String finEndDate = toYear + "-" + toMonth + "-31";
+				queryStr += " WHERE (SUBSTRING(inception_date,1,10) >='" + finstartDate
+						+ "' and SUBSTRING(inception_date,1,10) <='" + finEndDate + "')";
+	
 			
-			//Have to uncomment----------
-			/*
-			 * if(filterRequest != null && filterRequest.getPolicyTypeNew() != null &&
-			 * !filterRequest.getPolicyTypeNew().isEmpty()){
-			 * 
-			 * String vals = ""; for (int i = 0; i <
-			 * filterRequest.getPolicyTypeNew().size(); i++) { vals += "'" +
-			 * filterRequest.getPolicyTypeNew().get(i).trim() + "'"; if (i !=
-			 * filterRequest.getPolicyTypeNew().size() - 1) { vals += ","; } } queryStr +=
-			 * " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.POLICY_TYPE_NEW) in ("
-			 * + vals + ")";
-			 * 
-			 * } if (filterRequest != null && filterRequest.getChannelNew() != null &&
-			 * !filterRequest.getChannelNew().isEmpty()) { String vals = ""; for (int i = 0;
-			 * i < filterRequest.getChannelNew().size(); i++) { vals += "'" +
-			 * filterRequest.getChannelNew().get(i).trim() + "'"; if (i !=
-			 * filterRequest.getChannelNew().size() - 1) vals += ","; } queryStr +=
-			 * " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.CHANNEL_NEW) in (" +
-			 * vals + ")"; }
-			 * 
-			 * if(filterRequest != null && filterRequest.getCategorisation() != null &&
-			 * !filterRequest.getCategorisation().isEmpty()){
-			 * 
-			 * String vals = ""; for (int i = 0; i <
-			 * filterRequest.getCategorisation().size(); i++) { vals += "'" +
-			 * filterRequest.getCategorisation().get(i).trim() + "'"; if (i !=
-			 * filterRequest.getCategorisation().size() - 1) { vals += ","; } } queryStr +=
-			 * " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.CATEGORISATION) in ("
-			 * + vals + ")";
-			 * 
-			 * }
-			 * 
-			 * if(filterRequest != null && filterRequest.getEngineCapacity() != null &&
-			 * !filterRequest.getEngineCapacity().isEmpty()){
-			 * 
-			 * String vals = ""; for (int i = 0; i <
-			 * filterRequest.getEngineCapacity().size(); i++) { vals += "'" +
-			 * filterRequest.getEngineCapacity().get(i).trim() + "'"; if (i !=
-			 * filterRequest.getEngineCapacity().size() - 1) { vals += ","; } } queryStr +=
-			 * " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.ENGINECAPACITY) in ("
-			 * + vals + ")";
-			 * 
-			 * } if (filterRequest != null && filterRequest.getVehicleAge() != null &&
-			 * !filterRequest.getVehicleAge().isEmpty()) { String vals = ""; for (int i = 0;
-			 * i < filterRequest.getVehicleAge().size(); i++) { vals += "'" +
-			 * filterRequest.getVehicleAge().get(i).trim() + "'"; if (i !=
-			 * filterRequest.getVehicleAge().size() - 1) { vals += ","; } } queryStr +=
-			 * " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.VEHICLEAGE) in (" +
-			 * vals + ")"; }
-			 */
-			
-
-			if (filterRequest != null && filterRequest.getMotorCarType() != null
-					&& !filterRequest.getMotorCarType().isEmpty()) {
-				String vals = "'HIGHEND','High End'";
-				String nheVals = "'Sling','OIB','OIB PS','Xcd','Others','SS PS'";
-				int cvalcounter = 0, cvalNHEcounter = 0;
-				for (int i = 0; i < filterRequest.getMotorCarType().size(); i++) {
-
-					if (filterRequest.getMotorCarType().get(i).trim().equals("HE")) {
-						if (cvalcounter == 0)
-							queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + vals + ")";
-						cvalcounter++;
-					} else if (filterRequest.getMotorCarType().get(i).trim().equals("NHE")) {
-						if (cvalNHEcounter == 0)
-							queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + nheVals
-									+ ")";
-						cvalNHEcounter++;
-					}
-
-					System.out.println("HE query------------------------------ " + queryStr);
-
-				}
-
-			}
-
-			System.out.println("queryStr------------------------------ " + queryStr);
-			ResultSet rs = stmt.executeQuery(queryStr);
-			System.out.println("START------------------------------ ");
-
-			while (rs.next()) {
-
-				GepCubeResponseFinal gepCubeResponse = new GepCubeResponseFinal();
-				
-				gepCubeResponse.setGep(rs.getDouble(1));
-				gepCubeResponse.setNep(rs.getDouble(2));
-				gepCubeResponse.setGepOd(rs.getDouble(3));
-				gepCubeResponse.setGepTp(rs.getDouble(4));
-				gepCubeResponse.setNepOd(rs.getDouble(5));
-				gepCubeResponse.setNepTp(rs.getDouble(6));
-				
-				gepCubeResponse.setDiscountGepOd(rs.getDouble(7));
-				gepCubeResponse.setDiscountGepTp(rs.getDouble(8));
-				
-				gepCubeResponse.setGepDep(rs.getDouble(9));
-				gepCubeResponse.setGepDepOd(rs.getDouble(10));
-				gepCubeResponse.setGepDepTp(rs.getDouble(11));
-				
-				gepCubeResponse.setGepNcb(rs.getDouble(12));
-				gepCubeResponse.setGepNcbOd(rs.getDouble(13));
-				gepCubeResponse.setGepNcbTp(rs.getDouble(14));
-				
-				gepCubeResponse.setGepOtherAddon(rs.getDouble(15));
-				gepCubeResponse.setGepOtherAddonOd(rs.getDouble(16));
-				gepCubeResponse.setGepOtherAddonTp(rs.getDouble(17));
-				
-				gepCubeResponse.setNepDep(rs.getDouble(18));
-				gepCubeResponse.setNepDepOd(rs.getDouble(19));
-				gepCubeResponse.setNepDepTp(rs.getDouble(20));
-				
-				gepCubeResponse.setNepNcb(rs.getDouble(21));
-				gepCubeResponse.setNepNcbOd(rs.getDouble(22));
-				gepCubeResponse.setNepNcbTp(rs.getDouble(23));
-				
-				gepCubeResponse.setNepOtherAddon(rs.getDouble(24));
-				gepCubeResponse.setNepOtherAddonOd(rs.getDouble(25));
-				gepCubeResponse.setNepOtherAddonTp(rs.getDouble(26));
-				
-				gepCubeResponse.setEarnedPolicies(rs.getDouble(27));
-				gepCubeResponse.setEarnedPoliciesOd(rs.getDouble(28));
-				gepCubeResponse.setEarnedPoliciesTp(rs.getDouble(29));
-				
-				gepCubeResponse.setAddonEarnedPolicies(rs.getDouble(30));
-				gepCubeResponse.setAddonEarnedPoliciesOd(rs.getDouble(31));
-				gepCubeResponse.setAddonEarnedPoliciesTp(rs.getDouble(32));
-				
-				gepCubeResponse.setGicTpulr(rs.getDouble(33));
-				gepCubeResponse.setGicTpulrDep(rs.getDouble(34));
-				gepCubeResponse.setGicTpulrNcb(rs.getDouble(35));
-				gepCubeResponse.setGicTpulrOtherAddon(rs.getDouble(36));
-				
-				gepCubeResponse.setNicTpulr(rs.getDouble(37));
-				gepCubeResponse.setNicTpulrDep(rs.getDouble(38));
-				gepCubeResponse.setNicTpulrNcb(rs.getDouble(39));
-				gepCubeResponse.setNicTpulrOtherAddon(rs.getDouble(40));
-				
 				/*
-				 * for(int i=1; i<=40; i++) {
-				 * System.out.println("rs.getDouble("+i+") = "+rs.getDouble(i)); }
+				 * if (filterRequest != null && filterRequest.getPolicyTypes() != null &&
+				 * !filterRequest.getPolicyTypes().isEmpty()) { String vals = ""; for (int i =
+				 * 0; i < filterRequest.getPolicyTypes().size(); i++) { vals += "'" +
+				 * filterRequest.getPolicyTypes().get(i).trim() + "'"; if (i !=
+				 * filterRequest.getPolicyTypes().size() - 1) { vals += ","; } } queryStr +=
+				 * " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.POLICY_TYPE) in ("
+				 * +vals+")"; }
 				 */
-
-				kpiResponseList.add(gepCubeResponse);
-
+	
+				if (filterRequest != null && filterRequest.getBTypeNow() != null
+						&& !filterRequest.getBTypeNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getBTypeNow().size(); i++) {
+						vals += "'" + filterRequest.getBTypeNow().get(i).trim() + "'";
+						if (i != filterRequest.getBTypeNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.BUSINESS_TYPE) in (" + vals + ")";
+				}
+	
+				if (filterRequest != null && filterRequest.getChannelNow() != null
+						&& !filterRequest.getChannelNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getChannelNow().size(); i++) {
+						vals += "'" + filterRequest.getChannelNow().get(i).trim() + "'";
+						if (i != filterRequest.getChannelNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.CHANNEL) in (" + vals + ")";
+				}
+	
+	
+				if (filterRequest != null && filterRequest.getSubChannelNow() != null
+						&& !filterRequest.getSubChannelNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getSubChannelNow().size(); i++) {
+						vals += "'" + filterRequest.getSubChannelNow().get(i).trim() + "'";
+						if (i != filterRequest.getSubChannelNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.SUB_CHANNEL) in 	(" + vals + ")";
+				}
+				if (filterRequest != null && filterRequest.getMakeNow() != null && !filterRequest.getMakeNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMakeNow().size(); i++) {
+						vals += "'" + filterRequest.getMakeNow().get(i).trim() + "'";
+						if (i != filterRequest.getMakeNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.MAKE) in (" + vals + ")";
+				}
+				if (filterRequest != null && filterRequest.getModelGroupNow() != null
+						&& !filterRequest.getModelGroupNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getModelGroupNow().size(); i++) {
+						vals += "'" + filterRequest.getModelGroupNow().get(i).trim() + "'";
+						if (i != filterRequest.getModelGroupNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.MODELGROUP) in (" + vals + ")";
+				}
+				if (filterRequest != null && filterRequest.getFuelTypeNow() != null
+						&& !filterRequest.getFuelTypeNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getFuelTypeNow().size(); i++) {
+						vals += "'" + filterRequest.getFuelTypeNow().get(i).trim() + "'";
+						if (i != filterRequest.getFuelTypeNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and coalesce(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.FUELTYPE,'N') in (" + vals + ")";
+				}
+				if (filterRequest != null && filterRequest.getStateGroupNow() != null
+						&& !filterRequest.getStateGroupNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getStateGroupNow().size(); i++) {
+						vals += "'" + filterRequest.getStateGroupNow().get(i).trim() + "'";
+						if (i != filterRequest.getStateGroupNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_DWH_CITY_GROUPING_MASTER_FINAL.STATE_GROUPING) in (" + vals + ")";
+				}
+				if (filterRequest != null && filterRequest.getNcbNow() != null && !filterRequest.getNcbNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getNcbNow().size(); i++) {
+						vals += "'" + filterRequest.getNcbNow().get(i).trim() + "'";
+						if (i != filterRequest.getNcbNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NCB_FLAG) in (" + vals + ")";
+				}
+	
+				/*
+				 * if (filterRequest != null && filterRequest.getMotorChannel() != null &&
+				 * !filterRequest.getMotorChannel().isEmpty()) { String vals = ""; for (int i =
+				 * 0; i < filterRequest.getMotorChannel().size(); i++) { vals += "'" +
+				 * filterRequest.getMotorChannel().get(i).trim() + "'"; if (i !=
+				 * filterRequest.getMotorChannel().size() - 1) { vals += ","; } } queryStr +=
+				 * " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.CHANNEL) in (" + vals + ")";
+				 * }
+				 * 
+				 * if (filterRequest != null && filterRequest.getMotorSubChannel() != null &&
+				 * !filterRequest.getMotorSubChannel().isEmpty()) { String vals = ""; for (int i
+				 * = 0; i < filterRequest.getMotorSubChannel().size(); i++) { vals += "'" +
+				 * filterRequest.getMotorSubChannel().get(i).trim() + "'"; if (i !=
+				 * filterRequest.getMotorSubChannel().size() - 1) { vals += ","; } } queryStr +=
+				 * " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.SUB_CHANNEL) in (" + vals +
+				 * ")"; }
+				 */
+	
+				if (filterRequest != null && filterRequest.getMotorZone() != null
+						&& !filterRequest.getMotorZone().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorZone().size(); i++) {
+						vals += "'" + filterRequest.getMotorZone().get(i).trim() + "'";
+						if (i != filterRequest.getMotorZone().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(KPI_BRANCH_MASTER.ZONE) in (" + vals + ")";
+				}
+	
+				if (filterRequest != null && filterRequest.getMotorCluster() != null
+						&& !filterRequest.getMotorCluster().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorCluster().size(); i++) {
+						vals += "'" + filterRequest.getMotorCluster().get(i).trim() + "'";
+						if (i != filterRequest.getMotorCluster().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in (" + vals + ")";
+				}
+	
+				if (filterRequest != null && filterRequest.getMotorState() != null
+						&& !filterRequest.getMotorState().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorState().size(); i++) {
+						vals += "'" + filterRequest.getMotorState().get(i).trim() + "'";
+						if (i != filterRequest.getMotorState().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in (" + vals + ")";
+				}
+	
+				if (filterRequest != null && filterRequest.getMotorCity() != null
+						&& !filterRequest.getMotorCity().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorCity().size(); i++) {
+						vals += "'" + filterRequest.getMotorCity().get(i).trim() + "'";
+						if (i != filterRequest.getMotorCity().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in (" + vals + ")";
+				}
+	
+				if (filterRequest != null && filterRequest.getMotorBranch() != null
+						&& !filterRequest.getMotorBranch().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorBranch().size(); i++) {
+						vals += "'" + filterRequest.getMotorBranch().get(i).trim() + "'";
+						if (i != filterRequest.getMotorBranch().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.BRANCH_CODE) in (" + vals + ")";
+				}
+	
+				if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
+						&& !filterRequest.getMotorIntermediaryCode().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorIntermediaryCode().size(); i++) {
+						vals += "'" + filterRequest.getMotorIntermediaryCode().get(i).trim() + "'";
+						if (i != filterRequest.getMotorIntermediaryCode().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.AGENT_CODE) in (" + vals + ")";
+				}
+	
+				if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
+						&& !filterRequest.getMotorIntermediaryName().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorIntermediaryName().size(); i++) {
+						vals += "'" + filterRequest.getMotorIntermediaryName().get(i).trim() + "'";
+						if (i != filterRequest.getMotorIntermediaryName().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in (" + vals + ")";
+				}
+	
+				
+				  if (filterRequest != null && filterRequest.getMotorFuelType() != null &&
+				  !filterRequest.getMotorFuelType().isEmpty()) { String vals = ""; for (int i =
+				  0; i < filterRequest.getMotorFuelType().size(); i++) { vals += "'" +
+				  filterRequest.getMotorFuelType().get(i).trim() + "'"; if (i !=
+				  filterRequest.getMotorFuelType().size() - 1) { vals += ","; } } queryStr +=
+				  " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.FUEL_TYPE) in (" + vals +
+				  ")"; }
+				  
+				  if (filterRequest != null && filterRequest.getMotorNcbFlag() != null &&
+				  !filterRequest.getMotorNcbFlag().isEmpty()) { String vals = ""; for (int i =
+				  0; i < filterRequest.getMotorNcbFlag().size(); i++) { vals += "'" +
+				  filterRequest.getMotorNcbFlag().get(i).trim() + "'"; if (i !=
+				  filterRequest.getMotorNcbFlag().size() - 1) { vals += ","; } } queryStr +=
+				  " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NCB) in (" + vals + ")"; }
+				 
+				
+				//Have to uncomment----------
+				
+				  if(filterRequest != null && filterRequest.getPolicyTypeNew() != null &&
+				  !filterRequest.getPolicyTypeNew().isEmpty()){
+				  
+				  String vals = ""; for (int i = 0; i <
+				  filterRequest.getPolicyTypeNew().size(); i++) { vals += "'" +
+				  filterRequest.getPolicyTypeNew().get(i).trim() + "'"; if (i !=
+				  filterRequest.getPolicyTypeNew().size() - 1) { vals += ","; } } queryStr +=
+				  " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.POLICY_TYPE_NEW) in ("
+				  + vals + ")";
+				  
+				  } if (filterRequest != null && filterRequest.getChannelNew() != null &&
+				  !filterRequest.getChannelNew().isEmpty()) { String vals = ""; for (int i = 0;
+				  i < filterRequest.getChannelNew().size(); i++) { vals += "'" +
+				  filterRequest.getChannelNew().get(i).trim() + "'"; if (i !=
+				  filterRequest.getChannelNew().size() - 1) vals += ","; } queryStr +=
+				  " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.CHANNEL_NEW) in (" +
+				  vals + ")"; }
+				  
+				  if(filterRequest != null && filterRequest.getCategorisation() != null &&
+				  !filterRequest.getCategorisation().isEmpty()){
+				  
+				  String vals = ""; for (int i = 0; i <
+				  filterRequest.getCategorisation().size(); i++) { vals += "'" +
+				  filterRequest.getCategorisation().get(i).trim() + "'"; if (i !=
+				  filterRequest.getCategorisation().size() - 1) { vals += ","; } } queryStr +=
+				  " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.CATEGORISATION) in ("
+				  + vals + ")";
+				  
+				  }
+				  
+				  if(filterRequest != null && filterRequest.getEngineCapacity() != null &&
+				  !filterRequest.getEngineCapacity().isEmpty()){
+				  
+				  String vals = ""; for (int i = 0; i <
+				  filterRequest.getEngineCapacity().size(); i++) { vals += "'" +
+				  filterRequest.getEngineCapacity().get(i).trim() + "'"; if (i !=
+				  filterRequest.getEngineCapacity().size() - 1) { vals += ","; } } queryStr +=
+				  " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.ENGINECAPACITY) in ("
+				  + vals + ")";
+				  
+				  } if (filterRequest != null && filterRequest.getVehicleAge() != null &&
+				  !filterRequest.getVehicleAge().isEmpty()) { String vals = ""; for (int i = 0;
+				  i < filterRequest.getVehicleAge().size(); i++) { vals += "'" +
+				  filterRequest.getVehicleAge().get(i).trim() + "'"; if (i !=
+				  filterRequest.getVehicleAge().size() - 1) { vals += ","; } } queryStr +=
+				  " and TRIM(RSA_KPI_UW_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.VEHICLEAGE) in (" +
+				  vals + ")"; }
+				 
+				
+	
+				if (filterRequest != null && filterRequest.getMotorCarType() != null
+						&& !filterRequest.getMotorCarType().isEmpty()) {
+					String vals = "'HIGHEND','High End'";
+					String nheVals = "'Sling','OIB','OIB PS','Xcd','Others','SS PS'";
+					int cvalcounter = 0, cvalNHEcounter = 0;
+					for (int i = 0; i < filterRequest.getMotorCarType().size(); i++) {
+	
+						if (filterRequest.getMotorCarType().get(i).trim().equals("HE")) {
+							if (cvalcounter == 0)
+								queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + vals + ")";
+							cvalcounter++;
+						} else if (filterRequest.getMotorCarType().get(i).trim().equals("NHE")) {
+							if (cvalNHEcounter == 0)
+								queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + nheVals
+										+ ")";
+							cvalNHEcounter++;
+						}
+	
+						System.out.println("HE query------------------------------ " + queryStr);
+	
+					}
+	
+				}
+	
+				System.out.println("queryStr------------------------------ " + queryStr);
+				ResultSet rs = stmt.executeQuery(queryStr);
+				System.out.println("START------------------------------ ");
+	
+				while (rs.next()) {
+	
+					GepCubeResponseFinal gepCubeResponse = new GepCubeResponseFinal();
+					
+					gepCubeResponse.setGep(rs.getDouble(1));
+					gepCubeResponse.setNep(rs.getDouble(2));
+					gepCubeResponse.setGepOd(rs.getDouble(3));
+					gepCubeResponse.setGepTp(rs.getDouble(4));
+					gepCubeResponse.setNepOd(rs.getDouble(5));
+					gepCubeResponse.setNepTp(rs.getDouble(6));
+					
+					gepCubeResponse.setDiscountGepOd(rs.getDouble(7));
+					gepCubeResponse.setDiscountGepTp(rs.getDouble(8));
+					
+					gepCubeResponse.setGepDep(rs.getDouble(9));
+					gepCubeResponse.setGepDepOd(rs.getDouble(10));
+					gepCubeResponse.setGepDepTp(rs.getDouble(11));
+					
+					gepCubeResponse.setGepNcb(rs.getDouble(12));
+					gepCubeResponse.setGepNcbOd(rs.getDouble(13));
+					gepCubeResponse.setGepNcbTp(rs.getDouble(14));
+					
+					gepCubeResponse.setGepOtherAddon(rs.getDouble(15));
+					gepCubeResponse.setGepOtherAddonOd(rs.getDouble(16));
+					gepCubeResponse.setGepOtherAddonTp(rs.getDouble(17));
+					
+					gepCubeResponse.setNepDep(rs.getDouble(18));
+					gepCubeResponse.setNepDepOd(rs.getDouble(19));
+					gepCubeResponse.setNepDepTp(rs.getDouble(20));
+					
+					gepCubeResponse.setNepNcb(rs.getDouble(21));
+					gepCubeResponse.setNepNcbOd(rs.getDouble(22));
+					gepCubeResponse.setNepNcbTp(rs.getDouble(23));
+					
+					gepCubeResponse.setNepOtherAddon(rs.getDouble(24));
+					gepCubeResponse.setNepOtherAddonOd(rs.getDouble(25));
+					gepCubeResponse.setNepOtherAddonTp(rs.getDouble(26));
+					
+					gepCubeResponse.setEarnedPolicies(rs.getDouble(27));
+					gepCubeResponse.setEarnedPoliciesOd(rs.getDouble(28));
+					gepCubeResponse.setEarnedPoliciesTp(rs.getDouble(29));
+					
+					gepCubeResponse.setAddonEarnedPolicies(rs.getDouble(30));
+					gepCubeResponse.setAddonEarnedPoliciesOd(rs.getDouble(31));
+					gepCubeResponse.setAddonEarnedPoliciesTp(rs.getDouble(32));
+					
+					gepCubeResponse.setGicTpulr(rs.getDouble(33));
+					gepCubeResponse.setGicTpulrDep(rs.getDouble(34));
+					gepCubeResponse.setGicTpulrNcb(rs.getDouble(35));
+					gepCubeResponse.setGicTpulrOtherAddon(rs.getDouble(36));
+					
+					gepCubeResponse.setNicTpulr(rs.getDouble(37));
+					gepCubeResponse.setNicTpulrDep(rs.getDouble(38));
+					gepCubeResponse.setNicTpulrNcb(rs.getDouble(39));
+					gepCubeResponse.setNicTpulrOtherAddon(rs.getDouble(40));
+					
+					/*
+					 * for(int i=1; i<=40; i++) {
+					 * System.out.println("rs.getDouble("+i+") = "+rs.getDouble(i)); }
+					 */
+	
+					kpiResponseList.add(gepCubeResponse);
+	
+				}
+	
+				System.out.println("Query execution time " + (System.currentTimeMillis() - startTime));
+			} catch (Exception e) {
+				System.out.println("kylinDataSource initialize error, ex: " + e);
+				System.out.println();
+				e.printStackTrace();
+			} finally {
+				connection.close();
 			}
-
-			System.out.println("Query execution time " + (System.currentTimeMillis() - startTime));
-		} catch (Exception e) {
-			System.out.println("kylinDataSource initialize error, ex: " + e);
-			System.out.println();
-			e.printStackTrace();
-		} finally {
-			connection.close();
+			return kpiResponseList;
 		}
-		return kpiResponseList;
-	}
-
-	@GetMapping("/getGepNewCubeMonthAscolumnDataFIN")
-	@ResponseBody
-	public List<GepCubeResponseFinal> getGepCubeNewMonthAscolumnDataFIN(HttpServletRequest req,
-			UserMatrixMasterRequest filterRequest) throws SQLException {
-		System.out.print("filterRequest = " + filterRequest);
-
-		Connection connection = null;
-		List<GepCubeResponseFinal> kpiResponseList = new ArrayList<GepCubeResponseFinal>();
-		long startTime = System.currentTimeMillis();
-		try {
-			// String fromDate = req.getParameter("fromDate") == null ? "" :
-			// req.getParameter("fromDate");
-			// String toDate = req.getParameter("toDate") == null ? "" :
-			// req.getParameter("toDate");
-			String fromDate = filterRequest.getFromDate() == null ? "" : filterRequest.getFromDate();
-			String toDate = filterRequest.getToDate() == null ? "" : filterRequest.getToDate();
-
-			List<ProductMaster> productMasters = productMasterRepository.findAll();
-
-			String motorProductVals = "'" + productMasters.stream()
-					.filter(p -> p.getProductType().toLowerCase().contains("motor")).map(ProductMaster::getProductCode)
-					.collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";
-
-			String healthProductVals = "'" + productMasters.stream()
-					.filter(p -> p.getProductType().toLowerCase().contains("health")).map(ProductMaster::getProductCode)
-					.collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";
-
-			Driver driverManager = (Driver) Class.forName("org.apache.kylin.jdbc.Driver").newInstance();
-			Properties info = new Properties();
-			info.put("user", "ADMIN");
-			info.put("password", "KYLIN");
-			connection = driverManager
-					.connect("jdbc:kylin://" + RMSConstants.KYLIN_RS_BASE_IP_AND_PORT + "/learn_kylin", info);
-			System.out.println("Connection status -------------------------->" + connection);
-			Statement stmt = connection.createStatement();
-
-			String fromMonth = fromDate.split("/")[0];
-			String fromYear = fromDate.split("/")[1];
-			String toMonth = toDate.split("/")[0];
-			String toYear = toDate.split("/")[1];
-			List<String> measureList = null;
-
-			String queryStr = "SELECT SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEPCOVERAGE) as GEP, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEPCOVERAGE) as NEP, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_OD) as GEP_OD, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_TP) as GEP_TP  , "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_OD) as NEP_OD, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_TP) as NEP_TP, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.DISCOUNT_GEP_OD) as DISCOUNT_GEP_OD, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.DISCOUNT_NEP_OD) as DISCOUNT_NEP_OD, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_DEP) as GEP_DEP, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_DEP_OD) as GEP_DEP_OD, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_DEP_TP) as GEP_DEP_TP, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_NCB) as GEP_NCB, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_NCB_OD) as GEP_NCB_OD, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_NCB_TP) as GEP_NCB_TP, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_OTHER_ADDON) as GEP_OTHER_ADDON, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_OTHER_ADDON_OD) as GEP_OTHER_ADDON_OD  , "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_OTHER_ADDON_TP) as GEP_OTHER_ADDON_TP, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_DEP) as NEP_DEP, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_DEP_OD) as NEP_DEP_OD, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_DEP_TP) as NEP_DEP_TP, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_NCB) as NEP_NCB, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_NCB_OD) as NEP_NCB_OD, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_NCB_TP) as NEP_NCB_TP, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_OTHER_ADDON) as NEP_OTHER_ADDON, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_OTHER_ADDON_OD) as NEP_OTHER_ADDON_OD  , "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_OTHER_ADDON_TP) as NEP_OTHER_ADDON_TP, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.EARNED_POLICIES) as EARNED_POLICIES, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.EARNED_POLICIES_OD) as EARNED_POLICIES_OD, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.EARNED_POLICIES_TP) as EARNED_POLICIES_TP, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.ADDON_EARNED_POLICIES) as ADDON_EARNED_POLICIES  , "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.ADDON_EARNED_POLICIES_OD) as ADDON_EARNED_POLICIES_OD, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.ADDON_EARNED_POLICIES_TP) as ADDON_EARNED_POLICIES_TP, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GIC_TPULR) as GIC_TPULR, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GIC_TPULR_DEP) as GIC_TPULR_DEP, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GIC_TPULR_NCB) as GIC_TPULR_NCB, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GIC_TPULR_OTHER_ADDON) as GIC_TPULR_OTHER_ADDON  , "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NIC_TPULR) as NIC_TPULR, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NIC_TPULR_DEP) as NIC_TPULR_DEP, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NIC_TPULR_NCB) as NIC_TPULR_NCB, "
-					+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NIC_TPULR_OTHER_ADDON) as NIC_TPULR_OTHER_ADDON "
-					+ "FROM RSDB.RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE as RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE "
-					+ "LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER "
-					+ "ON RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE "
-					+ "LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER "
-					+ "ON RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE "
-					+ "LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER "
-					+ "ON RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE "
-					+ "LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER "
-					+ "ON RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE "
-					+ "LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT "
-					+ "ON RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE "
-					+ "LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME "
-					+ "LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE ";
-			// if(claimType.equalsIgnoreCase("R")){
-			measureList = getgepBaseMeasures();
-			System.out.println("AddOn: " + filterRequest.getAddOnNew());
-
-			String finstartDate = fromYear + "-" + fromMonth + "-01";
-			String finEndDate = toYear + "-" + toMonth + "-31";
-
-			queryStr += "WHERE ((gep_year='" + fromYear
-					+ "' and gep_MONTH in ('04','05','06','07','08','09','10','11','12')) or (gep_year='" + toYear
-					+ "' and gep_MONTH in ('01','02','03')))";
-
-			/*
-			 * if (filterRequest != null && filterRequest.getPolicyTypes() != null &&
-			 * !filterRequest.getPolicyTypes().isEmpty()) { String vals = ""; for (int i =
-			 * 0; i < filterRequest.getPolicyTypes().size(); i++) { vals += "'" +
-			 * filterRequest.getPolicyTypes().get(i).trim() + "'"; if (i !=
-			 * filterRequest.getPolicyTypes().size() - 1) { vals += ","; } } queryStr +=
-			 * " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.POLICY_TYPE) in (" +
-			 * vals + ")"; }
-			 */
-
-			if (filterRequest != null && filterRequest.getBTypeNow() != null
-					&& !filterRequest.getBTypeNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getBTypeNow().size(); i++) {
-					vals += "'" + filterRequest.getBTypeNow().get(i).trim() + "'";
-					if (i != filterRequest.getBTypeNow().size() - 1) {
-						vals += ",";
+	
+		// GepNep Api for Financial Year
+		@GetMapping("/getGepNewCubeMonthAscolumnDataFIN")
+		@ResponseBody
+		public List<GepCubeResponseFinal> getGepCubeNewMonthAscolumnDataFIN(HttpServletRequest req,
+				UserMatrixMasterRequest filterRequest) throws SQLException {
+			System.out.print("filterRequest = " + filterRequest);
+	
+			Connection connection = null;
+			List<GepCubeResponseFinal> kpiResponseList = new ArrayList<GepCubeResponseFinal>();
+			long startTime = System.currentTimeMillis();
+			try {
+				// String fromDate = req.getParameter("fromDate") == null ? "" :
+				// req.getParameter("fromDate");
+				// String toDate = req.getParameter("toDate") == null ? "" :
+				// req.getParameter("toDate");
+				String fromDate = filterRequest.getFromDate() == null ? "" : filterRequest.getFromDate();
+				String toDate = filterRequest.getToDate() == null ? "" : filterRequest.getToDate();
+	
+				List<ProductMaster> productMasters = productMasterRepository.findAll();
+	
+				String motorProductVals = "'" + productMasters.stream()
+						.filter(p -> p.getProductType().toLowerCase().contains("motor")).map(ProductMaster::getProductCode)
+						.collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";
+	
+				String healthProductVals = "'" + productMasters.stream()
+						.filter(p -> p.getProductType().toLowerCase().contains("health")).map(ProductMaster::getProductCode)
+						.collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";
+	
+				Driver driverManager = (Driver) Class.forName("org.apache.kylin.jdbc.Driver").newInstance();
+				Properties info = new Properties();
+				info.put("user", "ADMIN");
+				info.put("password", "KYLIN");
+				connection = driverManager
+						.connect("jdbc:kylin://" + RMSConstants.KYLIN_RS_BASE_IP_AND_PORT + "/learn_kylin", info);
+				System.out.println("Connection status -------------------------->" + connection);
+				Statement stmt = connection.createStatement();
+	
+				String fromMonth = fromDate.split("/")[0];
+				String fromYear = fromDate.split("/")[1];
+				String toMonth = toDate.split("/")[0];
+				String toYear = toDate.split("/")[1];
+				List<String> measureList = null;
+	
+				String queryStr = "SELECT SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEPCOVERAGE) as GEP, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEPCOVERAGE) as NEP, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_OD) as GEP_OD, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_TP) as GEP_TP  , "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_OD) as NEP_OD, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_TP) as NEP_TP, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.DISCOUNT_GEP_OD) as DISCOUNT_GEP_OD, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.DISCOUNT_NEP_OD) as DISCOUNT_NEP_OD, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_DEP) as GEP_DEP, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_DEP_OD) as GEP_DEP_OD, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_DEP_TP) as GEP_DEP_TP, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_NCB) as GEP_NCB, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_NCB_OD) as GEP_NCB_OD, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_NCB_TP) as GEP_NCB_TP, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_OTHER_ADDON) as GEP_OTHER_ADDON, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_OTHER_ADDON_OD) as GEP_OTHER_ADDON_OD  , "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GEP_OTHER_ADDON_TP) as GEP_OTHER_ADDON_TP, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_DEP) as NEP_DEP, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_DEP_OD) as NEP_DEP_OD, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_DEP_TP) as NEP_DEP_TP, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_NCB) as NEP_NCB, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_NCB_OD) as NEP_NCB_OD, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_NCB_TP) as NEP_NCB_TP, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_OTHER_ADDON) as NEP_OTHER_ADDON, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_OTHER_ADDON_OD) as NEP_OTHER_ADDON_OD  , "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NEP_OTHER_ADDON_TP) as NEP_OTHER_ADDON_TP, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.EARNED_POLICIES) as EARNED_POLICIES, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.EARNED_POLICIES_OD) as EARNED_POLICIES_OD, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.EARNED_POLICIES_TP) as EARNED_POLICIES_TP, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.ADDON_EARNED_POLICIES) as ADDON_EARNED_POLICIES  , "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.ADDON_EARNED_POLICIES_OD) as ADDON_EARNED_POLICIES_OD, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.ADDON_EARNED_POLICIES_TP) as ADDON_EARNED_POLICIES_TP, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GIC_TPULR) as GIC_TPULR, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GIC_TPULR_DEP) as GIC_TPULR_DEP, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GIC_TPULR_NCB) as GIC_TPULR_NCB, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.GIC_TPULR_OTHER_ADDON) as GIC_TPULR_OTHER_ADDON  , "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NIC_TPULR) as NIC_TPULR, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NIC_TPULR_DEP) as NIC_TPULR_DEP, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NIC_TPULR_NCB) as NIC_TPULR_NCB, "
+						+ "SUM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NIC_TPULR_OTHER_ADDON) as NIC_TPULR_OTHER_ADDON "
+						+ "FROM RSDB.RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE as RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE "
+						+ "LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER "
+						+ "ON RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE "
+						+ "LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER "
+						+ "ON RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE "
+						+ "LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER "
+						+ "ON RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE "
+						+ "LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER "
+						+ "ON RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE "
+						+ "LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT "
+						+ "ON RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE "
+						+ "LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME "
+						+ "LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE ";
+				
+				measureList = getgepBaseMeasures();
+				System.out.println("AddOn: " + filterRequest.getAddOnNew());
+	
+				String finstartDate = fromYear + "-" + fromMonth + "-01";
+				String finEndDate = toYear + "-" + toMonth + "-31";
+	
+				queryStr += "WHERE ((gep_year='" + fromYear
+						+ "' and gep_MONTH in ('04','05','06','07','08','09','10','11','12')) or (gep_year='" + toYear
+						+ "' and gep_MONTH in ('01','02','03')))";
+	
+				/*
+				 * if (filterRequest != null && filterRequest.getPolicyTypes() != null &&
+				 * !filterRequest.getPolicyTypes().isEmpty()) { String vals = ""; for (int i =
+				 * 0; i < filterRequest.getPolicyTypes().size(); i++) { vals += "'" +
+				 * filterRequest.getPolicyTypes().get(i).trim() + "'"; if (i !=
+				 * filterRequest.getPolicyTypes().size() - 1) { vals += ","; } } queryStr +=
+				 * " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.POLICY_TYPE) in (" +
+				 * vals + ")"; }
+				 */
+	
+				if (filterRequest != null && filterRequest.getBTypeNow() != null
+						&& !filterRequest.getBTypeNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getBTypeNow().size(); i++) {
+						vals += "'" + filterRequest.getBTypeNow().get(i).trim() + "'";
+						if (i != filterRequest.getBTypeNow().size() - 1) {
+							vals += ",";
+						}
 					}
+					queryStr += " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.BUSINESS_TYPE) in (" + vals + ")";
 				}
-				queryStr += " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.BUSINESS_TYPE) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getChannelNow() != null
-					&& !filterRequest.getChannelNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getChannelNow().size(); i++) {
-					vals += "'" + filterRequest.getChannelNow().get(i).trim() + "'";
-					if (i != filterRequest.getChannelNow().size() - 1) {
-						vals += ",";
+	
+				if (filterRequest != null && filterRequest.getChannelNow() != null
+						&& !filterRequest.getChannelNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getChannelNow().size(); i++) {
+						vals += "'" + filterRequest.getChannelNow().get(i).trim() + "'";
+						if (i != filterRequest.getChannelNow().size() - 1) {
+							vals += ",";
+						}
 					}
+					queryStr += " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.CHANNEL) in (" + vals + ")";
 				}
-				queryStr += " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.CHANNEL) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getSubChannelNow() != null
-					&& !filterRequest.getSubChannelNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getSubChannelNow().size(); i++) {
-					vals += "'" + filterRequest.getSubChannelNow().get(i).trim() + "'";
-					if (i != filterRequest.getSubChannelNow().size() - 1) {
-						vals += ",";
+	
+				if (filterRequest != null && filterRequest.getSubChannelNow() != null
+						&& !filterRequest.getSubChannelNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getSubChannelNow().size(); i++) {
+						vals += "'" + filterRequest.getSubChannelNow().get(i).trim() + "'";
+						if (i != filterRequest.getSubChannelNow().size() - 1) {
+							vals += ",";
+						}
 					}
+					queryStr += " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.CHANNEL_NEW) in (" + vals + ")";
 				}
-				queryStr += " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.CHANNEL_NEW) in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getMakeNow() != null && !filterRequest.getMakeNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMakeNow().size(); i++) {
-					vals += "'" + filterRequest.getMakeNow().get(i).trim() + "'";
-					if (i != filterRequest.getMakeNow().size() - 1) {
-						vals += ",";
+				if (filterRequest != null && filterRequest.getMakeNow() != null && !filterRequest.getMakeNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMakeNow().size(); i++) {
+						vals += "'" + filterRequest.getMakeNow().get(i).trim() + "'";
+						if (i != filterRequest.getMakeNow().size() - 1) {
+							vals += ",";
+						}
 					}
+					queryStr += " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.MAKE) in (" + vals + ")";
 				}
-				queryStr += " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.MAKE) in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getModelGroupNow() != null
-					&& !filterRequest.getModelGroupNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getModelGroupNow().size(); i++) {
-					vals += "'" + filterRequest.getModelGroupNow().get(i).trim() + "'";
-					if (i != filterRequest.getModelGroupNow().size() - 1) {
-						vals += ",";
+				if (filterRequest != null && filterRequest.getModelGroupNow() != null
+						&& !filterRequest.getModelGroupNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getModelGroupNow().size(); i++) {
+						vals += "'" + filterRequest.getModelGroupNow().get(i).trim() + "'";
+						if (i != filterRequest.getModelGroupNow().size() - 1) {
+							vals += ",";
+						}
 					}
+					queryStr += " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.MODELGROUP) in (" + vals + ")";
 				}
-				queryStr += " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.MODELGROUP) in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getFuelTypeNow() != null
-					&& !filterRequest.getFuelTypeNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getFuelTypeNow().size(); i++) {
-					vals += "'" + filterRequest.getFuelTypeNow().get(i).trim() + "'";
-					if (i != filterRequest.getFuelTypeNow().size() - 1) {
-						vals += ",";
+				if (filterRequest != null && filterRequest.getFuelTypeNow() != null
+						&& !filterRequest.getFuelTypeNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getFuelTypeNow().size(); i++) {
+						vals += "'" + filterRequest.getFuelTypeNow().get(i).trim() + "'";
+						if (i != filterRequest.getFuelTypeNow().size() - 1) {
+							vals += ",";
+						}
 					}
+					queryStr += " and coalesce(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.FUELTYPE,'N') in (" + vals + ")";
 				}
-				queryStr += " and coalesce(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.FUELTYPE,'N') in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getStateGroupNow() != null
-					&& !filterRequest.getStateGroupNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getStateGroupNow().size(); i++) {
-					vals += "'" + filterRequest.getStateGroupNow().get(i).trim() + "'";
-					if (i != filterRequest.getStateGroupNow().size() - 1) {
-						vals += ",";
+				if (filterRequest != null && filterRequest.getStateGroupNow() != null
+						&& !filterRequest.getStateGroupNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getStateGroupNow().size(); i++) {
+						vals += "'" + filterRequest.getStateGroupNow().get(i).trim() + "'";
+						if (i != filterRequest.getStateGroupNow().size() - 1) {
+							vals += ",";
+						}
 					}
+					queryStr += " and TRIM(RSA_DWH_CITY_GROUPING_MASTER_FINAL.STATE_GROUPING) in (" + vals + ")";
 				}
-				queryStr += " and TRIM(RSA_DWH_CITY_GROUPING_MASTER_FINAL.STATE_GROUPING) in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getNcbNow() != null && !filterRequest.getNcbNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getNcbNow().size(); i++) {
-					vals += "'" + filterRequest.getNcbNow().get(i).trim() + "'";
-					if (i != filterRequest.getNcbNow().size() - 1) {
-						vals += ",";
+				if (filterRequest != null && filterRequest.getNcbNow() != null && !filterRequest.getNcbNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getNcbNow().size(); i++) {
+						vals += "'" + filterRequest.getNcbNow().get(i).trim() + "'";
+						if (i != filterRequest.getNcbNow().size() - 1) {
+							vals += ",";
+						}
 					}
+					queryStr += " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NCB_FLAG) in (" + vals + ")";
 				}
-				queryStr += " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.NCB_FLAG) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorZone() != null
-					&& !filterRequest.getMotorZone().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorZone().size(); i++) {
-					vals += "'" + filterRequest.getMotorZone().get(i).trim() + "'";
-					if (i != filterRequest.getMotorZone().size() - 1) {
-						vals += ",";
+	
+				if (filterRequest != null && filterRequest.getMotorZone() != null
+						&& !filterRequest.getMotorZone().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorZone().size(); i++) {
+						vals += "'" + filterRequest.getMotorZone().get(i).trim() + "'";
+						if (i != filterRequest.getMotorZone().size() - 1) {
+							vals += ",";
+						}
 					}
+					queryStr += " and TRIM(KPI_BRANCH_MASTER.ZONE) in (" + vals + ")";
 				}
-				queryStr += " and TRIM(KPI_BRANCH_MASTER.ZONE) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorCluster() != null
-					&& !filterRequest.getMotorCluster().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorCluster().size(); i++) {
-					vals += "'" + filterRequest.getMotorCluster().get(i).trim() + "'";
-					if (i != filterRequest.getMotorCluster().size() - 1) {
-						vals += ",";
+	
+				if (filterRequest != null && filterRequest.getMotorCluster() != null
+						&& !filterRequest.getMotorCluster().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorCluster().size(); i++) {
+						vals += "'" + filterRequest.getMotorCluster().get(i).trim() + "'";
+						if (i != filterRequest.getMotorCluster().size() - 1) {
+							vals += ",";
+						}
 					}
+					queryStr += " and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in (" + vals + ")";
 				}
-				queryStr += " and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorState() != null
-					&& !filterRequest.getMotorState().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorState().size(); i++) {
-					vals += "'" + filterRequest.getMotorState().get(i).trim() + "'";
-					if (i != filterRequest.getMotorState().size() - 1) {
-						vals += ",";
+	
+				if (filterRequest != null && filterRequest.getMotorState() != null
+						&& !filterRequest.getMotorState().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorState().size(); i++) {
+						vals += "'" + filterRequest.getMotorState().get(i).trim() + "'";
+						if (i != filterRequest.getMotorState().size() - 1) {
+							vals += ",";
+						}
 					}
+					queryStr += " and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in (" + vals + ")";
 				}
-				queryStr += " and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorCity() != null
-					&& !filterRequest.getMotorCity().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorCity().size(); i++) {
-					vals += "'" + filterRequest.getMotorCity().get(i).trim() + "'";
-					if (i != filterRequest.getMotorCity().size() - 1) {
-						vals += ",";
+	
+				if (filterRequest != null && filterRequest.getMotorCity() != null
+						&& !filterRequest.getMotorCity().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorCity().size(); i++) {
+						vals += "'" + filterRequest.getMotorCity().get(i).trim() + "'";
+						if (i != filterRequest.getMotorCity().size() - 1) {
+							vals += ",";
+						}
 					}
+					queryStr += " and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in (" + vals + ")";
 				}
-				queryStr += " and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorBranch() != null
-					&& !filterRequest.getMotorBranch().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorBranch().size(); i++) {
-					vals += "'" + filterRequest.getMotorBranch().get(i).trim() + "'";
-					if (i != filterRequest.getMotorBranch().size() - 1) {
-						vals += ",";
+	
+				if (filterRequest != null && filterRequest.getMotorBranch() != null
+						&& !filterRequest.getMotorBranch().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorBranch().size(); i++) {
+						vals += "'" + filterRequest.getMotorBranch().get(i).trim() + "'";
+						if (i != filterRequest.getMotorBranch().size() - 1) {
+							vals += ",";
+						}
 					}
+					queryStr += " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.BRANCH_CODE) in (" + vals + ")";
 				}
-				queryStr += " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.BRANCH_CODE) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
-					&& !filterRequest.getMotorIntermediaryCode().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorIntermediaryCode().size(); i++) {
-					vals += "'" + filterRequest.getMotorIntermediaryCode().get(i).trim() + "'";
-					if (i != filterRequest.getMotorIntermediaryCode().size() - 1) {
-						vals += ",";
+	
+				if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
+						&& !filterRequest.getMotorIntermediaryCode().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorIntermediaryCode().size(); i++) {
+						vals += "'" + filterRequest.getMotorIntermediaryCode().get(i).trim() + "'";
+						if (i != filterRequest.getMotorIntermediaryCode().size() - 1) {
+							vals += ",";
+						}
 					}
+					queryStr += " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.AGENT_CODE) in (" + vals + ")";
 				}
-				queryStr += " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.AGENT_CODE) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
-					&& !filterRequest.getMotorIntermediaryName().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorIntermediaryName().size(); i++) {
-					vals += "'" + filterRequest.getMotorIntermediaryName().get(i).trim() + "'";
-					if (i != filterRequest.getMotorIntermediaryName().size() - 1) {
-						vals += ",";
+	
+				if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
+						&& !filterRequest.getMotorIntermediaryName().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorIntermediaryName().size(); i++) {
+						vals += "'" + filterRequest.getMotorIntermediaryName().get(i).trim() + "'";
+						if (i != filterRequest.getMotorIntermediaryName().size() - 1) {
+							vals += ",";
+						}
 					}
+					queryStr += " and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in (" + vals + ")";
 				}
-				queryStr += " and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in (" + vals + ")";
-			}
-
-			/*
-			 * if (filterRequest != null && filterRequest.getMotorFuelType() != null &&
-			 * !filterRequest.getMotorFuelType().isEmpty()) { String vals = ""; for (int i =
-			 * 0; i < filterRequest.getMotorFuelType().size(); i++) { vals += "'" +
-			 * filterRequest.getMotorFuelType().get(i).trim() + "'"; if (i !=
-			 * filterRequest.getMotorFuelType().size() - 1) { vals += ","; } } queryStr +=
-			 * " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.FUEL_TYPE) in (" + vals +
-			 * ")"; }
-			 * 
-			 * if (filterRequest != null && filterRequest.getMotorNcbFlag() != null &&
-			 * !filterRequest.getMotorNcbFlag().isEmpty()) { String vals = ""; for (int i =
-			 * 0; i < filterRequest.getMotorNcbFlag().size(); i++) { vals += "'" +
-			 * filterRequest.getMotorNcbFlag().get(i).trim() + "'"; if (i !=
-			 * filterRequest.getMotorNcbFlag().size() - 1) { vals += ","; } } queryStr +=
-			 * " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NCB) in (" + vals + ")"; }
-			 */
-
-			// Have to uncomment---------
-			/*
-			 * if(filterRequest != null && filterRequest.getPolicyTypeNew() != null &&
-			 * !filterRequest.getPolicyTypeNew().isEmpty()){
-			 * 
-			 * String vals = ""; for (int i = 0; i <
-			 * filterRequest.getPolicyTypeNew().size(); i++) { vals += "'" +
-			 * filterRequest.getPolicyTypeNew().get(i).trim() + "'"; if (i !=
-			 * filterRequest.getPolicyTypeNew().size() - 1) { vals += ","; } } queryStr +=
-			 * " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.POLICY_TYPE_NEW) in (" +
-			 * vals + ")";
-			 * 
-			 * } if (filterRequest != null && filterRequest.getChannelNew() != null &&
-			 * !filterRequest.getChannelNew().isEmpty()) { String vals = ""; for (int i = 0;
-			 * i < filterRequest.getChannelNew().size(); i++) { vals += "'" +
-			 * filterRequest.getChannelNew().get(i).trim() + "'"; if (i !=
-			 * filterRequest.getChannelNew().size() - 1) vals += ","; } queryStr +=
-			 * " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.CHANNEL_NEW) in (" +
-			 * vals + ")"; }
-			 * 
-			 * if(filterRequest != null && filterRequest.getCategorisation() != null &&
-			 * !filterRequest.getCategorisation().isEmpty()){
-			 * 
-			 * String vals = ""; for (int i = 0; i <
-			 * filterRequest.getCategorisation().size(); i++) { vals += "'" +
-			 * filterRequest.getCategorisation().get(i).trim() + "'"; if (i !=
-			 * filterRequest.getCategorisation().size() - 1) { vals += ","; } } queryStr +=
-			 * " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.CATEGORISATION) in (" +
-			 * vals + ")";
-			 * 
-			 * }
-			 * 
-			 * if(filterRequest != null && filterRequest.getEngineCapacity() != null &&
-			 * !filterRequest.getEngineCapacity().isEmpty()){
-			 * 
-			 * String vals = ""; for (int i = 0; i <
-			 * filterRequest.getEngineCapacity().size(); i++) { vals += "'" +
-			 * filterRequest.getEngineCapacity().get(i).trim() + "'"; if (i !=
-			 * filterRequest.getEngineCapacity().size() - 1) { vals += ","; } } queryStr +=
-			 * " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.ENGINECAPACITY) in (" +
-			 * vals + ")";
-			 * 
-			 * } if (filterRequest != null && filterRequest.getVehicleAge() != null &&
-			 * !filterRequest.getVehicleAge().isEmpty()) { String vals = ""; for (int i = 0;
-			 * i < filterRequest.getVehicleAge().size(); i++) { vals += "'" +
-			 * filterRequest.getVehicleAge().get(i).trim() + "'"; if (i !=
-			 * filterRequest.getVehicleAge().size() - 1) { vals += ","; } } queryStr +=
-			 * " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.VEHICLEAGE) in (" + vals
-			 * + ")"; }
-			 */
-
-			if (filterRequest != null && filterRequest.getMotorCarType() != null
-					&& !filterRequest.getMotorCarType().isEmpty()) {
-				String vals = "'HIGHEND','High End'";
-				String nheVals = "'Sling','OIB','OIB PS','Xcd','Others','SS PS'";
-				int cvalcounter = 0, cvalNHEcounter = 0;
-				for (int i = 0; i < filterRequest.getMotorCarType().size(); i++) {
-
-					if (filterRequest.getMotorCarType().get(i).trim().equals("HE")) {
-						if (cvalcounter == 0)
-							queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + vals + ")";
-						cvalcounter++;
-					} else if (filterRequest.getMotorCarType().get(i).trim().equals("NHE")) {
-						if (cvalNHEcounter == 0)
-							queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + nheVals
-									+ ")";
-						cvalNHEcounter++;
+	
+				
+				  if (filterRequest != null && filterRequest.getMotorFuelType() != null &&
+				  !filterRequest.getMotorFuelType().isEmpty()) { String vals = ""; for (int i =
+				  0; i < filterRequest.getMotorFuelType().size(); i++) { vals += "'" +
+				  filterRequest.getMotorFuelType().get(i).trim() + "'"; if (i !=
+				  filterRequest.getMotorFuelType().size() - 1) { vals += ","; } } queryStr +=
+				  " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.FUEL_TYPE) in (" + vals +
+				  ")"; }
+				  
+				  if (filterRequest != null && filterRequest.getMotorNcbFlag() != null &&
+				  !filterRequest.getMotorNcbFlag().isEmpty()) { String vals = ""; for (int i =
+				  0; i < filterRequest.getMotorNcbFlag().size(); i++) { vals += "'" +
+				  filterRequest.getMotorNcbFlag().get(i).trim() + "'"; if (i !=
+				  filterRequest.getMotorNcbFlag().size() - 1) { vals += ","; } } queryStr +=
+				  " and TRIM(GEP_POLICY_GEP_MONTH_ON_COLUMN_TRIAL.NCB) in (" + vals + ")"; }
+				 
+	
+				
+				  if(filterRequest != null && filterRequest.getPolicyTypeNew() != null &&
+				  !filterRequest.getPolicyTypeNew().isEmpty()){
+				  
+				  String vals = ""; for (int i = 0; i <
+				  filterRequest.getPolicyTypeNew().size(); i++) { vals += "'" +
+				  filterRequest.getPolicyTypeNew().get(i).trim() + "'"; if (i !=
+				  filterRequest.getPolicyTypeNew().size() - 1) { vals += ","; } } queryStr +=
+				  " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.POLICY_TYPE_NEW) in (" +
+				  vals + ")";
+				  
+				  } if (filterRequest != null && filterRequest.getChannelNew() != null &&
+				  !filterRequest.getChannelNew().isEmpty()) { String vals = ""; for (int i = 0;
+				  i < filterRequest.getChannelNew().size(); i++) { vals += "'" +
+				  filterRequest.getChannelNew().get(i).trim() + "'"; if (i !=
+				  filterRequest.getChannelNew().size() - 1) vals += ","; } queryStr +=
+				  " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.CHANNEL_NEW) in (" +
+				  vals + ")"; }
+				  
+				  if(filterRequest != null && filterRequest.getCategorisation() != null &&
+				  !filterRequest.getCategorisation().isEmpty()){
+				  
+				  String vals = ""; for (int i = 0; i <
+				  filterRequest.getCategorisation().size(); i++) { vals += "'" +
+				  filterRequest.getCategorisation().get(i).trim() + "'"; if (i !=
+				  filterRequest.getCategorisation().size() - 1) { vals += ","; } } queryStr +=
+				  " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.CATEGORISATION) in (" +
+				  vals + ")";
+				  
+				  }
+				  
+				  if(filterRequest != null && filterRequest.getEngineCapacity() != null &&
+				  !filterRequest.getEngineCapacity().isEmpty()){
+				  
+				  String vals = ""; for (int i = 0; i <
+				  filterRequest.getEngineCapacity().size(); i++) { vals += "'" +
+				  filterRequest.getEngineCapacity().get(i).trim() + "'"; if (i !=
+				  filterRequest.getEngineCapacity().size() - 1) { vals += ","; } } queryStr +=
+				  " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.ENGINECAPACITY) in (" +
+				  vals + ")";
+				  
+				  } if (filterRequest != null && filterRequest.getVehicleAge() != null &&
+				  !filterRequest.getVehicleAge().isEmpty()) { String vals = ""; for (int i = 0;
+				  i < filterRequest.getVehicleAge().size(); i++) { vals += "'" +
+				  filterRequest.getVehicleAge().get(i).trim() + "'"; if (i !=
+				  filterRequest.getVehicleAge().size() - 1) { vals += ","; } } queryStr +=
+				  " and TRIM(RSA_KPI_GEP_POLICY_MONTH_LEVEL_FACT_TABLE.VEHICLEAGE) in (" + vals
+				  + ")"; }
+				 
+	
+				if (filterRequest != null && filterRequest.getMotorCarType() != null
+						&& !filterRequest.getMotorCarType().isEmpty()) {
+					String vals = "'HIGHEND','High End'";
+					String nheVals = "'Sling','OIB','OIB PS','Xcd','Others','SS PS'";
+					int cvalcounter = 0, cvalNHEcounter = 0;
+					for (int i = 0; i < filterRequest.getMotorCarType().size(); i++) {
+	
+						if (filterRequest.getMotorCarType().get(i).trim().equals("HE")) {
+							if (cvalcounter == 0)
+								queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + vals + ")";
+							cvalcounter++;
+						} else if (filterRequest.getMotorCarType().get(i).trim().equals("NHE")) {
+							if (cvalNHEcounter == 0)
+								queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + nheVals
+										+ ")";
+							cvalNHEcounter++;
+						}
+	
+						// System.out.println("HE query------------------------------ " + queryStr);
+	
 					}
-
-					// System.out.println("HE query------------------------------ " + queryStr);
-
+	
 				}
-
+	
+				System.out.println("queryStr------------------------------ " + queryStr);
+				ResultSet rs = stmt.executeQuery(queryStr);
+				System.out.println("START------------------------------ ");
+	
+				while (rs.next()) {
+	
+					GepCubeResponseFinal gepCubeResponse = new GepCubeResponseFinal();
+					// System.out.println(rs.getDouble(1));
+					gepCubeResponse.setGep(rs.getDouble(1));
+					gepCubeResponse.setNep(rs.getDouble(2));
+					gepCubeResponse.setGepOd(rs.getDouble(3));
+					gepCubeResponse.setGepTp(rs.getDouble(4));
+					gepCubeResponse.setNepOd(rs.getDouble(5));
+					gepCubeResponse.setNepTp(rs.getDouble(6));
+	
+					gepCubeResponse.setDiscountGepOd(rs.getDouble(7));
+					gepCubeResponse.setDiscountGepTp(rs.getDouble(8));
+	
+					gepCubeResponse.setGepDep(rs.getDouble(9));
+					gepCubeResponse.setGepDepOd(rs.getDouble(10));
+					gepCubeResponse.setGepDepTp(rs.getDouble(11));
+	
+					gepCubeResponse.setGepNcb(rs.getDouble(12));
+					gepCubeResponse.setGepNcbOd(rs.getDouble(13));
+					gepCubeResponse.setGepNcbTp(rs.getDouble(14));
+	
+					gepCubeResponse.setGepOtherAddon(rs.getDouble(15));
+					gepCubeResponse.setGepOtherAddonOd(rs.getDouble(16));
+					gepCubeResponse.setGepOtherAddonTp(rs.getDouble(17));
+	
+					gepCubeResponse.setNepDep(rs.getDouble(18));
+					gepCubeResponse.setNepDepOd(rs.getDouble(19));
+					gepCubeResponse.setNepDepTp(rs.getDouble(20));
+	
+					gepCubeResponse.setNepNcb(rs.getDouble(21));
+					gepCubeResponse.setNepNcbOd(rs.getDouble(22));
+					gepCubeResponse.setNepNcbTp(rs.getDouble(23));
+	
+					gepCubeResponse.setNepOtherAddon(rs.getDouble(24));
+					gepCubeResponse.setNepOtherAddonOd(rs.getDouble(25));
+					gepCubeResponse.setNepOtherAddonTp(rs.getDouble(26));
+	
+					gepCubeResponse.setEarnedPolicies(rs.getDouble(27));
+					gepCubeResponse.setEarnedPoliciesOd(rs.getDouble(28));
+					gepCubeResponse.setEarnedPoliciesTp(rs.getDouble(29));
+	
+					gepCubeResponse.setAddonEarnedPolicies(rs.getDouble(30));
+					gepCubeResponse.setAddonEarnedPoliciesOd(rs.getDouble(31));
+					gepCubeResponse.setAddonEarnedPoliciesTp(rs.getDouble(32));
+	
+					gepCubeResponse.setGicTpulr(rs.getDouble(33));
+					gepCubeResponse.setGicTpulrDep(rs.getDouble(34));
+					gepCubeResponse.setGicTpulrNcb(rs.getDouble(35));
+					gepCubeResponse.setGicTpulrOtherAddon(rs.getDouble(36));
+	
+					gepCubeResponse.setNicTpulr(rs.getDouble(37));
+					gepCubeResponse.setNicTpulrDep(rs.getDouble(38));
+					gepCubeResponse.setNicTpulrNcb(rs.getDouble(39));
+					gepCubeResponse.setNicTpulrOtherAddon(rs.getDouble(40));
+	
+					for (int i = 1; i <= 40; i++)
+						System.out.println("rs.getDouble(" + i + ") = " + rs.getDouble(i));
+	
+					kpiResponseList.add(gepCubeResponse);
+	
+				}
+	
+				System.out.println("Query execution time " + (System.currentTimeMillis() - startTime));
+			} catch (Exception e) {
+				System.out.println("kylinDataSource initialize error, ex: " + e);
+				System.out.println();
+				e.printStackTrace();
+			} finally {
+				connection.close();
 			}
-
-			System.out.println("queryStr------------------------------ " + queryStr);
-			ResultSet rs = stmt.executeQuery(queryStr);
-			System.out.println("START------------------------------ ");
-
-			while (rs.next()) {
-
-				GepCubeResponseFinal gepCubeResponse = new GepCubeResponseFinal();
-				// System.out.println(rs.getDouble(1));
-				gepCubeResponse.setGep(rs.getDouble(1));
-				gepCubeResponse.setNep(rs.getDouble(2));
-				gepCubeResponse.setGepOd(rs.getDouble(3));
-				gepCubeResponse.setGepTp(rs.getDouble(4));
-				gepCubeResponse.setNepOd(rs.getDouble(5));
-				gepCubeResponse.setNepTp(rs.getDouble(6));
-
-				gepCubeResponse.setDiscountGepOd(rs.getDouble(7));
-				gepCubeResponse.setDiscountGepTp(rs.getDouble(8));
-
-				gepCubeResponse.setGepDep(rs.getDouble(9));
-				gepCubeResponse.setGepDepOd(rs.getDouble(10));
-				gepCubeResponse.setGepDepTp(rs.getDouble(11));
-
-				gepCubeResponse.setGepNcb(rs.getDouble(12));
-				gepCubeResponse.setGepNcbOd(rs.getDouble(13));
-				gepCubeResponse.setGepNcbTp(rs.getDouble(14));
-
-				gepCubeResponse.setGepOtherAddon(rs.getDouble(15));
-				gepCubeResponse.setGepOtherAddonOd(rs.getDouble(16));
-				gepCubeResponse.setGepOtherAddonTp(rs.getDouble(17));
-
-				gepCubeResponse.setNepDep(rs.getDouble(18));
-				gepCubeResponse.setNepDepOd(rs.getDouble(19));
-				gepCubeResponse.setNepDepTp(rs.getDouble(20));
-
-				gepCubeResponse.setNepNcb(rs.getDouble(21));
-				gepCubeResponse.setNepNcbOd(rs.getDouble(22));
-				gepCubeResponse.setNepNcbTp(rs.getDouble(23));
-
-				gepCubeResponse.setNepOtherAddon(rs.getDouble(24));
-				gepCubeResponse.setNepOtherAddonOd(rs.getDouble(25));
-				gepCubeResponse.setNepOtherAddonTp(rs.getDouble(26));
-
-				gepCubeResponse.setEarnedPolicies(rs.getDouble(27));
-				gepCubeResponse.setEarnedPoliciesOd(rs.getDouble(28));
-				gepCubeResponse.setEarnedPoliciesTp(rs.getDouble(29));
-
-				gepCubeResponse.setAddonEarnedPolicies(rs.getDouble(30));
-				gepCubeResponse.setAddonEarnedPoliciesOd(rs.getDouble(31));
-				gepCubeResponse.setAddonEarnedPoliciesTp(rs.getDouble(32));
-
-				gepCubeResponse.setGicTpulr(rs.getDouble(33));
-				gepCubeResponse.setGicTpulrDep(rs.getDouble(34));
-				gepCubeResponse.setGicTpulrNcb(rs.getDouble(35));
-				gepCubeResponse.setGicTpulrOtherAddon(rs.getDouble(36));
-
-				gepCubeResponse.setNicTpulr(rs.getDouble(37));
-				gepCubeResponse.setNicTpulrDep(rs.getDouble(38));
-				gepCubeResponse.setNicTpulrNcb(rs.getDouble(39));
-				gepCubeResponse.setNicTpulrOtherAddon(rs.getDouble(40));
-
-				for (int i = 1; i <= 40; i++)
-					System.out.println("rs.getDouble(" + i + ") = " + rs.getDouble(i));
-
-				kpiResponseList.add(gepCubeResponse);
-
-			}
-
-			System.out.println("Query execution time " + (System.currentTimeMillis() - startTime));
-		} catch (Exception e) {
-			System.out.println("kylinDataSource initialize error, ex: " + e);
-			System.out.println();
-			e.printStackTrace();
-		} finally {
-			connection.close();
+			return kpiResponseList;
 		}
-		return kpiResponseList;
-	}
+	
+		// Reserve Single Line APi for UnderWritten
+	   @GetMapping("/getReserveSingleLineNewCubeGicDataForUW")
+	   @ResponseBody
+		public List<ReserverSingleLineCubeResponseNew> getReserveSingleLineCubeGicDataNewForUR(HttpServletRequest req,
+				UserMatrixMasterRequest filterRequest) throws SQLException {
 
+			Connection connection = null;
+			List<ReserverSingleLineCubeResponseNew> kpiResponseList = new ArrayList<ReserverSingleLineCubeResponseNew>();
+			long startTime = System.currentTimeMillis();
+
+			try {
+				String fromDate = filterRequest.getFromDate() == null ? "" : filterRequest.getFromDate();
+				String toDate = filterRequest.getToDate() == null ? "" : filterRequest.getToDate();
+
+				List<ProductMaster> productMasters = productMasterRepository.findAll();
+
+				String motorProductVals = "'"
+						+ productMasters.stream().filter(p -> p.getProductType().toLowerCase().contains("motor"))
+								.map(ProductMaster::getProductCode).collect(Collectors.toSet()).stream()
+								.collect(Collectors.joining("','"))
+						+ "'";
+
+				String healthProductVals = "'"
+						+ productMasters.stream().filter(p -> p.getProductType().toLowerCase().contains("health"))
+								.map(ProductMaster::getProductCode).collect(Collectors.toSet()).stream()
+								.collect(Collectors.joining("','"))
+						+ "'";
+
+				Driver driverManager = (Driver) Class.forName("org.apache.kylin.jdbc.Driver").newInstance();
+				Properties info = new Properties();
+				info.put("user", "ADMIN");
+				info.put("password", "KYLIN");
+				connection = driverManager
+						.connect("jdbc:kylin://" + RMSConstants.KYLIN_RS_BASE_IP_AND_PORT + "/learn_kylin", info);
+				System.out.println("Connection status -------------------------->" + connection);
+				Statement stmt = connection.createStatement();
+
+				String fromMonth = fromDate.split("/")[0];
+				String fromYear = fromDate.split("/")[1];
+				String toMonth = toDate.split("/")[0];
+				String toYear = toDate.split("/")[1];
+				String queryStr = "";
+
+				queryStr = "SELECT " + "SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_GIC) as RSL_GIC,  "
+						+ "SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_CAT_GIC) as RSL_CAT_GIC,"
+						+ "SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_THEFT_GIC) as RSL_THEFT_GIC, "
+						+ "SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_OTHER_GIC) as RSL_OTHER_GIC,"
+						+ "SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_TP_GIC) as RSL_TP_GIC, "
+						+ "SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_NIC) as RSL_NIC, "
+						+ "SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_CAT_NIC) as RSL_CAT_NIC, "
+						+ "SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_THEFT_NIC) as RSL_THEFT_NIC, "
+						+ "SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_OTHER_NIC) as RSL_OTHER_NIC, "
+						+ "SUM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.RSL_TP_NIC) as RSL_TP_NIC "
+						+ "FROM RSDB.RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL as RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL "
+						+ "LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE "
+						+ "LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE "
+						+ "LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE  "
+						+ "LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE "
+						+ "LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.OA_CODE = KPI_OA_MASTER_NW.OA_CODE "
+						+ "LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE "
+						+ "LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  "
+						+ "LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME "
+						+ "LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE ";
+				// + "LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER ON
+				// RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.CSL_CATASTROPHICTYPE =
+				// CATASTROPHIC_MASTER.CAT_TYPE" ;
+
+				String finstartDate = fromYear + "-" + fromMonth + "-01";
+				String finEndDate = toYear + "-" + toMonth + "-31";
+				queryStr += " WHERE (SUBSTRING(inception_date,1,10) >='" + finstartDate
+						+ "' and SUBSTRING(inception_date,1,10) <='" + finEndDate + "' )";
+
+				// 1 channel
+
+				if (filterRequest != null && filterRequest.getChannelNow() != null
+						&& !filterRequest.getChannelNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getChannelNow().size(); i++) {
+						vals += "'" + filterRequest.getChannelNow().get(i).trim() + "'";
+						if (i != filterRequest.getChannelNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.CHANNEL) in (" + vals + ")";
+				}
+
+				// 2 channel New
+
+				if (filterRequest != null && filterRequest.getChannelNew() != null
+						&& !filterRequest.getChannelNew().isEmpty()) {
+
+					String vals = "";
+					for (int i = 0; i < filterRequest.getChannelNew().size(); i++) {
+						vals += "'" + filterRequest.getChannelNew().get(i).trim() + "'";
+						if (i != filterRequest.getChannelNew().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.CHANNEL_NEW) in  (" + vals + ")";
+
+				}
+
+				// 3 subchannel
+
+				if (filterRequest != null && filterRequest.getSubChannelNow() != null
+						&& !filterRequest.getSubChannelNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getSubChannelNow().size(); i++) {
+						vals += "'" + filterRequest.getSubChannelNow().get(i).trim() + "'";
+						if (i != filterRequest.getSubChannelNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.SUB_CHANNEL) in (" + vals + ")";
+				}
+
+				// 4 agentcode
+
+				if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
+						&& !filterRequest.getMotorIntermediaryCode().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorIntermediaryCode().size(); i++) {
+						vals += "'" + filterRequest.getMotorIntermediaryCode().get(i).trim() + "'";
+						if (i != filterRequest.getMotorIntermediaryCode().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE) in (" + vals + ")";
+				}
+
+				// 5 fueltype N
+				if (filterRequest != null && filterRequest.getFuelTypeNow() != null
+						&& !filterRequest.getFuelTypeNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getFuelTypeNow().size(); i++) {
+						vals += "'" + filterRequest.getFuelTypeNow().get(i).trim() + "'";
+						if (i != filterRequest.getFuelTypeNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and coalesce(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.FUELTYPE,'N') in (" + vals
+							+ ")";
+				}
+
+				// 6 ncb flag
+				if (filterRequest != null && filterRequest.getNcbNow() != null
+						&& !filterRequest.getNcbNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getNcbNow().size(); i++) {
+						vals += "'" + filterRequest.getNcbNow().get(i).trim() + "'";
+						if (i != filterRequest.getNcbNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.NCB_FLAG) in (" + vals + ")";
+				}
+
+				// 7 branch code
+
+				if (filterRequest != null && filterRequest.getMotorBranch() != null
+						&& !filterRequest.getMotorBranch().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorBranch().size(); i++) {
+						vals += "'" + filterRequest.getMotorBranch().get(i).trim() + "'";
+						if (i != filterRequest.getMotorBranch().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE) in (" + vals + ")";
+				}
+
+				// 8 bussiness type
+
+				if (filterRequest != null && filterRequest.getBTypeNow() != null
+						&& !filterRequest.getBTypeNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getBTypeNow().size(); i++) {
+						vals += "'" + filterRequest.getBTypeNow().get(i).trim() + "'";
+						if (i != filterRequest.getBTypeNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.BUSINESS_TYPE) in (" + vals + ")";
+				}
+
+				// 9 make
+
+				if (filterRequest != null && filterRequest.getMakeNow() != null
+						&& !filterRequest.getMakeNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMakeNow().size(); i++) {
+						vals += "'" + filterRequest.getMakeNow().get(i).trim() + "'";
+						if (i != filterRequest.getMakeNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.MAKE) in (" + vals + ")";
+				}
+
+				// 10 model group
+
+				if (filterRequest != null && filterRequest.getModelGroupNow() != null
+						&& !filterRequest.getModelGroupNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getModelGroupNow().size(); i++) {
+						vals += "'" + filterRequest.getModelGroupNow().get(i).trim() + "'";
+						if (i != filterRequest.getModelGroupNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.MODELGROUP) in (" + vals + ")";
+				}
+
+				// 11 policy types
+
+//				if (filterRequest != null && filterRequest.getPolicyTypes() != null
+//						&& !filterRequest.getPolicyTypes().isEmpty()) {
+//					String vals = "";
+//					for (int i = 0; i < filterRequest.getPolicyTypes().size(); i++) {
+//						vals += "'" + filterRequest.getPolicyTypes().get(i).trim() + "'";
+//						if (i != filterRequest.getPolicyTypes().size() - 1) {
+//							vals += ",";
+//						}
+//					}
+//					
+//					queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.POLICY_TYPE) in(" + vals + ")";
+//				}
+//				
+
+				// 12 policytype new
+
+				if (filterRequest != null && filterRequest.getPolicyTypeNew() != null
+						&& !filterRequest.getPolicyTypeNew().isEmpty()) {
+
+					String vals = "";
+					for (int i = 0; i < filterRequest.getPolicyTypeNew().size(); i++) {
+						vals += "'" + filterRequest.getPolicyTypeNew().get(i).trim() + "'";
+						if (i != filterRequest.getPolicyTypeNew().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += "and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.POLICY_TYPE_NEW) in(" + vals + ")";
+
+				}
+
+				// 13 categerisation
+
+				if (filterRequest != null && filterRequest.getCategorisation() != null
+						&& !filterRequest.getCategorisation().isEmpty()) {
+
+					String vals = "";
+					for (int i = 0; i < filterRequest.getCategorisation().size(); i++) {
+						vals += "'" + filterRequest.getCategorisation().get(i).trim() + "'";
+						if (i != filterRequest.getCategorisation().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += "and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.CATEGORISATION) in  (" + vals + ")";
+
+				}
+
+				// 14 vechicle age
+
+				if (filterRequest != null && filterRequest.getVehicleAge() != null
+						&& !filterRequest.getVehicleAge().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getVehicleAge().size(); i++) {
+						vals += "'" + filterRequest.getVehicleAge().get(i).trim() + "'";
+						if (i != filterRequest.getVehicleAge().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.VEHICLEAGE) in  (" + vals + ")";
+				}
+
+				// 15 engine capacity
+
+				if (filterRequest != null && filterRequest.getEngineCapacity() != null
+						&& !filterRequest.getEngineCapacity().isEmpty()) {
+
+					String vals = "";
+					for (int i = 0; i < filterRequest.getEngineCapacity().size(); i++) {
+						vals += "'" + filterRequest.getEngineCapacity().get(i).trim() + "'";
+						if (i != filterRequest.getEngineCapacity().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_UW_RESERVE_SINGLE_LINE_FINAL.ENGINECAPACITY) in(" + vals + ")";
+
+				}
+
+				// 16 intermediatery name
+
+				if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
+						&& !filterRequest.getMotorIntermediaryName().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorIntermediaryName().size(); i++) {
+						vals += "'" + filterRequest.getMotorIntermediaryName().get(i).trim() + "'";
+						if (i != filterRequest.getMotorIntermediaryName().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in (" + vals + ")";
+				}
+
+				// 17 model classification
+
+				if (filterRequest != null && filterRequest.getMotorCarType() != null
+						&& !filterRequest.getMotorCarType().isEmpty()) {
+					String vals = "'HIGHEND','High End'";
+					String nheVals = "'Sling','OIB','OIB PS','Xcd','Others','SS PS'";
+					int cvalcounter = 0, cvalNHEcounter = 0;
+					for (int i = 0; i < filterRequest.getMotorCarType().size(); i++) {
+
+						if (filterRequest.getMotorCarType().get(i).trim().equals("HE")) {
+							if (cvalcounter == 0)
+								queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + vals
+										+ ")";
+
+							cvalcounter++;
+						} else if (filterRequest.getMotorCarType().get(i).trim().equals("NHE")) {
+							if (cvalNHEcounter == 0)
+								queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + nheVals
+										+ ")";
+							cvalNHEcounter++;
+						}
+
+						System.out.println("HE query------------------------------ " + queryStr);
+
+					}
+
+				}
+
+				// 18 zone
+
+				if (filterRequest != null && filterRequest.getMotorZone() != null
+						&& !filterRequest.getMotorZone().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorZone().size(); i++) {
+						vals += "'" + filterRequest.getMotorZone().get(i).trim() + "'";
+						if (i != filterRequest.getMotorZone().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(KPI_BRANCH_MASTER.ZONE) in (" + vals + ")";
+				}
+
+				// 19 cluster name
+
+				if (filterRequest != null && filterRequest.getMotorCluster() != null
+						&& !filterRequest.getMotorCluster().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorCluster().size(); i++) {
+						vals += "'" + filterRequest.getMotorCluster().get(i).trim() + "'";
+						if (i != filterRequest.getMotorCluster().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in (" + vals + ")";
+				}
+
+				// 20 state new
+
+				if (filterRequest != null && filterRequest.getMotorState() != null
+						&& !filterRequest.getMotorState().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorState().size(); i++) {
+						vals += "'" + filterRequest.getMotorState().get(i).trim() + "'";
+						if (i != filterRequest.getMotorState().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in (" + vals + ")";
+				}
+
+				// 21 description
+
+				if (filterRequest != null && filterRequest.getMotorCity() != null
+						&& !filterRequest.getMotorCity().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorCity().size(); i++) {
+						vals += "'" + filterRequest.getMotorCity().get(i).trim() + "'";
+						if (i != filterRequest.getMotorCity().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in (" + vals + ")";
+				}
+
+				// 22 grouping
+
+				if (filterRequest != null && filterRequest.getStateGroupNow() != null
+						&& !filterRequest.getStateGroupNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getStateGroupNow().size(); i++) {
+						vals += "'" + filterRequest.getStateGroupNow().get(i).trim() + "'";
+						if (i != filterRequest.getStateGroupNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_DWH_CITY_GROUPING_MASTER_FINAL.STATE_GROUPING) in (" + vals + ")";
+				}
+
+				System.out.println("queryStr------------------------------ " + queryStr);
+				ResultSet rs = stmt.executeQuery(queryStr);
+				System.out.println("START------------------------------ ");
+				// System.out.println("Query -------------> " +queryStr);
+				System.out.println(rs);
+
+				while (rs.next()) {
+
+					ReserverSingleLineCubeResponseNew res = new ReserverSingleLineCubeResponseNew();
+
+					res.setRslGic(20000);
+					res.setRslCatGic(20000);
+					res.setRslTheftGic(20000);
+					res.setRslOtherGic(20000);
+					res.setRslTpGic(20000);
+
+					res.setRslNic(20000);
+					res.setRslCatNic(20000);
+					res.setRslTheftNic(20000);
+					res.setRslOtherNic(20000);
+					res.setRslTpNic(20000);
+
+					kpiResponseList.add(res);
+				}
+
+			} catch (Exception e) {
+
+				e.printStackTrace();
+
+			} finally {
+				connection.close();
+			}
+
+			return kpiResponseList;
+
+		}
+
+		// reserve single level api for financial year //
+		@GetMapping("/getReserveSingleLineNewCubeGicDataForFIN")
+		@ResponseBody
+		public List<ReserverSingleLineCubeResponseNew> getReserveSingleLineNewCubeGicDataForFIN(HttpServletRequest req,
+				UserMatrixMasterRequest filterRequest) throws SQLException {
+
+			Connection connection = null;
+			List<ReserverSingleLineCubeResponseNew> kpiResponseList = new ArrayList<ReserverSingleLineCubeResponseNew>();
+			long startTime = System.currentTimeMillis();
+
+			try {
+
+				String fromDate = filterRequest.getFromDate() == null ? "" : filterRequest.getFromDate();
+				String toDate = filterRequest.getToDate() == null ? "" : filterRequest.getToDate();
+
+				List<ProductMaster> productMasters = productMasterRepository.findAll();
+
+				String motorProductVals = "'"
+						+ productMasters.stream().filter(p -> p.getProductType().toLowerCase().contains("motor"))
+								.map(ProductMaster::getProductCode).collect(Collectors.toSet()).stream()
+								.collect(Collectors.joining("','"))
+						+ "'";
+
+				String healthProductVals = "'"
+						+ productMasters.stream().filter(p -> p.getProductType().toLowerCase().contains("health"))
+								.map(ProductMaster::getProductCode).collect(Collectors.toSet()).stream()
+								.collect(Collectors.joining("','"))
+						+ "'";
+
+				Driver driverManager = (Driver) Class.forName("org.apache.kylin.jdbc.Driver").newInstance();
+				Properties info = new Properties();
+				info.put("user", "ADMIN");
+				info.put("password", "KYLIN");
+				connection = driverManager
+						.connect("jdbc:kylin://" + RMSConstants.KYLIN_RS_BASE_IP_AND_PORT + "/learn_kylin", info);
+				System.out.println("Connection status -------------------------->" + connection);
+				Statement stmt = connection.createStatement();
+
+				String fromMonth = fromDate.split("/")[0];
+				String fromYear = fromDate.split("/")[1];
+				String toMonth = toDate.split("/")[0];
+				String toYear = toDate.split("/")[1];
+				String queryStr = "";
+
+				queryStr = "SELECT " + "SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_GIC) as RSL_GIC, "
+						+ "SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CAT_GIC) as RSL_CAT_GIC, "
+						+ "SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_THEFT_GIC) as RSL_THEFT_GIC,  "
+						+ "SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_OTHER_GIC) as RSL_OTHER_GIC,"
+						+ "SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_TP_GIC) as RSL_TP_GIC,  "
+						+ "SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_NIC) as RSL_NIC, "
+						+ "SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_CAT_NIC) as RSL_CAT_NIC, "
+						+ "SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_THEFT_NIC) as RSL_THEFT_NIC, "
+						+ "SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_OTHER_NIC) as RSL_OTHER_NIC, "
+						+ "SUM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.RSL_TP_NIC) as RSL_TP_NIC "
+						+ "FROM RSDB.RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL as RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL "
+						+ "LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE "
+						+ "LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE "
+						+ "LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE "
+						+ "LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE "
+						+ "LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  "
+						+ "LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE "
+						+ "LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE "
+						+ "LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  "
+						+ "LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE  "
+						+ "LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE ";
+
+				queryStr += "WHERE ( CSL_MVMT_MONTH between " + fromYear + fromMonth + " and " + toYear + toMonth
+						+ " )";
+
+				// 1 channel
+
+				if (filterRequest != null && filterRequest.getChannelNow() != null
+						&& !filterRequest.getChannelNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getChannelNow().size(); i++) {
+						vals += "'" + filterRequest.getChannelNow().get(i).trim() + "'";
+						if (i != filterRequest.getChannelNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CHANNEL) in (" + vals + ")";
+
+				}
+
+//	            2 channel new 
+
+				if (filterRequest != null && filterRequest.getChannelNew() != null
+						&& !filterRequest.getChannelNew().isEmpty()) {
+
+					String vals = "";
+					for (int i = 0; i < filterRequest.getChannelNew().size(); i++) {
+						vals += "'" + filterRequest.getChannelNew().get(i).trim() + "'";
+						if (i != filterRequest.getChannelNew().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CHANNEL_NEW) in  (" + vals + ")";
+
+				}
+
+				// 3 subchannel
+
+				if (filterRequest != null && filterRequest.getSubChannelNow() != null
+						&& !filterRequest.getSubChannelNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getSubChannelNow().size(); i++) {
+						vals += "'" + filterRequest.getSubChannelNow().get(i).trim() + "'";
+						if (i != filterRequest.getSubChannelNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.SUB_CHANNEL) in (" + vals + ")";
+				}
+
+				// 4 agentcode
+
+				if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
+						&& !filterRequest.getMotorIntermediaryCode().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorIntermediaryCode().size(); i++) {
+						vals += "'" + filterRequest.getMotorIntermediaryCode().get(i).trim() + "'";
+						if (i != filterRequest.getMotorIntermediaryCode().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.AGENT_CODE) in (" + vals + ")";
+				}
+
+				// 5 fueltype N
+				if (filterRequest != null && filterRequest.getFuelTypeNow() != null
+						&& !filterRequest.getFuelTypeNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getFuelTypeNow().size(); i++) {
+						vals += "'" + filterRequest.getFuelTypeNow().get(i).trim() + "'";
+						if (i != filterRequest.getFuelTypeNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and coalesce(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.FUELTYPE,'N') in (" + vals + ")";
+				}
+
+				// 6 ncb flag
+				if (filterRequest != null && filterRequest.getNcbNow() != null
+						&& !filterRequest.getNcbNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getNcbNow().size(); i++) {
+						vals += "'" + filterRequest.getNcbNow().get(i).trim() + "'";
+						if (i != filterRequest.getNcbNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.NCB_FLAG) in (" + vals + ")";
+				}
+
+				// 7 branch code
+
+				if (filterRequest != null && filterRequest.getMotorBranch() != null
+						&& !filterRequest.getMotorBranch().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorBranch().size(); i++) {
+						vals += "'" + filterRequest.getMotorBranch().get(i).trim() + "'";
+						if (i != filterRequest.getMotorBranch().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BRANCH_CODE) in (" + vals + ")";
+				}
+
+				// 8 bussiness type
+
+				if (filterRequest != null && filterRequest.getBTypeNow() != null
+						&& !filterRequest.getBTypeNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getBTypeNow().size(); i++) {
+						vals += "'" + filterRequest.getBTypeNow().get(i).trim() + "'";
+						if (i != filterRequest.getBTypeNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.BUSINESS_TYPE) in (" + vals + ")";
+				}
+
+				// 9 make
+
+				if (filterRequest != null && filterRequest.getMakeNow() != null
+						&& !filterRequest.getMakeNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMakeNow().size(); i++) {
+						vals += "'" + filterRequest.getMakeNow().get(i).trim() + "'";
+						if (i != filterRequest.getMakeNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MAKE) in (" + vals + ")";
+				}
+
+				// 10 model group
+
+				if (filterRequest != null && filterRequest.getModelGroupNow() != null
+						&& !filterRequest.getModelGroupNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getModelGroupNow().size(); i++) {
+						vals += "'" + filterRequest.getModelGroupNow().get(i).trim() + "'";
+						if (i != filterRequest.getModelGroupNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.MODELGROUP) in (" + vals + ")";
+				}
+
+				// 11 policy type // changes
+
+//				if (filterRequest != null && filterRequest.getPolicyTypes() != null
+//						&& !filterRequest.getPolicyTypes().isEmpty()) {
+//					String vals = "";
+//					for (int i = 0; i < filterRequest.getPolicyTypes().size(); i++) {
+//						vals += "'" + filterRequest.getPolicyTypes().get(i).trim() + "'";
+//						if (i != filterRequest.getPolicyTypes().size() - 1) {
+//							vals += ",";
+//						}
+//					}
+//					
+//					queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.POLICY_TYPE) in (" + vals + ")";
+//				}
+
+				// 12 policytype new
+
+				if (filterRequest != null && filterRequest.getPolicyTypeNew() != null
+						&& !filterRequest.getPolicyTypeNew().isEmpty()) {
+
+					String vals = "";
+					for (int i = 0; i < filterRequest.getPolicyTypeNew().size(); i++) {
+						vals += "'" + filterRequest.getPolicyTypeNew().get(i).trim() + "'";
+						if (i != filterRequest.getPolicyTypeNew().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += "and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.POLICY_TYPE_NEW) in (" + vals + ")";
+
+				}
+
+				// 13 categerisation
+
+				if (filterRequest != null && filterRequest.getCategorisation() != null
+						&& !filterRequest.getCategorisation().isEmpty()) {
+
+					String vals = "";
+					for (int i = 0; i < filterRequest.getCategorisation().size(); i++) {
+						vals += "'" + filterRequest.getCategorisation().get(i).trim() + "'";
+						if (i != filterRequest.getCategorisation().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += "and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.CATEGORISATION) in(" + vals + ")";
+
+				}
+
+				// 14 vechicle age
+
+				if (filterRequest != null && filterRequest.getVehicleAge() != null
+						&& !filterRequest.getVehicleAge().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getVehicleAge().size(); i++) {
+						vals += "'" + filterRequest.getVehicleAge().get(i).trim() + "'";
+						if (i != filterRequest.getVehicleAge().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.VEHICLEAGE) in (" + vals + ")";
+				}
+
+				// 15 engine capacity
+
+				if (filterRequest != null && filterRequest.getEngineCapacity() != null
+						&& !filterRequest.getEngineCapacity().isEmpty()) {
+
+					String vals = "";
+					for (int i = 0; i < filterRequest.getEngineCapacity().size(); i++) {
+						vals += "'" + filterRequest.getEngineCapacity().get(i).trim() + "'";
+						if (i != filterRequest.getEngineCapacity().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_KPI_FACT_RESERVE_SINGLE_LINE_FINAL.ENGINECAPACITY) in (" + vals + ")";
+
+				}
+
+				// 16 intermediatery name
+
+				if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
+						&& !filterRequest.getMotorIntermediaryName().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorIntermediaryName().size(); i++) {
+						vals += "'" + filterRequest.getMotorIntermediaryName().get(i).trim() + "'";
+						if (i != filterRequest.getMotorIntermediaryName().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in (" + vals + ")";
+				}
+
+				// 17 model classification
+
+				if (filterRequest != null && filterRequest.getMotorCarType() != null
+						&& !filterRequest.getMotorCarType().isEmpty()) {
+					String vals = "'HIGHEND','High End'";
+					String nheVals = "'Sling','OIB','OIB PS','Xcd','Others','SS PS'";
+					int cvalcounter = 0, cvalNHEcounter = 0;
+					for (int i = 0; i < filterRequest.getMotorCarType().size(); i++) {
+
+						if (filterRequest.getMotorCarType().get(i).trim().equals("HE")) {
+							if (cvalcounter == 0)
+								queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + vals
+										+ ")";
+
+							cvalcounter++;
+						} else if (filterRequest.getMotorCarType().get(i).trim().equals("NHE")) {
+							if (cvalNHEcounter == 0)
+								queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + nheVals
+										+ ")";
+							cvalNHEcounter++;
+						}
+
+						System.out.println("HE query------------------------------ " + queryStr);
+
+					}
+
+				}
+
+				// 18 zone
+
+				if (filterRequest != null && filterRequest.getMotorZone() != null
+						&& !filterRequest.getMotorZone().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorZone().size(); i++) {
+						vals += "'" + filterRequest.getMotorZone().get(i).trim() + "'";
+						if (i != filterRequest.getMotorZone().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(KPI_BRANCH_MASTER.ZONE) in (" + vals + ")";
+				}
+
+				// 19 cluster name
+
+				if (filterRequest != null && filterRequest.getMotorCluster() != null
+						&& !filterRequest.getMotorCluster().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorCluster().size(); i++) {
+						vals += "'" + filterRequest.getMotorCluster().get(i).trim() + "'";
+						if (i != filterRequest.getMotorCluster().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in (" + vals + ")";
+				}
+
+				// 20 state new
+
+				if (filterRequest != null && filterRequest.getMotorState() != null
+						&& !filterRequest.getMotorState().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorState().size(); i++) {
+						vals += "'" + filterRequest.getMotorState().get(i).trim() + "'";
+						if (i != filterRequest.getMotorState().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in (" + vals + ")";
+				}
+
+				// 21 description
+
+				if (filterRequest != null && filterRequest.getMotorCity() != null
+						&& !filterRequest.getMotorCity().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getMotorCity().size(); i++) {
+						vals += "'" + filterRequest.getMotorCity().get(i).trim() + "'";
+						if (i != filterRequest.getMotorCity().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in (" + vals + ")";
+				}
+
+				// 22 grouping
+
+				if (filterRequest != null && filterRequest.getStateGroupNow() != null
+						&& !filterRequest.getStateGroupNow().isEmpty()) {
+					String vals = "";
+					for (int i = 0; i < filterRequest.getStateGroupNow().size(); i++) {
+						vals += "'" + filterRequest.getStateGroupNow().get(i).trim() + "'";
+						if (i != filterRequest.getStateGroupNow().size() - 1) {
+							vals += ",";
+						}
+					}
+					queryStr += " and TRIM(RSA_DWH_CITY_GROUPING_MASTER_FINAL.STATE_GROUPING) in (" + vals + ")";
+				}
+
+				System.out.println("queryStr------------------------------ " + queryStr);
+				ResultSet rs = stmt.executeQuery(queryStr);
+				System.out.println("START------------------------------ ");
+				System.out.println(rs);
+
+				while (rs.next()) {
+
+					ReserverSingleLineCubeResponseNew res = new ReserverSingleLineCubeResponseNew();
+
+//	    	    res.setRslGic(rs.getDouble(1));
+//				res.setRslCatGic(rs.getDouble(2));
+//				res.setRslTheftGic(rs.getDouble(3));
+//				res.setRslOtherGic(rs.getDouble(4));
+//				res.setRslTpGic(rs.getDouble(5));
+//				
+//				
+//				res.setRslNic(rs.getDouble(6));
+//				res.setRslCatNic(rs.getDouble(7));
+//				res.setRslTheftNic(rs.getDouble(8));
+//				res.setRslOtherNic(rs.getDouble(9));
+//				res.setRslTpNic(rs.getDouble(10));
+
+					res.setRslGic(20000);
+					res.setRslCatGic(20000);
+					res.setRslTheftGic(20000);
+					res.setRslOtherGic(20000);
+					res.setRslTpGic(20000);
+
+					res.setRslNic(20000);
+					res.setRslCatNic(20000);
+					res.setRslTheftNic(20000);
+					res.setRslOtherNic(20000);
+					res.setRslTpNic(20000);
+
+					kpiResponseList.add(res);
+				}
+			} catch (Exception e) {
+				System.out.println("Error occured when query running");
+				System.out.println(e.getMessage());
+			}
+
+			return kpiResponseList;
+		}
+
+		
 }
