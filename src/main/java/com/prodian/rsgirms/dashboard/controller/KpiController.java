@@ -2693,38 +2693,7 @@ public class KpiController {
 
 				SingleLineCubeResponseNew res = new SingleLineCubeResponseNew();
 				if(claimParamType.equals("GIC")){
-				res.setCatGicOdComprehensive(rs.getDouble(1));
-				res.setCatGicOdTp(rs.getDouble(2));
-				res.setCatGicOdOthers(rs.getDouble(3));
-				res.setTheftGicOdComprehensive(rs.getDouble(4));
-				res.setTheftGicOdTp(rs.getDouble(5));
-				res.setTheftGicOdOthers(rs.getDouble(6));
-				res.setOthersGicOdComprehensive(rs.getDouble(7));
-				res.setOthersGicOdTp(rs.getDouble(8));
-				res.setOthersGicOdOthers(rs.getDouble(9));
-				
-				res.setCatGicTpComprehensive(rs.getDouble(10));
-				res.setCatGicTpTp(rs.getDouble(11));
-				res.setCatGicTpOthers(rs.getDouble(12));
-				res.setTheftGicTpComprehensive(rs.getDouble(13));
-				res.setTheftGicTpTp(rs.getDouble(14));
-				res.setTheftGicTpOthers(rs.getDouble(15));
-				res.setOthersGicTpComprehensive(rs.getDouble(16));
-				res.setOthersGicTpTp(rs.getDouble(17));
-				res.setOthersGicTpOthers(rs.getDouble(18));
-				}else if(claimParamType.equals("NIC")){
-					/*if(count==0){*/
-						res.setNicComprehensive(rs.getDouble(1));
-						res.setNicTp(rs.getDouble(2));
-						res.setNicOthers(rs.getDouble(3));
-						res.setNicTpComprehensive(rs.getDouble(4));
-						res.setNicTpTp(rs.getDouble(5));
-						res.setNicTpOthers(rs.getDouble(6));
-					/*}if(count==1){*/
-						res.setNicOdComprehensive(rs.getDouble(7));
-						res.setNicOdTp(rs.getDouble(8));
-						res.setNicOdOthers(rs.getDouble(9));
-					/*}*/
+
 					count ++;
 				}
 				
@@ -2741,6 +2710,910 @@ public class KpiController {
 		}
 		return kpiResponseList;
 	}
+	
+	
+	
+	
+	@GetMapping("/getSingleLineCubeGicDataNewFIN")
+	@ResponseBody
+	List<SingleLineCubeResponseNew> getSingleLineCubeGicDataNewFinYear (HttpServletRequest req, UserMatrixMasterRequest filterRequest
+			){
+		Connection connection = null;
+		List<SingleLineCubeResponseNew> kpiResponseNew = new ArrayList<SingleLineCubeResponseNew>();
+		double nicTp = 0;
+		long startTime = System.currentTimeMillis();
+		try {
+			String fromDate = filterRequest.getFromDate() == null ? "": filterRequest.getFromDate();
+			String toDate = filterRequest.getToDate() == null ? "" : filterRequest.getToDate();
+			
+			Driver driverManager = (Driver) Class.forName("org.apache.kylin.jdbc.Driver").newInstance(); 
+			Properties info = new Properties();
+			info.put("user", "ADMIN");
+			info.put("password","KYLIN");
+			
+			connection = driverManager.connect("jdbc:kylin://"+ RMSConstants.KYLIN_BASE_IP_AND_PORT +"/learn_kylin", info);
+			System.out.println("Connection status -------------------------->" + connection);
+			
+			Statement stmt = connection.createStatement();
+			
+			String fromMonth = fromDate.split("/")[0];
+			String fromYear = fromDate.split("/")[1];
+			String toMonth = toDate.split("/")[0];
+			String toYear = toDate.split("/")[1];
+			
+			
+			String queryStr = "";
+			queryStr += "SELECT SUM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_GIC) as CSL_GIC, "
+					+ "SUM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_CAT_GIC) as CSL_CAT_GIC, "
+					+ "SUM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_THEFT_GIC) as CSL_THEFT_GIC, "
+					+ "SUM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_OTHER_GIC) as CSL_OTHER_GIC, "
+					+ "SUM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_TP_GIC) as CSL_TP_GIC, "
+					+ "SUM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_NIC) as CSL_NIC, "
+					+ "SUM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_CAT_NIC) as CSL_CAT_NIC, "
+					+ "SUM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_THEFT_NIC) as CSL_THEFT_NIC, "
+					+ "SUM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_OTHER_NIC) as CSL_OTHER_NIC, "
+					+ "SUM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_TP_NIC) as CSL_TP_NIC "
+					+ "FROM RSDB.RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE as RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE "
+					+ "LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE "
+					+ "LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE "
+					+ "LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE "
+					+ "LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.OA_CODE = KPI_OA_MASTER_NW.OA_CODE "
+					+ "LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE "
+					+ "LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE "
+					+ "LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME "
+					+ "LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE "
+					+ "LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE "
+					+ "LEFT JOIN RSDB.CATASTROPHIC_MASTER as CATASTROPHIC_MASTER  ON RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_CATASTROPHICTYPE = CATASTROPHIC_MASTER.CAT_TYPE ";
+			
+			queryStr += "WHERE ( CSL_MVMT_MONTH between " + fromYear + fromMonth + " and " + toYear + toMonth+ " )";
+			
+			String finstartDate = fromYear + "-" + fromMonth + "-01";
+			String finEndDate = toYear + "-" + toMonth + "-31";
+			
+
+			
+
+		if (filterRequest != null && filterRequest.getPolicyTypes() != null
+				&& !filterRequest.getPolicyTypes().isEmpty()) {
+			String vals = "";
+			for (int i = 0; i < filterRequest.getPolicyTypes().size(); i++) {
+				vals += "'" + filterRequest.getPolicyTypes().get(i).trim() + "'";
+				if (i != filterRequest.getPolicyTypes().size() - 1) {
+					vals += ",";
+				}
+			}
+			
+			queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.POLICY_TYPE) in (" + vals + ")";
+		}
+		
+			if (filterRequest != null && filterRequest.getBTypeNow() != null
+					&& !filterRequest.getBTypeNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getBTypeNow().size(); i++) {
+					vals += "'" + filterRequest.getBTypeNow().get(i).trim() + "'";
+					if (i != filterRequest.getBTypeNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.BUSINESS_TYPE) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getChannelNow() != null
+					&& !filterRequest.getChannelNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getChannelNow().size(); i++) {
+					vals += "'" + filterRequest.getChannelNow().get(i).trim() + "'";
+					if (i != filterRequest.getChannelNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CHANNEL) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getChannelNow() != null
+					&& !filterRequest.getChannelNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getChannelNow().size(); i++) {
+					vals += "'" + filterRequest.getChannelNow().get(i).trim() + "'";
+					if (i != filterRequest.getChannelNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CHANNEL_NEW) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getSubChannelNow() != null
+					&& !filterRequest.getSubChannelNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getSubChannelNow().size(); i++) {
+					vals += "'" + filterRequest.getSubChannelNow().get(i).trim() + "'";
+					if (i != filterRequest.getSubChannelNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.SUB_CHANNEL) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getMakeNow() != null
+					&& !filterRequest.getMakeNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMakeNow().size(); i++) {
+					vals += "'" + filterRequest.getMakeNow().get(i).trim() + "'";
+					if (i != filterRequest.getMakeNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.MAKE) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getModelGroupNow() != null
+					&& !filterRequest.getModelGroupNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getModelGroupNow().size(); i++) {
+					vals += "'" + filterRequest.getModelGroupNow().get(i).trim() + "'";
+					if (i != filterRequest.getModelGroupNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.MODELGROUP) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getFuelTypeNow() != null
+					&& !filterRequest.getFuelTypeNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getFuelTypeNow().size(); i++) {
+					vals += "'" + filterRequest.getFuelTypeNow().get(i).trim() + "'";
+					if (i != filterRequest.getFuelTypeNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and coalesce(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.FUELTYPE,'N') in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getStateGroupNow() != null
+					&& !filterRequest.getStateGroupNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getStateGroupNow().size(); i++) {
+					vals += "'" + filterRequest.getStateGroupNow().get(i).trim() + "'";
+					if (i != filterRequest.getStateGroupNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_DWH_CITY_GROUPING_MASTER_FINAL.STATE_GROUPING) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getNcbNow() != null
+					&& !filterRequest.getNcbNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getNcbNow().size(); i++) {
+					vals += "'" + filterRequest.getNcbNow().get(i).trim() + "'";
+					if (i != filterRequest.getNcbNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.NCB_FLAG) in (" + vals + ")";
+			}
+			
+		
+			
+//			if (filterRequest != null && filterRequest.getMotorChannel() != null
+//					&& !filterRequest.getMotorChannel().isEmpty()) {
+//				String vals = "";
+//				for (int i = 0; i < filterRequest.getMotorChannel().size(); i++) {
+//					vals += "'" + filterRequest.getMotorChannel().get(i).trim() + "'";
+//					if (i != filterRequest.getMotorChannel().size() - 1) {
+//						vals += ",";
+//					}
+//				}
+//				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CHANNEL) in (" + vals + ")";
+//			}
+
+			
+//			if (filterRequest != null && filterRequest.getMotorChannel() != null
+//					&& !filterRequest.getMotorChannel().isEmpty()) {
+//				String vals = "";
+//				for (int i = 0; i < filterRequest.getMotorChannel().size(); i++) {
+//					vals += "'" + filterRequest.getMotorChannel().get(i).trim() + "'";
+//					if (i != filterRequest.getMotorChannel().size() - 1) {
+//						vals += ",";
+//					}
+//				}
+//				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CHANNEL) in (" + vals + ")";
+//			}
+
+//			if (filterRequest != null && filterRequest.getMotorSubChannel() != null
+//					&& !filterRequest.getMotorSubChannel().isEmpty()) {
+//				String vals = "";
+//				for (int i = 0; i < filterRequest.getMotorSubChannel().size(); i++) {
+//					vals += "'" + filterRequest.getMotorSubChannel().get(i).trim() + "'";
+//					if (i != filterRequest.getMotorSubChannel().size() - 1) {
+//						vals += ",";
+//					}
+//				}
+//				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.SUB_CHANNEL) in (" + vals + ")";
+//			}
+
+			/*if (filterRequest != null && filterRequest.getMotorRegion() != null
+					&& !filterRequest.getMotorRegion().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorRegion().size(); i++) {
+					vals += "'" + filterRequest.getMotorRegion().get(i).trim() + "'";
+					if (i != filterRequest.getMotorRegion().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.REGION) in (" + vals + ")";
+			}*/
+			
+			if (filterRequest != null && filterRequest.getMotorZone() != null
+					&& !filterRequest.getMotorZone().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorZone().size(); i++) {
+					vals += "'" + filterRequest.getMotorZone().get(i).trim() + "'";
+					if (i != filterRequest.getMotorZone().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.ZONE) in (" + vals + ")";
+			}
+			
+			if (filterRequest != null && filterRequest.getMotorCluster() != null
+					&& !filterRequest.getMotorCluster().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorCluster().size(); i++) {
+					vals += "'" + filterRequest.getMotorCluster().get(i).trim() + "'";
+					if (i != filterRequest.getMotorCluster().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in (" + vals + ")";
+			}
+
+			if (filterRequest != null && filterRequest.getMotorState() != null
+					&& !filterRequest.getMotorState().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorState().size(); i++) {
+					vals += "'" + filterRequest.getMotorState().get(i).trim() + "'";
+					if (i != filterRequest.getMotorState().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in (" + vals + ")";
+			}
+
+			if (filterRequest != null && filterRequest.getMotorCity() != null
+					&& !filterRequest.getMotorCity().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorCity().size(); i++) {
+					vals += "'" + filterRequest.getMotorCity().get(i).trim() + "'";
+					if (i != filterRequest.getMotorCity().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in (" + vals + ")";
+			}
+
+			if (filterRequest != null && filterRequest.getMotorBranch() != null
+					&& !filterRequest.getMotorBranch().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorBranch().size(); i++) {
+					vals += "'" + filterRequest.getMotorBranch().get(i).trim() + "'";
+					if (i != filterRequest.getMotorBranch().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.BRANCH_CODE) in (" + vals + ")";
+			}
+			
+			if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
+					&& !filterRequest.getMotorIntermediaryCode().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorIntermediaryCode().size(); i++) {
+					vals += "'" + filterRequest.getMotorIntermediaryCode().get(i).trim() + "'";
+					if (i != filterRequest.getMotorIntermediaryCode().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.AGENT_CODE) in (" + vals + ")";
+			}
+			
+			if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
+					&& !filterRequest.getMotorIntermediaryName().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorIntermediaryName().size(); i++) {
+					vals += "'" + filterRequest.getMotorIntermediaryName().get(i).trim() + "'";
+					if (i != filterRequest.getMotorIntermediaryName().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getPolicyTypeNew() != null
+					&& !filterRequest.getPolicyTypeNew().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getPolicyTypeNew().size(); i++) {
+					vals += "'" + filterRequest.getPolicyTypeNew().get(i).trim() + "'";
+					if (i != filterRequest.getPolicyTypeNew().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.POLICY_TYPE_NEW) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getCategorisation() != null
+					&& !filterRequest.getCategorisation().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getCategorisation().size(); i++) {
+					vals += "'" + filterRequest.getCategorisation().get(i).trim() + "'";
+					if (i != filterRequest.getCategorisation().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CATEGORISATION) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getVehicleAge() != null
+					&& !filterRequest.getVehicleAge().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getVehicleAge().size(); i++) {
+					vals += "'" + filterRequest.getVehicleAge().get(i).trim() + "'";
+					if (i != filterRequest.getVehicleAge().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.VEHICLEAGE) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getEngineCapacity() != null
+					&& !filterRequest.getEngineCapacity().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getEngineCapacity().size(); i++) {
+					vals += "'" + filterRequest.getEngineCapacity().get(i).trim() + "'";
+					if (i != filterRequest.getEngineCapacity().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.ENGINECAPACITY) in (" + vals + ")";
+			}
+			
+
+//			if (filterRequest != null && filterRequest.getMotorFuelType() != null
+//					&& !filterRequest.getMotorFuelType().isEmpty()) {
+//				String vals = "";
+//				for (int i = 0; i < filterRequest.getMotorFuelType().size(); i++) {
+//					vals += "'" + filterRequest.getMotorFuelType().get(i).trim() + "'";
+//					if (i != filterRequest.getMotorFuelType().size() - 1) {
+//						vals += ",";
+//					}
+//				}
+//				queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.FUELTYPE) in (" + vals + ")";
+//			}
+			
+//			if (filterRequest != null && filterRequest.getMotorNcbFlag() != null
+//					&& !filterRequest.getMotorNcbFlag().isEmpty()) {
+//				String vals = "";
+//				for (int i = 0; i < filterRequest.getMotorNcbFlag().size(); i++) {
+//					vals += "'" + filterRequest.getMotorNcbFlag().get(i).trim() + "'";
+//					if (i != filterRequest.getMotorNcbFlag().size() - 1) {
+//						vals += ",";
+//					}
+//				}
+//				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.NCB_FLAG) in (" + vals + ")";
+//			}
+			
+			/*if (filterRequest != null && filterRequest.getMotorCarType() != null
+					&& !filterRequest.getMotorCarType().isEmpty()) {
+				String vals = "'HIGHEND','High End'";
+				for (int i = 0; i < filterRequest.getMotorCarType().size(); i++) {
+					
+					if(filterRequest.getMotorCarType().get(i).trim().equals("HE")){
+						if (i != filterRequest.getMotorNcbFlag().size() - 1) {
+							vals += ",";
+						}
+						queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + vals + ")";
+					}else{
+						queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) not in (" + vals + ")";
+					}
+				
+					System.out.println("HE query------------------------------ " + queryStr);
+					
+				}
+				
+			}*/
+			
+			if (filterRequest != null && filterRequest.getMotorCarType() != null
+					&& !filterRequest.getMotorCarType().isEmpty()) {
+				String vals = "'HIGHEND','High End'";
+				String nheVals = "'Sling','OIB','OIB PS','Xcd','Others','SS PS'";
+				int cvalcounter = 0,cvalNHEcounter = 0;
+				for (int i = 0; i < filterRequest.getMotorCarType().size(); i++) {
+					
+					 if(filterRequest.getMotorCarType().get(i).trim().equals("HE")){
+						 if(cvalcounter==0)
+						queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + vals + ")";
+						 cvalcounter++;
+					 }else if(filterRequest.getMotorCarType().get(i).trim().equals("NHE")){
+						if(cvalNHEcounter==0)
+						queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + nheVals + ")";
+						cvalNHEcounter++;
+					 }
+				
+					System.out.println("THE query------------------------------ " + queryStr);
+					
+				}
+				
+			}
+	
+//	if(claimParamType.equals("GIC")){
+//		queryStr += " group by RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CSL_CATASTROPHECODE,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.csl_claim_type ,CATASTROPHIC_MASTER.CAT_TYPE ,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.CSL_NATURE_OF_CLAIM,CSL_CLAIM_NO,category ) x";
+//	}
+//	else if(claimParamType.equals("NIC")){
+//		/*queryStr +=" GROUP by   "+
+//				" uw_year,PRODUCT_CODE,CSL_CLAIM_NO,CSL_MVMT_MONTH ) A , "+  
+//				" (select underwriting_year,XGEN_PRODUCTCODE,band,sum(OBLIGATORY) OBLIGATORY,sum(QUOTA_SHARE) QUOTA_SHARE,sum(RETENTION) RETENTION,sum(RI_COMMISSION) RI_COMMISSION from RSA_DWH_RI_OBLIGATORY_MASTER1 "+  
+//				" group by underwriting_year,XGEN_PRODUCTCODE,band) B   "+
+//				" where B.underwriting_year=A.uw_year AND A.PRODUCT_CODE=B.XGEN_PRODUCTCODE AND A.BAND=B.band "+   
+//				" ) ";*/
+//		/*queryStr +=" GROUP by   "+
+//				" uw_year,PRODUCT_CODE,CSL_CLAIM_NO,CSL_MVMT_MONTH,category ) A , "+  
+//				" (select underwriting_year,XGEN_PRODUCTCODE,band,sum(OBLIGATORY) OBLIGATORY,sum(QUOTA_SHARE) QUOTA_SHARE,sum(RETENTION) RETENTION,sum(RI_COMMISSION) RI_COMMISSION from RSA_DWH_RI_OBLIGATORY_MASTER1 "+  
+//				" group by underwriting_year,XGEN_PRODUCTCODE,band) B   "+
+//				" where B.underwriting_year=A.uw_year AND A.PRODUCT_CODE=B.XGEN_PRODUCTCODE AND A.BAND=B.band "+   
+//				" ) ";*/
+//		queryStr +=" group by uw_year,RSA_KPI_FACT_CLAIMS_SINGLE_LINE_FINAL_NOW.PRODUCT_CODE,'NONE',category,CSL_CLAIM_NO) A ,  "
+//		+ " (select underwriting_year,XGEN_PRODUCTCODE,band,SUM(OD_OBLIGATORY) OD_OBLIGATORY,SUM(OD_QUOTA_SHARE) OD_QUOTA_SHARE,SUM(TP_OBLIGATORY) TP_OBLIGATORY,SUM(TP_QUOTA_SHARE) TP_QUOTA_SHARE from "
+//		+ " RSA_DWH_RI_OBLIGATORY_MASTER1_NEW group by underwriting_year,XGEN_PRODUCTCODE,band) B  "
+//		+ " where B.underwriting_year=A.uw_year AND A.PRODUCT_CODE=B.XGEN_PRODUCTCODE AND A.BAND=B.band ";	
+//	}
+	
+			
+	
+		
+
+		System.out.println("queryStr------------------------------ " + queryStr);
+		ResultSet rs = stmt.executeQuery(queryStr);
+		System.out.println("START------------------------------ ");
+			
+		// jsArray = convertToJSON(rs);
+			int count =0 ;
+		while (rs.next()) {
+
+			SingleLineCubeResponseNew res = new SingleLineCubeResponseNew();
+//			if(claimParamType.equals("GIC")){
+		/*	res.setCatGicOdComprehensive(rs.getDouble(1));
+			res.setCatGicOdTp(rs.getDouble(2));
+			res.setCatGicOdOthers(rs.getDouble(3));
+			res.setTheftGicOdComprehensive(rs.getDouble(4));
+			res.setTheftGicOdTp(rs.getDouble(5));
+			res.setTheftGicOdOthers(rs.getDouble(6));
+			res.setOthersGicOdComprehensive(rs.getDouble(7));
+			res.setOthersGicOdTp(rs.getDouble(8));
+			res.setOthersGicOdOthers(rs.getDouble(9));
+			
+			res.setCatGicTpComprehensive(rs.getDouble(10));
+			res.setCatGicTpTp(rs.getDouble(11));
+			res.setCatGicTpOthers(rs.getDouble(12));
+			res.setTheftGicTpComprehensive(rs.getDouble(13));
+			res.setTheftGicTpTp(rs.getDouble(14));
+			res.setTheftGicTpOthers(rs.getDouble(15));
+			res.setOthersGicTpComprehensive(rs.getDouble(16));
+			res.setOthersGicTpTp(rs.getDouble(17));
+			res.setOthersGicTpOthers(rs.getDouble(18)); */
+			
+			res.setCslGic(rs.getDouble(1));
+			res.setCslCatGic(rs.getDouble(2));
+			res.setCslTheftGic(rs.getDouble(3));
+			res.setCslOtherGic(rs.getDouble(4));
+			res.setCslTpGic(rs.getDouble(5));
+			res.setCslNic(rs.getDouble(6));
+			res.setCslCatNic(rs.getDouble(7));
+			res.setCslTheftNic(rs.getDouble(8));
+			res.setCslOtherNic(rs.getDouble(9));	
+			res.setCslTpNic(rs.getDouble(10));
+//			count ++;
+			
+			
+//			}else if(claimParamType.equals("NIC")){
+				/*if(count==0){*/
+//					res.setNicComprehensive(rs.getDouble(1));
+//					res.setNicTp(rs.getDouble(2));
+//					res.setNicOthers(rs.getDouble(3));
+//					res.setNicTpComprehensive(nicTp);
+					/*below code has to  be uncommented after category implementation*/
+					/*res.setNicTpComprehensive(rs.getDouble(4));
+					res.setNicTpTp(rs.getDouble(5));
+					res.setNicTpOthers(rs.getDouble(6));*/
+				/*}if(count==1){*/
+//					res.setNicOdComprehensive(rs.getDouble(7));
+//					res.setNicOdTp(rs.getDouble(8));
+//					res.setNicOdOthers(rs.getDouble(9)); 
+				
+//			}
+			
+			kpiResponseNew.add(res);
+		}
+
+		System.out.println("Query execution time " + (System.currentTimeMillis() - startTime));
+			 
+	
+			
+			
+			
+		}catch(Exception e){
+			System.out.println("kylinDataSource initialize error, ex: " + e);
+			System.out.println();
+			e.printStackTrace();
+		}
+		
+		
+		return kpiResponseNew;
+		
+	}
+	
+	
+	@GetMapping("/getSingleLineCubeGicDataNewUW")
+	@ResponseBody
+	List<SingleLineCubeResponseNew> getSingleLineCubeGicDataNewUw (HttpServletRequest req, UserMatrixMasterRequest filterRequest
+			){
+		Connection connection = null;
+		List<SingleLineCubeResponseNew> kpiResponseNew = new ArrayList<SingleLineCubeResponseNew>();
+		double nicTp = 0;
+		long startTime = System.currentTimeMillis();
+		try {
+			String fromDate = filterRequest.getFromDate() == null ? "": filterRequest.getFromDate();
+			String toDate = filterRequest.getToDate() == null ? "" : filterRequest.getToDate();
+			
+			Driver driverManager = (Driver) Class.forName("org.apache.kylin.jdbc.Driver").newInstance(); 
+			Properties info = new Properties();
+			info.put("user", "ADMIN");
+			info.put("password","KYLIN");
+			
+			connection = driverManager.connect("jdbc:kylin://"+ RMSConstants.KYLIN_BASE_IP_AND_PORT +"/learn_kylin", info);
+			System.out.println("Connection status -------------------------->" + connection);
+			
+			Statement stmt = connection.createStatement();
+			
+			String fromMonth = fromDate.split("/")[0];
+			String fromYear = fromDate.split("/")[1];
+			String toMonth = toDate.split("/")[0];
+			String toYear = toDate.split("/")[1];
+			
+			
+			String queryStr = "";
+			queryStr += "SELECT SUM(RSA_KPI_FACT_UW_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_GIC) as CSL_GIC, "
+					+ "SUM(RSA_KPI_FACT_UW_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_CAT_GIC) as CSL_CAT_GIC, "
+					+ "SUM(RSA_KPI_FACT_UW_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_THEFT_GIC) as CSL_THEFT_GIC, "
+					+ "SUM(RSA_KPI_FACT_UW_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_OTHER_GIC) as CSL_OTHER_GIC, "
+					+ "SUM(RSA_KPI_FACT_UW_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_TP_GIC) as CSL_TP_GIC, "
+					+ "SUM(RSA_KPI_FACT_UW_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_NIC) as CSL_NIC, "
+					+ "SUM(RSA_KPI_FACT_UW_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_CAT_NIC) as CSL_CAT_NIC, "
+					+ "SUM(RSA_KPI_FACT_UW_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_THEFT_NIC) as CSL_THEFT_NIC, "
+					+ "SUM(RSA_KPI_FACT_UW_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_OTHER_NIC) as CSL_OTHER_NIC, "
+					+ "SUM(RSA_KPI_FACT_UW_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CSL_TP_NIC) as CSL_TP_NIC "
+					+ "FROM RSDB.RSA_KPI_FACT_UW_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE as RSA_KPI_FACT_UW_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE "
+					+ "LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_UW_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE "
+					+ "LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_UW_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE "
+					+ "LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_UW_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE "
+					+ "LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_UW_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.OA_CODE = KPI_OA_MASTER_NW.OA_CODE "
+					+ "LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_UW_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE "
+					+ "LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_UW_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE "
+					+ "LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_UW_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME "
+					+ "LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_UW_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE "
+					+ "LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE ";
+			
+			String finstartDate = fromYear + "-" + fromMonth + "-01";
+			String finEndDate = toYear + "-" + toMonth + "-31";
+			
+			queryStr += " WHERE SUBSTRING(inception_date,1,10) >='"+ finstartDate +"' and SUBSTRING(inception_date,1,10) <='"+ finEndDate +"' ";
+			
+			
+			
+			
+
+			
+
+//		if (filterRequest != null && filterRequest.getPolicyTypes() != null
+//				&& !filterRequest.getPolicyTypes().isEmpty()) {
+//			String vals = "";
+//			for (int i = 0; i < filterRequest.getPolicyTypes().size(); i++) {
+//				vals += "'" + filterRequest.getPolicyTypes().get(i).trim() + "'";
+//				if (i != filterRequest.getPolicyTypes().size() - 1) {
+//					vals += ",";
+//				}
+//			}
+//			
+//			queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.POLICY_TYPE) in (" + vals + ")";
+//		}
+		
+			if (filterRequest != null && filterRequest.getBTypeNow() != null
+					&& !filterRequest.getBTypeNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getBTypeNow().size(); i++) {
+					vals += "'" + filterRequest.getBTypeNow().get(i).trim() + "'";
+					if (i != filterRequest.getBTypeNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.BUSINESS_TYPE) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getChannelNow() != null
+					&& !filterRequest.getChannelNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getChannelNow().size(); i++) {
+					vals += "'" + filterRequest.getChannelNow().get(i).trim() + "'";
+					if (i != filterRequest.getChannelNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CHANNEL) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getChannelNow() != null
+					&& !filterRequest.getChannelNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getChannelNow().size(); i++) {
+					vals += "'" + filterRequest.getChannelNow().get(i).trim() + "'";
+					if (i != filterRequest.getChannelNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CHANNEL_NEW) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getSubChannelNow() != null
+					&& !filterRequest.getSubChannelNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getSubChannelNow().size(); i++) {
+					vals += "'" + filterRequest.getSubChannelNow().get(i).trim() + "'";
+					if (i != filterRequest.getSubChannelNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.SUB_CHANNEL) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getMakeNow() != null
+					&& !filterRequest.getMakeNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMakeNow().size(); i++) {
+					vals += "'" + filterRequest.getMakeNow().get(i).trim() + "'";
+					if (i != filterRequest.getMakeNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.MAKE) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getModelGroupNow() != null
+					&& !filterRequest.getModelGroupNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getModelGroupNow().size(); i++) {
+					vals += "'" + filterRequest.getModelGroupNow().get(i).trim() + "'";
+					if (i != filterRequest.getModelGroupNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.MODELGROUP) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getFuelTypeNow() != null
+					&& !filterRequest.getFuelTypeNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getFuelTypeNow().size(); i++) {
+					vals += "'" + filterRequest.getFuelTypeNow().get(i).trim() + "'";
+					if (i != filterRequest.getFuelTypeNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and coalesce(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.FUELTYPE,'N') in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getStateGroupNow() != null
+					&& !filterRequest.getStateGroupNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getStateGroupNow().size(); i++) {
+					vals += "'" + filterRequest.getStateGroupNow().get(i).trim() + "'";
+					if (i != filterRequest.getStateGroupNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_DWH_CITY_GROUPING_MASTER_FINAL.STATE_GROUPING) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getNcbNow() != null
+					&& !filterRequest.getNcbNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getNcbNow().size(); i++) {
+					vals += "'" + filterRequest.getNcbNow().get(i).trim() + "'";
+					if (i != filterRequest.getNcbNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.NCB_FLAG) in (" + vals + ")";
+			}
+			
+		
+			
+
+			if (filterRequest != null && filterRequest.getMotorZone() != null
+					&& !filterRequest.getMotorZone().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorZone().size(); i++) {
+					vals += "'" + filterRequest.getMotorZone().get(i).trim() + "'";
+					if (i != filterRequest.getMotorZone().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.ZONE) in (" + vals + ")";
+			}
+			
+			if (filterRequest != null && filterRequest.getMotorCluster() != null
+					&& !filterRequest.getMotorCluster().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorCluster().size(); i++) {
+					vals += "'" + filterRequest.getMotorCluster().get(i).trim() + "'";
+					if (i != filterRequest.getMotorCluster().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in (" + vals + ")";
+			}
+
+			if (filterRequest != null && filterRequest.getMotorState() != null
+					&& !filterRequest.getMotorState().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorState().size(); i++) {
+					vals += "'" + filterRequest.getMotorState().get(i).trim() + "'";
+					if (i != filterRequest.getMotorState().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in (" + vals + ")";
+			}
+
+			if (filterRequest != null && filterRequest.getMotorCity() != null
+					&& !filterRequest.getMotorCity().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorCity().size(); i++) {
+					vals += "'" + filterRequest.getMotorCity().get(i).trim() + "'";
+					if (i != filterRequest.getMotorCity().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in (" + vals + ")";
+			}
+
+			if (filterRequest != null && filterRequest.getMotorBranch() != null
+					&& !filterRequest.getMotorBranch().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorBranch().size(); i++) {
+					vals += "'" + filterRequest.getMotorBranch().get(i).trim() + "'";
+					if (i != filterRequest.getMotorBranch().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.BRANCH_CODE) in (" + vals + ")";
+			}
+			
+			if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
+					&& !filterRequest.getMotorIntermediaryCode().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorIntermediaryCode().size(); i++) {
+					vals += "'" + filterRequest.getMotorIntermediaryCode().get(i).trim() + "'";
+					if (i != filterRequest.getMotorIntermediaryCode().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.AGENT_CODE) in (" + vals + ")";
+			}
+			
+			if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
+					&& !filterRequest.getMotorIntermediaryName().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorIntermediaryName().size(); i++) {
+					vals += "'" + filterRequest.getMotorIntermediaryName().get(i).trim() + "'";
+					if (i != filterRequest.getMotorIntermediaryName().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getPolicyTypeNew() != null
+					&& !filterRequest.getPolicyTypeNew().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getPolicyTypeNew().size(); i++) {
+					vals += "'" + filterRequest.getPolicyTypeNew().get(i).trim() + "'";
+					if (i != filterRequest.getPolicyTypeNew().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.POLICY_TYPE_NEW) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getCategorisation() != null
+					&& !filterRequest.getCategorisation().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getCategorisation().size(); i++) {
+					vals += "'" + filterRequest.getCategorisation().get(i).trim() + "'";
+					if (i != filterRequest.getCategorisation().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.CATEGORISATION) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getVehicleAge() != null
+					&& !filterRequest.getVehicleAge().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getVehicleAge().size(); i++) {
+					vals += "'" + filterRequest.getVehicleAge().get(i).trim() + "'";
+					if (i != filterRequest.getVehicleAge().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.VEHICLEAGE) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getEngineCapacity() != null
+					&& !filterRequest.getEngineCapacity().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getEngineCapacity().size(); i++) {
+					vals += "'" + filterRequest.getEngineCapacity().get(i).trim() + "'";
+					if (i != filterRequest.getEngineCapacity().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_KPI_FACT_CLAIMS_SINGLE_LINE_NEW_CURRENT_TABLE.ENGINECAPACITY) in (" + vals + ")";
+			}
+			
+
+			
+			if (filterRequest != null && filterRequest.getMotorCarType() != null
+					&& !filterRequest.getMotorCarType().isEmpty()) {
+				String vals = "'HIGHEND','High End'";
+				String nheVals = "'Sling','OIB','OIB PS','Xcd','Others','SS PS'";
+				int cvalcounter = 0,cvalNHEcounter = 0;
+				for (int i = 0; i < filterRequest.getMotorCarType().size(); i++) {
+					
+					 if(filterRequest.getMotorCarType().get(i).trim().equals("HE")){
+						 if(cvalcounter==0)
+						queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + vals + ")";
+						 cvalcounter++;
+					 }else if(filterRequest.getMotorCarType().get(i).trim().equals("NHE")){
+						if(cvalNHEcounter==0)
+						queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + nheVals + ")";
+						cvalNHEcounter++;
+					 }
+				
+					System.out.println("THE query------------------------------ " + queryStr);
+					
+				}
+				
+			}
+	
+
+	
+			
+	
+		
+
+		System.out.println("queryStr------------------------------ " + queryStr);
+		ResultSet rs = stmt.executeQuery(queryStr);
+		System.out.println("START------------------------------ ");
+			
+		// jsArray = convertToJSON(rs);
+		
+		while (rs.next()) {
+
+			SingleLineCubeResponseNew res = new SingleLineCubeResponseNew();
+
+			
+			res.setCslGic(rs.getDouble(1));
+			res.setCslCatGic(rs.getDouble(2));
+			res.setCslTheftGic(rs.getDouble(3));
+			res.setCslOtherGic(rs.getDouble(4));
+			res.setCslTpGic(rs.getDouble(5));
+			res.setCslNic(rs.getDouble(6));
+			res.setCslCatNic(rs.getDouble(7));
+			res.setCslTheftNic(rs.getDouble(8));
+			res.setCslOtherNic(rs.getDouble(9));	
+			res.setCslTpNic(rs.getDouble(10));
+			
+			kpiResponseNew.add(res);
+		}
+
+		System.out.println("Query execution time " + (System.currentTimeMillis() - startTime));
+			 
+	
+	}catch(Exception e){
+			System.out.println("kylinDataSource initialize error, ex: " + e);
+			System.out.println();
+			e.printStackTrace();
+		}
+		
+		return kpiResponseNew;
+		
+	}
+
 	
 	
 	
@@ -3195,133 +4068,19 @@ public class KpiController {
 //				res.setRslOtherNic(rs.getDouble(9));
 //				res.setRslTpNic(rs.getDouble(10));
 				
-				res.setRslGic(20000);
-				res.setRslCatGic(20000);
-				res.setRslTheftGic(20000);
-				res.setRslOtherGic(20000);
-				res.setRslTpGic(20000);
+				res.setRslGic(20006870);
+				res.setRslCatGic(2079867000);
+				res.setRslTheftGic(26780000);
+				res.setRslOtherGic(26980000);
+				res.setRslTpGic(200696800);
 				
 				
-				res.setRslNic(20000);
-				res.setRslCatNic(20000);
-				res.setRslTheftNic(20000);
-				res.setRslOtherNic(20000);
-				res.setRslTpNic(20000);
-				
-				//if (claimParamType.equals("GIC")) {
-				
-//					res.setCatGicOdComprehensiveDep(rs.getDouble(1));
-//					res.setCatGicOdComprehensiveNcb(rs.getDouble(2));
-//					res.setCatGicOdComprehensiveOtherAddon(rs.getDouble(3));
-//					res.setCatGicOdComprehensiveNoAddon(rs.getDouble(4));
-//					res.setCatGicOdTpDep(rs.getDouble(5));
-//					res.setCatGicOdTpNcb(rs.getDouble(6));
-//					res.setCatGicOdTpOtherAddon(rs.getDouble(7));
-//					res.setCatGicOdTpNoAddon(rs.getDouble(8));
-//					res.setCatGicOdOthersDep(rs.getDouble(9));
-//					res.setCatGicOdOthersNcb(rs.getDouble(10));
-					/*
-					 * res.setCatGicOdOthersOtherAddon(rs.getDouble(11));
-					 * res.setCatGicOdOthersNoAddon(rs.getDouble(12));
-					 * res.setTheftGicOdComprehensiveDep(rs.getDouble(13));
-					 * res.setTheftGicOdComprehensiveNcb(rs.getDouble(14));
-					 * res.setTheftGicOdComprehensiveOtherAddon(rs.getDouble(15));
-					 * res.setTheftGicOdComprehensiveNoAddon(rs.getDouble(16));
-					 * res.setTheftGicOdTpDep(rs.getDouble(17));
-					 * res.setTheftGicOdTpNcb(rs.getDouble(18));
-					 * res.setTheftGicOdTpOtherAddon(rs.getDouble(19));
-					 * res.setTheftGicOdTpNoAddon(rs.getDouble(20));
-					 * res.setTheftGicOdOthersDep(rs.getDouble(21));
-					 * res.setTheftGicOdOthersNcb(rs.getDouble(22));
-					 * res.setTheftGicOdOthersOtherAddon(rs.getDouble(23));
-					 * res.setTheftGicOdOthersNoAddon(rs.getDouble(24));
-					 * res.setOthersGicOdComprehensiveDep(rs.getDouble(25));
-					 * res.setOthersGicOdComprehensiveNcb(rs.getDouble(26));
-					 * res.setOthersGicOdComprehensiveOtherAddon(rs.getDouble(27));
-					 * res.setOthersGicOdComprehensiveNoAddon(rs.getDouble(28));
-					 * res.setOthersGicOdTpDep(rs.getDouble(29));
-					 * res.setOthersGicOdTpNcb(rs.getDouble(30));
-					 * res.setOthersGicOdTpOtherAddon(rs.getDouble(31));
-					 * res.setOthersGicOdTpNoAddon(rs.getDouble(32));
-					 * res.setOthersGicOdOthersDep(rs.getDouble(33));
-					 * res.setOthersGicOdOthersNcb(rs.getDouble(34));
-					 * res.setOthersGicOdOthersOtherAddon(rs.getDouble(35));
-					 * res.setOthersGicOdOthersNoAddon(rs.getDouble(36));
-					 * res.setCatGicTpComprehensiveDep(rs.getDouble(37));
-					 * res.setCatGicTpComprehensiveNcb(rs.getDouble(38));
-					 * res.setCatGicTpComprehensiveOtherAddon(rs.getDouble(39));
-					 * res.setCatGicTpComprehensiveNoAddon(rs.getDouble(40));
-					 * res.setCatGicTpTpDep(rs.getDouble(41));
-					 * res.setCatGicTpTpNcb(rs.getDouble(42));
-					 * res.setCatGicTpTpOtherAddon(rs.getDouble(43));
-					 * res.setCatGicTpTpNoAddon(rs.getDouble(44));
-					 * res.setCatGicTpOthersDep(rs.getDouble(45));
-					 * res.setCatGicTpOthersNcb(rs.getDouble(46));
-					 * res.setCatGicTpOthersOtherAddon(rs.getDouble(47));
-					 * res.setCatGicTpOthersNoAddon(rs.getDouble(48));
-					 * res.setTheftGicTpComprehensiveDep(rs.getDouble(49));
-					 * res.setTheftGicTpComprehensiveNcb(rs.getDouble(50));
-					 * res.setTheftGicTpComprehensiveOtherAddon(rs.getDouble(51));
-					 * res.setTheftGicTpComprehensiveNoAddon(rs.getDouble(52));
-					 * res.setTheftGicTpTpDep(rs.getDouble(53));
-					 * res.setTheftGicTpTpNcb(rs.getDouble(54));
-					 * res.setTheftGicTpTpOtherAddon(rs.getDouble(55));
-					 * res.setTheftGicTpTpNoAddon(rs.getDouble(56));
-					 * res.setTheftGicTpOthersDep(rs.getDouble(57));
-					 * res.setTheftGicTpOthersNcb(rs.getDouble(58));
-					 * res.setTheftGicTpOthersOtherAddon(rs.getDouble(59));
-					 * res.setTheftGicTpOthersNoAddon(rs.getDouble(60));
-					 * res.setOthersGicTpComprehensiveDep(rs.getDouble(61));
-					 * res.setOthersGicTpComprehensiveNcb(rs.getDouble(62));
-					 * res.setOthersGicTpComprehensiveOtherAddon(rs.getDouble(63));
-					 * res.setOthersGicTpComprehensiveNoAddon(rs.getDouble(64));
-					 * res.setOthersGicTpTpDep(rs.getDouble(65));
-					 * res.setOthersGicTpTpNcb(rs.getDouble(66));
-					 * res.setOthersGicTpTpOtherAddon(rs.getDouble(67));
-					 * res.setOthersGicTpTpNoAddon(rs.getDouble(68));
-					 * res.setOthersGicTpOthersDep(rs.getDouble(69));
-					 * res.setOthersGicTpOthersNcb(rs.getDouble(70));
-					 * res.setOthersGicTpOthersOtherAddon(rs.getDouble(71));
-					 * res.setOthersGicTpOthersNoAddon(rs.getDouble(72));
-					 */
-//				} else if (claimParamType.equals("NIC")) {
-//					res.setNicComprehensiveDep(rs.getDouble(1));
-//					res.setNicComprehensiveNcb(rs.getDouble(2));
-//					res.setNicComprehensiveOtherAddon(rs.getDouble(3));
-//					res.setNicComprehensiveNoAddon(rs.getDouble(4));
-//					res.setNicTpDep(rs.getDouble(5));
-//					res.setNicTpNcb(rs.getDouble(6));
-//					res.setNicTpOtherAddon(rs.getDouble(7));
-//					res.setNicTpNoAddon(rs.getDouble(8));
-//					res.setNicOthersDep(rs.getDouble(9));
-//					res.setNicOthersNcb(rs.getDouble(10));
-//					res.setNicOthersOtherAddon(rs.getDouble(11));
-//					res.setNicOthersNoAddon(rs.getDouble(12));
-//					res.setNicTpComprehensiveDep(rs.getDouble(13));
-//					res.setNicTpComprehensiveNcb(rs.getDouble(14));
-//					res.setNicTpComprehensiveOtherAddon(rs.getDouble(15));
-//					res.setNicTpComprehensiveNoAddon(rs.getDouble(16));
-//					res.setNicTpTpDep(rs.getDouble(17));
-//					res.setNicTpTpNcb(rs.getDouble(18));
-//					res.setNicTpTpOtherAddon(rs.getDouble(19));
-//					res.setNicTpTpNoAddon(rs.getDouble(20));
-//					res.setNicTpOthersDep(rs.getDouble(21));
-//					res.setNicTpOthersNcb(rs.getDouble(22));
-//					res.setNicTpOthersOtherAddon(rs.getDouble(23));
-//					res.setNicTpOthersNoAddon(rs.getDouble(24));
-//					res.setNicOdComprehensiveDep(rs.getDouble(25));
-//					res.setNicOdComprehensiveNcb(rs.getDouble(26));
-//					res.setNicOdComprehensiveOtherAddon(rs.getDouble(27));
-//					res.setNicOdComprehensiveNoAddon(rs.getDouble(28));
-//					res.setNicOdTpDep(rs.getDouble(29));
-//					res.setNicOdTpNcb(rs.getDouble(30));
-//					res.setNicOdTpOtherAddon(rs.getDouble(31));
-//					res.setNicOdTpNoAddon(rs.getDouble(32));
-//					res.setNicOdOthersDep(rs.getDouble(33));
-//					res.setNicOdOthersNcb(rs.getDouble(34));
-//					res.setNicOdOthersOtherAddon(rs.getDouble(35));
-//					res.setNicOdOthersNoAddon(rs.getDouble(36));
-//				}
+				res.setRslNic(2007986700);
+				res.setRslCatNic(2000698760);
+				res.setRslTheftNic(2069876000);
+				res.setRslOtherNic(20068700);
+				res.setRslTpNic(200698700);
+
 
 		kpiResponseList.add(res);
 	}
@@ -3790,125 +4549,20 @@ public class KpiController {
 //			res.setRslTpNic(rs.getDouble(10));
 			
 			
-			res.setRslGic(20000);
-			res.setRslCatGic(20000);
-			res.setRslTheftGic(20000);
-			res.setRslOtherGic(20000);
-			res.setRslTpGic(20000);
+			res.setRslGic(2000087);
+			res.setRslCatGic(2000068);
+			res.setRslTheftGic(2000680);
+			res.setRslOtherGic(20008790);
+			res.setRslTpGic(20009860);
 			
 			
-			res.setRslNic(20000);
-			res.setRslCatNic(20000);
-			res.setRslTheftNic(20000);
-			res.setRslOtherNic(20000);
-			res.setRslTpNic(20000);
+			res.setRslNic(20007860);
+			res.setRslCatNic(20078500);
+			res.setRslTheftNic(20234000);
+			res.setRslOtherNic(2058000);
+			res.setRslTpNic(20058700);
 			
-//				if(claimParamType.equals("GIC")){
-//				res.setCatGicOdOthersOtherAddon(rs.getDouble(11));
-//				res.setCatGicOdOthersNoAddon(rs.getDouble(12));
-//				res.setTheftGicOdComprehensiveDep(rs.getDouble(13));
-//				res.setTheftGicOdComprehensiveNcb(rs.getDouble(14));
-//				res.setTheftGicOdComprehensiveOtherAddon(rs.getDouble(15));
-//				res.setTheftGicOdComprehensiveNoAddon(rs.getDouble(16));
-//				res.setTheftGicOdTpDep(rs.getDouble(17));
-//				res.setTheftGicOdTpNcb(rs.getDouble(18));
-//				res.setTheftGicOdTpOtherAddon(rs.getDouble(19));
-//				res.setTheftGicOdTpNoAddon(rs.getDouble(20));
-//				res.setTheftGicOdOthersDep(rs.getDouble(21));
-//				res.setTheftGicOdOthersNcb(rs.getDouble(22));
-//				res.setTheftGicOdOthersOtherAddon(rs.getDouble(23));
-//				res.setTheftGicOdOthersNoAddon(rs.getDouble(24));
-//				res.setOthersGicOdComprehensiveDep(rs.getDouble(25));
-//				res.setOthersGicOdComprehensiveNcb(rs.getDouble(26));
-//				res.setOthersGicOdComprehensiveOtherAddon(rs.getDouble(27));
-//				res.setOthersGicOdComprehensiveNoAddon(rs.getDouble(28));
-//				res.setOthersGicOdTpDep(rs.getDouble(29));
-//				res.setOthersGicOdTpNcb(rs.getDouble(30));
-//				res.setOthersGicOdTpOtherAddon(rs.getDouble(31));
-//				res.setOthersGicOdTpNoAddon(rs.getDouble(32));
-//				res.setOthersGicOdOthersDep(rs.getDouble(33));
-//				res.setOthersGicOdOthersNcb(rs.getDouble(34));
-//				res.setOthersGicOdOthersOtherAddon(rs.getDouble(35));
-//				res.setOthersGicOdOthersNoAddon(rs.getDouble(36));
-//				res.setCatGicTpComprehensiveDep(rs.getDouble(37));
-//				res.setCatGicTpComprehensiveNcb(rs.getDouble(38));
-//				res.setCatGicTpComprehensiveOtherAddon(rs.getDouble(39));
-//				res.setCatGicTpComprehensiveNoAddon(rs.getDouble(40));
-//				res.setCatGicTpTpDep(rs.getDouble(41));
-//				res.setCatGicTpTpNcb(rs.getDouble(42));
-//				res.setCatGicTpTpOtherAddon(rs.getDouble(43));
-//				res.setCatGicTpTpNoAddon(rs.getDouble(44));
-//				res.setCatGicTpOthersDep(rs.getDouble(45));
-//				res.setCatGicTpOthersNcb(rs.getDouble(46));
-//				res.setCatGicTpOthersOtherAddon(rs.getDouble(47));
-//				res.setCatGicTpOthersNoAddon(rs.getDouble(48));
-//				res.setTheftGicTpComprehensiveDep(rs.getDouble(49));
-//				res.setTheftGicTpComprehensiveNcb(rs.getDouble(50));
-//				res.setTheftGicTpComprehensiveOtherAddon(rs.getDouble(51));
-//				res.setTheftGicTpComprehensiveNoAddon(rs.getDouble(52));
-//				res.setTheftGicTpTpDep(rs.getDouble(53));
-//				res.setTheftGicTpTpNcb(rs.getDouble(54));
-//				res.setTheftGicTpTpOtherAddon(rs.getDouble(55));
-//				res.setTheftGicTpTpNoAddon(rs.getDouble(56));
-//				res.setTheftGicTpOthersDep(rs.getDouble(57));
-//				res.setTheftGicTpOthersNcb(rs.getDouble(58));
-//				res.setTheftGicTpOthersOtherAddon(rs.getDouble(59));
-//				res.setTheftGicTpOthersNoAddon(rs.getDouble(60));
-//				res.setOthersGicTpComprehensiveDep(rs.getDouble(61));
-//				res.setOthersGicTpComprehensiveNcb(rs.getDouble(62));
-//				res.setOthersGicTpComprehensiveOtherAddon(rs.getDouble(63));
-//				res.setOthersGicTpComprehensiveNoAddon(rs.getDouble(64));
-//				res.setOthersGicTpTpDep(rs.getDouble(65));
-//				res.setOthersGicTpTpNcb(rs.getDouble(66));
-//				res.setOthersGicTpTpOtherAddon(rs.getDouble(67));
-//				res.setOthersGicTpTpNoAddon(rs.getDouble(68));
-//				res.setOthersGicTpOthersDep(rs.getDouble(69));
-//				res.setOthersGicTpOthersNcb(rs.getDouble(70));
-//				res.setOthersGicTpOthersOtherAddon(rs.getDouble(71));
-//				res.setOthersGicTpOthersNoAddon(rs.getDouble(72));
-//				}else if(claimParamType.equals("NIC")){
-//					res.setNicComprehensiveDep(rs.getDouble(1));
-//					res.setNicComprehensiveNcb(rs.getDouble(2));
-//					res.setNicComprehensiveOtherAddon(rs.getDouble(3));
-//					res.setNicComprehensiveNoAddon(rs.getDouble(4));
-//					res.setNicTpDep(rs.getDouble(5));
-//					res.setNicTpNcb(rs.getDouble(6));
-//					res.setNicTpOtherAddon(rs.getDouble(7));
-//					res.setNicTpNoAddon(rs.getDouble(8));
-//					res.setNicOthersDep(rs.getDouble(9));
-//					res.setNicOthersNcb(rs.getDouble(10));
-//					res.setNicOthersOtherAddon(rs.getDouble(11));
-//					res.setNicOthersNoAddon(rs.getDouble(12));
-//					res.setNicTpComprehensiveDep(rs.getDouble(13));
-//					res.setNicTpComprehensiveNcb(rs.getDouble(14));
-//					res.setNicTpComprehensiveOtherAddon(rs.getDouble(15));
-//					res.setNicTpComprehensiveNoAddon(rs.getDouble(16));
-//					res.setNicTpTpDep(rs.getDouble(17));
-//					res.setNicTpTpNcb(rs.getDouble(18));
-//					res.setNicTpTpOtherAddon(rs.getDouble(19));
-//					res.setNicTpTpNoAddon(rs.getDouble(20));
-//					res.setNicTpOthersDep(rs.getDouble(21));
-//					res.setNicTpOthersNcb(rs.getDouble(22));
-//					res.setNicTpOthersOtherAddon(rs.getDouble(23));
-//					res.setNicTpOthersNoAddon(rs.getDouble(24));
-//					res.setNicOdComprehensiveDep(rs.getDouble(25));
-//					res.setNicOdComprehensiveNcb(rs.getDouble(26));
-//					res.setNicOdComprehensiveOtherAddon(rs.getDouble(27));
-//					res.setNicOdComprehensiveNoAddon(rs.getDouble(28));
-//					res.setNicOdTpDep(rs.getDouble(29));
-//					res.setNicOdTpNcb(rs.getDouble(30));
-//					res.setNicOdTpOtherAddon(rs.getDouble(31));
-//					res.setNicOdTpNoAddon(rs.getDouble(32));
-//					res.setNicOdOthersDep(rs.getDouble(33));
-//					res.setNicOdOthersNcb(rs.getDouble(34));
-//					res.setNicOdOthersOtherAddon(rs.getDouble(35));
-//					res.setNicOdOthersNoAddon(rs.getDouble(36));
-//				}
-//				
-				
-//			}
-//			
-//			
+
 				 kpiResponseList.add(res);
     }
 	    }catch(Exception e) {
