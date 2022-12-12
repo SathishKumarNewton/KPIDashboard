@@ -293,7 +293,7 @@ public List<GwpkpiResponse> getOEMwiseGwp() throws SQLException {
 		queryStr = " SELECT oem_non_oem,(CASE WHEN HIGH_END IN ('HIGHEND','High End')  THEN 'HIGHEND' ELSE 'NON_HIGHEND' END) HIGHEND,upper(fueltype),coalesce(NCB_FLAG,'N') NCB_FL,coalesce(cityname,'OTHERS'),coalesce(statename,'OTHERS'),SUM(CASE WHEN substring(inception_date,1,10) >= DATE '"+getCustomFirstDate(true,false)+"' and   substring(inception_date,1,10) <= DATE '"+getCustomLastDate(true,false)+"' THEN (GWP) ELSE 0.0 END) CM_GWP,"
 				+ "   SUM(CASE WHEN substring(inception_date,1,10) >= DATE '"+getCustomFirstDate(false,true)+"' and    substring(inception_date,1,10) <= DATE '"+getCustomLastDate(false,true)+"' THEN (GWP) ELSE 0.0 END) PM_GWP "
 						+ "  FROM(   SELECT inception_date,case when channel='OEM' then 'OEM' WHEN channel='NONE' then 'NONE' ELSE 'NON_OEM' end as oem_non_oem,HIGH_END,coalesce(c.fueltypE,a.fueltypE) as fueltype ,NCB_FLAG,b.cityname,statename,  "
-						+ " SUM(INS_GWP) GWP FROM RSDB.RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_CURRENT a LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW ON a.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  left join RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL b on RSA_DWH_CITY_MASTER_NOW.CITYCODE=b.citycode left join RSDB.RSA_DWH_MODEL_MASTER_CURRENT c on  a.modelcode=c.model_code  GROUP BY inception_date,case when channel='OEM' then 'OEM' WHEN channel='NONE' then 'NONE' ELSE 'NON_OEM' end,HIGH_END,coalesce(c.fueltypE,a.fueltypE),NCB_FLAG ,b.cityname,statename) X   group by oem_non_oem,(CASE WHEN HIGH_END IN ('HIGHEND','High End')  THEN 'HIGHEND' ELSE 'NON_HIGHEND' END),upper(fueltype),coalesce(NCB_FLAG,'N'),coalesce(cityname,'OTHERS'),coalesce(statename,'OTHERS') ";
+						+ " SUM(INS_GWP) GWP FROM RSDB.RSDB.RSA_KPI_FACT_INS_COVERAGE_NEW_CURRENT_TABLE a LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW ON a.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  left join RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL b on RSA_DWH_CITY_MASTER_NOW.CITYCODE=b.citycode left join RSDB.RSA_DWH_MODEL_MASTER_CURRENT c on  a.modelcode=c.model_code  GROUP BY inception_date,case when channel='OEM' then 'OEM' WHEN channel='NONE' then 'NONE' ELSE 'NON_OEM' end,HIGH_END,coalesce(c.fueltypE,a.fueltypE),NCB_FLAG ,b.cityname,statename) X   group by oem_non_oem,(CASE WHEN HIGH_END IN ('HIGHEND','High End')  THEN 'HIGHEND' ELSE 'NON_HIGHEND' END),upper(fueltype),coalesce(NCB_FLAG,'N'),coalesce(cityname,'OTHERS'),coalesce(statename,'OTHERS') ";
 		
 		/*queryStr = " SELECT oem_non_oem,(CASE WHEN HIGH_END IN ('HIGHEND','High End')  THEN 'HIGHEND' ELSE 'NON_HIGHEND' END) HIGHEND,upper(fueltype),coalesce(NCB_FLAG,'N') NCB_FL,coalesce(cityname,'OTHERS'),coalesce(statename,'OTHERS'),SUM(CASE WHEN substring(inception_date,1,10) >= DATE '"+getCustomFirstDate(true,false)+"' and   substring(inception_date,1,10) <= DATE '"+getCustomLastDate(true,false)+"' THEN (GWP) ELSE 0.0 END) CM_GWP,   SUM(CASE WHEN substring(inception_date,1,10) >= DATE '"+getCustomFirstDate(false,true)+"' and    substring(inception_date,1,10) <= DATE '"+getCustomLastDate(false,true)+"' THEN (GWP) ELSE 0.0 END) PM_GWP   FROM( "+
 				   " SELECT inception_date,case when channel='OEM' then 'OEM' WHEN channel='NONE' then 'NONE' ELSE 'NON_OEM' end as oem_non_oem, MM_MODELCLASSIFICATION as HIGH_END ,coalesce(MM_FUELTYPE,PPC_FUELTYPE) as fueltype ,NCB_FLAG,cityname,statename,   SUM(COVERAGE_PREIMUM) GWP FROM RSA_DWH_OEM_CLASIFICATION_FACT  GROUP BY inception_date,case when channel='OEM' then 'OEM' WHEN channel='NONE' then 'NONE' ELSE 'NON_OEM' end, MM_MODELCLASSIFICATION,coalesce(MM_FUELTYPE,PPC_FUELTYPE),NCB_FLAG ,cityname,statename "+ 
@@ -863,629 +863,549 @@ public List<PolicyCubeResponseNew> getPolicyCubeDataNew(HttpServletRequest req, 
 		return kpiResponseList;
 	}
 	
-	
-	@GetMapping("/getInsCubeDataUpdatedNew/{claimType}")
-	@ResponseBody
-public List<InsCubeResponseNew> getInsCubeDataNew(HttpServletRequest req, UserMatrixMasterRequest filterRequest, @PathVariable(value="claimType") String claimType)
-			throws SQLException {
-		Connection connection = null;
-		List<InsCubeResponseNew> kpiResponseList = new ArrayList<InsCubeResponseNew>();
-		long startTime = System.currentTimeMillis();
-		try {
-			String fromDate = filterRequest.getFromDate() == null ? "" : filterRequest.getFromDate();
-			String toDate = filterRequest.getToDate() == null ? "" : filterRequest.getToDate();
-
-			List<ProductMaster> productMasters = productMasterRepository.findAll();
-
-			/*String motorProductVals = "'" + productMasters.stream()
-					.filter(p -> p.getProductType().toLowerCase().contains("motor")).map(ProductMaster::getProductCode)
-					.collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";
-
-			String healthProductVals = "'" + productMasters.stream()
-					.filter(p -> p.getProductType().toLowerCase().contains("health")).map(ProductMaster::getProductCode)
-					.collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";*/
-
-			Driver driverManager = (Driver) Class.forName("org.apache.kylin.jdbc.Driver").newInstance();
-			Properties info = new Properties();
-			info.put("user", "ADMIN");
-			info.put("password", "KYLIN");
-			connection = driverManager
-					.connect("jdbc:kylin://" + RMSConstants.KYLIN_RS_BASE_IP_AND_PORT + "/learn_kylin", info);
-			System.out.println("Connection status -------------------------->" + connection);
-			Statement stmt = connection.createStatement();
-
-			String fromMonth = fromDate.split("/")[0];
-			String fromYear = fromDate.split("/")[1];
-			String toMonth = toDate.split("/")[0];
-			String toYear = toDate.split("/")[1];
-
-			String queryStr= "";
-			System.out.println("Query filterRequest: " + (filterRequest.getAddOnNew().equals( "Include")));
-			if(filterRequest.getAddOnNew().equals("Include")) {
-				queryStr += "SELECT "
-						+ "SUM(INS_GWP) as INS_GWP_POLICY_COMP,"
-						+ "0 as InsGwpPolicyTp,"
-						+ "0 as InsGwpPolicyOthers,"
-						+ "SUM(INS_GWP_OD) as INS_GWP_OD_POLICY_COMP,"
-						+ "0 as INS_GWP_OD_POLICY_TP,"
-						+ "0 as INS_GWP_OD_POLICY_others,"
-						+ "SUM(INS_GWP_TP) as INS_GWP_TP_POLICY_COMP,"
-						+ "0 as INS_GWP_TP_POLICY_TP,"
-						+ "0 as INS_GWP_TP_POLICY_others,"
-						+ "SUM(INS_GWP_DISCOUNT_OD) as INS_GWP_DISCOUNT_OD_POLICY_COMP,"
-						+ "0 as INS_GWP_DISCOUNT_OD_POLICY_TP,"
-						+ "0 as INS_GWP_DISCOUNT_OD_POLICY_others,"
-						+ "SUM((INS_GWP *(1-od_quota_share-od_obligatory))+(INS_GWP*od_quota_share*od_RI_COMMISSION)) as INS_NWP_POLICY_COMP,"
-						+ "0 as INS_NWP_POLICY_TP,"
-						+ "0 as INS_NWP_POLICY_others,"
-						+ "SUM((INS_GWP_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_OD*od_quota_share*od_RI_COMMISSION)) as INS_NWP_OD_POLICY_COMP,"
-						+ "0 as INS_NWP_OD_POLICY_TP,"
-						+ "0 as INS_NWP_OD_POLICY_others,"
-						+ "SUM((INS_GWP_TP *(1-od_quota_share-od_obligatory))+(INS_GWP_TP*od_quota_share*od_RI_COMMISSION)) as INS_NWP_TP_POLICY_COMP,"
-						+ "0 as INS_NWP_OD_POLICY_TP,"
-						+ "0 as INS_NWP_OD_POLICY_others,"
-						+ "SUM((INS_GWP_DISCOUNT_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_DISCOUNT_OD*od_quota_share*od_RI_COMMISSION)) as INS_NWP_DISCOUNT_OD_POLICY,"
-						+ "0 as INS_NWP_DISCOUNT_OD_POLICY_TP,"
-						+ "0 as INS_NWP_DISCOUNT_OD_POLICY_others,"
-						+ "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_COMP,"
-						+ "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_TP,"
-						+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_others,"
-						+ "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_COMP,"
-						+ "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_TP,"
-						+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_others,"
-						+ "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_COMP,"
-						+ "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_TP,"
-						+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_others,"
-						+ "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_COMP,"
-						+ "SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_TP,"
-						+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_others,"
-						+ "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_NCB *(1-od_quota_share-od_obligatory))+(INS_GWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_COMP,"
-						+ "SUM(case when aa.CATEGORY='TP' THEN (INS_NWP_NCB *(1-od_quota_share-od_obligatory))+(INS_NWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_TP,"
-						+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_NWP_NCB *(1-od_quota_share-od_obligatory))+(INS_NWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_others,"
-						+ "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_COMP,  SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_TP,  SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_others "
-						+ "FROM ( SELECT  SUM(INS_GWP) as INS_GWP  ,SUM(INS_GWP_OD) as INS_GWP_OD  ,SUM(INS_GWP_TP) as INS_GWP_TP  ,SUM(INS_GWP_DISCOUNT_OD) as INS_GWP_DISCOUNT_OD  ,SUM(INS_NWP) as INS_NWP  ,SUM(INS_NWP_OD) as INS_NWP_OD  ,SUM(INS_NWP_TP) as INS_NWP_TP  ,SUM(INS_NWP_DISCOUNT_OD) as INS_NWP_DISCOUNT_OD  ,SUM(INS_GWP_DEP) as INS_GWP_DEP  ,SUM(INS_GWP_NCB) as INS_GWP_NCB  ,SUM(INS_GWP_OTHERADDON) as INS_GWP_OTHERADDON  ,SUM(INS_NWP_DEP) as INS_NWP_DEP  ,SUM(INS_NWP_NCB) as INS_NWP_NCB  ,SUM(INS_NWP_OTHERADDON) as INS_NWP_OTHERADDON  , CATEGORY, uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code  FROM RSDB.RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_CURRENT as RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW  LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL  LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE  LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE  LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE  LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE  LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY  LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE  LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE ";
-			}
-			
-			else if(filterRequest.getAddOnNew().equals("Exclude")) {
-				System.out.println("Query filterRequest: " + (filterRequest.getAddOnNew().equals( "Exclude")));
-				queryStr += "SELECT "
-						+ "(INS_GWP_POLICY - INS_GWP_DEP_POLICY_COMP - INS_GWP_DEP_POLICY_TP - INS_GWP_DEP_POLICY_others - INS_GWP_NCB_POLICY_COMP - INS_GWP_NCB_POLICY_TP - INS_GWP_NCB_POLICY_others - INS_GWP_OTHERADDON_POLICY_COMP - INS_GWP_OTHERADDON_POLICY_TP - INS_GWP_OTHERADDON_POLICY_others) AS INS_GWP_POLICY_COMP, "
-						+ "0 as INS_GWP_POLICY_TP, "
-						+ "0 as INS_GWP_POLICY_others, "
-						+ "(INS_GWP_OD_POLICY - INS_GWP_DEP_POLICY_COMP - INS_GWP_NCB_POLICY_COMP - INS_GWP_OTHERADDON_POLICY_COMP) AS INS_GWP_OD_POLICY_COMP, "
-						+ "0 as INS_GWP_OD_POLICY_TP, "
-						+ "0 as INS_GWP_OD_POLICY_others, "
-						+ "(INS_GWP_TP_POLICY - INS_GWP_DEP_POLICY_TP - INS_GWP_NCB_POLICY_TP - INS_GWP_OTHERADDON_POLICY_TP) AS INS_GWP_TP_POLICY_COMP, "
-						+ "0 as INS_GWP_TP_POLICY_TP, "
-						+ "0 as INS_GWP_TP_POLICY_others, "
-						+ "(INS_GWP_DISCOUNT_OD_POLICY) as INS_GWP_DISCOUNT_OD_POLICY_COMP, "
-						+ "0 as INS_GWP_DISCOUNT_OD_POLICY_TP, "
-						+ "0 as INS_GWP_DISCOUNT_OD_POLICY_others, "
-						+ "(INS_NWP_POLICY - INS_NWP_DEP_POLICY_COMP - INS_NWP_DEP_POLICY_TP - INS_NWP_DEP_POLICY_others - INS_NWP_NCB_POLICY_COMP - INS_NWP_NCB_POLICY_TP - INS_NWP_NCB_POLICY_others - INS_NWP_OTHERADDON_POLICY_COMP - INS_NWP_OTHERADDON_POLICY_TP - INS_NWP_OTHERADDON_POLICY_others) AS INS_NWP_POLICY_COMP, "
-						+ "0 as INS_NWP_POLICY_TP, "
-						+ "0 as INS_NWP_POLICY_others, "
-						+ "(INS_NWP_OD_POLICY - INS_NWP_DEP_POLICY_COMP - INS_NWP_NCB_POLICY_COMP - INS_NWP_OTHERADDON_POLICY_COMP) AS INS_NWP_OD_POLICY_COMP, "
-						+ "0 as INS_NWP_OD_POLICY_TP, "
-						+ "0 as INS_NWP_OD_POLICY_others, "
-						+ "(INS_NWP_TP_POLICY - INS_NWP_DEP_POLICY_TP - INS_NWP_NCB_POLICY_TP - INS_NWP_OTHERADDON_POLICY_TP) AS INS_NWP_TP_POLICY_COMP, "
-						+ "0 as INS_NWP_TP_POLICY_TP, "
-						+ "0 as INS_NWP_TP_POLICY_others, "
-						+ "(INS_NWP_DISCOUNT_OD_POLICY) as INS_NWP_DISCOUNT_OD_POLICY_COMP, "
-						+ "0 as INS_NWP_DISCOUNT_OD_POLICY_TP, "
-						+ "0 as INS_NWP_DISCOUNT_OD_POLICY_others, "
-						+ "0 as INS_GWP_DEP_POLICY_COMP, "
-						+ "0 as INS_GWP_DEP_POLICY_TP, "
-						+ "0 as INS_GWP_DEP_POLICY_others, "
-						+ "0 as INS_GWP_NCB_POLICY_COMP, "
-						+ "0 as INS_GWP_NCB_POLICY_TP, "
-						+ "0 as INS_GWP_NCB_POLICY_others, "
-						+ "0 as INS_GWP_OTHERADDON_POLICY_COMP, "
-						+ "0 as INS_GWP_OTHERADDON_POLICY_TP, "
-						+ "0 as INS_GWP_OTHERADDON_POLICY_others, "
-						+ "0 as INS_NWP_DEP_POLICY_COMP, "
-						+ "0 as INS_NWP_DEP_POLICY_TP, "
-						+ "0 as INS_NWP_DEP_POLICY_others, "
-						+ "0 as INS_NWP_NCB_POLICY_COMP, "
-						+ "0 as INS_NWP_NCB_POLICY_TP, "
-						+ "0 as INS_NWP_NCB_POLICY_others, "
-						+ "0 as INS_NWP_OTHERADDON_POLICY_COMP, "
-						+ "0 as INS_NWP_OTHERADDON_POLICY_TP, "
-						+ "0 as INS_NWP_OTHERADDON_POLICY_others "
-						+ "FROM ( SELECT SUM(INS_GWP) as INS_GWP_POLICY, "
-						+ "SUM(INS_GWP_OD) as INS_GWP_OD_POLICY, "
-						+ "SUM(INS_GWP_TP) as INS_GWP_TP_POLICY, "
-						+ "SUM(INS_GWP_DISCOUNT_OD) as INS_GWP_DISCOUNT_OD_POLICY, "
-						+ "SUM((INS_GWP *(1-od_quota_share-od_obligatory))+(INS_GWP*od_quota_share*od_RI_COMMISSION)) as INS_NWP_POLICY, "
-						+ "SUM((INS_GWP_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_OD*od_quota_share*od_RI_COMMISSION)) as INS_NWP_OD_POLICY, "
-						+ "SUM((INS_GWP_TP *(1-od_quota_share-od_obligatory))+(INS_GWP_TP*od_quota_share*od_RI_COMMISSION)) as INS_NWP_TP_POLICY, "
-						+ "SUM((INS_GWP_DISCOUNT_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_DISCOUNT_OD*od_quota_share*od_RI_COMMISSION)) as INS_NWP_DISCOUNT_OD_POLICY, "
-						+ "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_COMP, "
-						+ "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_TP, "
-						+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_others, "
-						+ "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_COMP, "
-						+ "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_TP, "
-						+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_others, "
-						+ "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_COMP, "
-						+ "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_TP, "
-						+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_others, "
-						+ "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_COMP, "
-						+ "SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_TP, "
-						+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_others, "
-						+ "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_NCB *(1-od_quota_share-od_obligatory))+(INS_GWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_COMP, "
-						+ "SUM(case when aa.CATEGORY='TP' THEN (INS_NWP_NCB *(1-od_quota_share-od_obligatory))+(INS_NWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_TP, "
-						+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_NWP_NCB *(1-od_quota_share-od_obligatory))+(INS_NWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_others, "
-						+ "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_COMP,  SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_TP,  SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_others "
-						+ "FROM ( SELECT  SUM(INS_GWP) as INS_GWP  ,SUM(INS_GWP_OD) as INS_GWP_OD  ,SUM(INS_GWP_TP) as INS_GWP_TP  ,SUM(INS_GWP_DISCOUNT_OD) as INS_GWP_DISCOUNT_OD  ,SUM(INS_NWP) as INS_NWP  ,SUM(INS_NWP_OD) as INS_NWP_OD  ,SUM(INS_NWP_TP) as INS_NWP_TP  ,SUM(INS_NWP_DISCOUNT_OD) as INS_NWP_DISCOUNT_OD  ,SUM(INS_GWP_DEP) as INS_GWP_DEP  ,SUM(INS_GWP_NCB) as INS_GWP_NCB  ,SUM(INS_GWP_OTHERADDON) as INS_GWP_OTHERADDON  ,SUM(INS_NWP_DEP) as INS_NWP_DEP  ,SUM(INS_NWP_NCB) as INS_NWP_NCB  ,SUM(INS_NWP_OTHERADDON) as INS_NWP_OTHERADDON  , CATEGORY, uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code  FROM RSDB.RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_CURRENT as RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW  LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL  LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE  LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE  LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE  LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE  LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY  LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE  LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE ";
-				
-			}
-			else if(filterRequest.getAddOnNew().equals("Only Addon")) {
-				System.out.println("Query filterRequest: " + (filterRequest.getAddOnNew().equals( "Only Addon")));
-				queryStr += "SELECT "
-						+ "(INS_GWP_DEP_POLICY_COMP + INS_GWP_DEP_POLICY_TP + INS_GWP_DEP_POLICY_others + INS_GWP_NCB_POLICY_COMP + INS_GWP_NCB_POLICY_TP + INS_GWP_NCB_POLICY_others + INS_GWP_OTHERADDON_POLICY_COMP + INS_GWP_OTHERADDON_POLICY_TP + INS_GWP_OTHERADDON_POLICY_others) AS INS_GWP_POLICY_COMP, "
-						+ "0 as INS_GWP_POLICY_TP, "
-						+ "0 as INS_GWP_POLICY_others, "
-						+ "(INS_GWP_DEP_POLICY_COMP + INS_GWP_NCB_POLICY_COMP + INS_GWP_OTHERADDON_POLICY_COMP) AS INS_GWP_OD_POLICY_COMP, "
-						+ "0 as INS_GWP_OD_POLICY_TP, "
-						+ "0 as INS_GWP_OD_POLICY_others, "
-						+ "(INS_GWP_DEP_POLICY_TP + INS_GWP_NCB_POLICY_TP + INS_GWP_OTHERADDON_POLICY_TP) AS INS_GWP_TP_POLICY_COMP, "
-						+ "0 as INS_GWP_TP_POLICY_TP, "
-						+ "0 as INS_GWP_TP_POLICY_others, "
-						+ "(INS_GWP_DISCOUNT_OD_POLICY) as INS_GWP_DISCOUNT_OD_POLICY_COMP, "
-						+ "0 as INS_GWP_DISCOUNT_OD_POLICY_TP, "
-						+ "0 as INS_GWP_DISCOUNT_OD_POLICY_others, "
-						+ "(INS_NWP_DEP_POLICY_COMP + INS_NWP_DEP_POLICY_TP + INS_NWP_DEP_POLICY_others + INS_NWP_NCB_POLICY_COMP + INS_NWP_NCB_POLICY_TP + INS_NWP_NCB_POLICY_others + INS_NWP_OTHERADDON_POLICY_COMP + INS_NWP_OTHERADDON_POLICY_TP + INS_NWP_OTHERADDON_POLICY_others) AS INS_NWP_POLICY_COMP, "
-						+ "0 as INS_NWP_POLICY_TP, "
-						+ "0 as INS_NWP_POLICY_others, "
-						+ "(INS_NWP_DEP_POLICY_COMP + INS_NWP_NCB_POLICY_COMP + INS_NWP_OTHERADDON_POLICY_COMP) AS INS_NWP_OD_POLICY_COMP, "
-						+ "0 as INS_NWP_OD_POLICY_TP, "
-						+ "0 as INS_NWP_OD_POLICY_others, "
-						+ "(INS_NWP_DEP_POLICY_TP + INS_NWP_NCB_POLICY_TP + INS_NWP_OTHERADDON_POLICY_TP) AS INS_NWP_TP_POLICY_COMP, "
-						+ "0 as INS_NWP_TP_POLICY_TP, "
-						+ "0 as INS_NWP_TP_POLICY_others, "
-						+ "(INS_NWP_DISCOUNT_OD_POLICY) as INS_NWP_DISCOUNT_OD_POLICY_COMP, "
-						+ "0 as INS_NWP_DISCOUNT_OD_POLICY_TP, "
-						+ "0 as INS_NWP_DISCOUNT_OD_POLICY_others, "
-						+ "0 as INS_GWP_DEP_POLICY_COMP, "
-						+ "0 as INS_GWP_DEP_POLICY_TP, "
-						+ "0 as INS_GWP_DEP_POLICY_others, "
-						+ "0 as INS_GWP_NCB_POLICY_COMP, "
-						+ "0 as INS_GWP_NCB_POLICY_TP, "
-						+ "0 as INS_GWP_NCB_POLICY_others, "
-						+ "0 as INS_GWP_OTHERADDON_POLICY_COMP, "
-						+ "0 as INS_GWP_OTHERADDON_POLICY_TP, "
-						+ "0 as INS_GWP_OTHERADDON_POLICY_others, "
-						+ "0 as INS_NWP_DEP_POLICY_COMP, "
-						+ "0 as INS_NWP_DEP_POLICY_TP, "
-						+ "0 as INS_NWP_DEP_POLICY_others, "
-						+ "0 as INS_NWP_NCB_POLICY_COMP, "
-						+ "0 as INS_NWP_NCB_POLICY_TP, "
-						+ "0 as INS_NWP_NCB_POLICY_others, "
-						+ "0 as INS_NWP_OTHERADDON_POLICY_COMP, "
-						+ "0 as INS_NWP_OTHERADDON_POLICY_TP, "
-						+ "0 as INS_NWP_OTHERADDON_POLICY_others "
-						+ "FROM ( SELECT SUM(INS_GWP) as INS_GWP_POLICY, "
-						+ "SUM(INS_GWP_OD) as INS_GWP_OD_POLICY, "
-						+ "SUM(INS_GWP_TP) as INS_GWP_TP_POLICY, "
-						+ "SUM(INS_GWP_DISCOUNT_OD) as INS_GWP_DISCOUNT_OD_POLICY, "
-						+ "SUM((INS_GWP *(1-od_quota_share-od_obligatory))+(INS_GWP*od_quota_share*od_RI_COMMISSION)) as INS_NWP_POLICY, "
-						+ "SUM((INS_GWP_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_OD*od_quota_share*od_RI_COMMISSION)) as INS_NWP_OD_POLICY, "
-						+ "SUM((INS_GWP_TP *(1-od_quota_share-od_obligatory))+(INS_GWP_TP*od_quota_share*od_RI_COMMISSION)) as INS_NWP_TP_POLICY, "
-						+ "SUM((INS_GWP_DISCOUNT_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_DISCOUNT_OD*od_quota_share*od_RI_COMMISSION)) as INS_NWP_DISCOUNT_OD_POLICY, "
-						+ "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_COMP, "
-						+ "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_TP, "
-						+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_others, "
-						+ "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_COMP, "
-						+ "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_TP, "
-						+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_others, "
-						+ "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_COMP, "
-						+ "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_TP, "
-						+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_others, "
-						+ "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_COMP, "
-						+ "SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_TP, "
-						+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_others, "
-						+ "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_NCB *(1-od_quota_share-od_obligatory))+(INS_GWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_COMP, "
-						+ "SUM(case when aa.CATEGORY='TP' THEN (INS_NWP_NCB *(1-od_quota_share-od_obligatory))+(INS_NWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_TP, "
-						+ "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_NWP_NCB *(1-od_quota_share-od_obligatory))+(INS_NWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_others, "
-						+ "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_COMP,  SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_TP,  SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_others "
-						+ "FROM ( SELECT  SUM(INS_GWP) as INS_GWP  ,SUM(INS_GWP_OD) as INS_GWP_OD  ,SUM(INS_GWP_TP) as INS_GWP_TP  ,SUM(INS_GWP_DISCOUNT_OD) as INS_GWP_DISCOUNT_OD  ,SUM(INS_NWP) as INS_NWP  ,SUM(INS_NWP_OD) as INS_NWP_OD  ,SUM(INS_NWP_TP) as INS_NWP_TP  ,SUM(INS_NWP_DISCOUNT_OD) as INS_NWP_DISCOUNT_OD  ,SUM(INS_GWP_DEP) as INS_GWP_DEP  ,SUM(INS_GWP_NCB) as INS_GWP_NCB  ,SUM(INS_GWP_OTHERADDON) as INS_GWP_OTHERADDON  ,SUM(INS_NWP_DEP) as INS_NWP_DEP  ,SUM(INS_NWP_NCB) as INS_NWP_NCB  ,SUM(INS_NWP_OTHERADDON) as INS_NWP_OTHERADDON  , CATEGORY, uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code  FROM RSDB.RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_CURRENT as RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW  LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL  LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE  LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE  LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE  LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE  LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY  LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE  LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE ";
-			}
-			
-			
-			String finstartDate = fromYear + "-" + fromMonth + "-01";
-			String finEndDate = toYear + "-" + toMonth + "-31";
-			
-			
-			if(claimType.equalsIgnoreCase("R")){
-				queryStr += " WHERE  ";
-				queryStr += getFinCondQuery(Integer.valueOf(fromMonth),Integer.valueOf(toMonth),Integer.valueOf(fromYear),Integer.valueOf(toYear));
-
-			}else if(claimType.equalsIgnoreCase("U")){
-				
-				queryStr += " WHERE SUBSTRING(inception_date,1,10) >='"+finstartDate+"' and SUBSTRING(inception_date,1,10) <='"+finEndDate+"' ";
-			}
-			
-			if (filterRequest != null && filterRequest.getPolicyTypes() != null
-					&& !filterRequest.getPolicyTypes().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getPolicyTypes().size(); i++) {
-					vals += "'" + filterRequest.getPolicyTypes().get(i).trim() + "'";
-					if (i != filterRequest.getPolicyTypes().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_DWH_COVERCODE_MASTER.CATEGORY) in (" + vals + ")";
-			}
-				
-			if (filterRequest != null && filterRequest.getBTypeNow() != null
-					&& !filterRequest.getBTypeNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getBTypeNow().size(); i++) {
-					vals += "'" + filterRequest.getBTypeNow().get(i).trim() + "'";
-					if (i != filterRequest.getBTypeNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BUSINESS_TYPE) in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getChannelNow() != null
-					&& !filterRequest.getChannelNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getChannelNow().size(); i++) {
-					vals += "'" + filterRequest.getChannelNow().get(i).trim() + "'";
-					if (i != filterRequest.getChannelNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CHANNEL) in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getSubChannelNow() != null
-					&& !filterRequest.getSubChannelNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getSubChannelNow().size(); i++) {
-					vals += "'" + filterRequest.getSubChannelNow().get(i).trim() + "'";
-					if (i != filterRequest.getSubChannelNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUB_CHANNEL) in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getMakeNow() != null
-					&& !filterRequest.getMakeNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMakeNow().size(); i++) {
-					vals += "'" + filterRequest.getMakeNow().get(i).trim() + "'";
-					if (i != filterRequest.getMakeNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MAKE) in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getModelGroupNow() != null
-					&& !filterRequest.getModelGroupNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getModelGroupNow().size(); i++) {
-					vals += "'" + filterRequest.getModelGroupNow().get(i).trim() + "'";
-					if (i != filterRequest.getModelGroupNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELGROUP) in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getFuelTypeNow() != null
-					&& !filterRequest.getFuelTypeNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getFuelTypeNow().size(); i++) {
-					vals += "'" + filterRequest.getFuelTypeNow().get(i).trim() + "'";
-					if (i != filterRequest.getFuelTypeNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and coalesce(RSA_DWH_MODEL_MASTER_CURRENT.FUELTYPE,'N') in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getStateGroupNow() != null
-					&& !filterRequest.getStateGroupNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getStateGroupNow().size(); i++) {
-					vals += "'" + filterRequest.getStateGroupNow().get(i).trim() + "'";
-					if (i != filterRequest.getStateGroupNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_DWH_CITY_GROUPING_MASTER_FINAL.STATE_GROUPING) in (" + vals + ")";
-			}
-			if (filterRequest != null && filterRequest.getNcbNow() != null
-					&& !filterRequest.getNcbNow().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getNcbNow().size(); i++) {
-					vals += "'" + filterRequest.getNcbNow().get(i).trim() + "'";
-					if (i != filterRequest.getNcbNow().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.NCB_FLAG) in (" + vals + ")";
-			}
-
-			
-			if (filterRequest != null && filterRequest.getMotorChannel() != null
-					&& !filterRequest.getMotorChannel().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorChannel().size(); i++) {
-					vals += "'" + filterRequest.getMotorChannel().get(i).trim() + "'";
-					if (i != filterRequest.getMotorChannel().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CHANNEL) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorSubChannel() != null
-					&& !filterRequest.getMotorSubChannel().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorSubChannel().size(); i++) {
-					vals += "'" + filterRequest.getMotorSubChannel().get(i).trim() + "'";
-					if (i != filterRequest.getMotorSubChannel().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUB_CHANNEL) in (" + vals + ")";
-			}
-
-			/*if (filterRequest != null && filterRequest.getMotorRegion() != null
-					&& !filterRequest.getMotorRegion().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorRegion().size(); i++) {
-					vals += "'" + filterRequest.getMotorRegion().get(i).trim() + "'";
-					if (i != filterRequest.getMotorRegion().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(KPI_BRANCH_MASTER.REGION) in (" + vals + ")";
-			}*/
-			
-			if (filterRequest != null && filterRequest.getMotorZone() != null
-					&& !filterRequest.getMotorZone().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorZone().size(); i++) {
-					vals += "'" + filterRequest.getMotorZone().get(i).trim() + "'";
-					if (i != filterRequest.getMotorZone().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(KPI_BRANCH_MASTER.ZONE) in (" + vals + ")";
-			}
-			
-			if (filterRequest != null && filterRequest.getMotorCluster() != null
-					&& !filterRequest.getMotorCluster().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorCluster().size(); i++) {
-					vals += "'" + filterRequest.getMotorCluster().get(i).trim() + "'";
-					if (i != filterRequest.getMotorCluster().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorState() != null
-					&& !filterRequest.getMotorState().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorState().size(); i++) {
-					vals += "'" + filterRequest.getMotorState().get(i).trim() + "'";
-					if (i != filterRequest.getMotorState().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorCity() != null
-					&& !filterRequest.getMotorCity().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorCity().size(); i++) {
-					vals += "'" + filterRequest.getMotorCity().get(i).trim() + "'";
-					if (i != filterRequest.getMotorCity().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorBranch() != null
-					&& !filterRequest.getMotorBranch().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorBranch().size(); i++) {
-					vals += "'" + filterRequest.getMotorBranch().get(i).trim() + "'";
-					if (i != filterRequest.getMotorBranch().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BRANCH_CODE) in (" + vals + ")";
-			}
-			
-			if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
-					&& !filterRequest.getMotorIntermediaryCode().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorIntermediaryCode().size(); i++) {
-					vals += "'" + filterRequest.getMotorIntermediaryCode().get(i).trim() + "'";
-					if (i != filterRequest.getMotorIntermediaryCode().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.AGENT_CODE) in (" + vals + ")";
-			}
-			
-			if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
-					&& !filterRequest.getMotorIntermediaryName().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorIntermediaryName().size(); i++) {
-					vals += "'" + filterRequest.getMotorIntermediaryName().get(i).trim() + "'";
-					if (i != filterRequest.getMotorIntermediaryName().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in (" + vals + ")";
-			}
-
-			if (filterRequest != null && filterRequest.getMotorFuelType() != null
-					&& !filterRequest.getMotorFuelType().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorFuelType().size(); i++) {
-					vals += "'" + filterRequest.getMotorFuelType().get(i).trim() + "'";
-					if (i != filterRequest.getMotorFuelType().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.FUELTYPE) in (" + vals + ")";
-			}
-			
-			if (filterRequest != null && filterRequest.getMotorNcbFlag() != null
-					&& !filterRequest.getMotorNcbFlag().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getMotorNcbFlag().size(); i++) {
-					vals += "'" + filterRequest.getMotorNcbFlag().get(i).trim() + "'";
-					if (i != filterRequest.getMotorNcbFlag().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.NCB_FLAG) in (" + vals + ")";
-			}
-			
-			/*if (filterRequest != null && filterRequest.getMotorCarType() != null
-					&& !filterRequest.getMotorCarType().isEmpty()) {
-				String vals = "'HIGHEND','High End'";
-				for (int i = 0; i < filterRequest.getMotorCarType().size(); i++) {
-					
-					if(filterRequest.getMotorCarType().get(i).trim().equals("HE")){
-						if (i != filterRequest.getMotorNcbFlag().size() - 1) {
-							vals += ",";
-						}
-						queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + vals + ")";
-					}else{
-						queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) not in (" + vals + ")";
-					}
-				
-					System.out.println("HE query------------------------------ " + queryStr);
-					
-				}
-				
-			}*/
-			
-			if (filterRequest != null && filterRequest.getMotorCarType() != null
-					&& !filterRequest.getMotorCarType().isEmpty()) {
-				String vals = "'HIGHEND','High End'";
-				String nheVals = "'Sling','OIB','OIB PS','Xcd','Others','SS PS'";
-				int cvalcounter = 0,cvalNHEcounter = 0;
-				for (int i = 0; i < filterRequest.getMotorCarType().size(); i++) {
-					
-					 if(filterRequest.getMotorCarType().get(i).trim().equals("HE")){
-						 if(cvalcounter==0)
-						queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + vals + ")";
-						 cvalcounter++;
-					 }else if(filterRequest.getMotorCarType().get(i).trim().equals("NHE")){
-						if(cvalNHEcounter==0)
-						queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + nheVals + ")";
-						cvalNHEcounter++;
-					 }
-				
-					System.out.println("HE query------------------------------ " + queryStr);
-					
-				}
-				
-			}
-			
-
-			/*queryStr += " group by category ) x";*/
-			if(filterRequest.getAddOnNew().equals("Include")){
-				queryStr += " group by category,uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code ) aa, (select r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE,sum(r.OD_OBLIGATORY) OD_OBLIGATORY,sum(r.OD_QUOTA_SHARE) OD_QUOTA_SHARE,sum(OD_RI_COMMISSION) OD_RI_COMMISSION,sum(r.TP_OBLIGATORY) TP_OBLIGATORY,sum(r.TP_QUOTA_SHARE) TP_QUOTA_SHARE,sum(TP_RI_COMMISSION) TP_RI_COMMISSION   from rsa_dwh_ri_obligatory_master1_new r group by r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE) bb where aa.uw_year=bb.underwriting_year and aa.product_Code=bb.xgen_productcode";
-			}else if(filterRequest.getAddOnNew().equals("Exclude")){
-				queryStr += " group by category,uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code ) aa, (select r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE,sum(r.OD_OBLIGATORY) OD_OBLIGATORY,sum(r.OD_QUOTA_SHARE) OD_QUOTA_SHARE,sum(OD_RI_COMMISSION) OD_RI_COMMISSION,sum(r.TP_OBLIGATORY) TP_OBLIGATORY,sum(r.TP_QUOTA_SHARE) TP_QUOTA_SHARE,sum(TP_RI_COMMISSION) TP_RI_COMMISSION   from rsa_dwh_ri_obligatory_master1_new r group by r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE) bb where aa.uw_year=bb.underwriting_year and aa.product_Code=bb.xgen_productcode)mm";
-			}else if(filterRequest.getAddOnNew().equals("Only Addon")){
-				queryStr += " group by category,uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code ) aa, (select r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE,sum(r.OD_OBLIGATORY) OD_OBLIGATORY,sum(r.OD_QUOTA_SHARE) OD_QUOTA_SHARE,sum(OD_RI_COMMISSION) OD_RI_COMMISSION,sum(r.TP_OBLIGATORY) TP_OBLIGATORY,sum(r.TP_QUOTA_SHARE) TP_QUOTA_SHARE,sum(TP_RI_COMMISSION) TP_RI_COMMISSION   from rsa_dwh_ri_obligatory_master1_new r group by r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE) bb where aa.uw_year=bb.underwriting_year and aa.product_Code=bb.xgen_productcode)mm";
-			}
-			
-//			
-//			queryStr += "group by category,uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code ) aa, (select r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE,sum(r.OD_OBLIGATORY) OD_OBLIGATORY,sum(r.OD_QUOTA_SHARE) OD_QUOTA_SHARE,sum(OD_RI_COMMISSION) OD_RI_COMMISSION,sum(r.TP_OBLIGATORY) TP_OBLIGATORY,sum(r.TP_QUOTA_SHARE) TP_QUOTA_SHARE,sum(TP_RI_COMMISSION) TP_RI_COMMISSION   from rsa_dwh_ri_obligatory_master1_new r group by r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE) bb "
-//			+"where aa.uw_year = bb.underwriting_year "
-//			+"and aa.product_Code = bb.xgen_productcode";
-//			
-			
-			
-			/*queryStr += " group by category,uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code ) aa,"
-					+ " (select r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE,sum(r.OD_OBLIGATORY) OD_OBLIGATORY,sum(r.OD_QUOTA_SHARE) OD_QUOTA_SHARE,sum(OD_RI_COMMISSION) OD_RI_COMMISSION,sum(r.TP_OBLIGATORY) TP_OBLIGATORY,sum(r.TP_QUOTA_SHARE) TP_QUOTA_SHARE,sum(TP_RI_COMMISSION) TP_RI_COMMISSION  "
-					+ " from rsa_dwh_ri_obligatory_master1_new r "
-					+ "group by r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE) bb "
-					+ "where aa.uw_year=bb.underwriting_year and aa.product_Code=bb.xgen_productcode";*/
-
-			System.out.println("queryStr------------------------------ NWP " + queryStr);
-			ResultSet rs = stmt.executeQuery(queryStr);
-			System.out.println("START------------------------------ ");
-
-			// jsArray = convertToJSON(rs);
-
-			while (rs.next()) {
-
-				InsCubeResponseNew res = new InsCubeResponseNew();
-				
-				res.setInsGwpPolicyComprehensive(rs.getDouble(1));
-				res.setInsGwpPolicyTp(rs.getDouble(2));
-				res.setInsGwpPolicyOthers(rs.getDouble(3));
-				res.setInsGwpOdPolicyComprehensive(rs.getDouble(4));
-				res.setInsGwpOdPolicyTp(rs.getDouble(5));
-				res.setInsGwpOdPolicyOthers(rs.getDouble(6));
-				res.setInsGwpTpPolicyComprehensive(rs.getDouble(7));
-				res.setInsGwpTpPolicyTp(rs.getDouble(8));
-				res.setInsGwpTpPolicyOthers(rs.getDouble(9));
-				res.setInsGwpDiscountPolicyComprehensive(rs.getDouble(10));
-				res.setInsGwpDiscountPolicyTp(rs.getDouble(11));
-				res.setInsGwpDiscountPolicyOthers(rs.getDouble(12));
-				
-				res.setInsNwpPolicyComprehensive(rs.getDouble(13));
-				res.setInsNwpPolicyTp(rs.getDouble(14));
-				res.setInsNwpPolicyOthers(rs.getDouble(5));
-				res.setInsNwpOdPolicyComprehensive(rs.getDouble(16));
-				res.setInsNwpOdPolicyTp(rs.getDouble(17));
-				res.setInsNwpOdPolicyOthers(rs.getDouble(18));
-				res.setInsNwpTpPolicyComprehensive(rs.getDouble(19));
-				res.setInsNwpTpPolicyTp(rs.getDouble(20));
-				res.setInsNwpTpPolicyOthers(rs.getDouble(21));
-				res.setInsNwpDiscountPolicyComprehensive(rs.getDouble(21));
-				res.setInsNwpDiscountPolicyTp(rs.getDouble(23));
-				res.setInsNwpDiscountPolicyOthers(rs.getDouble(24));
-				
-				res.setInsGwpDepPolicyComprehensive(rs.getDouble(25));
-				res.setInsGwpDepPolicyTp(rs.getDouble(26));
-				res.setInsGwpDepPolicyOthers(rs.getDouble(27));
-				res.setInsGwpNcbPolicyComprehensive(rs.getDouble(28));
-				res.setInsGwpNcbPolicyTp(rs.getDouble(29));
-				res.setInsGwpNcbPolicyOthers(rs.getDouble(30));
-				res.setInsGwpOtherAddonPolicyComprehensive(rs.getDouble(31));
-				res.setInsGwpOtherAddonPolicyTp(rs.getDouble(32));
-				res.setInsGwpOtherAddonPolicyOthers(rs.getDouble(33));
-				
-				res.setInsNwpDepPolicyComprehensive(rs.getDouble(34));
-				res.setInsNwpDepPolicyTp(rs.getDouble(35));
-				res.setInsNwpDepPolicyOthers(rs.getDouble(36));
-				res.setInsNwpNcbPolicyComprehensive(rs.getDouble(37));
-				res.setInsNwpNcbPolicyTp(rs.getDouble(38));
-				res.setInsNwpNcbPolicyOthers(rs.getDouble(39));
-				res.setInsNwpOtherAddonPolicyComprehensive(rs.getDouble(40));
-				res.setInsNwpOtherAddonPolicyTp(rs.getDouble(41));
-				res.setInsNwpOtherAddonPolicyOthers(rs.getDouble(42));
-				
-				kpiResponseList.add(res);
-			}
-
-			System.out.println("Query execution time " + (System.currentTimeMillis() - startTime));
-		} catch (Exception e) {
-			System.out.println("kylinDataSource initialize error, ex: " + e);
-			System.out.println();
-			e.printStackTrace();
-		} finally {
-			connection.close();
-		}
-		return kpiResponseList;
-	}
-
+	/*
+	 * @GetMapping("/getInsCubeDataUpdatedNew/{claimType}")
+	 * 
+	 * @ResponseBody public List<InsCubeResponseNew>
+	 * getInsCubeDataNew(HttpServletRequest req, UserMatrixMasterRequest
+	 * filterRequest, @PathVariable(value="claimType") String claimType) throws
+	 * SQLException { Connection connection = null; List<InsCubeResponseNew>
+	 * kpiResponseList = new ArrayList<InsCubeResponseNew>(); long startTime =
+	 * System.currentTimeMillis(); try { String fromDate =
+	 * filterRequest.getFromDate() == null ? "" : filterRequest.getFromDate();
+	 * String toDate = filterRequest.getToDate() == null ? "" :
+	 * filterRequest.getToDate();
+	 * 
+	 * List<ProductMaster> productMasters = productMasterRepository.findAll();
+	 * 
+	 * String motorProductVals = "'" + productMasters.stream() .filter(p ->
+	 * p.getProductType().toLowerCase().contains("motor")).map(ProductMaster::
+	 * getProductCode)
+	 * .collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) +
+	 * "'";
+	 * 
+	 * String healthProductVals = "'" + productMasters.stream() .filter(p ->
+	 * p.getProductType().toLowerCase().contains("health")).map(ProductMaster::
+	 * getProductCode)
+	 * .collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) +
+	 * "'";
+	 * 
+	 * Driver driverManager = (Driver)
+	 * Class.forName("org.apache.kylin.jdbc.Driver").newInstance(); Properties info
+	 * = new Properties(); info.put("user", "ADMIN"); info.put("password", "KYLIN");
+	 * connection = driverManager .connect("jdbc:kylin://" +
+	 * RMSConstants.KYLIN_RS_BASE_IP_AND_PORT + "/learn_kylin", info);
+	 * System.out.println("Connection status -------------------------->" +
+	 * connection); Statement stmt = connection.createStatement();
+	 * 
+	 * String fromMonth = fromDate.split("/")[0]; String fromYear =
+	 * fromDate.split("/")[1]; String toMonth = toDate.split("/")[0]; String toYear
+	 * = toDate.split("/")[1];
+	 * 
+	 * String queryStr= ""; System.out.println("Query filterRequest: " +
+	 * (filterRequest.getAddOnNew().equals( "Include")));
+	 * if(filterRequest.getAddOnNew().equals("Include")) { queryStr += "SELECT " +
+	 * "SUM(INS_GWP) as INS_GWP_POLICY_COMP," + "0 as InsGwpPolicyTp," +
+	 * "0 as InsGwpPolicyOthers," + "SUM(INS_GWP_OD) as INS_GWP_OD_POLICY_COMP," +
+	 * "0 as INS_GWP_OD_POLICY_TP," + "0 as INS_GWP_OD_POLICY_others," +
+	 * "SUM(INS_GWP_TP) as INS_GWP_TP_POLICY_COMP," + "0 as INS_GWP_TP_POLICY_TP," +
+	 * "0 as INS_GWP_TP_POLICY_others," +
+	 * "SUM(INS_GWP_DISCOUNT_OD) as INS_GWP_DISCOUNT_OD_POLICY_COMP," +
+	 * "0 as INS_GWP_DISCOUNT_OD_POLICY_TP," +
+	 * "0 as INS_GWP_DISCOUNT_OD_POLICY_others," +
+	 * "SUM((INS_GWP *(1-od_quota_share-od_obligatory))+(INS_GWP*od_quota_share*od_RI_COMMISSION)) as INS_NWP_POLICY_COMP,"
+	 * + "0 as INS_NWP_POLICY_TP," + "0 as INS_NWP_POLICY_others," +
+	 * "SUM((INS_GWP_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_OD*od_quota_share*od_RI_COMMISSION)) as INS_NWP_OD_POLICY_COMP,"
+	 * + "0 as INS_NWP_OD_POLICY_TP," + "0 as INS_NWP_OD_POLICY_others," +
+	 * "SUM((INS_GWP_TP *(1-od_quota_share-od_obligatory))+(INS_GWP_TP*od_quota_share*od_RI_COMMISSION)) as INS_NWP_TP_POLICY_COMP,"
+	 * + "0 as INS_NWP_OD_POLICY_TP," + "0 as INS_NWP_OD_POLICY_others," +
+	 * "SUM((INS_GWP_DISCOUNT_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_DISCOUNT_OD*od_quota_share*od_RI_COMMISSION)) as INS_NWP_DISCOUNT_OD_POLICY,"
+	 * + "0 as INS_NWP_DISCOUNT_OD_POLICY_TP," +
+	 * "0 as INS_NWP_DISCOUNT_OD_POLICY_others," +
+	 * "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_COMP,"
+	 * +
+	 * "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_TP,"
+	 * +
+	 * "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_others,"
+	 * +
+	 * "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_COMP,"
+	 * +
+	 * "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_TP,"
+	 * +
+	 * "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_others,"
+	 * +
+	 * "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_COMP,"
+	 * +
+	 * "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_TP,"
+	 * +
+	 * "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_others,"
+	 * +
+	 * "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_COMP,"
+	 * +
+	 * "SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_TP,"
+	 * +
+	 * "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_others,"
+	 * +
+	 * "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_NCB *(1-od_quota_share-od_obligatory))+(INS_GWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_COMP,"
+	 * +
+	 * "SUM(case when aa.CATEGORY='TP' THEN (INS_NWP_NCB *(1-od_quota_share-od_obligatory))+(INS_NWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_TP,"
+	 * +
+	 * "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_NWP_NCB *(1-od_quota_share-od_obligatory))+(INS_NWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_others,"
+	 * +
+	 * "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_COMP,  SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_TP,  SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_others "
+	 * +
+	 * "FROM ( SELECT  SUM(INS_GWP) as INS_GWP  ,SUM(INS_GWP_OD) as INS_GWP_OD  ,SUM(INS_GWP_TP) as INS_GWP_TP  ,SUM(INS_GWP_DISCOUNT_OD) as INS_GWP_DISCOUNT_OD  ,SUM(INS_NWP) as INS_NWP  ,SUM(INS_NWP_OD) as INS_NWP_OD  ,SUM(INS_NWP_TP) as INS_NWP_TP  ,SUM(INS_NWP_DISCOUNT_OD) as INS_NWP_DISCOUNT_OD  ,SUM(INS_GWP_DEP) as INS_GWP_DEP  ,SUM(INS_GWP_NCB) as INS_GWP_NCB  ,SUM(INS_GWP_OTHERADDON) as INS_GWP_OTHERADDON  ,SUM(INS_NWP_DEP) as INS_NWP_DEP  ,SUM(INS_NWP_NCB) as INS_NWP_NCB  ,SUM(INS_NWP_OTHERADDON) as INS_NWP_OTHERADDON  , CATEGORY, uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code  FROM RSDB.RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_CURRENT as RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW  LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL  LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE  LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE  LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE  LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE  LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY  LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE  LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE "
+	 * ; }
+	 * 
+	 * else if(filterRequest.getAddOnNew().equals("Exclude")) {
+	 * System.out.println("Query filterRequest: " +
+	 * (filterRequest.getAddOnNew().equals( "Exclude"))); queryStr += "SELECT " +
+	 * "(INS_GWP_POLICY - INS_GWP_DEP_POLICY_COMP - INS_GWP_DEP_POLICY_TP - INS_GWP_DEP_POLICY_others - INS_GWP_NCB_POLICY_COMP - INS_GWP_NCB_POLICY_TP - INS_GWP_NCB_POLICY_others - INS_GWP_OTHERADDON_POLICY_COMP - INS_GWP_OTHERADDON_POLICY_TP - INS_GWP_OTHERADDON_POLICY_others) AS INS_GWP_POLICY_COMP, "
+	 * + "0 as INS_GWP_POLICY_TP, " + "0 as INS_GWP_POLICY_others, " +
+	 * "(INS_GWP_OD_POLICY - INS_GWP_DEP_POLICY_COMP - INS_GWP_NCB_POLICY_COMP - INS_GWP_OTHERADDON_POLICY_COMP) AS INS_GWP_OD_POLICY_COMP, "
+	 * + "0 as INS_GWP_OD_POLICY_TP, " + "0 as INS_GWP_OD_POLICY_others, " +
+	 * "(INS_GWP_TP_POLICY - INS_GWP_DEP_POLICY_TP - INS_GWP_NCB_POLICY_TP - INS_GWP_OTHERADDON_POLICY_TP) AS INS_GWP_TP_POLICY_COMP, "
+	 * + "0 as INS_GWP_TP_POLICY_TP, " + "0 as INS_GWP_TP_POLICY_others, " +
+	 * "(INS_GWP_DISCOUNT_OD_POLICY) as INS_GWP_DISCOUNT_OD_POLICY_COMP, " +
+	 * "0 as INS_GWP_DISCOUNT_OD_POLICY_TP, " +
+	 * "0 as INS_GWP_DISCOUNT_OD_POLICY_others, " +
+	 * "(INS_NWP_POLICY - INS_NWP_DEP_POLICY_COMP - INS_NWP_DEP_POLICY_TP - INS_NWP_DEP_POLICY_others - INS_NWP_NCB_POLICY_COMP - INS_NWP_NCB_POLICY_TP - INS_NWP_NCB_POLICY_others - INS_NWP_OTHERADDON_POLICY_COMP - INS_NWP_OTHERADDON_POLICY_TP - INS_NWP_OTHERADDON_POLICY_others) AS INS_NWP_POLICY_COMP, "
+	 * + "0 as INS_NWP_POLICY_TP, " + "0 as INS_NWP_POLICY_others, " +
+	 * "(INS_NWP_OD_POLICY - INS_NWP_DEP_POLICY_COMP - INS_NWP_NCB_POLICY_COMP - INS_NWP_OTHERADDON_POLICY_COMP) AS INS_NWP_OD_POLICY_COMP, "
+	 * + "0 as INS_NWP_OD_POLICY_TP, " + "0 as INS_NWP_OD_POLICY_others, " +
+	 * "(INS_NWP_TP_POLICY - INS_NWP_DEP_POLICY_TP - INS_NWP_NCB_POLICY_TP - INS_NWP_OTHERADDON_POLICY_TP) AS INS_NWP_TP_POLICY_COMP, "
+	 * + "0 as INS_NWP_TP_POLICY_TP, " + "0 as INS_NWP_TP_POLICY_others, " +
+	 * "(INS_NWP_DISCOUNT_OD_POLICY) as INS_NWP_DISCOUNT_OD_POLICY_COMP, " +
+	 * "0 as INS_NWP_DISCOUNT_OD_POLICY_TP, " +
+	 * "0 as INS_NWP_DISCOUNT_OD_POLICY_others, " + "0 as INS_GWP_DEP_POLICY_COMP, "
+	 * + "0 as INS_GWP_DEP_POLICY_TP, " + "0 as INS_GWP_DEP_POLICY_others, " +
+	 * "0 as INS_GWP_NCB_POLICY_COMP, " + "0 as INS_GWP_NCB_POLICY_TP, " +
+	 * "0 as INS_GWP_NCB_POLICY_others, " + "0 as INS_GWP_OTHERADDON_POLICY_COMP, "
+	 * + "0 as INS_GWP_OTHERADDON_POLICY_TP, " +
+	 * "0 as INS_GWP_OTHERADDON_POLICY_others, " + "0 as INS_NWP_DEP_POLICY_COMP, "
+	 * + "0 as INS_NWP_DEP_POLICY_TP, " + "0 as INS_NWP_DEP_POLICY_others, " +
+	 * "0 as INS_NWP_NCB_POLICY_COMP, " + "0 as INS_NWP_NCB_POLICY_TP, " +
+	 * "0 as INS_NWP_NCB_POLICY_others, " + "0 as INS_NWP_OTHERADDON_POLICY_COMP, "
+	 * + "0 as INS_NWP_OTHERADDON_POLICY_TP, " +
+	 * "0 as INS_NWP_OTHERADDON_POLICY_others " +
+	 * "FROM ( SELECT SUM(INS_GWP) as INS_GWP_POLICY, " +
+	 * "SUM(INS_GWP_OD) as INS_GWP_OD_POLICY, " +
+	 * "SUM(INS_GWP_TP) as INS_GWP_TP_POLICY, " +
+	 * "SUM(INS_GWP_DISCOUNT_OD) as INS_GWP_DISCOUNT_OD_POLICY, " +
+	 * "SUM((INS_GWP *(1-od_quota_share-od_obligatory))+(INS_GWP*od_quota_share*od_RI_COMMISSION)) as INS_NWP_POLICY, "
+	 * +
+	 * "SUM((INS_GWP_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_OD*od_quota_share*od_RI_COMMISSION)) as INS_NWP_OD_POLICY, "
+	 * +
+	 * "SUM((INS_GWP_TP *(1-od_quota_share-od_obligatory))+(INS_GWP_TP*od_quota_share*od_RI_COMMISSION)) as INS_NWP_TP_POLICY, "
+	 * +
+	 * "SUM((INS_GWP_DISCOUNT_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_DISCOUNT_OD*od_quota_share*od_RI_COMMISSION)) as INS_NWP_DISCOUNT_OD_POLICY, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_COMP, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_TP, "
+	 * +
+	 * "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_others, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_COMP, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_TP, "
+	 * +
+	 * "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_others, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_COMP, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_TP, "
+	 * +
+	 * "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_others, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_COMP, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_TP, "
+	 * +
+	 * "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_others, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_NCB *(1-od_quota_share-od_obligatory))+(INS_GWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_COMP, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='TP' THEN (INS_NWP_NCB *(1-od_quota_share-od_obligatory))+(INS_NWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_TP, "
+	 * +
+	 * "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_NWP_NCB *(1-od_quota_share-od_obligatory))+(INS_NWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_others, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_COMP,  SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_TP,  SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_others "
+	 * +
+	 * "FROM ( SELECT  SUM(INS_GWP) as INS_GWP  ,SUM(INS_GWP_OD) as INS_GWP_OD  ,SUM(INS_GWP_TP) as INS_GWP_TP  ,SUM(INS_GWP_DISCOUNT_OD) as INS_GWP_DISCOUNT_OD  ,SUM(INS_NWP) as INS_NWP  ,SUM(INS_NWP_OD) as INS_NWP_OD  ,SUM(INS_NWP_TP) as INS_NWP_TP  ,SUM(INS_NWP_DISCOUNT_OD) as INS_NWP_DISCOUNT_OD  ,SUM(INS_GWP_DEP) as INS_GWP_DEP  ,SUM(INS_GWP_NCB) as INS_GWP_NCB  ,SUM(INS_GWP_OTHERADDON) as INS_GWP_OTHERADDON  ,SUM(INS_NWP_DEP) as INS_NWP_DEP  ,SUM(INS_NWP_NCB) as INS_NWP_NCB  ,SUM(INS_NWP_OTHERADDON) as INS_NWP_OTHERADDON  , CATEGORY, uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code  FROM RSDB.RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_CURRENT as RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW  LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL  LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE  LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE  LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE  LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE  LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY  LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE  LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE "
+	 * ;
+	 * 
+	 * } else if(filterRequest.getAddOnNew().equals("Only Addon")) {
+	 * System.out.println("Query filterRequest: " +
+	 * (filterRequest.getAddOnNew().equals( "Only Addon"))); queryStr += "SELECT " +
+	 * "(INS_GWP_DEP_POLICY_COMP + INS_GWP_DEP_POLICY_TP + INS_GWP_DEP_POLICY_others + INS_GWP_NCB_POLICY_COMP + INS_GWP_NCB_POLICY_TP + INS_GWP_NCB_POLICY_others + INS_GWP_OTHERADDON_POLICY_COMP + INS_GWP_OTHERADDON_POLICY_TP + INS_GWP_OTHERADDON_POLICY_others) AS INS_GWP_POLICY_COMP, "
+	 * + "0 as INS_GWP_POLICY_TP, " + "0 as INS_GWP_POLICY_others, " +
+	 * "(INS_GWP_DEP_POLICY_COMP + INS_GWP_NCB_POLICY_COMP + INS_GWP_OTHERADDON_POLICY_COMP) AS INS_GWP_OD_POLICY_COMP, "
+	 * + "0 as INS_GWP_OD_POLICY_TP, " + "0 as INS_GWP_OD_POLICY_others, " +
+	 * "(INS_GWP_DEP_POLICY_TP + INS_GWP_NCB_POLICY_TP + INS_GWP_OTHERADDON_POLICY_TP) AS INS_GWP_TP_POLICY_COMP, "
+	 * + "0 as INS_GWP_TP_POLICY_TP, " + "0 as INS_GWP_TP_POLICY_others, " +
+	 * "(INS_GWP_DISCOUNT_OD_POLICY) as INS_GWP_DISCOUNT_OD_POLICY_COMP, " +
+	 * "0 as INS_GWP_DISCOUNT_OD_POLICY_TP, " +
+	 * "0 as INS_GWP_DISCOUNT_OD_POLICY_others, " +
+	 * "(INS_NWP_DEP_POLICY_COMP + INS_NWP_DEP_POLICY_TP + INS_NWP_DEP_POLICY_others + INS_NWP_NCB_POLICY_COMP + INS_NWP_NCB_POLICY_TP + INS_NWP_NCB_POLICY_others + INS_NWP_OTHERADDON_POLICY_COMP + INS_NWP_OTHERADDON_POLICY_TP + INS_NWP_OTHERADDON_POLICY_others) AS INS_NWP_POLICY_COMP, "
+	 * + "0 as INS_NWP_POLICY_TP, " + "0 as INS_NWP_POLICY_others, " +
+	 * "(INS_NWP_DEP_POLICY_COMP + INS_NWP_NCB_POLICY_COMP + INS_NWP_OTHERADDON_POLICY_COMP) AS INS_NWP_OD_POLICY_COMP, "
+	 * + "0 as INS_NWP_OD_POLICY_TP, " + "0 as INS_NWP_OD_POLICY_others, " +
+	 * "(INS_NWP_DEP_POLICY_TP + INS_NWP_NCB_POLICY_TP + INS_NWP_OTHERADDON_POLICY_TP) AS INS_NWP_TP_POLICY_COMP, "
+	 * + "0 as INS_NWP_TP_POLICY_TP, " + "0 as INS_NWP_TP_POLICY_others, " +
+	 * "(INS_NWP_DISCOUNT_OD_POLICY) as INS_NWP_DISCOUNT_OD_POLICY_COMP, " +
+	 * "0 as INS_NWP_DISCOUNT_OD_POLICY_TP, " +
+	 * "0 as INS_NWP_DISCOUNT_OD_POLICY_others, " + "0 as INS_GWP_DEP_POLICY_COMP, "
+	 * + "0 as INS_GWP_DEP_POLICY_TP, " + "0 as INS_GWP_DEP_POLICY_others, " +
+	 * "0 as INS_GWP_NCB_POLICY_COMP, " + "0 as INS_GWP_NCB_POLICY_TP, " +
+	 * "0 as INS_GWP_NCB_POLICY_others, " + "0 as INS_GWP_OTHERADDON_POLICY_COMP, "
+	 * + "0 as INS_GWP_OTHERADDON_POLICY_TP, " +
+	 * "0 as INS_GWP_OTHERADDON_POLICY_others, " + "0 as INS_NWP_DEP_POLICY_COMP, "
+	 * + "0 as INS_NWP_DEP_POLICY_TP, " + "0 as INS_NWP_DEP_POLICY_others, " +
+	 * "0 as INS_NWP_NCB_POLICY_COMP, " + "0 as INS_NWP_NCB_POLICY_TP, " +
+	 * "0 as INS_NWP_NCB_POLICY_others, " + "0 as INS_NWP_OTHERADDON_POLICY_COMP, "
+	 * + "0 as INS_NWP_OTHERADDON_POLICY_TP, " +
+	 * "0 as INS_NWP_OTHERADDON_POLICY_others " +
+	 * "FROM ( SELECT SUM(INS_GWP) as INS_GWP_POLICY, " +
+	 * "SUM(INS_GWP_OD) as INS_GWP_OD_POLICY, " +
+	 * "SUM(INS_GWP_TP) as INS_GWP_TP_POLICY, " +
+	 * "SUM(INS_GWP_DISCOUNT_OD) as INS_GWP_DISCOUNT_OD_POLICY, " +
+	 * "SUM((INS_GWP *(1-od_quota_share-od_obligatory))+(INS_GWP*od_quota_share*od_RI_COMMISSION)) as INS_NWP_POLICY, "
+	 * +
+	 * "SUM((INS_GWP_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_OD*od_quota_share*od_RI_COMMISSION)) as INS_NWP_OD_POLICY, "
+	 * +
+	 * "SUM((INS_GWP_TP *(1-od_quota_share-od_obligatory))+(INS_GWP_TP*od_quota_share*od_RI_COMMISSION)) as INS_NWP_TP_POLICY, "
+	 * +
+	 * "SUM((INS_GWP_DISCOUNT_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_DISCOUNT_OD*od_quota_share*od_RI_COMMISSION)) as INS_NWP_DISCOUNT_OD_POLICY, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_COMP, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_TP, "
+	 * +
+	 * "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_others, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_COMP, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_TP, "
+	 * +
+	 * "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_others, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_COMP, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='TP' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_TP, "
+	 * +
+	 * "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_others, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_COMP, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_TP, "
+	 * +
+	 * "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_others, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_NCB *(1-od_quota_share-od_obligatory))+(INS_GWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_COMP, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='TP' THEN (INS_NWP_NCB *(1-od_quota_share-od_obligatory))+(INS_NWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_TP, "
+	 * +
+	 * "SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_NWP_NCB *(1-od_quota_share-od_obligatory))+(INS_NWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_others, "
+	 * +
+	 * "SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_COMP,  SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_TP,  SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_others "
+	 * +
+	 * "FROM ( SELECT  SUM(INS_GWP) as INS_GWP  ,SUM(INS_GWP_OD) as INS_GWP_OD  ,SUM(INS_GWP_TP) as INS_GWP_TP  ,SUM(INS_GWP_DISCOUNT_OD) as INS_GWP_DISCOUNT_OD  ,SUM(INS_NWP) as INS_NWP  ,SUM(INS_NWP_OD) as INS_NWP_OD  ,SUM(INS_NWP_TP) as INS_NWP_TP  ,SUM(INS_NWP_DISCOUNT_OD) as INS_NWP_DISCOUNT_OD  ,SUM(INS_GWP_DEP) as INS_GWP_DEP  ,SUM(INS_GWP_NCB) as INS_GWP_NCB  ,SUM(INS_GWP_OTHERADDON) as INS_GWP_OTHERADDON  ,SUM(INS_NWP_DEP) as INS_NWP_DEP  ,SUM(INS_NWP_NCB) as INS_NWP_NCB  ,SUM(INS_NWP_OTHERADDON) as INS_NWP_OTHERADDON  , CATEGORY, uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code  FROM RSDB.RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_CURRENT as RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW  LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL  LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE  LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE  LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE  LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE  LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.OA_CODE = KPI_OA_MASTER_NW.OA_CODE  LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY  LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE  LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE  LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME  LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT  ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE  LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL  ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE "
+	 * ; }
+	 * 
+	 * 
+	 * String finstartDate = fromYear + "-" + fromMonth + "-01"; String finEndDate =
+	 * toYear + "-" + toMonth + "-31";
+	 * 
+	 * 
+	 * if(claimType.equalsIgnoreCase("R")){ queryStr += " WHERE  "; queryStr +=
+	 * getFinCondQuery(Integer.valueOf(fromMonth),Integer.valueOf(toMonth),Integer.
+	 * valueOf(fromYear),Integer.valueOf(toYear));
+	 * 
+	 * }else if(claimType.equalsIgnoreCase("U")){
+	 * 
+	 * queryStr += " WHERE SUBSTRING(inception_date,1,10) >='"
+	 * +finstartDate+"' and SUBSTRING(inception_date,1,10) <='"+finEndDate+"' "; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getPolicyTypes() != null &&
+	 * !filterRequest.getPolicyTypes().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getPolicyTypes().size(); i++) { vals += "'" +
+	 * filterRequest.getPolicyTypes().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getPolicyTypes().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_DWH_COVERCODE_MASTER.CATEGORY) in (" + vals + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getBTypeNow() != null &&
+	 * !filterRequest.getBTypeNow().isEmpty()) { String vals = ""; for (int i = 0; i
+	 * < filterRequest.getBTypeNow().size(); i++) { vals += "'" +
+	 * filterRequest.getBTypeNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getBTypeNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BUSINESS_TYPE) in (" +
+	 * vals + ")"; } if (filterRequest != null && filterRequest.getChannelNow() !=
+	 * null && !filterRequest.getChannelNow().isEmpty()) { String vals = ""; for
+	 * (int i = 0; i < filterRequest.getChannelNow().size(); i++) { vals += "'" +
+	 * filterRequest.getChannelNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getChannelNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CHANNEL) in (" + vals +
+	 * ")"; } if (filterRequest != null && filterRequest.getSubChannelNow() != null
+	 * && !filterRequest.getSubChannelNow().isEmpty()) { String vals = ""; for (int
+	 * i = 0; i < filterRequest.getSubChannelNow().size(); i++) { vals += "'" +
+	 * filterRequest.getSubChannelNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getSubChannelNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUB_CHANNEL) in (" + vals
+	 * + ")"; } if (filterRequest != null && filterRequest.getMakeNow() != null &&
+	 * !filterRequest.getMakeNow().isEmpty()) { String vals = ""; for (int i = 0; i
+	 * < filterRequest.getMakeNow().size(); i++) { vals += "'" +
+	 * filterRequest.getMakeNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMakeNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MAKE) in (" + vals + ")"; } if
+	 * (filterRequest != null && filterRequest.getModelGroupNow() != null &&
+	 * !filterRequest.getModelGroupNow().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getModelGroupNow().size(); i++) { vals += "'" +
+	 * filterRequest.getModelGroupNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getModelGroupNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELGROUP) in (" + vals + ")"; } if
+	 * (filterRequest != null && filterRequest.getFuelTypeNow() != null &&
+	 * !filterRequest.getFuelTypeNow().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getFuelTypeNow().size(); i++) { vals += "'" +
+	 * filterRequest.getFuelTypeNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getFuelTypeNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and coalesce(RSA_DWH_MODEL_MASTER_CURRENT.FUELTYPE,'N') in (" + vals + ")";
+	 * } if (filterRequest != null && filterRequest.getStateGroupNow() != null &&
+	 * !filterRequest.getStateGroupNow().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getStateGroupNow().size(); i++) { vals += "'" +
+	 * filterRequest.getStateGroupNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getStateGroupNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_DWH_CITY_GROUPING_MASTER_FINAL.STATE_GROUPING) in (" + vals +
+	 * ")"; } if (filterRequest != null && filterRequest.getNcbNow() != null &&
+	 * !filterRequest.getNcbNow().isEmpty()) { String vals = ""; for (int i = 0; i <
+	 * filterRequest.getNcbNow().size(); i++) { vals += "'" +
+	 * filterRequest.getNcbNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getNcbNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.NCB_FLAG) in (" + vals +
+	 * ")"; }
+	 * 
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorChannel() != null &&
+	 * !filterRequest.getMotorChannel().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getMotorChannel().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorChannel().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorChannel().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CHANNEL) in (" + vals +
+	 * ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorSubChannel() != null &&
+	 * !filterRequest.getMotorSubChannel().isEmpty()) { String vals = ""; for (int i
+	 * = 0; i < filterRequest.getMotorSubChannel().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorSubChannel().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorSubChannel().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUB_CHANNEL) in (" + vals
+	 * + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorRegion() != null &&
+	 * !filterRequest.getMotorRegion().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getMotorRegion().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorRegion().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorRegion().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(KPI_BRANCH_MASTER.REGION) in (" + vals + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorZone() != null &&
+	 * !filterRequest.getMotorZone().isEmpty()) { String vals = ""; for (int i = 0;
+	 * i < filterRequest.getMotorZone().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorZone().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorZone().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(KPI_BRANCH_MASTER.ZONE) in (" + vals + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorCluster() != null &&
+	 * !filterRequest.getMotorCluster().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getMotorCluster().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorCluster().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorCluster().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in (" + vals + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorState() != null &&
+	 * !filterRequest.getMotorState().isEmpty()) { String vals = ""; for (int i = 0;
+	 * i < filterRequest.getMotorState().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorState().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorState().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in (" + vals + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorCity() != null &&
+	 * !filterRequest.getMotorCity().isEmpty()) { String vals = ""; for (int i = 0;
+	 * i < filterRequest.getMotorCity().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorCity().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorCity().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in (" + vals + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorBranch() != null &&
+	 * !filterRequest.getMotorBranch().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getMotorBranch().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorBranch().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorBranch().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BRANCH_CODE) in (" + vals
+	 * + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
+	 * && !filterRequest.getMotorIntermediaryCode().isEmpty()) { String vals = "";
+	 * for (int i = 0; i < filterRequest.getMotorIntermediaryCode().size(); i++) {
+	 * vals += "'" + filterRequest.getMotorIntermediaryCode().get(i).trim() + "'";
+	 * if (i != filterRequest.getMotorIntermediaryCode().size() - 1) { vals += ",";
+	 * } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.AGENT_CODE) in (" + vals +
+	 * ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
+	 * && !filterRequest.getMotorIntermediaryName().isEmpty()) { String vals = "";
+	 * for (int i = 0; i < filterRequest.getMotorIntermediaryName().size(); i++) {
+	 * vals += "'" + filterRequest.getMotorIntermediaryName().get(i).trim() + "'";
+	 * if (i != filterRequest.getMotorIntermediaryName().size() - 1) { vals += ",";
+	 * } } queryStr +=
+	 * " and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in (" + vals + ")";
+	 * }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorFuelType() != null &&
+	 * !filterRequest.getMotorFuelType().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getMotorFuelType().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorFuelType().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorFuelType().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.FUELTYPE) in (" + vals + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorNcbFlag() != null &&
+	 * !filterRequest.getMotorNcbFlag().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getMotorNcbFlag().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorNcbFlag().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorNcbFlag().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.NCB_FLAG) in (" + vals +
+	 * ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorCarType() != null &&
+	 * !filterRequest.getMotorCarType().isEmpty()) { String vals =
+	 * "'HIGHEND','High End'"; for (int i = 0; i <
+	 * filterRequest.getMotorCarType().size(); i++) {
+	 * 
+	 * if(filterRequest.getMotorCarType().get(i).trim().equals("HE")){ if (i !=
+	 * filterRequest.getMotorNcbFlag().size() - 1) { vals += ","; } queryStr +=
+	 * " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + vals +
+	 * ")"; }else{ queryStr +=
+	 * " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) not in (" + vals
+	 * + ")"; }
+	 * 
+	 * System.out.println("HE query------------------------------ " + queryStr);
+	 * 
+	 * }
+	 * 
+	 * }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorCarType() != null &&
+	 * !filterRequest.getMotorCarType().isEmpty()) { String vals =
+	 * "'HIGHEND','High End'"; String nheVals =
+	 * "'Sling','OIB','OIB PS','Xcd','Others','SS PS'"; int cvalcounter =
+	 * 0,cvalNHEcounter = 0; for (int i = 0; i <
+	 * filterRequest.getMotorCarType().size(); i++) {
+	 * 
+	 * if(filterRequest.getMotorCarType().get(i).trim().equals("HE")){
+	 * if(cvalcounter==0) queryStr +=
+	 * " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + vals +
+	 * ")"; cvalcounter++; }else
+	 * if(filterRequest.getMotorCarType().get(i).trim().equals("NHE")){
+	 * if(cvalNHEcounter==0) queryStr +=
+	 * " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + nheVals
+	 * + ")"; cvalNHEcounter++; }
+	 * 
+	 * System.out.println("HE query------------------------------ " + queryStr);
+	 * 
+	 * }
+	 * 
+	 * }
+	 * 
+	 * 
+	 * queryStr += " group by category ) x";
+	 * if(filterRequest.getAddOnNew().equals("Include")){ queryStr +=
+	 * " group by category,uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code ) aa, (select r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE,sum(r.OD_OBLIGATORY) OD_OBLIGATORY,sum(r.OD_QUOTA_SHARE) OD_QUOTA_SHARE,sum(OD_RI_COMMISSION) OD_RI_COMMISSION,sum(r.TP_OBLIGATORY) TP_OBLIGATORY,sum(r.TP_QUOTA_SHARE) TP_QUOTA_SHARE,sum(TP_RI_COMMISSION) TP_RI_COMMISSION   from rsa_dwh_ri_obligatory_master1_new r group by r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE) bb where aa.uw_year=bb.underwriting_year and aa.product_Code=bb.xgen_productcode"
+	 * ; }else if(filterRequest.getAddOnNew().equals("Exclude")){ queryStr +=
+	 * " group by category,uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code ) aa, (select r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE,sum(r.OD_OBLIGATORY) OD_OBLIGATORY,sum(r.OD_QUOTA_SHARE) OD_QUOTA_SHARE,sum(OD_RI_COMMISSION) OD_RI_COMMISSION,sum(r.TP_OBLIGATORY) TP_OBLIGATORY,sum(r.TP_QUOTA_SHARE) TP_QUOTA_SHARE,sum(TP_RI_COMMISSION) TP_RI_COMMISSION   from rsa_dwh_ri_obligatory_master1_new r group by r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE) bb where aa.uw_year=bb.underwriting_year and aa.product_Code=bb.xgen_productcode)mm"
+	 * ; }else if(filterRequest.getAddOnNew().equals("Only Addon")){ queryStr +=
+	 * " group by category,uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code ) aa, (select r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE,sum(r.OD_OBLIGATORY) OD_OBLIGATORY,sum(r.OD_QUOTA_SHARE) OD_QUOTA_SHARE,sum(OD_RI_COMMISSION) OD_RI_COMMISSION,sum(r.TP_OBLIGATORY) TP_OBLIGATORY,sum(r.TP_QUOTA_SHARE) TP_QUOTA_SHARE,sum(TP_RI_COMMISSION) TP_RI_COMMISSION   from rsa_dwh_ri_obligatory_master1_new r group by r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE) bb where aa.uw_year=bb.underwriting_year and aa.product_Code=bb.xgen_productcode)mm"
+	 * ; }
+	 * 
+	 * // // queryStr +=
+	 * "group by category,uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code ) aa, (select r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE,sum(r.OD_OBLIGATORY) OD_OBLIGATORY,sum(r.OD_QUOTA_SHARE) OD_QUOTA_SHARE,sum(OD_RI_COMMISSION) OD_RI_COMMISSION,sum(r.TP_OBLIGATORY) TP_OBLIGATORY,sum(r.TP_QUOTA_SHARE) TP_QUOTA_SHARE,sum(TP_RI_COMMISSION) TP_RI_COMMISSION   from rsa_dwh_ri_obligatory_master1_new r group by r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE) bb "
+	 * // +"where aa.uw_year = bb.underwriting_year " //
+	 * +"and aa.product_Code = bb.xgen_productcode"; //
+	 * 
+	 * 
+	 * queryStr +=
+	 * " group by category,uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code ) aa,"
+	 * +
+	 * " (select r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE,sum(r.OD_OBLIGATORY) OD_OBLIGATORY,sum(r.OD_QUOTA_SHARE) OD_QUOTA_SHARE,sum(OD_RI_COMMISSION) OD_RI_COMMISSION,sum(r.TP_OBLIGATORY) TP_OBLIGATORY,sum(r.TP_QUOTA_SHARE) TP_QUOTA_SHARE,sum(TP_RI_COMMISSION) TP_RI_COMMISSION  "
+	 * + " from rsa_dwh_ri_obligatory_master1_new r " +
+	 * "group by r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE) bb " +
+	 * "where aa.uw_year=bb.underwriting_year and aa.product_Code=bb.xgen_productcode"
+	 * ;
+	 * 
+	 * System.out.println("queryStr------------------------------ NWP " + queryStr);
+	 * ResultSet rs = stmt.executeQuery(queryStr);
+	 * System.out.println("START------------------------------ ");
+	 * 
+	 * // jsArray = convertToJSON(rs);
+	 * 
+	 * while (rs.next()) {
+	 * 
+	 * InsCubeResponseNew res = new InsCubeResponseNew();
+	 * 
+	 * res.setInsGwpPolicyComprehensive(rs.getDouble(1));
+	 * res.setInsGwpPolicyTp(rs.getDouble(2));
+	 * res.setInsGwpPolicyOthers(rs.getDouble(3));
+	 * res.setInsGwpOdPolicyComprehensive(rs.getDouble(4));
+	 * res.setInsGwpOdPolicyTp(rs.getDouble(5));
+	 * res.setInsGwpOdPolicyOthers(rs.getDouble(6));
+	 * res.setInsGwpTpPolicyComprehensive(rs.getDouble(7));
+	 * res.setInsGwpTpPolicyTp(rs.getDouble(8));
+	 * res.setInsGwpTpPolicyOthers(rs.getDouble(9));
+	 * res.setInsGwpDiscountPolicyComprehensive(rs.getDouble(10));
+	 * res.setInsGwpDiscountPolicyTp(rs.getDouble(11));
+	 * res.setInsGwpDiscountPolicyOthers(rs.getDouble(12));
+	 * 
+	 * res.setInsNwpPolicyComprehensive(rs.getDouble(13));
+	 * res.setInsNwpPolicyTp(rs.getDouble(14));
+	 * res.setInsNwpPolicyOthers(rs.getDouble(5));
+	 * res.setInsNwpOdPolicyComprehensive(rs.getDouble(16));
+	 * res.setInsNwpOdPolicyTp(rs.getDouble(17));
+	 * res.setInsNwpOdPolicyOthers(rs.getDouble(18));
+	 * res.setInsNwpTpPolicyComprehensive(rs.getDouble(19));
+	 * res.setInsNwpTpPolicyTp(rs.getDouble(20));
+	 * res.setInsNwpTpPolicyOthers(rs.getDouble(21));
+	 * res.setInsNwpDiscountPolicyComprehensive(rs.getDouble(21));
+	 * res.setInsNwpDiscountPolicyTp(rs.getDouble(23));
+	 * res.setInsNwpDiscountPolicyOthers(rs.getDouble(24));
+	 * 
+	 * res.setInsGwpDepPolicyComprehensive(rs.getDouble(25));
+	 * res.setInsGwpDepPolicyTp(rs.getDouble(26));
+	 * res.setInsGwpDepPolicyOthers(rs.getDouble(27));
+	 * res.setInsGwpNcbPolicyComprehensive(rs.getDouble(28));
+	 * res.setInsGwpNcbPolicyTp(rs.getDouble(29));
+	 * res.setInsGwpNcbPolicyOthers(rs.getDouble(30));
+	 * res.setInsGwpOtherAddonPolicyComprehensive(rs.getDouble(31));
+	 * res.setInsGwpOtherAddonPolicyTp(rs.getDouble(32));
+	 * res.setInsGwpOtherAddonPolicyOthers(rs.getDouble(33));
+	 * 
+	 * res.setInsNwpDepPolicyComprehensive(rs.getDouble(34));
+	 * res.setInsNwpDepPolicyTp(rs.getDouble(35));
+	 * res.setInsNwpDepPolicyOthers(rs.getDouble(36));
+	 * res.setInsNwpNcbPolicyComprehensive(rs.getDouble(37));
+	 * res.setInsNwpNcbPolicyTp(rs.getDouble(38));
+	 * res.setInsNwpNcbPolicyOthers(rs.getDouble(39));
+	 * res.setInsNwpOtherAddonPolicyComprehensive(rs.getDouble(40));
+	 * res.setInsNwpOtherAddonPolicyTp(rs.getDouble(41));
+	 * res.setInsNwpOtherAddonPolicyOthers(rs.getDouble(42));
+	 * 
+	 * kpiResponseList.add(res); }
+	 * 
+	 * System.out.println("Query execution time " + (System.currentTimeMillis() -
+	 * startTime)); } catch (Exception e) {
+	 * System.out.println("kylinDataSource initialize error, ex: " + e);
+	 * System.out.println(); e.printStackTrace(); } finally { connection.close(); }
+	 * return kpiResponseList; }
+	 */
 	
 	/**
 	 * @author Aravindharaj P
@@ -6944,767 +6864,705 @@ public List<SingleLineCubeResponseNew> getSingleLineCubeGicDataNewUw (HttpServle
 @GetMapping("/getR12NewCubeData")
 @ResponseBody
 public List<R12CubeResponse> getR12NewCubeData(HttpServletRequest req, UserMatrixMasterRequest filterRequest)
-		 throws SQLException {
-   
-			Connection connection = null;
-			List<R12CubeResponse> kpiResponseList = new ArrayList<R12CubeResponse>();
-			
-			long startTime = System.currentTimeMillis();
-			try {
-				String fromDate = filterRequest.getFromDate() == null ? "" : filterRequest.getFromDate();
-				String toDate = filterRequest.getToDate() == null ? "" : filterRequest.getToDate();
-		
-		
-				System.out.println("SALVATION----------R12----------------SALVATION");
-				List<ProductMaster> productMasters = productMasterRepository.findAll();
-		
-				/*String motorProductVals = "'" + productMasters.stream()
-						.filter(p -> p.getProductType().toLowerCase().contains("motor")).map(ProductMaster::getProductCode)
-						.collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";
-		
-				String healthProductVals = "'" + productMasters.stream()
-						.filter(p -> p.getProductType().toLowerCase().contains("health")).map(ProductMaster::getProductCode)
-						.collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";*/
-		
-				Driver driverManager = (Driver) Class.forName("org.apache.kylin.jdbc.Driver").newInstance();
-				Properties info = new Properties();
-				info.put("user", "ADMIN");
-				info.put("password", "KYLIN");
-				connection = driverManager
-						.connect("jdbc:kylin://" + RMSConstants.KYLIN_RS_BASE_IP_AND_PORT + "/learn_kylin", info);
-				System.out.println("Connection status -------------------------->" + connection);
-		
-				Statement stmt = connection.createStatement();
-		
-				String fromMonth = fromDate.split("/")[0];
-				String fromYear = fromDate.split("/")[1];
-				String toMonth = toDate.split("/")[0];
-				String toYear = toDate.split("/")[1];
-		
-				String queryStr = "";
-				System.out.println("Query filterRequest: " + (filterRequest.getAddOnNew().equals( "Include")));
-		
-				queryStr += "SELECT" 
-				+" SUM(GEP_OD) AS GEP_OD,"
-				+" SUM(GEP_TP) AS GEP_TP,"
-				+" SUM(NEP_OD) AS NEP_OD,"
-				+" SUM(NEP_TP) AS NEP_TP,"
-				+" SUM(DISCOUNT_GEP_OD) AS DISCOUNT_GEP_OD,"
-				+" SUM(DISCOUNT_NEP_OD) AS DISCOUNT_NEP_OD,"
-				+" SUM(GEP_DEP_OD) AS GEP_DEP_OD,"
-				+" SUM(GEP_DEP_TP) AS GEP_DEP_TP,"
-				+" SUM(GEP_NCB_OD) AS GEP_NCB_OD,"
-				+" SUM(GEP_NCB_TP) AS GEP_NCB_TP,"
-				+" SUM(GEP_OTHER_ADDON_OD) AS GEP_OTHER_ADDON_OD,"
-				+" SUM(GEP_OTHER_ADDON_TP) AS GEP_OTHER_ADDON_TP,"
-				+" SUM(NEP_DEP_OD) AS NEP_DEP_OD,"
-				+" SUM(NEP_DEP_TP) AS NEP_DEP_TP,"
-				+" SUM(NEP_NCB_OD) AS NEP_NCB_OD,"
-				+" SUM(NEP_NCB_TP) AS NEP_NCB_TP,"
-				+" SUM(NEP_OTHER_ADDON_OD) AS NEP_OTHER_ADDON_OD,"
-				+" SUM(NEP_OTHER_ADDON_TP) AS NEP_OTHER_ADDON_TP,"
-				+" SUM(EARNED_POLICIES_OD) AS EARNED_POLICIES_OD,"
-				+" SUM(EARNED_POLICIES_TP) AS EARNED_POLICIES_TP,"
-				+" SUM(ADDON_EARNED_POLICIES_OD) AS ADDON_EARNED_POLICIES_OD,"
-				+" SUM(ADDON_EARNED_POLICIES_TP) AS ADDON_EARNED_POLICIES_TP,"
-				+" SUM(GIC_TPULR) AS GIC_TPULR,"
-				+" SUM(GIC_TPULR_DEP) AS GIC_TPULR_DEP,"
-				+" SUM(GIC_TPULR_NCB) AS GIC_TPULR_NCB,"
-				+" SUM(GIC_TPULR_OTHER_ADDON) AS GIC_TPULR_OTHER_ADDON,"
-				+" SUM(NIC_TPULR) AS NIC_TPULR,"
-				+" SUM(NIC_TPULR_DEP) AS NIC_TPULR_DEP,"
-				+" SUM(NIC_TPULR_NCB) AS NIC_TPULR_NCB,"
-				+" SUM(NIC_TPULR_OTHER_ADDON) AS NIC_TPULR_OTHER_ADDON,"
-				+" SUM(GWP_OD) AS GWP_OD,"
-				+" SUM(GWP_TP) AS GWP_TP,"
-				+" SUM(NWP_OD) AS NWP_OD,"
-				+" SUM(NWP_TP) AS NWP_TP,"
-				+" SUM(GWP_DEP_OD) AS GWP_DEP_OD,"
-				+" SUM(GWP_DEP_TP) AS GWP_DEP_TP,"
-				+" SUM(GWP_NCB_OD) AS GWP_NCB_OD,"
-				+" SUM(GWP_NCB_TP) AS GWP_NCB_TP,"
-				+" SUM(GWP_OTHER_ADDON_OD) AS GWP_OTHER_ADDON_OD,"
-				+" SUM(GWP_OTHER_ADDON_TP) AS GWP_OTHER_ADDON_TP,"
-				+" SUM(NWP_DEP_OD) AS NWP_DEP_OD,"
-				+" SUM(NWP_DEP_TP) AS NWP_DEP_TP,"
-				+" SUM(NWP_NCB_OD) AS NWP_NCB_OD,"
-				+" SUM(NWP_NCB_TP) AS NWP_NCB_TP,"
-				+" SUM(NWP_OTHER_ADDON_OD) AS NWP_OTHER_ADDON_OD,"
-				+" SUM(NWP_OTHER_ADDON_TP) AS NWP_OTHER_ADDON_TP,"
-				+" SUM(POLICY_COUNT_OD) AS POLICY_COUNT_OD,"
-				+" SUM(POLICY_COUNT_TP) AS POLICY_COUNT_TP,"
-				+" SUM(POLICY_COUNT_OTHERS) AS POLICY_COUNT_OTHERS,"
-				+" SUM(ADDON_POLICY_COUNT_OD) AS ADDON_POLICY_COUNT_OD,"
-				+" SUM(ADDON_POLICY_COUNT_TP) AS ADDON_POLICY_COUNT_TP,"
-				+" SUM(ADDON_POLICY_COUNT_OTHERS) AS ADDON_POLICY_COUNT_OTHERS,"
-				+" SUM(ACQ_COST_OD) AS ACQ_COST_OD,"
-				+" SUM(ACQ_COST_TP) AS ACQ_COST_TP,"
-				+" SUM(ADDON_ACQ_COST_OD) AS ADDON_ACQ_COST_OD,"
-				+" SUM(ADDON_ACQ_COST_TP) AS ADDON_ACQ_COST_TP,"
-				+" SUM(CAT_CLAIM_COUNT) AS CAT_CLAIM_COUNT,"
-				+" SUM(THEFT_CLAIM_COUNT) AS THEFT_CLAIM_COUNT,"
-				+" SUM(OTHER_CLAIM_COUNT) AS OTHER_CLAIM_COUNT,"
-				+" SUM(CLAIM_COUNT_TP) AS CLAIM_COUNT_TP,"
-				+" SUM(ADDON_CAT_COUNT) AS ADDON_CAT_COUNT,"
-				+" SUM(ADDON_THEFT_COUNT) AS ADDON_THEFT_COUNT,"
-				+" SUM(ADDON_OTHER_COUNT) AS ADDON_OTHER_COUNT,"
-				+" SUM(ADDON_CLAIM_COUNT_TP) AS ADDON_CLAIM_COUNT_TP,"
-				+" SUM(CAT_GIC) AS CAT_GIC,"
-				+" SUM(THEFT_GIC) AS THEFT_GIC,"
-				+" SUM(OTHER_GIC) AS OTHER_GIC,"
-				+" SUM(GIC_TP) AS GIC_TP,"
-				+" SUM(CAT_NIC) AS CAT_NIC,"
-				+" SUM(THEFT_NIC) AS THEFT_NIC,"
-				+" SUM(OTHER_NIC) AS OTHER_NIC,"
-				+" SUM(NIC_TP) AS NIC_TP,"
-				+" SUM(ADDON_CAT_GIC) AS ADDON_CAT_GIC,"
-				+" SUM(ADDON_THEFT_GIC) AS ADDON_THEFT_GIC,"
-				+" SUM(ADDON_OTHER_GIC) AS ADDON_OTHER_GIC,"
-				+" SUM(ADDON_GIC_TP) AS ADDON_GIC_TP,"
-				+" SUM(ADDON_CAT_NIC) AS ADDON_CAT_NIC,"
-				+" SUM(ADDON_THEFT_NIC) AS ADDON_THEFT_NIC,"
-				+" SUM(ADDON_OTHER_NIC) AS ADDON_OTHER_NIC,"
-				+" SUM(ADDON_NIC_TP) AS ADDON_NIC_TP,"
-				+" SUM(ESTIMATED_GIC) AS ESTIMATED_GIC,"
-				+" SUM(ESTIMATED_CAT_GIC) AS ESTIMATED_CAT_GIC,"
-				+" SUM(ESTIMATED_THEFT_GIC) AS ESTIMATED_THEFT_GIC,"
-				+" SUM(ESTIMATED_OTHER_GIC) AS ESTIMATED_OTHER_GIC,"
-				+" SUM(ESTIMATED_TP_GIC) AS ESTIMATED_TP_GIC,"
-				+" SUM(ESTIMATED_ADDON_GIC) AS ESTIMATED_ADDON_GIC,"
-				+" SUM(ESTIMATED_ADDON_CAT_GIC) AS ESTIMATED_ADDON_CAT_GIC,"
-				+" SUM(ESTIMATED_ADDON_THEFT_GIC) AS ESTIMATED_ADDON_THEFT_GIC,"
-				+" SUM(ESTIMATED_ADDON_OTHER_GIC) AS ESTIMATED_ADDON_OTHER_GIC,"
-				+" SUM(ESTIMATED_ADDON_TP_GIC) AS ESTIMATED_ADDON_TP_GIC,"
-				+" SUM(ESTIMATED_LOSS_RATIO) AS ESTIMATED_LOSS_RATIO,"
-				+" SUM(ESTIMATED_OD_LOSS_RATIO) AS ESTIMATED_OD_LOSS_RATIO,"
-				+" SUM(ESTIMATED_TP_LOSS_RATIO) AS ESTIMATED_TP_LOSS_RATIO,"
-				+" SUM(ESTIMATED_TPULR_LOSS_RATIO) AS ESTIMATED_TPULR_LOSS_RATIO,"
-				+" SUM(ESTIMATED_ADDON_LOSS_RATIO) AS ESTIMATED_ADDON_LOSS_RATIO,"
-				+" SUM(ESTIMATED_ADDON_OD_LOSS_RATIO) AS ESTIMATED_ADDON_OD_LOSS_RATIO,"
-				+" SUM(ESTIMATED_ADDON_TP_LOSS_RATIO) AS ESTIMATED_ADDON_TP_LOSS_RATIO,"
-				+" SUM(ESTIMATED_ADDON_TPULR_LOSS_RATIO) AS ESTIMATED_ADDON_TPULR_LOSS_RATIO,"
-				+" AVG(R12_FREQ) AS R12_FREQ,"
-				+" AVG(R12_CAT_FREQ) AS R12_CAT_FREQ,"
-				+" AVG(R12_THEFT_FREQ) AS R12_THEFT_FREQ,"
-				+" AVG(R12_OTHERS_FREQ) AS R12_OTHERS_FREQ,"
-				+" AVG(R12_TP_FREQ) AS R12_TP_FREQ,"
-				+" AVG(R12_ADDON_FREQ) AS R12_ADDON_FREQ,"
-				+" AVG(R12_ADDON_CAT_FREQ) AS R12_ADDON_CAT_FREQ,"
-				+" AVG(R12_ADDON_THEFT_FREQ) AS R12_ADDON_THEFT_FREQ,"
-				+" AVG(R12_ADDON_OTHERS_FREQ) AS R12_ADDON_OTHERS_FREQ,"
-				+" AVG(R12_ADDON_TP_FREQ) AS R12_ADDON_TP_FREQ,"
-				+" AVG(R12_SEVERITY) AS R12_SEVERITY,"
-				+" AVG(R12_CAT_SEVERITY) AS R12_CAT_SEVERITY,"
-				+" AVG(R12_THEFT_SEVERITY) AS R12_THEFT_SEVERITY,"
-				+" AVG(R12_OTHERS_SEVERITY) AS R12_OTHERS_SEVERITY,"
-				+" AVG(R12_TP_SEVERITY) AS R12_TP_SEVERITY,"
-				+" AVG(R12_ADDON_SEVERITY) AS R12_ADDON_SEVERITY,"
-				+" AVG(R12_ADDON_CAT_SEVERITY) AS R12_ADDON_CAT_SEVERITY,"
-				+" AVG(R12_ADDON_THEFT_SEVERITY) AS R12_ADDON_THEFT_SEVERITY,"
-				+" AVG(R12_ADDON_OTHERS_SEVERITY) AS R12_ADDON_OTHERS_SEVERITY,"
-				+" AVG(R12_ADDON_TP_SEVERITY) AS R12_ADDON_TP_SEVERITY,"
-				+" AVG(R12_LOSS_RATIO) AS R12_LOSS_RATIO,"
-				+" AVG(R12_OD_LOSS_RATIO) AS R12_OD_LOSS_RATIO,"
-				+" AVG(R12_TP_LOSS_RATIO) AS R12_TP_LOSS_RATIO,"
-				+" AVG(R12_TPULR_LOSS_RATIO) AS R12_TPULR_LOSS_RATIO,"
-				+" AVG(R12_ADDON_LOSS_RATIO) AS R12_ADDON_LOSS_RATIO,"
-				+" AVG(R12_ADDON_OD_LOSS_RATIO) AS R12_ADDON_OD_LOSS_RATIO,"
-				+" AVG(R12_ADDON_TP_LOSS_RATIO) AS R12_ADDON_TP_LOSS_RATIO,"
-				+" AVG(R12_ADDON_TPULR_LOSS_RATIO) AS R12_ADDON_TPULR_LOSS_RATIO,"
-				+" ((SUM(CAT_CLAIM_COUNT)+SUM(THEFT_CLAIM_COUNT)+SUM(OTHER_CLAIM_COUNT))/(SUM(POLICY_COUNT_OD)))*100 AS FREQ,"
-				+" ((SUM(CAT_CLAIM_COUNT))/(SUM(POLICY_COUNT_OD)))*100 AS CAT_FREQ,"
-				+" ((SUM(THEFT_CLAIM_COUNT))/(SUM(POLICY_COUNT_OD)))*100 AS THEFT_FREQ,"
-				+" ((SUM(OTHER_CLAIM_COUNT))/(SUM(POLICY_COUNT_OD)))*100 AS OTHER_FREQ,"
-				+" ((SUM(CAT_GIC)+SUM(THEFT_GIC)+SUM(OTHER_GIC))/(SUM(CAT_CLAIM_COUNT)+SUM(THEFT_CLAIM_COUNT)+SUM(OTHER_CLAIM_COUNT))) AS SEVERITY,"
-				+" ((SUM(CAT_GIC))/(SUM(CAT_CLAIM_COUNT)+SUM(THEFT_CLAIM_COUNT)+SUM(OTHER_CLAIM_COUNT))) AS CAT_SEVERITY,"
-				+" ((SUM(THEFT_GIC))/(SUM(CAT_CLAIM_COUNT)+SUM(THEFT_CLAIM_COUNT)+SUM(OTHER_CLAIM_COUNT))) AS THEFT_SEVERITY,"
-				+" ((SUM(OTHER_GIC))/(SUM(CAT_CLAIM_COUNT)+SUM(THEFT_CLAIM_COUNT)+SUM(OTHER_CLAIM_COUNT))) AS OTHER_SEVERITY,"
-				+" ((SUM(CAT_GIC)+SUM(THEFT_GIC)+SUM(OTHER_GIC)+SUM(GIC_TPULR))/(SUM(GEP_OD)+SUM(GEP_TP)))*100 AS LOSS_RATIO,"
-				+" ((SUM(CAT_GIC)+SUM(THEFT_GIC)+SUM(OTHER_GIC))/(SUM(GEP_OD)))*100 AS OD_LOSS_RATIO,"
-				+" ((SUM(GIC_TPULR))/(SUM(GEP_TP)))*100 AS TPulr_LOSS_RATIO,"
-				+" ((SUM(GIC_TP))/(SUM(GEP_TP)))*100 AS TP_LOSS_RATIO"
-				+" FROM RSDB.POLICY_GROUP_LEVEL_FACT_TABLE as POLICY_GROUP_LEVEL_FACT_TABLE"
-				+" LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER"
-				+" ON POLICY_GROUP_LEVEL_FACT_TABLE.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE"
-				+" LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER"
-				+" ON POLICY_GROUP_LEVEL_FACT_TABLE.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE"
-				+" LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER"
-				+" ON POLICY_GROUP_LEVEL_FACT_TABLE.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE"
-				+" LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER"
-				+" ON POLICY_GROUP_LEVEL_FACT_TABLE.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE";
-									
-				String finstartDate = fromYear + "-" + fromMonth + "-01";
-				String finEndDate = toYear + "-" + toMonth + "-31";
-				
-				queryStr += " WHERE  GEP_YEAR in ('"+fromYear+"') and  GEP_MONTH in ('01','02','03','04','05','06','07','08','09','10','11','12')";
-		
-				System.out.println("R12Query" + queryStr);
-				
-				// if (filterRequest != null && filterRequest.getPolicyTypes() != null
-				// 		&& !filterRequest.getPolicyTypes().isEmpty()) {
-				// 	String vals = "";
-				// 	for (int i = 0; i < filterRequest.getPolicyTypes().size(); i++) {
-				// 		vals += "'" + filterRequest.getPolicyTypes().get(i).trim() + "'";
-				// 		if (i != filterRequest.getPolicyTypes().size() - 1) {
-				// 			vals += ",";
-				// 		}
-				// 	}
-					
-				// 	queryStr += "and TRIM (POLICY_GROUP_LEVEL_FACT_TABLE.POLICY_TYPE) in  (" + vals + ")";
-				// }
-		
-				if(filterRequest != null && filterRequest.getPolicyTypeNew() != null && !filterRequest.getPolicyTypeNew().isEmpty()){
-					
-					String vals = "";
-					for (int i = 0; i < filterRequest.getPolicyTypeNew().size(); i++) {
-						vals += "'" + filterRequest.getPolicyTypeNew().get(i).trim() + "'";
-						if (i != filterRequest.getPolicyTypeNew().size() - 1) {
-							vals += ",";
-						}
-					}
-					queryStr += "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.POLICY_TYPE_NEW) in  (" + vals + ")";
-		
-				}
-		
-				if(filterRequest != null && filterRequest.getChannelNew() != null && !filterRequest.getChannelNew().isEmpty()){
-					
-					String vals = "";
-					for (int i = 0; i < filterRequest.getChannelNew().size(); i++) {
-						vals += "'" + filterRequest.getChannelNew().get(i).trim() + "'";
-						if (i != filterRequest.getChannelNew().size() - 1) {
-							vals += ",";
-						}
-					}
-					queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.CHANNEL_NEW) in  (" + vals + ")";
-		
-				}
-		
-				if(filterRequest != null && filterRequest.getCategorisation() != null && !filterRequest.getCategorisation().isEmpty()){
-					
-					String vals = "";
-					for (int i = 0; i < filterRequest.getCategorisation().size(); i++) {
-						vals += "'" + filterRequest.getCategorisation().get(i).trim() + "'";
-						if (i != filterRequest.getCategorisation().size() - 1) {
-							vals += ",";
-						}
-					}
-					queryStr += "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.CATEGORISATION) in(" + vals + ")";
-		
-				}
-		
-				if(filterRequest != null && filterRequest.getEngineCapacity() != null && !filterRequest.getEngineCapacity().isEmpty()){
-					
-					String vals = "";
-					for (int i = 0; i < filterRequest.getEngineCapacity().size(); i++) {
-						vals += "'" + filterRequest.getEngineCapacity().get(i).trim() + "'";
-						if (i != filterRequest.getEngineCapacity().size() - 1) {
-							vals += ",";
-						}
-					}
-					queryStr += " and (POLICY_GROUP_LEVEL_FACT_TABLE.ENGINECAPACITY) in (" + vals + ")";
-		
-				}
-				if (filterRequest != null && filterRequest.getVehicleAge() != null
-						&& !filterRequest.getVehicleAge().isEmpty()) {
-					String vals = "";
-					for (int i = 0; i < filterRequest.getVehicleAge().size(); i++) {
-						vals += "'" + filterRequest.getVehicleAge().get(i).trim() + "'";
-						if (i != filterRequest.getVehicleAge().size() - 1) {
-							vals += ",";
-						}
-					}
-					queryStr += "and (POLICY_GROUP_LEVEL_FACT_TABLE.VEHICLEAGE) in (" + vals + ")";
-				}
-		
-				
-				if (filterRequest != null && filterRequest.getBTypeNow() != null
-						&& !filterRequest.getBTypeNow().isEmpty()) {
-					String vals = "";
-					for (int i = 0; i < filterRequest.getBTypeNow().size(); i++) {
-						vals += "'" + filterRequest.getBTypeNow().get(i).trim() + "'";
-						if (i != filterRequest.getBTypeNow().size() - 1) {
-							vals += ",";
-						}
-					}
-					queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.BUSINESS_TYPE) in (" + vals + ")";
-				}
-				if (filterRequest != null && filterRequest.getChannelNow() != null
-						&& !filterRequest.getChannelNow().isEmpty()) {
-					String vals = "";
-					for (int i = 0; i < filterRequest.getChannelNow().size(); i++) {
-						vals += "'" + filterRequest.getChannelNow().get(i).trim() + "'";
-						if (i != filterRequest.getChannelNow().size() - 1) {
-							vals += ",";
-						}
-					}
-					queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.CHANNEL) in (" + vals + ")";
-				}
-				if (filterRequest != null && filterRequest.getSubChannelNow() != null
-						&& !filterRequest.getSubChannelNow().isEmpty()) {
-					String vals = "";
-					for (int i = 0; i < filterRequest.getSubChannelNow().size(); i++) {
-						vals += "'" + filterRequest.getSubChannelNow().get(i).trim() + "'";
-						if (i != filterRequest.getSubChannelNow().size() - 1) {
-							vals += ",";
-						}
-					}
-					queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.SUB_CHANNEL) in  (" + vals + ")";
-				}
-				if (filterRequest != null && filterRequest.getMakeNow() != null
-						&& !filterRequest.getMakeNow().isEmpty()) {
-					String vals = "";
-					for (int i = 0; i < filterRequest.getMakeNow().size(); i++) {
-						vals += "'" + filterRequest.getMakeNow().get(i).trim() + "'";
-						if (i != filterRequest.getMakeNow().size() - 1) {
-							vals += ",";
-						}
-					}
-					queryStr += "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.MAKE) in  (" + vals + ")";
-				}
-				if (filterRequest != null && filterRequest.getModelGroupNow() != null
-						&& !filterRequest.getModelGroupNow().isEmpty()) {
-					String vals = "";
-					for (int i = 0; i < filterRequest.getModelGroupNow().size(); i++) {
-						vals += "'" + filterRequest.getModelGroupNow().get(i).trim() + "'";
-						if (i != filterRequest.getModelGroupNow().size() - 1) {
-							vals += ",";
-						}
-					}
-					queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.MODELGROUP) in (" + vals + ")";
-				}
-				if (filterRequest != null && filterRequest.getFuelTypeNow() != null
-						&& !filterRequest.getFuelTypeNow().isEmpty()) {
-					String vals = "";
-					for (int i = 0; i < filterRequest.getFuelTypeNow().size(); i++) {
-						vals += "'" + filterRequest.getFuelTypeNow().get(i).trim() + "'";
-						if (i != filterRequest.getFuelTypeNow().size() - 1) {
-							vals += ",";
-						}
-					}
-					queryStr += "and coalesce(POLICY_GROUP_LEVEL_FACT_TABLE.FUEL_TYPE,'N') in   (" + vals + ")";
-				}
-				if (filterRequest != null && filterRequest.getStateGroupNow() != null
-						&& !filterRequest.getStateGroupNow().isEmpty()) {
-					String vals = "";
-					for (int i = 0; i < filterRequest.getStateGroupNow().size(); i++) {
-						vals += "'" + filterRequest.getStateGroupNow().get(i).trim() + "'";
-						if (i != filterRequest.getStateGroupNow().size() - 1) {
-							vals += ",";
-						}
-					}
-					queryStr += "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.STATE_GROUPING) in (" + vals + ")";
-				}
-				
-				if (filterRequest != null && filterRequest.getNcbNow() != null
-						&& !filterRequest.getNcbNow().isEmpty()) {
-					String vals = "";
-					for (int i = 0; i < filterRequest.getNcbNow().size(); i++) {
-						vals += "'" + filterRequest.getNcbNow().get(i).trim() + "'";
-						if (i != filterRequest.getNcbNow().size() - 1) {
-							vals += ",";
-						}
-					}
-					queryStr += "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.NCB_FLAG) in 	  (" + vals + ")";
-				}
-				
-				/*latest*/
-				/*if (filterRequest != null && filterRequest.getNcbNow() != null
-						&& !filterRequest.getNcbNow().isEmpty()) {
-					
-					
-					String Nvals = "and (RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_PREM)= '0'";
-					String Yvals = "and (RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_PREM)<> '0'";
-					int cvalcounter = 0,cvalNcounter = 0;
-					for (int i = 0; i < filterRequest.getNcbNow().size(); i++) {
-						
-						 if(filterRequest.getNcbNow().get(i).trim().contains("N")){
-							 if(cvalcounter==0)
-							queryStr += Nvals;
-							 cvalcounter++;
-						 }else if(filterRequest.getNcbNow().get(i).trim().contains("Y")){
-							if(cvalNcounter==0)
-							queryStr += Yvals;
-							cvalNcounter++;
-						 }
-					
-						System.out.println("NCB NEW POLICY query------------------------------ " + queryStr);
-						
-					}
-					
-					
-					
-				}*/
-				
-				
-				/*String vals = "";
-				for (int i = 0; i < filterRequest.getMotorNcbFlag().size(); i++) {
-					vals += "'" + filterRequest.getMotorNcbFlag().get(i).trim() + "'";
-					if (i != filterRequest.getMotorNcbFlag().size() - 1) {
+			throws SQLException {
+
+		Connection connection = null;
+		List<R12CubeResponse> kpiResponseList = new ArrayList<R12CubeResponse>();
+
+		long startTime = System.currentTimeMillis();
+		try {
+			String fromDate = filterRequest.getFromDate() == null ? "" : filterRequest.getFromDate();
+			String toDate = filterRequest.getToDate() == null ? "" : filterRequest.getToDate();
+
+			System.out.println("SALVATION----------R12----------------SALVATION");
+			List<ProductMaster> productMasters = productMasterRepository.findAll();
+
+			/*
+			 * String motorProductVals = "'" + productMasters.stream() .filter(p ->
+			 * p.getProductType().toLowerCase().contains("motor")).map(ProductMaster::
+			 * getProductCode)
+			 * .collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) +
+			 * "'";
+			 * 
+			 * String healthProductVals = "'" + productMasters.stream() .filter(p ->
+			 * p.getProductType().toLowerCase().contains("health")).map(ProductMaster::
+			 * getProductCode)
+			 * .collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) +
+			 * "'";
+			 */
+
+			Driver driverManager = (Driver) Class.forName("org.apache.kylin.jdbc.Driver").newInstance();
+			Properties info = new Properties();
+			info.put("user", "ADMIN");
+			info.put("password", "KYLIN");
+			connection = driverManager
+					.connect("jdbc:kylin://" + RMSConstants.KYLIN_RS_BASE_IP_AND_PORT + "/learn_kylin", info);
+			System.out.println("Connection status -------------------------->" + connection);
+
+			Statement stmt = connection.createStatement();
+
+			String fromMonth = fromDate.split("/")[0];
+			String fromYear = fromDate.split("/")[1];
+			String toMonth = toDate.split("/")[0];
+			String toYear = toDate.split("/")[1];
+
+			String queryStr = "";
+			System.out.println("Query filterRequest: " + (filterRequest.getAddOnNew().equals("Include")));
+
+			queryStr += "SELECT" + " SUM(GEP_OD) AS GEP_OD," + " SUM(GEP_TP) AS GEP_TP," + " SUM(NEP_OD) AS NEP_OD,"
+					+ " SUM(NEP_TP) AS NEP_TP," + " SUM(DISCOUNT_GEP_OD) AS DISCOUNT_GEP_OD,"
+					+ " SUM(DISCOUNT_NEP_OD) AS DISCOUNT_NEP_OD," + " SUM(GEP_DEP_OD) AS GEP_DEP_OD,"
+					+ " SUM(GEP_DEP_TP) AS GEP_DEP_TP," + " SUM(GEP_NCB_OD) AS GEP_NCB_OD,"
+					+ " SUM(GEP_NCB_TP) AS GEP_NCB_TP," + " SUM(GEP_OTHER_ADDON_OD) AS GEP_OTHER_ADDON_OD,"
+					+ " SUM(GEP_OTHER_ADDON_TP) AS GEP_OTHER_ADDON_TP," + " SUM(NEP_DEP_OD) AS NEP_DEP_OD,"
+					+ " SUM(NEP_DEP_TP) AS NEP_DEP_TP," + " SUM(NEP_NCB_OD) AS NEP_NCB_OD,"
+					+ " SUM(NEP_NCB_TP) AS NEP_NCB_TP," + " SUM(NEP_OTHER_ADDON_OD) AS NEP_OTHER_ADDON_OD,"
+					+ " SUM(NEP_OTHER_ADDON_TP) AS NEP_OTHER_ADDON_TP,"
+					+ " SUM(EARNED_POLICIES_OD) AS EARNED_POLICIES_OD,"
+					+ " SUM(EARNED_POLICIES_TP) AS EARNED_POLICIES_TP,"
+					+ " SUM(ADDON_EARNED_POLICIES_OD) AS ADDON_EARNED_POLICIES_OD,"
+					+ " SUM(ADDON_EARNED_POLICIES_TP) AS ADDON_EARNED_POLICIES_TP," + " SUM(GIC_TPULR) AS GIC_TPULR,"
+					+ " SUM(GIC_TPULR_DEP) AS GIC_TPULR_DEP," + " SUM(GIC_TPULR_NCB) AS GIC_TPULR_NCB,"
+					+ " SUM(GIC_TPULR_OTHER_ADDON) AS GIC_TPULR_OTHER_ADDON," + " SUM(NIC_TPULR) AS NIC_TPULR,"
+					+ " SUM(NIC_TPULR_DEP) AS NIC_TPULR_DEP," + " SUM(NIC_TPULR_NCB) AS NIC_TPULR_NCB,"
+					+ " SUM(NIC_TPULR_OTHER_ADDON) AS NIC_TPULR_OTHER_ADDON," + " SUM(GWP_OD) AS GWP_OD,"
+					+ " SUM(GWP_TP) AS GWP_TP," + " SUM(NWP_OD) AS NWP_OD," + " SUM(NWP_TP) AS NWP_TP,"
+					+ " SUM(GWP_DEP_OD) AS GWP_DEP_OD," + " SUM(GWP_DEP_TP) AS GWP_DEP_TP,"
+					+ " SUM(GWP_NCB_OD) AS GWP_NCB_OD," + " SUM(GWP_NCB_TP) AS GWP_NCB_TP,"
+					+ " SUM(GWP_OTHER_ADDON_OD) AS GWP_OTHER_ADDON_OD,"
+					+ " SUM(GWP_OTHER_ADDON_TP) AS GWP_OTHER_ADDON_TP," + " SUM(NWP_DEP_OD) AS NWP_DEP_OD,"
+					+ " SUM(NWP_DEP_TP) AS NWP_DEP_TP," + " SUM(NWP_NCB_OD) AS NWP_NCB_OD,"
+					+ " SUM(NWP_NCB_TP) AS NWP_NCB_TP," + " SUM(NWP_OTHER_ADDON_OD) AS NWP_OTHER_ADDON_OD,"
+					+ " SUM(NWP_OTHER_ADDON_TP) AS NWP_OTHER_ADDON_TP," + " SUM(POLICY_COUNT_OD) AS POLICY_COUNT_OD,"
+					+ " SUM(POLICY_COUNT_TP) AS POLICY_COUNT_TP," + " SUM(POLICY_COUNT_OTHERS) AS POLICY_COUNT_OTHERS,"
+					+ " SUM(ADDON_POLICY_COUNT_OD) AS ADDON_POLICY_COUNT_OD,"
+					+ " SUM(ADDON_POLICY_COUNT_TP) AS ADDON_POLICY_COUNT_TP,"
+					+ " SUM(ADDON_POLICY_COUNT_OTHERS) AS ADDON_POLICY_COUNT_OTHERS,"
+					+ " SUM(ACQ_COST_OD) AS ACQ_COST_OD," + " SUM(ACQ_COST_TP) AS ACQ_COST_TP,"
+					+ " SUM(ADDON_ACQ_COST_OD) AS ADDON_ACQ_COST_OD," + " SUM(ADDON_ACQ_COST_TP) AS ADDON_ACQ_COST_TP,"
+					+ " SUM(CAT_CLAIM_COUNT) AS CAT_CLAIM_COUNT," + " SUM(THEFT_CLAIM_COUNT) AS THEFT_CLAIM_COUNT,"
+					+ " SUM(OTHER_CLAIM_COUNT) AS OTHER_CLAIM_COUNT," + " SUM(CLAIM_COUNT_TP) AS CLAIM_COUNT_TP,"
+					+ " SUM(ADDON_CAT_COUNT) AS ADDON_CAT_COUNT," + " SUM(ADDON_THEFT_COUNT) AS ADDON_THEFT_COUNT,"
+					+ " SUM(ADDON_OTHER_COUNT) AS ADDON_OTHER_COUNT,"
+					+ " SUM(ADDON_CLAIM_COUNT_TP) AS ADDON_CLAIM_COUNT_TP," + " SUM(CAT_GIC) AS CAT_GIC,"
+					+ " SUM(THEFT_GIC) AS THEFT_GIC," + " SUM(OTHER_GIC) AS OTHER_GIC," + " SUM(GIC_TP) AS GIC_TP,"
+					+ " SUM(CAT_NIC) AS CAT_NIC," + " SUM(THEFT_NIC) AS THEFT_NIC," + " SUM(OTHER_NIC) AS OTHER_NIC,"
+					+ " SUM(NIC_TP) AS NIC_TP," + " SUM(ADDON_CAT_GIC) AS ADDON_CAT_GIC,"
+					+ " SUM(ADDON_THEFT_GIC) AS ADDON_THEFT_GIC," + " SUM(ADDON_OTHER_GIC) AS ADDON_OTHER_GIC,"
+					+ " SUM(ADDON_GIC_TP) AS ADDON_GIC_TP," + " SUM(ADDON_CAT_NIC) AS ADDON_CAT_NIC,"
+					+ " SUM(ADDON_THEFT_NIC) AS ADDON_THEFT_NIC," + " SUM(ADDON_OTHER_NIC) AS ADDON_OTHER_NIC,"
+					+ " SUM(ADDON_NIC_TP) AS ADDON_NIC_TP," + " SUM(ESTIMATED_GIC) AS ESTIMATED_GIC,"
+					+ " SUM(ESTIMATED_CAT_GIC) AS ESTIMATED_CAT_GIC,"
+					+ " SUM(ESTIMATED_THEFT_GIC) AS ESTIMATED_THEFT_GIC,"
+					+ " SUM(ESTIMATED_OTHER_GIC) AS ESTIMATED_OTHER_GIC,"
+					+ " SUM(ESTIMATED_TP_GIC) AS ESTIMATED_TP_GIC,"
+					+ " SUM(ESTIMATED_ADDON_GIC) AS ESTIMATED_ADDON_GIC,"
+					+ " SUM(ESTIMATED_ADDON_CAT_GIC) AS ESTIMATED_ADDON_CAT_GIC,"
+					+ " SUM(ESTIMATED_ADDON_THEFT_GIC) AS ESTIMATED_ADDON_THEFT_GIC,"
+					+ " SUM(ESTIMATED_ADDON_OTHER_GIC) AS ESTIMATED_ADDON_OTHER_GIC,"
+					+ " SUM(ESTIMATED_ADDON_TP_GIC) AS ESTIMATED_ADDON_TP_GIC,"
+					+ " SUM(ESTIMATED_LOSS_RATIO) AS ESTIMATED_LOSS_RATIO,"
+					+ " SUM(ESTIMATED_OD_LOSS_RATIO) AS ESTIMATED_OD_LOSS_RATIO,"
+					+ " SUM(ESTIMATED_TP_LOSS_RATIO) AS ESTIMATED_TP_LOSS_RATIO,"
+					+ " SUM(ESTIMATED_TPULR_LOSS_RATIO) AS ESTIMATED_TPULR_LOSS_RATIO,"
+					+ " SUM(ESTIMATED_ADDON_LOSS_RATIO) AS ESTIMATED_ADDON_LOSS_RATIO,"
+					+ " SUM(ESTIMATED_ADDON_OD_LOSS_RATIO) AS ESTIMATED_ADDON_OD_LOSS_RATIO,"
+					+ " SUM(ESTIMATED_ADDON_TP_LOSS_RATIO) AS ESTIMATED_ADDON_TP_LOSS_RATIO,"
+					+ " SUM(ESTIMATED_ADDON_TPULR_LOSS_RATIO) AS ESTIMATED_ADDON_TPULR_LOSS_RATIO,"
+					+ " AVG(R12_FREQ) AS R12_FREQ," + " AVG(R12_CAT_FREQ) AS R12_CAT_FREQ,"
+					+ " AVG(R12_THEFT_FREQ) AS R12_THEFT_FREQ," + " AVG(R12_OTHERS_FREQ) AS R12_OTHERS_FREQ,"
+					+ " AVG(R12_TP_FREQ) AS R12_TP_FREQ," + " AVG(R12_ADDON_FREQ) AS R12_ADDON_FREQ,"
+					+ " AVG(R12_ADDON_CAT_FREQ) AS R12_ADDON_CAT_FREQ,"
+					+ " AVG(R12_ADDON_THEFT_FREQ) AS R12_ADDON_THEFT_FREQ,"
+					+ " AVG(R12_ADDON_OTHERS_FREQ) AS R12_ADDON_OTHERS_FREQ,"
+					+ " AVG(R12_ADDON_TP_FREQ) AS R12_ADDON_TP_FREQ," + " AVG(R12_SEVERITY) AS R12_SEVERITY,"
+					+ " AVG(R12_CAT_SEVERITY) AS R12_CAT_SEVERITY," + " AVG(R12_THEFT_SEVERITY) AS R12_THEFT_SEVERITY,"
+					+ " AVG(R12_OTHERS_SEVERITY) AS R12_OTHERS_SEVERITY," + " AVG(R12_TP_SEVERITY) AS R12_TP_SEVERITY,"
+					+ " AVG(R12_ADDON_SEVERITY) AS R12_ADDON_SEVERITY,"
+					+ " AVG(R12_ADDON_CAT_SEVERITY) AS R12_ADDON_CAT_SEVERITY,"
+					+ " AVG(R12_ADDON_THEFT_SEVERITY) AS R12_ADDON_THEFT_SEVERITY,"
+					+ " AVG(R12_ADDON_OTHERS_SEVERITY) AS R12_ADDON_OTHERS_SEVERITY,"
+					+ " AVG(R12_ADDON_TP_SEVERITY) AS R12_ADDON_TP_SEVERITY,"
+					+ " AVG(R12_LOSS_RATIO) AS R12_LOSS_RATIO," + " AVG(R12_OD_LOSS_RATIO) AS R12_OD_LOSS_RATIO,"
+					+ " AVG(R12_TP_LOSS_RATIO) AS R12_TP_LOSS_RATIO,"
+					+ " AVG(R12_TPULR_LOSS_RATIO) AS R12_TPULR_LOSS_RATIO,"
+					+ " AVG(R12_ADDON_LOSS_RATIO) AS R12_ADDON_LOSS_RATIO,"
+					+ " AVG(R12_ADDON_OD_LOSS_RATIO) AS R12_ADDON_OD_LOSS_RATIO,"
+					+ " AVG(R12_ADDON_TP_LOSS_RATIO) AS R12_ADDON_TP_LOSS_RATIO,"
+					+ " AVG(R12_ADDON_TPULR_LOSS_RATIO) AS R12_ADDON_TPULR_LOSS_RATIO,"
+					+ " ((SUM(CAT_CLAIM_COUNT)+SUM(THEFT_CLAIM_COUNT)+SUM(OTHER_CLAIM_COUNT))/(SUM(POLICY_COUNT_OD)))*100 AS FREQ,"
+					+ " ((SUM(CAT_CLAIM_COUNT))/(SUM(POLICY_COUNT_OD)))*100 AS CAT_FREQ,"
+					+ " ((SUM(THEFT_CLAIM_COUNT))/(SUM(POLICY_COUNT_OD)))*100 AS THEFT_FREQ,"
+					+ " ((SUM(OTHER_CLAIM_COUNT))/(SUM(POLICY_COUNT_OD)))*100 AS OTHER_FREQ,"
+					+ " ((SUM(CAT_GIC)+SUM(THEFT_GIC)+SUM(OTHER_GIC))/(SUM(CAT_CLAIM_COUNT)+SUM(THEFT_CLAIM_COUNT)+SUM(OTHER_CLAIM_COUNT))) AS SEVERITY,"
+					+ " ((SUM(CAT_GIC))/(SUM(CAT_CLAIM_COUNT)+SUM(THEFT_CLAIM_COUNT)+SUM(OTHER_CLAIM_COUNT))) AS CAT_SEVERITY,"
+					+ " ((SUM(THEFT_GIC))/(SUM(CAT_CLAIM_COUNT)+SUM(THEFT_CLAIM_COUNT)+SUM(OTHER_CLAIM_COUNT))) AS THEFT_SEVERITY,"
+					+ " ((SUM(OTHER_GIC))/(SUM(CAT_CLAIM_COUNT)+SUM(THEFT_CLAIM_COUNT)+SUM(OTHER_CLAIM_COUNT))) AS OTHER_SEVERITY,"
+					+ " ((SUM(CAT_GIC)+SUM(THEFT_GIC)+SUM(OTHER_GIC)+SUM(GIC_TPULR))/(SUM(GEP_OD)+SUM(GEP_TP)))*100 AS LOSS_RATIO,"
+					+ " ((SUM(CAT_GIC)+SUM(THEFT_GIC)+SUM(OTHER_GIC))/(SUM(GEP_OD)))*100 AS OD_LOSS_RATIO,"
+					+ " ((SUM(GIC_TPULR))/(SUM(GEP_TP)))*100 AS TPulr_LOSS_RATIO,"
+					+ " ((SUM(GIC_TP))/(SUM(GEP_TP)))*100 AS TP_LOSS_RATIO,"
+					+ " SUM(ESTIMATED_TPULR_GIC) AS ESTIMATED_TPULR_GIC,"
+					+ " SUM(ESTIMATED_ADDON_TPULR_GIC) AS ESTIMATED_ADDON_TPULR_GIC"
+					+ " FROM RSDB.POLICY_GROUP_LEVEL_FACT_TABLE as POLICY_GROUP_LEVEL_FACT_TABLE"
+					+ " LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER"
+					+ " ON POLICY_GROUP_LEVEL_FACT_TABLE.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE"
+					+ " LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER"
+					+ " ON POLICY_GROUP_LEVEL_FACT_TABLE.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE"
+					+ " LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER"
+					+ " ON POLICY_GROUP_LEVEL_FACT_TABLE.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE"
+					+ " LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER"
+					+ " ON POLICY_GROUP_LEVEL_FACT_TABLE.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE";
+
+			String finstartDate = fromYear + "-" + fromMonth + "-01";
+			String finEndDate = toYear + "-" + toMonth + "-31";
+
+			queryStr += " WHERE  GEP_YEAR in ('" + fromYear
+					+ "') and  GEP_MONTH in ('01','02','03','04','05','06','07','08','09','10','11','12')";
+
+			System.out.println("R12Query" + queryStr);
+
+			// if (filterRequest != null && filterRequest.getPolicyTypes() != null
+			// && !filterRequest.getPolicyTypes().isEmpty()) {
+			// String vals = "";
+			// for (int i = 0; i < filterRequest.getPolicyTypes().size(); i++) {
+			// vals += "'" + filterRequest.getPolicyTypes().get(i).trim() + "'";
+			// if (i != filterRequest.getPolicyTypes().size() - 1) {
+			// vals += ",";
+			// }
+			// }
+
+			// queryStr += "and TRIM (POLICY_GROUP_LEVEL_FACT_TABLE.POLICY_TYPE) in (" +
+			// vals + ")";
+			// }
+
+			// have to uncomment these filters
+			/*
+			 * if(filterRequest != null && filterRequest.getPolicyTypeNew() != null &&
+			 * !filterRequest.getPolicyTypeNew().isEmpty()){
+			 * 
+			 * String vals = ""; for (int i = 0; i <
+			 * filterRequest.getPolicyTypeNew().size(); i++) { vals += "'" +
+			 * filterRequest.getPolicyTypeNew().get(i).trim() + "'"; if (i !=
+			 * filterRequest.getPolicyTypeNew().size() - 1) { vals += ","; } } queryStr +=
+			 * "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.POLICY_TYPE_NEW) in  (" + vals + ")";
+			 * 
+			 * }
+			 * 
+			 * if(filterRequest != null && filterRequest.getChannelNew() != null &&
+			 * !filterRequest.getChannelNew().isEmpty()){
+			 * 
+			 * String vals = ""; for (int i = 0; i < filterRequest.getChannelNew().size();
+			 * i++) { vals += "'" + filterRequest.getChannelNew().get(i).trim() + "'"; if (i
+			 * != filterRequest.getChannelNew().size() - 1) { vals += ","; } } queryStr +=
+			 * " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.CHANNEL_NEW) in  (" + vals + ")";
+			 * 
+			 * }
+			 * 
+			 * if(filterRequest != null && filterRequest.getCategorisation() != null &&
+			 * !filterRequest.getCategorisation().isEmpty()){
+			 * 
+			 * String vals = ""; for (int i = 0; i <
+			 * filterRequest.getCategorisation().size(); i++) { vals += "'" +
+			 * filterRequest.getCategorisation().get(i).trim() + "'"; if (i !=
+			 * filterRequest.getCategorisation().size() - 1) { vals += ","; } } queryStr +=
+			 * "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.CATEGORISATION) in(" + vals + ")";
+			 * 
+			 * }
+			 * 
+			 * if(filterRequest != null && filterRequest.getEngineCapacity() != null &&
+			 * !filterRequest.getEngineCapacity().isEmpty()){
+			 * 
+			 * String vals = ""; for (int i = 0; i <
+			 * filterRequest.getEngineCapacity().size(); i++) { vals += "'" +
+			 * filterRequest.getEngineCapacity().get(i).trim() + "'"; if (i !=
+			 * filterRequest.getEngineCapacity().size() - 1) { vals += ","; } } queryStr +=
+			 * " and (POLICY_GROUP_LEVEL_FACT_TABLE.ENGINECAPACITY) in (" + vals + ")";
+			 * 
+			 * } if (filterRequest != null && filterRequest.getVehicleAge() != null &&
+			 * !filterRequest.getVehicleAge().isEmpty()) { String vals = ""; for (int i = 0;
+			 * i < filterRequest.getVehicleAge().size(); i++) { vals += "'" +
+			 * filterRequest.getVehicleAge().get(i).trim() + "'"; if (i !=
+			 * filterRequest.getVehicleAge().size() - 1) { vals += ","; } } queryStr +=
+			 * "and (POLICY_GROUP_LEVEL_FACT_TABLE.VEHICLEAGE) in (" + vals + ")"; }
+			 */
+
+			if (filterRequest != null && filterRequest.getBTypeNow() != null
+					&& !filterRequest.getBTypeNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getBTypeNow().size(); i++) {
+					vals += "'" + filterRequest.getBTypeNow().get(i).trim() + "'";
+					if (i != filterRequest.getBTypeNow().size() - 1) {
 						vals += ",";
 					}
 				}
-				queryStr += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_FLAG) in (" + vals + ")";
-				
-				
-				queryStr += "  ";*/			
-				
-				// if (filterRequest != null && filterRequest.getMotorChannel() != null
-				// 		&& !filterRequest.getMotorChannel().isEmpty()) {
-				// 	String vals = "";
-				// 	for (int i = 0; i < filterRequest.getMotorChannel().size(); i++) {
-				// 		vals += "'" + filterRequest.getMotorChannel().get(i).trim() + "'";
-				// 		if (i != filterRequest.getMotorChannel().size() - 1) {
-				// 			vals += ",";
-				// 		}
-				// 	}
-				// 	queryStr += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.CHANNEL) in (" + vals + ")";
-				// }
-		
-		
-				// if (filterRequest != null && filterRequest.getMotorSubChannel() != null
-				// 		&& !filterRequest.getMotorSubChannel().isEmpty()) {
-				// 	String vals = "";
-				// 	for (int i = 0; i < filterRequest.getMotorSubChannel().size(); i++) {
-				// 		vals += "'" + filterRequest.getMotorSubChannel().get(i).trim() + "'";
-				// 		if (i != filterRequest.getMotorSubChannel().size() - 1) {
-				// 			vals += ",";
-				// 		}
-				// 	}
-				// 	queryStr += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.SUB_CHANNEL) in (" + vals + ")";
-				// }
-		
-				if (filterRequest != null && filterRequest.getMotorZone() != null
-						&& !filterRequest.getMotorZone().isEmpty()) {
-					String vals = "";
-					for (int i = 0; i < filterRequest.getMotorZone().size(); i++) {
-						vals += "'" + filterRequest.getMotorZone().get(i).trim() + "'";
-						if (i != filterRequest.getMotorZone().size() - 1) {
-							vals += ",";
-						}
-					}
-					queryStr += " and TRIM(KPI_BRANCH_MASTER.ZONE) in (" + vals + ")";
-				}
-				
-				if (filterRequest != null && filterRequest.getMotorCluster() != null
-						&& !filterRequest.getMotorCluster().isEmpty()) {
-					String vals = "";
-					for (int i = 0; i < filterRequest.getMotorCluster().size(); i++) {
-						vals += "'" + filterRequest.getMotorCluster().get(i).trim() + "'";
-						if (i != filterRequest.getMotorCluster().size() - 1) {
-							vals += ",";
-						}
-					}
-					queryStr += " and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in (" + vals + ")";
-				}
-		
-				if (filterRequest != null && filterRequest.getMotorState() != null
-						&& !filterRequest.getMotorState().isEmpty()) {
-					String vals = "";
-					for (int i = 0; i < filterRequest.getMotorState().size(); i++) {
-						vals += "'" + filterRequest.getMotorState().get(i).trim() + "'";
-						if (i != filterRequest.getMotorState().size() - 1) {
-							vals += ",";
-						}
-					}
-					queryStr += " and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in (" + vals + ")";
-				}
-		
-				if (filterRequest != null && filterRequest.getMotorCity() != null
-						&& !filterRequest.getMotorCity().isEmpty()) {
-					String vals = "";
-					for (int i = 0; i < filterRequest.getMotorCity().size(); i++) {
-						vals += "'" + filterRequest.getMotorCity().get(i).trim() + "'";
-						if (i != filterRequest.getMotorCity().size() - 1) {
-							vals += ",";
-						}
-					}
-					queryStr += " and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in (" + vals + ")";
-				}
-			
-		
-				if (filterRequest != null && filterRequest.getMotorBranch() != null
-						&& !filterRequest.getMotorBranch().isEmpty()) {
-					String vals = "";
-					for (int i = 0; i < filterRequest.getMotorBranch().size(); i++) {
-						vals += "'" + filterRequest.getMotorBranch().get(i).trim() + "'";
-						if (i != filterRequest.getMotorBranch().size() - 1) {
-							vals += ",";
-						}
-					}
-					queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.BRANCH_CODE) in (" + vals + ")";
-				}
-				
-				if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
-						&& !filterRequest.getMotorIntermediaryCode().isEmpty()) {
-					String vals = "";
-					for (int i = 0; i < filterRequest.getMotorIntermediaryCode().size(); i++) {
-						vals += "'" + filterRequest.getMotorIntermediaryCode().get(i).trim() + "'";
-						if (i != filterRequest.getMotorIntermediaryCode().size() - 1) {
-							vals += ",";
-						}
-					}
-					queryStr += "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.AGENT_CODE) in  (" + vals + ")";
-				}
-				
-				if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
-						&& !filterRequest.getMotorIntermediaryName().isEmpty()) {
-					String vals = "";
-					for (int i = 0; i < filterRequest.getMotorIntermediaryName().size(); i++) {
-						vals += "'" + filterRequest.getMotorIntermediaryName().get(i).trim() + "'";
-						if (i != filterRequest.getMotorIntermediaryName().size() - 1) {
-							vals += ",";
-						}
-					}
-					queryStr += " and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in  (" + vals + ")";
-				}
-		
-				// if (filterRequest != null && filterRequest.getMotorFuelType() != null
-				// 		&& !filterRequest.getMotorFuelType().isEmpty()) {
-				// 	String vals = "";
-				// 	for (int i = 0; i < filterRequest.getMotorFuelType().size(); i++) {
-				// 		vals += "'" + filterRequest.getMotorFuelType().get(i).trim() + "'";
-				// 		if (i != filterRequest.getMotorFuelType().size() - 1) {
-				// 			vals += ",";
-				// 		}
-				// 	}
-				// 	queryStr += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.FUELTYPE) in (" + vals + ")";
-				// }
-				
-				/*if (filterRequest != null && filterRequest.getMotorNcbFlag() != null
-						&& !filterRequest.getMotorNcbFlag().isEmpty()) {
-					
-					
-					String Nvals = "and (RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_PREM)= '0'";
-					String Yvals = "and (RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_PREM)<> '0'";
-					int cvalcounter = 0,cvalNcounter = 0;
-					for (int i = 0; i < filterRequest.getMotorNcbFlag().size(); i++) {
-						
-						 if(filterRequest.getMotorNcbFlag().get(i).trim().contains("N")){
-							 if(cvalcounter==0)
-							queryStr += Nvals;
-							 cvalcounter++;
-						 }else if(filterRequest.getMotorNcbFlag().get(i).trim().contains("Y")){
-							if(cvalNcounter==0)
-							queryStr += Yvals;
-							cvalNcounter++;
-						 }
-					
-						System.out.println("NCB NEW POLICY query------------------------------ " + queryStr);
-						
-					}
-					
-				}*/
-				
-				/*String vals = "";
-				for (int i = 0; i < filterRequest.getMotorNcbFlag().size(); i++) {
-					vals += "'" + filterRequest.getMotorNcbFlag().get(i).trim() + "'";
-					if (i != filterRequest.getMotorNcbFlag().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_FLAG) in (" + vals + ")";
-				
-				
-				queryStr += "  ";*/
-				
-				if (filterRequest != null && filterRequest.getMotorCarType() != null
-						&& !filterRequest.getMotorCarType().isEmpty()) {
-					String vals = "'HIGHEND','High End'";
-					String nheVals = "'Sling','OIB','OIB PS','Xcd','Others','SS PS'";
-					int cvalcounter = 0,cvalNHEcounter = 0;
-					for (int i = 0; i < filterRequest.getMotorCarType().size(); i++) {
-						
-						 if(filterRequest.getMotorCarType().get(i).trim().equals("HE")){
-							 if(cvalcounter==0)
-							queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.MODELCLASSIFICATION) in  (" + vals + ")";
-							 cvalcounter++;
-						 }else if(filterRequest.getMotorCarType().get(i).trim().equals("NHE")){
-							if(cvalNHEcounter==0)
-							queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.MODELCLASSIFICATION) in (" + nheVals + ")";
-							cvalNHEcounter++;
-						 }
-					
-						System.out.println("HE query------------------------------ " + queryStr);
-						
-					}
-					
-				}
-				
-				
-		
-				// if(filterRequest.getAddOnNew().equals("Include")){
-				// 	queryStr += " group by ADDON_TYPE,category ) x";
-				// }else if(filterRequest.getAddOnNew().equals("Exclude")){
-				// 	queryStr += " group by ADDON_TYPE,category ) x ) mm";
-				// }else if(filterRequest.getAddOnNew().equals("Only Addon")){
-				// 	queryStr += " group by ADDON_TYPE,category ) x) mm";
-				// }
-		
-				System.out.println("R12 queryStr------------------------------ " + queryStr);
-				ResultSet rs = stmt.executeQuery(queryStr);
-				System.out.println("START------------------------------ ");
-		
-				
-				while (rs.next()) {
-		
-					R12CubeResponse res = new R12CubeResponse();
-					res.setGepOd(rs.getDouble(1));
-					res.setGepTp(rs.getDouble(2));
-					res.setNepOd(rs.getDouble(3));
-					res.setNepTp(rs.getDouble(4));
-					res.setDiscountGepOd(rs.getDouble(5));
-					res.setDiscountNepOd(rs.getDouble(6));;
-					res.setGepDepOd(rs.getDouble(7));
-					res.setGepDepTp(rs.getDouble(8));
-					res.setGepNcbOd(rs.getDouble(9));
-					res.setGepNcbTp(rs.getDouble(10));
-					res.setGepOtherAddonOd(rs.getDouble(11));
-					res.setGepOtherAddonTp(rs.getDouble(12));
-					res.setNepDepOd(rs.getDouble(13));
-					res.setNepDepTp(rs.getDouble(14));
-					res.setNepNcbOd(rs.getDouble(15));
-					res.setNepNcbTp(rs.getDouble(16));
-					res.setNepOtherAddonOd(rs.getDouble(17));
-					res.setNepOtherAddonTp(rs.getDouble(18));
-					res.setEarnedPoliciesOd(rs.getDouble(19));
-					res.setEarnedPoliciesTp(rs.getDouble(20));
-					res.setAddonEarnedPoliciesOd(rs.getDouble(21));
-					res.setAddonEarnedPoliciesTp(rs.getDouble(22));
-					res.setGicTpUlr(rs.getDouble(23));
-					res.setGicTpUlrDep(rs.getDouble(24));
-					res.setGicTpUlrNcb(rs.getDouble(25));
-					res.setGicTpUlrOtherAddon(rs.getDouble(26));
-					res.setNicTpUlr(rs.getDouble(27));
-					res.setNicTpUlrDep(rs.getDouble(28));
-					res.setNicTpUlrNcb(rs.getDouble(29));
-					res.setNicTpUlrOtherAddon(rs.getDouble(29));
-					res.setGwpOd(rs.getDouble(30));
-					res.setGwpTp(rs.getDouble(31));
-					res.setNwpOd(rs.getDouble(32));
-					res.setNwpTp(rs.getDouble(33));
-					res.setGwpDepOd(rs.getDouble(34));
-					res.setGwpDepTp(rs.getDouble(35));
-					res.setGwpNcbOd(rs.getDouble(36));
-					res.setGwpNcbTp(rs.getDouble(37));
-					res.setGwpOtherAddonOd(rs.getDouble(38));
-					res.setGwpOtherAddonTp(rs.getDouble(39));
-					res.setNwpDepOd(rs.getDouble(40));
-					res.setNwpDepTp(rs.getDouble(41));
-					res.setNwpNcbOd(rs.getDouble(42));
-					res.setNwpNcbTp(rs.getDouble(43));
-					res.setNwpOtherAddonOd(rs.getDouble(44));
-					res.setNwpOtherAddonTp(rs.getDouble(45));
-					res.setPolicyCountTp(rs.getDouble(46));
-					res.setPolicyCountOd(rs.getDouble(47));
-					res.setPolicyCountOthers(rs.getDouble(48));
-					res.setAddonPolicyCountTp(rs.getDouble(49));
-					res.setAddonPolicyCountOd(rs.getDouble(50));
-					res.setAddonPolicyCountOthers(rs.getDouble(51));
-					res.setAcqCostOd(rs.getDouble(52));
-					res.setAcqCostTp(rs.getDouble(53));
-					res.setAddonAcqCostOd(rs.getDouble(54));
-					res.setAddonAcqCostTp(rs.getDouble(55));
-					res.setCatClaimCount(rs.getDouble(56));
-					res.setTheftClaimCount(rs.getDouble(57));
-					res.setOtherClaimCount(rs.getDouble(58));
-					res.setAddonCatCount(rs.getDouble(59));
-					res.setAddonTheftCount(rs.getDouble(60));
-					res.setAddonOtherCount(rs.getDouble(61));
-					res.setAddonClaimCountTp(rs.getDouble(62));
-					res.setCatGic(rs.getDouble(63));
-					res.setTheftGic(rs.getDouble(64));
-					res.setOtherGic(rs.getDouble(65));
-					res.setGicTp(rs.getDouble(66));
-					res.setCatNic(rs.getDouble(67));
-					res.setTheftNic(rs.getDouble(68));
-					res.setOtherNic(rs.getDouble(69));
-					res.setNicTp(rs.getDouble(70));
-					res.setAddonCatGic(rs.getDouble(71));
-					res.setAddonTheftGic(rs.getDouble(72));
-					res.setAddonOtherGic(rs.getDouble(73));
-					res.setAddonGicTp(rs.getDouble(74));
-					res.setAddonCatNic(rs.getDouble(75));
-					res.setAddonTheftNic(rs.getDouble(76));
-					res.setAddonOtherNic(rs.getDouble(77));
-					res.setAddonNicTp(rs.getDouble(78));
-					res.setEstimatedGic(rs.getDouble(79));
-					res.setEstimatedCatGic(rs.getDouble(80));
-					res.setEstimatedTheftGic(rs.getDouble(81));
-					res.setEstimatedOtherGic(rs.getDouble(82));
-					res.setEstimatedTpGic(rs.getDouble(83));
-					res.setEstimatedAddonGic(rs.getDouble(84));
-					res.setEstimatedAddonCatGic(rs.getDouble(85));
-					res.setEstimatedAddonTheftGic(rs.getDouble(86));
-					res.setEstimatedAddonOtherGic(rs.getDouble(87));
-					res.setEstimatedAddonTpGic(rs.getDouble(88));
-					res.setEstimatedLossRatio(rs.getDouble(89));
-					res.setEstimatedOdLossRatio(rs.getDouble(90));
-					res.setEstimatedTpLossRatio(rs.getDouble(91));
-					res.setEstimatedTpUlrLossRatio(rs.getDouble(92));
-					res.setEstimatedAddonLossRatio(rs.getDouble(93));
-					res.setEstimatedAddonOdLossRatio(rs.getDouble(94));
-					res.setEstimatedAddonTpLossRatio(rs.getDouble(95));
-					res.setEstimatedAddonTpUlrLossRatio(rs.getDouble(96));
-					res.setR12Freq(rs.getDouble(97));
-					res.setR12CatFreq(rs.getDouble(98));
-					res.setR12TheftFreq(rs.getDouble(99));
-					res.setR12OthersFreq(rs.getDouble(100));
-					res.setR12TpFreq(rs.getDouble(101));
-					res.setR12AddonFreq(rs.getDouble(102));
-					res.setR12AddonCatFreq(rs.getDouble(103));
-					res.setR12AddonTheftFreq(rs.getDouble(104));
-					res.setR12AddonOthersFreq(rs.getDouble(105));
-					res.setR12AddonTpFreq(rs.getDouble(106));
-					res.setR12Severity(rs.getDouble(107));
-					res.setR12CatSeverity(rs.getDouble(108));
-					res.setR12TheftSeverity(rs.getDouble(109));
-					res.setR12OthersSeverity(rs.getDouble(110));
-					res.setR12TpSeverity(rs.getDouble(111));
-					res.setR12AddonSeverity(rs.getDouble(112));
-					res.setR12AddonCatSeverity(rs.getDouble(113));
-					res.setR12AddonTheftSeverity(rs.getDouble(114));
-					res.setR12AddonOthersSeverity(rs.getDouble(115));
-					res.setR12AddonTpSeverity(rs.getDouble(116));
-					res.setR12LossRatio(rs.getDouble(117));
-					res.setR12OdLossRatio(rs.getDouble(118));
-					res.setR12TpLossRatio(rs.getDouble(119));
-					res.setR12TpUlrLossRatio(rs.getDouble(120));
-					res.setR12AddonLossRatio(rs.getDouble(121));
-					res.setR12AddonOdLossRatio(rs.getDouble(122));
-					res.setR12AddonTpLossRatio(rs.getDouble(123));
-					res.setR12AddonTpUlrLossRatio(rs.getDouble(124));
-					res.setFreq(rs.getDouble(125));
-					res.setCatFreq(rs.getDouble(126));
-					res.setTheftFreq(rs.getDouble(127));
-					res.setOtherFreq(rs.getDouble(128));
-					res.setSeverity(rs.getDouble(129));
-					res.setCatSeverity(rs.getDouble(130));
-					res.setTheftSeverity(rs.getDouble(131));
-					res.setOtherSeverity(rs.getDouble(132));
-					res.setLossRatio(rs.getDouble(133));
-					res.setOdLossRatio(rs.getDouble(134));
-					res.setTpUlrLossRatio(rs.getDouble(135));
-					res.setTpLossRatio(rs.getDouble(136));
-					kpiResponseList.add(res);
-		
-		
-				}
-		
-				System.out.println("Query execution time " + (System.currentTimeMillis() - startTime));
-			} catch (Exception e) {
-				System.out.println("kylinDataSource initialize error, ex: " + e);
-				System.out.println();
-				e.printStackTrace();
-			} finally {
-				connection.close();
+				queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.BUSINESS_TYPE) in (" + vals + ")";
 			}
-			System.out.println("response list------------------------------ " + kpiResponseList);
-		
-			return kpiResponseList;
+			if (filterRequest != null && filterRequest.getChannelNow() != null
+					&& !filterRequest.getChannelNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getChannelNow().size(); i++) {
+					vals += "'" + filterRequest.getChannelNow().get(i).trim() + "'";
+					if (i != filterRequest.getChannelNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.CHANNEL) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getSubChannelNow() != null
+					&& !filterRequest.getSubChannelNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getSubChannelNow().size(); i++) {
+					vals += "'" + filterRequest.getSubChannelNow().get(i).trim() + "'";
+					if (i != filterRequest.getSubChannelNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.SUB_CHANNEL) in  (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getMakeNow() != null && !filterRequest.getMakeNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMakeNow().size(); i++) {
+					vals += "'" + filterRequest.getMakeNow().get(i).trim() + "'";
+					if (i != filterRequest.getMakeNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.MAKE) in  (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getModelGroupNow() != null
+					&& !filterRequest.getModelGroupNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getModelGroupNow().size(); i++) {
+					vals += "'" + filterRequest.getModelGroupNow().get(i).trim() + "'";
+					if (i != filterRequest.getModelGroupNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.MODELGROUP) in (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getFuelTypeNow() != null
+					&& !filterRequest.getFuelTypeNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getFuelTypeNow().size(); i++) {
+					vals += "'" + filterRequest.getFuelTypeNow().get(i).trim() + "'";
+					if (i != filterRequest.getFuelTypeNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += "and coalesce(POLICY_GROUP_LEVEL_FACT_TABLE.FUEL_TYPE,'N') in   (" + vals + ")";
+			}
+			if (filterRequest != null && filterRequest.getStateGroupNow() != null
+					&& !filterRequest.getStateGroupNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getStateGroupNow().size(); i++) {
+					vals += "'" + filterRequest.getStateGroupNow().get(i).trim() + "'";
+					if (i != filterRequest.getStateGroupNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.STATE_GROUPING) in (" + vals + ")";
+			}
+
+			if (filterRequest != null && filterRequest.getNcbNow() != null && !filterRequest.getNcbNow().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getNcbNow().size(); i++) {
+					vals += "'" + filterRequest.getNcbNow().get(i).trim() + "'";
+					if (i != filterRequest.getNcbNow().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.NCB_FLAG) in 	  (" + vals + ")";
+			}
+
+			/* latest */
+			/*
+			 * if (filterRequest != null && filterRequest.getNcbNow() != null &&
+			 * !filterRequest.getNcbNow().isEmpty()) {
+			 * 
+			 * 
+			 * String Nvals = "and (RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_PREM)= '0'"; String
+			 * Yvals = "and (RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_PREM)<> '0'"; int cvalcounter
+			 * = 0,cvalNcounter = 0; for (int i = 0; i < filterRequest.getNcbNow().size();
+			 * i++) {
+			 * 
+			 * if(filterRequest.getNcbNow().get(i).trim().contains("N")){ if(cvalcounter==0)
+			 * queryStr += Nvals; cvalcounter++; }else
+			 * if(filterRequest.getNcbNow().get(i).trim().contains("Y")){
+			 * if(cvalNcounter==0) queryStr += Yvals; cvalNcounter++; }
+			 * 
+			 * System.out.println("NCB NEW POLICY query------------------------------ " +
+			 * queryStr);
+			 * 
+			 * }
+			 * 
+			 * 
+			 * 
+			 * }
+			 */
+
+			/*
+			 * String vals = ""; for (int i = 0; i < filterRequest.getMotorNcbFlag().size();
+			 * i++) { vals += "'" + filterRequest.getMotorNcbFlag().get(i).trim() + "'"; if
+			 * (i != filterRequest.getMotorNcbFlag().size() - 1) { vals += ","; } } queryStr
+			 * += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_FLAG) in (" + vals + ")";
+			 * 
+			 * 
+			 * queryStr += "  ";
+			 */
+
+			// if (filterRequest != null && filterRequest.getMotorChannel() != null
+			// && !filterRequest.getMotorChannel().isEmpty()) {
+			// String vals = "";
+			// for (int i = 0; i < filterRequest.getMotorChannel().size(); i++) {
+			// vals += "'" + filterRequest.getMotorChannel().get(i).trim() + "'";
+			// if (i != filterRequest.getMotorChannel().size() - 1) {
+			// vals += ",";
+			// }
+			// }
+			// queryStr += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.CHANNEL) in (" + vals +
+			// ")";
+			// }
+
+			// if (filterRequest != null && filterRequest.getMotorSubChannel() != null
+			// && !filterRequest.getMotorSubChannel().isEmpty()) {
+			// String vals = "";
+			// for (int i = 0; i < filterRequest.getMotorSubChannel().size(); i++) {
+			// vals += "'" + filterRequest.getMotorSubChannel().get(i).trim() + "'";
+			// if (i != filterRequest.getMotorSubChannel().size() - 1) {
+			// vals += ",";
+			// }
+			// }
+			// queryStr += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.SUB_CHANNEL) in (" +
+			// vals + ")";
+			// }
+
+			if (filterRequest != null && filterRequest.getMotorZone() != null
+					&& !filterRequest.getMotorZone().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorZone().size(); i++) {
+					vals += "'" + filterRequest.getMotorZone().get(i).trim() + "'";
+					if (i != filterRequest.getMotorZone().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.ZONE) in (" + vals + ")";
+			}
+
+			if (filterRequest != null && filterRequest.getMotorCluster() != null
+					&& !filterRequest.getMotorCluster().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorCluster().size(); i++) {
+					vals += "'" + filterRequest.getMotorCluster().get(i).trim() + "'";
+					if (i != filterRequest.getMotorCluster().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in (" + vals + ")";
+			}
+
+			if (filterRequest != null && filterRequest.getMotorState() != null
+					&& !filterRequest.getMotorState().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorState().size(); i++) {
+					vals += "'" + filterRequest.getMotorState().get(i).trim() + "'";
+					if (i != filterRequest.getMotorState().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in (" + vals + ")";
+			}
+
+			if (filterRequest != null && filterRequest.getMotorCity() != null
+					&& !filterRequest.getMotorCity().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorCity().size(); i++) {
+					vals += "'" + filterRequest.getMotorCity().get(i).trim() + "'";
+					if (i != filterRequest.getMotorCity().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in (" + vals + ")";
+			}
+
+			if (filterRequest != null && filterRequest.getMotorBranch() != null
+					&& !filterRequest.getMotorBranch().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorBranch().size(); i++) {
+					vals += "'" + filterRequest.getMotorBranch().get(i).trim() + "'";
+					if (i != filterRequest.getMotorBranch().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.BRANCH_CODE) in (" + vals + ")";
+			}
+
+			if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
+					&& !filterRequest.getMotorIntermediaryCode().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorIntermediaryCode().size(); i++) {
+					vals += "'" + filterRequest.getMotorIntermediaryCode().get(i).trim() + "'";
+					if (i != filterRequest.getMotorIntermediaryCode().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.AGENT_CODE) in  (" + vals + ")";
+			}
+
+			if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
+					&& !filterRequest.getMotorIntermediaryName().isEmpty()) {
+				String vals = "";
+				for (int i = 0; i < filterRequest.getMotorIntermediaryName().size(); i++) {
+					vals += "'" + filterRequest.getMotorIntermediaryName().get(i).trim() + "'";
+					if (i != filterRequest.getMotorIntermediaryName().size() - 1) {
+						vals += ",";
+					}
+				}
+				queryStr += " and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in  (" + vals + ")";
+			}
+
+			// if (filterRequest != null && filterRequest.getMotorFuelType() != null
+			// && !filterRequest.getMotorFuelType().isEmpty()) {
+			// String vals = "";
+			// for (int i = 0; i < filterRequest.getMotorFuelType().size(); i++) {
+			// vals += "'" + filterRequest.getMotorFuelType().get(i).trim() + "'";
+			// if (i != filterRequest.getMotorFuelType().size() - 1) {
+			// vals += ",";
+			// }
+			// }
+			// queryStr += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.FUELTYPE) in (" + vals +
+			// ")";
+			// }
+
+			/*
+			 * if (filterRequest != null && filterRequest.getMotorNcbFlag() != null &&
+			 * !filterRequest.getMotorNcbFlag().isEmpty()) {
+			 * 
+			 * 
+			 * String Nvals = "and (RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_PREM)= '0'"; String
+			 * Yvals = "and (RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_PREM)<> '0'"; int cvalcounter
+			 * = 0,cvalNcounter = 0; for (int i = 0; i <
+			 * filterRequest.getMotorNcbFlag().size(); i++) {
+			 * 
+			 * if(filterRequest.getMotorNcbFlag().get(i).trim().contains("N")){
+			 * if(cvalcounter==0) queryStr += Nvals; cvalcounter++; }else
+			 * if(filterRequest.getMotorNcbFlag().get(i).trim().contains("Y")){
+			 * if(cvalNcounter==0) queryStr += Yvals; cvalNcounter++; }
+			 * 
+			 * System.out.println("NCB NEW POLICY query------------------------------ " +
+			 * queryStr);
+			 * 
+			 * }
+			 * 
+			 * }
+			 */
+
+			/*
+			 * String vals = ""; for (int i = 0; i < filterRequest.getMotorNcbFlag().size();
+			 * i++) { vals += "'" + filterRequest.getMotorNcbFlag().get(i).trim() + "'"; if
+			 * (i != filterRequest.getMotorNcbFlag().size() - 1) { vals += ","; } } queryStr
+			 * += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_FLAG) in (" + vals + ")";
+			 * 
+			 * 
+			 * queryStr += "  ";
+			 */
+
+			if (filterRequest != null && filterRequest.getMotorCarType() != null
+					&& !filterRequest.getMotorCarType().isEmpty()) {
+				String vals = "'HIGHEND','High End'";
+				String nheVals = "'Sling','OIB','OIB PS','Xcd','Others','SS PS'";
+				int cvalcounter = 0, cvalNHEcounter = 0;
+				for (int i = 0; i < filterRequest.getMotorCarType().size(); i++) {
+
+					if (filterRequest.getMotorCarType().get(i).trim().equals("HE")) {
+						if (cvalcounter == 0)
+							queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.MODELCLASSIFICATION) in  (" + vals
+									+ ")";
+						cvalcounter++;
+					} else if (filterRequest.getMotorCarType().get(i).trim().equals("NHE")) {
+						if (cvalNHEcounter == 0)
+							queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.MODELCLASSIFICATION) in (" + nheVals
+									+ ")";
+						cvalNHEcounter++;
+					}
+
+					System.out.println("HE query------------------------------ " + queryStr);
+
+				}
+
+			}
+
+			// if(filterRequest.getAddOnNew().equals("Include")){
+			// queryStr += " group by ADDON_TYPE,category ) x";
+			// }else if(filterRequest.getAddOnNew().equals("Exclude")){
+			// queryStr += " group by ADDON_TYPE,category ) x ) mm";
+			// }else if(filterRequest.getAddOnNew().equals("Only Addon")){
+			// queryStr += " group by ADDON_TYPE,category ) x) mm";
+			// }
+
+			System.out.println("R12 queryStr------------------------------ " + queryStr);
+			ResultSet rs = stmt.executeQuery(queryStr);
+			System.out.println("START------------------------------ ");
+
+			while (rs.next()) {
+
+				R12CubeResponse res = new R12CubeResponse();
+				res.setGepOd(rs.getDouble(1));
+				res.setGepTp(rs.getDouble(2));
+				res.setNepOd(rs.getDouble(3));
+				res.setNepTp(rs.getDouble(4));
+				res.setDiscountGepOd(rs.getDouble(5));
+				res.setDiscountNepOd(rs.getDouble(6));
+				res.setGepDepOd(rs.getDouble(7));
+				res.setGepDepTp(rs.getDouble(8));
+				res.setGepNcbOd(rs.getDouble(9));
+				res.setGepNcbTp(rs.getDouble(10));
+				res.setGepOtherAddonOd(rs.getDouble(11));
+				res.setGepOtherAddonTp(rs.getDouble(12));
+				res.setNepDepOd(rs.getDouble(13));
+				res.setNepDepTp(rs.getDouble(14));
+				res.setNepNcbOd(rs.getDouble(15));
+				res.setNepNcbTp(rs.getDouble(16));
+				res.setNepOtherAddonOd(rs.getDouble(17));
+				res.setNepOtherAddonTp(rs.getDouble(18));
+				res.setEarnedPoliciesOd(rs.getDouble(19));
+				res.setEarnedPoliciesTp(rs.getDouble(20));
+				res.setAddonEarnedPoliciesOd(rs.getDouble(21));
+				res.setAddonEarnedPoliciesTp(rs.getDouble(22));
+				res.setGicTpUlr(rs.getDouble(23));
+				res.setGicTpUlrDep(rs.getDouble(24));
+				res.setGicTpUlrNcb(rs.getDouble(25));
+				res.setGicTpUlrOtherAddon(rs.getDouble(26));
+				res.setNicTpUlr(rs.getDouble(27));
+				res.setNicTpUlrDep(rs.getDouble(28));
+				res.setNicTpUlrNcb(rs.getDouble(29));
+				res.setNicTpUlrOtherAddon(rs.getDouble(29));
+				res.setInsGwpPolicyComprehensive(rs.getDouble(30));			
+				res.setInsGwpPolicyTp(rs.getDouble(31));
+				res.setInsNwpPolicyComprehensive(rs.getDouble(32));
+				res.setInsNwpPolicyTp(rs.getDouble(33));
+				res.setInsGwpDepPolicyComprehensive(rs.getDouble(34));
+				res.setInsGwpDepPolicyTp(rs.getDouble(35)); 
+				res.setInsGwpNcbPolicyComprehensive(rs.getDouble(36));
+				res.setInsGwpNcbPolicyTp(rs.getDouble(37));
+				res.setInsGwpOtherAddonPolicyComprehensive(rs.getDouble(38));
+				res.setInsGwpOtherAddonPolicyTp(rs.getDouble(39));
+				res.setInsNwpDepPolicyComprehensive(rs.getDouble(40));
+				res.setInsNwpDepPolicyTp(rs.getDouble(41));
+				res.setInsNwpNcbPolicyComprehensive(rs.getDouble(42));
+				res.setInsNwpNcbPolicyTp(rs.getDouble(43));
+				res.setInsNwpOtherAddonPolicyComprehensive(rs.getDouble(44));
+				res.setInsNwpOtherAddonPolicyTp(rs.getDouble(45));
+				res.setWrittenPoliciesTp(rs.getDouble(46));
+				res.setWrittenPoliciesComprehensive(rs.getDouble(47));
+				res.setWrittenPoliciesOthers(rs.getDouble(48));		
+				res.setAddonWrittenPoliciesComprehensive(rs.getDouble(49));
+				res.setAddonWrittenPoliciesTp(rs.getDouble(50));
+				res.setAddonWrittenPoliciesOthers(rs.getDouble(51));
+				res.setAcqCostComprehensive(rs.getDouble(52));
+				res.setAcqCostTp(rs.getDouble(53));
+				res.setAddonAcqCostComprehensive(rs.getDouble(54));
+				res.setAddonAcqCostTp(rs.getDouble(55));
+				res.setCatClaimCount(rs.getDouble(56));
+				res.setTheftClaimCount(rs.getDouble(57));
+				res.setOtherClaimCount(rs.getDouble(58));
+				res.setAddonCatClaimCount(rs.getDouble(59));
+				res.setAddonTheftClaimCount(rs.getDouble(60));
+				res.setAddonOtherClaimCount(rs.getDouble(61));
+				res.setAddonClaimCountTp(rs.getDouble(62));
+				res.setCatGic(rs.getDouble(63));
+				res.setTheftGic(rs.getDouble(64));
+				res.setOtherGic(rs.getDouble(65));
+				res.setGicTp(rs.getDouble(66));
+				res.setCatNic(rs.getDouble(67));
+				res.setTheftNic(rs.getDouble(68));
+				res.setOtherNic(rs.getDouble(69));
+				res.setNicTp(rs.getDouble(70));
+				res.setAddonCatGic(rs.getDouble(71));
+				res.setAddonTheftGic(rs.getDouble(72));
+				res.setAddonOtherGic(rs.getDouble(73));
+				res.setAddonGicTp(rs.getDouble(74));
+				res.setAddonCatNic(rs.getDouble(75));
+				res.setAddonTheftNic(rs.getDouble(76));
+				res.setAddonOtherNic(rs.getDouble(77));
+				res.setAddonNicTp(rs.getDouble(78));
+				res.setEstimatedGic(rs.getDouble(79));
+				res.setEstimatedCatGic(rs.getDouble(80));
+				res.setEstimatedTheftGic(rs.getDouble(81));
+				res.setEstimatedOtherGic(rs.getDouble(82));
+				res.setEstimatedTpGic(rs.getDouble(83));
+				res.setEstimatedAddonGic(rs.getDouble(84));
+				res.setEstimatedAddonCatGic(rs.getDouble(85));
+				res.setEstimatedAddonTheftGic(rs.getDouble(86));
+				res.setEstimatedAddonOtherGic(rs.getDouble(87));
+				res.setEstimatedAddonTpGic(rs.getDouble(88));
+				res.setEstimatedLossRatio(rs.getDouble(89));
+				res.setEstimatedOdLossRatio(rs.getDouble(90));
+				res.setEstimatedTpLossRatio(rs.getDouble(91));
+				res.setEstimatedTpUlrLossRatio(rs.getDouble(92));
+				res.setEstimatedAddonLossRatio(rs.getDouble(93));
+				res.setEstimatedAddonOdLossRatio(rs.getDouble(94));
+				res.setEstimatedAddonTpLossRatio(rs.getDouble(95));
+				res.setEstimatedAddonTpUlrLossRatio(rs.getDouble(96));
+				res.setR12Freq(rs.getDouble(97));
+				res.setR12CatFreq(rs.getDouble(98));
+				res.setR12TheftFreq(rs.getDouble(99));
+				res.setR12OthersFreq(rs.getDouble(100));
+				res.setR12TpFreq(rs.getDouble(101));
+				res.setR12AddonFreq(rs.getDouble(102));
+				res.setR12AddonCatFreq(rs.getDouble(103));
+				res.setR12AddonTheftFreq(rs.getDouble(104));
+				res.setR12AddonOthersFreq(rs.getDouble(105));
+				res.setR12AddonTpFreq(rs.getDouble(106));
+				res.setR12Severity(rs.getDouble(107));
+				res.setR12CatSeverity(rs.getDouble(108));
+				res.setR12TheftSeverity(rs.getDouble(109));
+				res.setR12OthersSeverity(rs.getDouble(110));
+				res.setR12TpSeverity(rs.getDouble(111));
+				res.setR12AddonSeverity(rs.getDouble(112));
+				res.setR12AddonCatSeverity(rs.getDouble(113));
+				res.setR12AddonTheftSeverity(rs.getDouble(114));
+				res.setR12AddonOthersSeverity(rs.getDouble(115));
+				res.setR12AddonTpSeverity(rs.getDouble(116));
+				res.setR12LossRatio(rs.getDouble(117));
+				res.setR12OdLossRatio(rs.getDouble(118));
+				res.setR12TpLossRatio(rs.getDouble(119));
+				res.setR12TpUlrLossRatio(rs.getDouble(120));
+				res.setR12AddonLossRatio(rs.getDouble(121));
+				res.setR12AddonOdLossRatio(rs.getDouble(122));
+				res.setR12AddonTpLossRatio(rs.getDouble(123));
+				res.setR12AddonTpUlrLossRatio(rs.getDouble(124));
+				res.setFreq(rs.getDouble(125));
+				res.setCatFreq(rs.getDouble(126));
+				res.setTheftFreq(rs.getDouble(127));
+				res.setOtherFreq(rs.getDouble(128));
+				res.setSeverity(rs.getDouble(129));
+				res.setCatSeverity(rs.getDouble(130));
+				res.setTheftSeverity(rs.getDouble(131));
+				res.setOtherSeverity(rs.getDouble(132));
+				res.setLossRatio(rs.getDouble(133));
+				res.setOdLossRatio(rs.getDouble(134));
+				res.setTpUlrLossRatio(rs.getDouble(135));
+				res.setTpLossRatio(rs.getDouble(136));
+				res.setEstimatedTpulrGic(rs.getDouble(137));
+				res.setEstimatedAddonTpulrGic(rs.getDouble(138));	
+				
+				kpiResponseList.add(res);
+
+			}
+
+			System.out.println("Query execution time " + (System.currentTimeMillis() - startTime));
+		} catch (Exception e) {
+			System.out.println("kylinDataSource initialize error, ex: " + e);
+			System.out.println();
+			e.printStackTrace();
+		} finally {
+			connection.close();
 		}
+		System.out.println("response list------------------------------ " + kpiResponseList);
 
-
-
+		return kpiResponseList;
+	}
 
 
 
@@ -8928,506 +8786,458 @@ public List<PolicyCubeResponseNew> getUWPolicyCubeDataUpdatedNew(HttpServletRequ
 	}
 	return kpiResponseList;
 	}
-
-@GetMapping("/getUWInsCubeDataUpdatedNew")
-@ResponseBody
-public List<InsCubeResponseNew> getUWInsCubeDataUpdatedNew(HttpServletRequest req, UserMatrixMasterRequest filterRequest)
-		throws SQLException {
-	Connection connection = null;
-	List<InsCubeResponseNew> kpiResponseList = new ArrayList<InsCubeResponseNew>();
-	long startTime = System.currentTimeMillis();
-	try {
-//		String fromDate = req.getParameter("fromDate") == null ? "" : req.getParameter("fromDate");
-//		String toDate = req.getParameter("toDate") == null ? "" : req.getParameter("toDate");
-		String fromDate = filterRequest.getFromDate() == null ? "" : filterRequest.getFromDate();
-		String toDate = filterRequest.getToDate() == null ? "" : filterRequest.getToDate();
-
-		List<ProductMaster> productMasters = productMasterRepository.findAll();
-
-		String motorProductVals = "'" + productMasters.stream()
-				.filter(p -> p.getProductType().toLowerCase().contains("motor")).map(ProductMaster::getProductCode)
-				.collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";
-
-		String healthProductVals = "'" + productMasters.stream()
-				.filter(p -> p.getProductType().toLowerCase().contains("health")).map(ProductMaster::getProductCode)
-				.collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) + "'";
-
-		Driver driverManager = (Driver) Class.forName("org.apache.kylin.jdbc.Driver").newInstance();
-		Properties info = new Properties();
-		info.put("user", "ADMIN");
-		info.put("password", "KYLIN");
-		connection = driverManager
-				.connect("jdbc:kylin://" + RMSConstants.KYLIN_RS_BASE_IP_AND_PORT + "/learn_kylin", info);
-		System.out.println("Connection status -------------------------->" + connection);
-		Statement stmt = connection.createStatement();
-
-		String fromMonth = fromDate.split("/")[0];
-		String fromYear = fromDate.split("/")[1];
-		String toMonth = toDate.split("/")[0];
-		String toYear = toDate.split("/")[1];
-
-		
-		String queryStr = "SELECT "+
-				" SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP ELSE 0 END) as INS_GWP_POLICY_COMP, "+
-				" SUM(case when aa.CATEGORY='TP' THEN INS_GWP ELSE 0 END) as INS_GWP_POLICY_TP, "+
-				" SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP ELSE 0 END) as INS_GWP_POLICY_others, "+
-				" SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_OD ELSE 0 END) as INS_GWP_OD_POLICY_COMP, "+
-				" SUM(case when aa.CATEGORY='TP' THEN INS_GWP_OD ELSE 0 END) as INS_GWP_OD_POLICY_TP, "+
-				" SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_OD ELSE 0 END) as INS_GWP_OD_POLICY_others, "+
-				" SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_TP ELSE 0 END) as INS_GWP_TP_POLICY_COMP, "+
-				" SUM(case when aa.CATEGORY='TP' THEN INS_GWP_TP ELSE 0 END) as INS_GWP_TP_POLICY_TP, "+
-				" SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_TP ELSE 0 END) as INS_GWP_TP_POLICY_others, "+
-				" SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_DISCOUNT_OD ELSE 0 END) as INS_GWP_DISCOUNT_OD_POLICY_COMP, "+
-				" SUM(case when aa.CATEGORY='TP' THEN INS_GWP_DISCOUNT_OD ELSE 0 END) as INS_GWP_DISCOUNT_OD_POLICY_TP, "+
-				" SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_DISCOUNT_OD ELSE 0 END) as INS_GWP_DISCOUNT_OD_POLICY_others, "+
-				" SUM(case when aa.CATEGORY='Comprehensive' THEN 0 ELSE 0 END) as INS_NWP_POLICY_COMP, "+
-				" SUM(case when aa.CATEGORY='TP' THEN 0 ELSE 0 END) as INS_NWP_POLICY_TP, "+
-				" SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN 0 ELSE 0 END) as INS_NWP_POLICY_others, "+
-				" SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_OD*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OD_POLICY_COMP, "+
-				" SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_OD*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OD_POLICY_TP, "+
-				" SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_OD*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OD_POLICY_others, "+
-				" SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_TP *(1-tp_quota_share-tp_obligatory))+(INS_GWP_TP*tp_quota_share*tp_RI_COMMISSION) ELSE 0 END) as INS_NWP_TP_POLICY_COMP, "+
-				" SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_TP *(1-tp_quota_share-tp_obligatory))+(INS_GWP_TP*tp_quota_share*tp_RI_COMMISSION) ELSE 0 END) as INS_NWP_TP_POLICY_TP, "+
-				" SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_TP *(1-tp_quota_share-tp_obligatory))+(INS_GWP_TP*tp_quota_share*tp_RI_COMMISSION) ELSE 0 END) as INS_NWP_TP_POLICY_others, "+
-				" SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_DISCOUNT_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_DISCOUNT_OD*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DISCOUNT_OD_POLICY_COMP, "+
-				" SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_DISCOUNT_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_DISCOUNT_OD*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DISCOUNT_OD_POLICY_TP, "+
-				" SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_DISCOUNT_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_DISCOUNT_OD*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DISCOUNT_OD_POLICY_others, "+
-				" SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_COMP, "+
-				" SUM(case when aa.CATEGORY='TP' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_TP, "+
-				" SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_others, "+
-				" SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_COMP, "+
-				" SUM(case when aa.CATEGORY='TP' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_TP, "+
-				" SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_others, "+
-				" SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_COMP, "+
-				" SUM(case when aa.CATEGORY='TP' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_NCB_POLICY_TP, "+
-				" SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_others, "+
-				" SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_COMP, "+
-				" SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_TP, "+
-				" SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_others, "+
-				" SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_NCB *(1-od_quota_share-od_obligatory))+(INS_GWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_COMP, "+
-				" SUM(case when aa.CATEGORY='TP' THEN (INS_NWP_NCB *(1-od_quota_share-od_obligatory))+(INS_NWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_TP, "+
-				" SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_NWP_NCB *(1-od_quota_share-od_obligatory))+(INS_NWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_others, "+
-				" SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_COMP, "+
-				" SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_TP, "+
-				" SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_others "+
-				" FROM ( SELECT "+ 
-				" SUM(INS_GWP) as INS_GWP "+
-				" ,SUM(INS_GWP_OD) as INS_GWP_OD "+
-				" ,SUM(INS_GWP_TP) as INS_GWP_TP "+
-				" ,SUM(INS_GWP_DISCOUNT_OD) as INS_GWP_DISCOUNT_OD "+
-				" ,SUM(INS_NWP) as INS_NWP "+
-				" ,SUM(INS_NWP_OD) as INS_NWP_OD "+
-				" ,SUM(INS_NWP_TP) as INS_NWP_TP "+
-				" ,SUM(INS_NWP_DISCOUNT_OD) as INS_NWP_DISCOUNT_OD "+
-				" ,SUM(INS_GWP_DEP) as INS_GWP_DEP "+
-				" ,SUM(INS_GWP_NCB) as INS_GWP_NCB "+
-				" ,SUM(INS_GWP_OTHERADDON) as INS_GWP_OTHERADDON "+
-				" ,SUM(INS_NWP_DEP) as INS_NWP_DEP "+
-				" ,SUM(INS_NWP_NCB) as INS_NWP_NCB "+
-				" ,SUM(INS_NWP_OTHERADDON) as INS_NWP_OTHERADDON "+
-				" , CATEGORY, uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code "+				
-				" FROM RSDB.RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_CURRENT as RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW "+
-				" LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW "+
-				" ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL "+
-				" LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER "+
-				" ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE "+
-				" LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER "+
-				" ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE "+
-				" LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER "+
-				" ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE "+
-				" LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER "+
-				" ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE "+
-				" LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW "+
-				" ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.OA_CODE = KPI_OA_MASTER_NW.OA_CODE "+
-				" LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW "+
-				" ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY "+
-				" LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER "+
-				" ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE "+
-				" LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER "+
-				" ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE "+
-				" LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER "+
-				" ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE "+
-				" LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW "+
-				" ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME "+
-				" LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT "+
-				" ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE "+
-				" LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL "+
-				" ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE ";
-				
-		
-		/*if (fromYear.equals(toYear)) {
-			queryStr += " WHERE (( FINANCIAL_YEAR=" + fromYear + " and EFF_FIN_YEAR_MONTH >= '" + fromMonth
-					+ "' and EFF_FIN_YEAR_MONTH <='" + toMonth + "' ))";
-		} else {
-			queryStr += " WHERE (( FINANCIAL_YEAR=" + fromYear + " and EFF_FIN_YEAR_MONTH >= '" + fromMonth
-					+ "' ) or ( FINANCIAL_YEAR=" + toYear + " and EFF_FIN_YEAR_MONTH <='" + toMonth + "' ))";
-		}*/
-		
-		String finstartDate = fromYear + "-" + fromMonth + "-01";
-		String finEndDate = toYear + "-" + toMonth + "-31";
-		
-		//queryStr += " WHERE fin_date >='"+finstartDate+"' and fin_date <='"+finEndDate+"' ";
-		//queryStr += " WHERE ";
-		//queryStr += getFinCondQuery(Integer.valueOf(fromMonth),Integer.valueOf(toMonth),Integer.valueOf(fromYear),Integer.valueOf(toYear));
-		queryStr += " WHERE SUBSTRING(inception_date,1,10) >='"+finstartDate+"' and SUBSTRING(inception_date,1,10) <='"+finEndDate+"' ";
-
-		
-		if (filterRequest != null && filterRequest.getBTypeNow() != null
-				&& !filterRequest.getBTypeNow().isEmpty()) {
-			String vals = "";
-			for (int i = 0; i < filterRequest.getBTypeNow().size(); i++) {
-				vals += "'" + filterRequest.getBTypeNow().get(i).trim() + "'";
-				if (i != filterRequest.getBTypeNow().size() - 1) {
-					vals += ",";
-				}
-			}
-			queryStr += " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BUSINESS_TYPE) in (" + vals + ")";
-		}
-		if (filterRequest != null && filterRequest.getChannelNow() != null
-				&& !filterRequest.getChannelNow().isEmpty()) {
-			String vals = "";
-			for (int i = 0; i < filterRequest.getChannelNow().size(); i++) {
-				vals += "'" + filterRequest.getChannelNow().get(i).trim() + "'";
-				if (i != filterRequest.getChannelNow().size() - 1) {
-					vals += ",";
-				}
-			}
-			queryStr += " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CHANNEL) in (" + vals + ")";
-		}
-		if (filterRequest != null && filterRequest.getSubChannelNow() != null
-				&& !filterRequest.getSubChannelNow().isEmpty()) {
-			String vals = "";
-			for (int i = 0; i < filterRequest.getSubChannelNow().size(); i++) {
-				vals += "'" + filterRequest.getSubChannelNow().get(i).trim() + "'";
-				if (i != filterRequest.getSubChannelNow().size() - 1) {
-					vals += ",";
-				}
-			}
-			queryStr += " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUB_CHANNEL) in (" + vals + ")";
-		}
-		if (filterRequest != null && filterRequest.getMakeNow() != null
-				&& !filterRequest.getMakeNow().isEmpty()) {
-			String vals = "";
-			for (int i = 0; i < filterRequest.getMakeNow().size(); i++) {
-				vals += "'" + filterRequest.getMakeNow().get(i).trim() + "'";
-				if (i != filterRequest.getMakeNow().size() - 1) {
-					vals += ",";
-				}
-			}
-			queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MAKE) in (" + vals + ")";
-		}
-		if (filterRequest != null && filterRequest.getModelGroupNow() != null
-				&& !filterRequest.getModelGroupNow().isEmpty()) {
-			String vals = "";
-			for (int i = 0; i < filterRequest.getModelGroupNow().size(); i++) {
-				vals += "'" + filterRequest.getModelGroupNow().get(i).trim() + "'";
-				if (i != filterRequest.getModelGroupNow().size() - 1) {
-					vals += ",";
-				}
-			}
-			queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELGROUP) in (" + vals + ")";
-		}
-		if (filterRequest != null && filterRequest.getFuelTypeNow() != null
-				&& !filterRequest.getFuelTypeNow().isEmpty()) {
-			String vals = "";
-			for (int i = 0; i < filterRequest.getFuelTypeNow().size(); i++) {
-				vals += "'" + filterRequest.getFuelTypeNow().get(i).trim() + "'";
-				if (i != filterRequest.getFuelTypeNow().size() - 1) {
-					vals += ",";
-				}
-			}
-			queryStr += " and coalesce(RSA_DWH_MODEL_MASTER_CURRENT.FUELTYPE,'N') in (" + vals + ")";
-		}
-		if (filterRequest != null && filterRequest.getStateGroupNow() != null
-				&& !filterRequest.getStateGroupNow().isEmpty()) {
-			String vals = "";
-			for (int i = 0; i < filterRequest.getStateGroupNow().size(); i++) {
-				vals += "'" + filterRequest.getStateGroupNow().get(i).trim() + "'";
-				if (i != filterRequest.getStateGroupNow().size() - 1) {
-					vals += ",";
-				}
-			}
-			queryStr += " and TRIM(RSA_DWH_CITY_GROUPING_MASTER_FINAL.STATE_GROUPING) in (" + vals + ")";
-		}
-		if (filterRequest != null && filterRequest.getNcbNow() != null
-				&& !filterRequest.getNcbNow().isEmpty()) {
-			String vals = "";
-			for (int i = 0; i < filterRequest.getNcbNow().size(); i++) {
-				vals += "'" + filterRequest.getNcbNow().get(i).trim() + "'";
-				if (i != filterRequest.getNcbNow().size() - 1) {
-					vals += ",";
-				}
-			}
-			queryStr += " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.NCB_FLAG) in (" + vals + ")";
-		}
-
-		
-		if (filterRequest != null && filterRequest.getMotorChannel() != null
-				&& !filterRequest.getMotorChannel().isEmpty()) {
-			String vals = "";
-			for (int i = 0; i < filterRequest.getMotorChannel().size(); i++) {
-				vals += "'" + filterRequest.getMotorChannel().get(i).trim() + "'";
-				if (i != filterRequest.getMotorChannel().size() - 1) {
-					vals += ",";
-				}
-			}
-			queryStr += " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CHANNEL) in (" + vals + ")";
-		}
-
-		if (filterRequest != null && filterRequest.getMotorSubChannel() != null
-				&& !filterRequest.getMotorSubChannel().isEmpty()) {
-			String vals = "";
-			for (int i = 0; i < filterRequest.getMotorSubChannel().size(); i++) {
-				vals += "'" + filterRequest.getMotorSubChannel().get(i).trim() + "'";
-				if (i != filterRequest.getMotorSubChannel().size() - 1) {
-					vals += ",";
-				}
-			}
-			queryStr += " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUB_CHANNEL) in (" + vals + ")";
-		}
-
-		/*if (filterRequest != null && filterRequest.getMotorRegion() != null
-				&& !filterRequest.getMotorRegion().isEmpty()) {
-			String vals = "";
-			for (int i = 0; i < filterRequest.getMotorRegion().size(); i++) {
-				vals += "'" + filterRequest.getMotorRegion().get(i).trim() + "'";
-				if (i != filterRequest.getMotorRegion().size() - 1) {
-					vals += ",";
-				}
-			}
-			queryStr += " and TRIM(KPI_BRANCH_MASTER.REGION) in (" + vals + ")";
-		}*/
-		
-		if (filterRequest != null && filterRequest.getMotorZone() != null
-				&& !filterRequest.getMotorZone().isEmpty()) {
-			String vals = "";
-			for (int i = 0; i < filterRequest.getMotorZone().size(); i++) {
-				vals += "'" + filterRequest.getMotorZone().get(i).trim() + "'";
-				if (i != filterRequest.getMotorZone().size() - 1) {
-					vals += ",";
-				}
-			}
-			queryStr += " and TRIM(KPI_BRANCH_MASTER.ZONE) in (" + vals + ")";
-		}
-		
-		if (filterRequest != null && filterRequest.getMotorCluster() != null
-				&& !filterRequest.getMotorCluster().isEmpty()) {
-			String vals = "";
-			for (int i = 0; i < filterRequest.getMotorCluster().size(); i++) {
-				vals += "'" + filterRequest.getMotorCluster().get(i).trim() + "'";
-				if (i != filterRequest.getMotorCluster().size() - 1) {
-					vals += ",";
-				}
-			}
-			queryStr += " and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in (" + vals + ")";
-		}
-
-		if (filterRequest != null && filterRequest.getMotorState() != null
-				&& !filterRequest.getMotorState().isEmpty()) {
-			String vals = "";
-			for (int i = 0; i < filterRequest.getMotorState().size(); i++) {
-				vals += "'" + filterRequest.getMotorState().get(i).trim() + "'";
-				if (i != filterRequest.getMotorState().size() - 1) {
-					vals += ",";
-				}
-			}
-			queryStr += " and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in (" + vals + ")";
-		}
-
-		if (filterRequest != null && filterRequest.getMotorCity() != null
-				&& !filterRequest.getMotorCity().isEmpty()) {
-			String vals = "";
-			for (int i = 0; i < filterRequest.getMotorCity().size(); i++) {
-				vals += "'" + filterRequest.getMotorCity().get(i).trim() + "'";
-				if (i != filterRequest.getMotorCity().size() - 1) {
-					vals += ",";
-				}
-			}
-			queryStr += " and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in (" + vals + ")";
-		}
-
-		if (filterRequest != null && filterRequest.getMotorBranch() != null
-				&& !filterRequest.getMotorBranch().isEmpty()) {
-			String vals = "";
-			for (int i = 0; i < filterRequest.getMotorBranch().size(); i++) {
-				vals += "'" + filterRequest.getMotorBranch().get(i).trim() + "'";
-				if (i != filterRequest.getMotorBranch().size() - 1) {
-					vals += ",";
-				}
-			}
-			queryStr += " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BRANCH_CODE) in (" + vals + ")";
-		}
-		
-		if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
-				&& !filterRequest.getMotorIntermediaryCode().isEmpty()) {
-			String vals = "";
-			for (int i = 0; i < filterRequest.getMotorIntermediaryCode().size(); i++) {
-				vals += "'" + filterRequest.getMotorIntermediaryCode().get(i).trim() + "'";
-				if (i != filterRequest.getMotorIntermediaryCode().size() - 1) {
-					vals += ",";
-				}
-			}
-			queryStr += " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.AGENT_CODE) in (" + vals + ")";
-		}
-		
-		if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
-				&& !filterRequest.getMotorIntermediaryName().isEmpty()) {
-			String vals = "";
-			for (int i = 0; i < filterRequest.getMotorIntermediaryName().size(); i++) {
-				vals += "'" + filterRequest.getMotorIntermediaryName().get(i).trim() + "'";
-				if (i != filterRequest.getMotorIntermediaryName().size() - 1) {
-					vals += ",";
-				}
-			}
-			queryStr += " and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in (" + vals + ")";
-		}
-
-		if (filterRequest != null && filterRequest.getMotorFuelType() != null
-				&& !filterRequest.getMotorFuelType().isEmpty()) {
-			String vals = "";
-			for (int i = 0; i < filterRequest.getMotorFuelType().size(); i++) {
-				vals += "'" + filterRequest.getMotorFuelType().get(i).trim() + "'";
-				if (i != filterRequest.getMotorFuelType().size() - 1) {
-					vals += ",";
-				}
-			}
-			queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.FUELTYPE) in (" + vals + ")";
-		}
-		
-		if (filterRequest != null && filterRequest.getMotorNcbFlag() != null
-				&& !filterRequest.getMotorNcbFlag().isEmpty()) {
-			String vals = "";
-			for (int i = 0; i < filterRequest.getMotorNcbFlag().size(); i++) {
-				vals += "'" + filterRequest.getMotorNcbFlag().get(i).trim() + "'";
-				if (i != filterRequest.getMotorNcbFlag().size() - 1) {
-					vals += ",";
-				}
-			}
-			queryStr += " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.NCB_FLAG) in (" + vals + ")";
-		}
-		
-		/*if (filterRequest != null && filterRequest.getMotorCarType() != null
-				&& !filterRequest.getMotorCarType().isEmpty()) {
-			String vals = "'HIGHEND','High End'";
-			for (int i = 0; i < filterRequest.getMotorCarType().size(); i++) {
-				
-				if(filterRequest.getMotorCarType().get(i).trim().equals("HE")){
-					if (i != filterRequest.getMotorNcbFlag().size() - 1) {
-						vals += ",";
-					}
-					queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + vals + ")";
-				}else{
-					queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) not in (" + vals + ")";
-				}
-			
-				System.out.println("HE query------------------------------ " + queryStr);
-				
-			}
-			
-		}*/
-		
-		if (filterRequest != null && filterRequest.getMotorCarType() != null
-				&& !filterRequest.getMotorCarType().isEmpty()) {
-			String vals = "'HIGHEND','High End'";
-			String nheVals = "'Sling','OIB','OIB PS','Xcd','Others','SS PS'";
-			int cvalcounter = 0,cvalNHEcounter = 0;
-			for (int i = 0; i < filterRequest.getMotorCarType().size(); i++) {
-				
-				 if(filterRequest.getMotorCarType().get(i).trim().equals("HE")){
-					 if(cvalcounter==0)
-					queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + vals + ")";
-					 cvalcounter++;
-				 }else if(filterRequest.getMotorCarType().get(i).trim().equals("NHE")){
-					if(cvalNHEcounter==0)
-					queryStr += " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + nheVals + ")";
-					cvalNHEcounter++;
-				 }
-			
-				System.out.println("HE query------------------------------ " + queryStr);
-				
-			}
-			
-		}
-		
-
-		/*queryStr += " group by category ) x";*/
-		
-		queryStr += " group by category,uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code ) aa,"
-				+ " (select r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE,sum(r.OD_OBLIGATORY) OD_OBLIGATORY,sum(r.OD_QUOTA_SHARE) OD_QUOTA_SHARE,sum(OD_RI_COMMISSION) OD_RI_COMMISSION,sum(r.TP_OBLIGATORY) TP_OBLIGATORY,sum(r.TP_QUOTA_SHARE) TP_QUOTA_SHARE,sum(TP_RI_COMMISSION) TP_RI_COMMISSION  "
-				+ " from rsa_dwh_ri_obligatory_master1_new r "
-				+ "group by r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE) bb "
-				+ "where aa.uw_year=bb.underwriting_year and aa.product_Code=bb.xgen_productcode";
-
-		System.out.println("queryStr------------------------------ NWP " + queryStr);
-		ResultSet rs = stmt.executeQuery(queryStr);
-		System.out.println("START------------------------------ ");
-
-		// jsArray = convertToJSON(rs);
-
-		while (rs.next()) {
-
-			InsCubeResponseNew res = new InsCubeResponseNew();
-			
-			res.setInsGwpPolicyComprehensive(rs.getDouble(1));
-			res.setInsGwpPolicyTp(rs.getDouble(2));
-			res.setInsGwpPolicyOthers(rs.getDouble(3));
-			res.setInsGwpOdPolicyComprehensive(rs.getDouble(4));
-			res.setInsGwpOdPolicyTp(rs.getDouble(5));
-			res.setInsGwpOdPolicyOthers(rs.getDouble(6));
-			res.setInsGwpTpPolicyComprehensive(rs.getDouble(7));
-			res.setInsGwpTpPolicyTp(rs.getDouble(8));
-			res.setInsGwpTpPolicyOthers(rs.getDouble(9));
-			res.setInsGwpDiscountPolicyComprehensive(rs.getDouble(10));
-			res.setInsGwpDiscountPolicyTp(rs.getDouble(11));
-			res.setInsGwpDiscountPolicyOthers(rs.getDouble(12));
-			
-			res.setInsNwpPolicyComprehensive(rs.getDouble(13));
-			res.setInsNwpPolicyTp(rs.getDouble(14));
-			res.setInsNwpPolicyOthers(rs.getDouble(5));
-			res.setInsNwpOdPolicyComprehensive(rs.getDouble(16));
-			res.setInsNwpOdPolicyTp(rs.getDouble(17));
-			res.setInsNwpOdPolicyOthers(rs.getDouble(18));
-			res.setInsNwpTpPolicyComprehensive(rs.getDouble(19));
-			res.setInsNwpTpPolicyTp(rs.getDouble(20));
-			res.setInsNwpTpPolicyOthers(rs.getDouble(21));
-			res.setInsNwpDiscountPolicyComprehensive(rs.getDouble(21));
-			res.setInsNwpDiscountPolicyTp(rs.getDouble(23));
-			res.setInsNwpDiscountPolicyOthers(rs.getDouble(24));
-			
-			res.setInsGwpDepPolicyComprehensive(rs.getDouble(25));
-			res.setInsGwpDepPolicyTp(rs.getDouble(26));
-			res.setInsGwpDepPolicyOthers(rs.getDouble(27));
-			res.setInsGwpNcbPolicyComprehensive(rs.getDouble(28));
-			res.setInsGwpNcbPolicyTp(rs.getDouble(29));
-			res.setInsGwpNcbPolicyOthers(rs.getDouble(30));
-			res.setInsGwpOtherAddonPolicyComprehensive(rs.getDouble(31));
-			res.setInsGwpOtherAddonPolicyTp(rs.getDouble(32));
-			res.setInsGwpOtherAddonPolicyOthers(rs.getDouble(33));
-			
-			res.setInsNwpDepPolicyComprehensive(rs.getDouble(34));
-			res.setInsNwpDepPolicyTp(rs.getDouble(35));
-			res.setInsNwpDepPolicyOthers(rs.getDouble(36));
-			res.setInsNwpNcbPolicyComprehensive(rs.getDouble(37));
-			res.setInsNwpNcbPolicyTp(rs.getDouble(38));
-			res.setInsNwpNcbPolicyOthers(rs.getDouble(39));
-			res.setInsNwpOtherAddonPolicyComprehensive(rs.getDouble(40));
-			res.setInsNwpOtherAddonPolicyTp(rs.getDouble(41));
-			res.setInsNwpOtherAddonPolicyOthers(rs.getDouble(42));
-			
-			kpiResponseList.add(res);
-		}
-
-		System.out.println("Query execution time " + (System.currentTimeMillis() - startTime));
-	} catch (Exception e) {
-		System.out.println("kylinDataSource initialize error, ex: " + e);
-		System.out.println();
-		e.printStackTrace();
-	} finally {
-		connection.close();
-	}
-	return kpiResponseList;
-}
-
+	/*
+	 * @GetMapping("/getUWInsCubeDataUpdatedNew")
+	 * 
+	 * @ResponseBody public List<InsCubeResponseNew>
+	 * getUWInsCubeDataUpdatedNew(HttpServletRequest req, UserMatrixMasterRequest
+	 * filterRequest) throws SQLException { Connection connection = null;
+	 * List<InsCubeResponseNew> kpiResponseList = new
+	 * ArrayList<InsCubeResponseNew>(); long startTime = System.currentTimeMillis();
+	 * try { // String fromDate = req.getParameter("fromDate") == null ? "" :
+	 * req.getParameter("fromDate"); // String toDate = req.getParameter("toDate")
+	 * == null ? "" : req.getParameter("toDate"); String fromDate =
+	 * filterRequest.getFromDate() == null ? "" : filterRequest.getFromDate();
+	 * String toDate = filterRequest.getToDate() == null ? "" :
+	 * filterRequest.getToDate();
+	 * 
+	 * List<ProductMaster> productMasters = productMasterRepository.findAll();
+	 * 
+	 * String motorProductVals = "'" + productMasters.stream() .filter(p ->
+	 * p.getProductType().toLowerCase().contains("motor")).map(ProductMaster::
+	 * getProductCode)
+	 * .collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) +
+	 * "'";
+	 * 
+	 * String healthProductVals = "'" + productMasters.stream() .filter(p ->
+	 * p.getProductType().toLowerCase().contains("health")).map(ProductMaster::
+	 * getProductCode)
+	 * .collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) +
+	 * "'";
+	 * 
+	 * Driver driverManager = (Driver)
+	 * Class.forName("org.apache.kylin.jdbc.Driver").newInstance(); Properties info
+	 * = new Properties(); info.put("user", "ADMIN"); info.put("password", "KYLIN");
+	 * connection = driverManager .connect("jdbc:kylin://" +
+	 * RMSConstants.KYLIN_RS_BASE_IP_AND_PORT + "/learn_kylin", info);
+	 * System.out.println("Connection status -------------------------->" +
+	 * connection); Statement stmt = connection.createStatement();
+	 * 
+	 * String fromMonth = fromDate.split("/")[0]; String fromYear =
+	 * fromDate.split("/")[1]; String toMonth = toDate.split("/")[0]; String toYear
+	 * = toDate.split("/")[1];
+	 * 
+	 * 
+	 * String queryStr = "SELECT "+
+	 * " SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP ELSE 0 END) as INS_GWP_POLICY_COMP, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='TP' THEN INS_GWP ELSE 0 END) as INS_GWP_POLICY_TP, "
+	 * +
+	 * " SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP ELSE 0 END) as INS_GWP_POLICY_others, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_OD ELSE 0 END) as INS_GWP_OD_POLICY_COMP, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='TP' THEN INS_GWP_OD ELSE 0 END) as INS_GWP_OD_POLICY_TP, "
+	 * +
+	 * " SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_OD ELSE 0 END) as INS_GWP_OD_POLICY_others, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_TP ELSE 0 END) as INS_GWP_TP_POLICY_COMP, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='TP' THEN INS_GWP_TP ELSE 0 END) as INS_GWP_TP_POLICY_TP, "
+	 * +
+	 * " SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_TP ELSE 0 END) as INS_GWP_TP_POLICY_others, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_DISCOUNT_OD ELSE 0 END) as INS_GWP_DISCOUNT_OD_POLICY_COMP, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='TP' THEN INS_GWP_DISCOUNT_OD ELSE 0 END) as INS_GWP_DISCOUNT_OD_POLICY_TP, "
+	 * +
+	 * " SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_DISCOUNT_OD ELSE 0 END) as INS_GWP_DISCOUNT_OD_POLICY_others, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='Comprehensive' THEN 0 ELSE 0 END) as INS_NWP_POLICY_COMP, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='TP' THEN 0 ELSE 0 END) as INS_NWP_POLICY_TP, "+
+	 * " SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN 0 ELSE 0 END) as INS_NWP_POLICY_others, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_OD*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OD_POLICY_COMP, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_OD*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OD_POLICY_TP, "
+	 * +
+	 * " SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_OD*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OD_POLICY_others, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_TP *(1-tp_quota_share-tp_obligatory))+(INS_GWP_TP*tp_quota_share*tp_RI_COMMISSION) ELSE 0 END) as INS_NWP_TP_POLICY_COMP, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_TP *(1-tp_quota_share-tp_obligatory))+(INS_GWP_TP*tp_quota_share*tp_RI_COMMISSION) ELSE 0 END) as INS_NWP_TP_POLICY_TP, "
+	 * +
+	 * " SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_TP *(1-tp_quota_share-tp_obligatory))+(INS_GWP_TP*tp_quota_share*tp_RI_COMMISSION) ELSE 0 END) as INS_NWP_TP_POLICY_others, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_DISCOUNT_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_DISCOUNT_OD*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DISCOUNT_OD_POLICY_COMP, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_DISCOUNT_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_DISCOUNT_OD*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DISCOUNT_OD_POLICY_TP, "
+	 * +
+	 * " SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_DISCOUNT_OD *(1-od_quota_share-od_obligatory))+(INS_GWP_DISCOUNT_OD*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DISCOUNT_OD_POLICY_others, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_COMP, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='TP' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_TP, "
+	 * +
+	 * " SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_DEP ELSE 0 END) as INS_GWP_DEP_POLICY_others, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_COMP, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='TP' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_TP, "
+	 * +
+	 * " SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_NCB ELSE 0 END) as INS_GWP_NCB_POLICY_others, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='Comprehensive' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_COMP, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='TP' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_NCB_POLICY_TP, "
+	 * +
+	 * " SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN INS_GWP_OTHERADDON ELSE 0 END) as INS_GWP_OTHERADDON_POLICY_others, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_COMP, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_TP, "
+	 * +
+	 * " SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_DEP *(1-od_quota_share-od_obligatory))+(INS_GWP_DEP*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_DEP_POLICY_others, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_NCB *(1-od_quota_share-od_obligatory))+(INS_GWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_COMP, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='TP' THEN (INS_NWP_NCB *(1-od_quota_share-od_obligatory))+(INS_NWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_TP, "
+	 * +
+	 * " SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_NWP_NCB *(1-od_quota_share-od_obligatory))+(INS_NWP_NCB*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_NCB_POLICY_others, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='Comprehensive' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_COMP, "
+	 * +
+	 * " SUM(case when aa.CATEGORY='TP' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_TP, "
+	 * +
+	 * " SUM(case when coalesce(aa.CATEGORY,'Others')='Others' THEN (INS_GWP_OTHERADDON *(1-od_quota_share-od_obligatory))+(INS_GWP_OTHERADDON*od_quota_share*od_RI_COMMISSION) ELSE 0 END) as INS_NWP_OTHERADDON_POLICY_others "
+	 * + " FROM ( SELECT "+ " SUM(INS_GWP) as INS_GWP "+
+	 * " ,SUM(INS_GWP_OD) as INS_GWP_OD "+ " ,SUM(INS_GWP_TP) as INS_GWP_TP "+
+	 * " ,SUM(INS_GWP_DISCOUNT_OD) as INS_GWP_DISCOUNT_OD "+
+	 * " ,SUM(INS_NWP) as INS_NWP "+ " ,SUM(INS_NWP_OD) as INS_NWP_OD "+
+	 * " ,SUM(INS_NWP_TP) as INS_NWP_TP "+
+	 * " ,SUM(INS_NWP_DISCOUNT_OD) as INS_NWP_DISCOUNT_OD "+
+	 * " ,SUM(INS_GWP_DEP) as INS_GWP_DEP "+ " ,SUM(INS_GWP_NCB) as INS_GWP_NCB "+
+	 * " ,SUM(INS_GWP_OTHERADDON) as INS_GWP_OTHERADDON "+
+	 * " ,SUM(INS_NWP_DEP) as INS_NWP_DEP "+ " ,SUM(INS_NWP_NCB) as INS_NWP_NCB "+
+	 * " ,SUM(INS_NWP_OTHERADDON) as INS_NWP_OTHERADDON "+
+	 * " , CATEGORY, uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code "+
+	 * " FROM RSDB.RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_CURRENT as RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW "
+	 * + " LEFT JOIN RSDB.KPI_SUB_CHANNEL_MASTER_NW as KPI_SUB_CHANNEL_MASTER_NW "+
+	 * " ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.CHANNEL_NAME AND RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUB_CHANNEL = KPI_SUB_CHANNEL_MASTER_NW.SUB_CHANNEL "
+	 * + " LEFT JOIN RSDB.KPI_BUSINESS_TYPE_MASTER as KPI_BUSINESS_TYPE_MASTER "+
+	 * " ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BUSINESS_TYPE = KPI_BUSINESS_TYPE_MASTER.BUSINESS_TYPE "
+	 * + " LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER "+
+	 * " ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE "
+	 * + " LEFT JOIN RSDB.KPI_BRANCH_MASTER as KPI_BRANCH_MASTER "+
+	 * " ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BRANCH_CODE = KPI_BRANCH_MASTER.BRANCH_CODE "
+	 * + " LEFT JOIN RSDB.KPI_CAMPAIGN_MASTER as KPI_CAMPAIGN_MASTER "+
+	 * " ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CAMPAIN_CODE = KPI_CAMPAIGN_MASTER.CAMPAIGN_CODE "
+	 * + " LEFT JOIN RSDB.KPI_OA_MASTER_NW as KPI_OA_MASTER_NW "+
+	 * " ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.OA_CODE = KPI_OA_MASTER_NW.OA_CODE "
+	 * +
+	 * " LEFT JOIN RSDB.KPI_POLICY_CATEGORY_MASTER_NW as KPI_POLICY_CATEGORY_MASTER_NW "
+	 * +
+	 * " ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.POLICY_CATEGORY = KPI_POLICY_CATEGORY_MASTER_NW.POLICY_CATEGORY "
+	 * + " LEFT JOIN RSDB.KPI_SUBLINE_MASTER as KPI_SUBLINE_MASTER "+
+	 * " ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUBLINE = KPI_SUBLINE_MASTER.SUBLINE "
+	 * +
+	 * " LEFT JOIN RSDB.RSA_DWH_INTERMEDIARY_MASTER as RSA_DWH_INTERMEDIARY_MASTER "
+	 * +
+	 * " ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.AGENT_CODE = RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_CODE "
+	 * + " LEFT JOIN RSDB.RSA_DWH_COVERCODE_MASTER as RSA_DWH_COVERCODE_MASTER "+
+	 * " ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.COVER_CODE = RSA_DWH_COVERCODE_MASTER.COVER_CODE "
+	 * + " LEFT JOIN RSDB.RSA_DWH_CITY_MASTER_NOW as RSA_DWH_CITY_MASTER_NOW "+
+	 * " ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.REGLOCATION = RSA_DWH_CITY_MASTER_NOW.CITYNAME "
+	 * +
+	 * " LEFT JOIN RSDB.RSA_DWH_MODEL_MASTER_CURRENT as RSA_DWH_MODEL_MASTER_CURRENT "
+	 * +
+	 * " ON RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.MODELCODE = RSA_DWH_MODEL_MASTER_CURRENT.MODEL_CODE "
+	 * +
+	 * " LEFT JOIN RSDB.RSA_DWH_CITY_GROUPING_MASTER_FINAL as RSA_DWH_CITY_GROUPING_MASTER_FINAL "
+	 * +
+	 * " ON RSA_DWH_CITY_MASTER_NOW.CITYCODE = RSA_DWH_CITY_GROUPING_MASTER_FINAL.CITYCODE "
+	 * ;
+	 * 
+	 * 
+	 * if (fromYear.equals(toYear)) { queryStr += " WHERE (( FINANCIAL_YEAR=" +
+	 * fromYear + " and EFF_FIN_YEAR_MONTH >= '" + fromMonth +
+	 * "' and EFF_FIN_YEAR_MONTH <='" + toMonth + "' ))"; } else { queryStr +=
+	 * " WHERE (( FINANCIAL_YEAR=" + fromYear + " and EFF_FIN_YEAR_MONTH >= '" +
+	 * fromMonth + "' ) or ( FINANCIAL_YEAR=" + toYear +
+	 * " and EFF_FIN_YEAR_MONTH <='" + toMonth + "' ))"; }
+	 * 
+	 * String finstartDate = fromYear + "-" + fromMonth + "-01"; String finEndDate =
+	 * toYear + "-" + toMonth + "-31";
+	 * 
+	 * //queryStr +=
+	 * " WHERE fin_date >='"+finstartDate+"' and fin_date <='"+finEndDate+"' ";
+	 * //queryStr += " WHERE "; //queryStr +=
+	 * getFinCondQuery(Integer.valueOf(fromMonth),Integer.valueOf(toMonth),Integer.
+	 * valueOf(fromYear),Integer.valueOf(toYear)); queryStr +=
+	 * " WHERE SUBSTRING(inception_date,1,10) >='"
+	 * +finstartDate+"' and SUBSTRING(inception_date,1,10) <='"+finEndDate+"' ";
+	 * 
+	 * 
+	 * if (filterRequest != null && filterRequest.getBTypeNow() != null &&
+	 * !filterRequest.getBTypeNow().isEmpty()) { String vals = ""; for (int i = 0; i
+	 * < filterRequest.getBTypeNow().size(); i++) { vals += "'" +
+	 * filterRequest.getBTypeNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getBTypeNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BUSINESS_TYPE) in (" +
+	 * vals + ")"; } if (filterRequest != null && filterRequest.getChannelNow() !=
+	 * null && !filterRequest.getChannelNow().isEmpty()) { String vals = ""; for
+	 * (int i = 0; i < filterRequest.getChannelNow().size(); i++) { vals += "'" +
+	 * filterRequest.getChannelNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getChannelNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CHANNEL) in (" + vals +
+	 * ")"; } if (filterRequest != null && filterRequest.getSubChannelNow() != null
+	 * && !filterRequest.getSubChannelNow().isEmpty()) { String vals = ""; for (int
+	 * i = 0; i < filterRequest.getSubChannelNow().size(); i++) { vals += "'" +
+	 * filterRequest.getSubChannelNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getSubChannelNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUB_CHANNEL) in (" + vals
+	 * + ")"; } if (filterRequest != null && filterRequest.getMakeNow() != null &&
+	 * !filterRequest.getMakeNow().isEmpty()) { String vals = ""; for (int i = 0; i
+	 * < filterRequest.getMakeNow().size(); i++) { vals += "'" +
+	 * filterRequest.getMakeNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMakeNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MAKE) in (" + vals + ")"; } if
+	 * (filterRequest != null && filterRequest.getModelGroupNow() != null &&
+	 * !filterRequest.getModelGroupNow().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getModelGroupNow().size(); i++) { vals += "'" +
+	 * filterRequest.getModelGroupNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getModelGroupNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELGROUP) in (" + vals + ")"; } if
+	 * (filterRequest != null && filterRequest.getFuelTypeNow() != null &&
+	 * !filterRequest.getFuelTypeNow().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getFuelTypeNow().size(); i++) { vals += "'" +
+	 * filterRequest.getFuelTypeNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getFuelTypeNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and coalesce(RSA_DWH_MODEL_MASTER_CURRENT.FUELTYPE,'N') in (" + vals + ")";
+	 * } if (filterRequest != null && filterRequest.getStateGroupNow() != null &&
+	 * !filterRequest.getStateGroupNow().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getStateGroupNow().size(); i++) { vals += "'" +
+	 * filterRequest.getStateGroupNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getStateGroupNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_DWH_CITY_GROUPING_MASTER_FINAL.STATE_GROUPING) in (" + vals +
+	 * ")"; } if (filterRequest != null && filterRequest.getNcbNow() != null &&
+	 * !filterRequest.getNcbNow().isEmpty()) { String vals = ""; for (int i = 0; i <
+	 * filterRequest.getNcbNow().size(); i++) { vals += "'" +
+	 * filterRequest.getNcbNow().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getNcbNow().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.NCB_FLAG) in (" + vals +
+	 * ")"; }
+	 * 
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorChannel() != null &&
+	 * !filterRequest.getMotorChannel().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getMotorChannel().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorChannel().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorChannel().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.CHANNEL) in (" + vals +
+	 * ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorSubChannel() != null &&
+	 * !filterRequest.getMotorSubChannel().isEmpty()) { String vals = ""; for (int i
+	 * = 0; i < filterRequest.getMotorSubChannel().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorSubChannel().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorSubChannel().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.SUB_CHANNEL) in (" + vals
+	 * + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorRegion() != null &&
+	 * !filterRequest.getMotorRegion().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getMotorRegion().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorRegion().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorRegion().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(KPI_BRANCH_MASTER.REGION) in (" + vals + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorZone() != null &&
+	 * !filterRequest.getMotorZone().isEmpty()) { String vals = ""; for (int i = 0;
+	 * i < filterRequest.getMotorZone().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorZone().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorZone().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(KPI_BRANCH_MASTER.ZONE) in (" + vals + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorCluster() != null &&
+	 * !filterRequest.getMotorCluster().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getMotorCluster().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorCluster().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorCluster().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(KPI_BRANCH_MASTER.CLUSTER_NAME) in (" + vals + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorState() != null &&
+	 * !filterRequest.getMotorState().isEmpty()) { String vals = ""; for (int i = 0;
+	 * i < filterRequest.getMotorState().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorState().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorState().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(KPI_BRANCH_MASTER.STATE_NEW) in (" + vals + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorCity() != null &&
+	 * !filterRequest.getMotorCity().isEmpty()) { String vals = ""; for (int i = 0;
+	 * i < filterRequest.getMotorCity().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorCity().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorCity().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(KPI_BRANCH_MASTER.RA_DESCRIPTION) in (" + vals + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorBranch() != null &&
+	 * !filterRequest.getMotorBranch().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getMotorBranch().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorBranch().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorBranch().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.BRANCH_CODE) in (" + vals
+	 * + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorIntermediaryCode() != null
+	 * && !filterRequest.getMotorIntermediaryCode().isEmpty()) { String vals = "";
+	 * for (int i = 0; i < filterRequest.getMotorIntermediaryCode().size(); i++) {
+	 * vals += "'" + filterRequest.getMotorIntermediaryCode().get(i).trim() + "'";
+	 * if (i != filterRequest.getMotorIntermediaryCode().size() - 1) { vals += ",";
+	 * } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.AGENT_CODE) in (" + vals +
+	 * ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorIntermediaryName() != null
+	 * && !filterRequest.getMotorIntermediaryName().isEmpty()) { String vals = "";
+	 * for (int i = 0; i < filterRequest.getMotorIntermediaryName().size(); i++) {
+	 * vals += "'" + filterRequest.getMotorIntermediaryName().get(i).trim() + "'";
+	 * if (i != filterRequest.getMotorIntermediaryName().size() - 1) { vals += ",";
+	 * } } queryStr +=
+	 * " and TRIM(RSA_DWH_INTERMEDIARY_MASTER.INTERMEDIARY_NAME) in (" + vals + ")";
+	 * }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorFuelType() != null &&
+	 * !filterRequest.getMotorFuelType().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getMotorFuelType().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorFuelType().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorFuelType().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.FUELTYPE) in (" + vals + ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorNcbFlag() != null &&
+	 * !filterRequest.getMotorNcbFlag().isEmpty()) { String vals = ""; for (int i =
+	 * 0; i < filterRequest.getMotorNcbFlag().size(); i++) { vals += "'" +
+	 * filterRequest.getMotorNcbFlag().get(i).trim() + "'"; if (i !=
+	 * filterRequest.getMotorNcbFlag().size() - 1) { vals += ","; } } queryStr +=
+	 * " and TRIM(RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.NCB_FLAG) in (" + vals +
+	 * ")"; }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorCarType() != null &&
+	 * !filterRequest.getMotorCarType().isEmpty()) { String vals =
+	 * "'HIGHEND','High End'"; for (int i = 0; i <
+	 * filterRequest.getMotorCarType().size(); i++) {
+	 * 
+	 * if(filterRequest.getMotorCarType().get(i).trim().equals("HE")){ if (i !=
+	 * filterRequest.getMotorNcbFlag().size() - 1) { vals += ","; } queryStr +=
+	 * " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + vals +
+	 * ")"; }else{ queryStr +=
+	 * " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) not in (" + vals
+	 * + ")"; }
+	 * 
+	 * System.out.println("HE query------------------------------ " + queryStr);
+	 * 
+	 * }
+	 * 
+	 * }
+	 * 
+	 * if (filterRequest != null && filterRequest.getMotorCarType() != null &&
+	 * !filterRequest.getMotorCarType().isEmpty()) { String vals =
+	 * "'HIGHEND','High End'"; String nheVals =
+	 * "'Sling','OIB','OIB PS','Xcd','Others','SS PS'"; int cvalcounter =
+	 * 0,cvalNHEcounter = 0; for (int i = 0; i <
+	 * filterRequest.getMotorCarType().size(); i++) {
+	 * 
+	 * if(filterRequest.getMotorCarType().get(i).trim().equals("HE")){
+	 * if(cvalcounter==0) queryStr +=
+	 * " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + vals +
+	 * ")"; cvalcounter++; }else
+	 * if(filterRequest.getMotorCarType().get(i).trim().equals("NHE")){
+	 * if(cvalNHEcounter==0) queryStr +=
+	 * " and TRIM(RSA_DWH_MODEL_MASTER_CURRENT.MODELCLASSIFICATION) in (" + nheVals
+	 * + ")"; cvalNHEcounter++; }
+	 * 
+	 * System.out.println("HE query------------------------------ " + queryStr);
+	 * 
+	 * }
+	 * 
+	 * }
+	 * 
+	 * 
+	 * queryStr += " group by category ) x";
+	 * 
+	 * queryStr +=
+	 * " group by category,uw_year,RSA_KPI_FACT_INS_POLICY_LEVEL_FINAL_NOW.product_code ) aa,"
+	 * +
+	 * " (select r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE,sum(r.OD_OBLIGATORY) OD_OBLIGATORY,sum(r.OD_QUOTA_SHARE) OD_QUOTA_SHARE,sum(OD_RI_COMMISSION) OD_RI_COMMISSION,sum(r.TP_OBLIGATORY) TP_OBLIGATORY,sum(r.TP_QUOTA_SHARE) TP_QUOTA_SHARE,sum(TP_RI_COMMISSION) TP_RI_COMMISSION  "
+	 * + " from rsa_dwh_ri_obligatory_master1_new r " +
+	 * "group by r.UNDERWRITING_YEAR,r.XGEN_PRODUCTCODE) bb " +
+	 * "where aa.uw_year=bb.underwriting_year and aa.product_Code=bb.xgen_productcode"
+	 * ;
+	 * 
+	 * System.out.println("queryStr------------------------------ NWP " + queryStr);
+	 * ResultSet rs = stmt.executeQuery(queryStr);
+	 * System.out.println("START------------------------------ ");
+	 * 
+	 * // jsArray = convertToJSON(rs);
+	 * 
+	 * while (rs.next()) {
+	 * 
+	 * InsCubeResponseNew res = new InsCubeResponseNew();
+	 * 
+	 * res.setInsGwpPolicyComprehensive(rs.getDouble(1));
+	 * res.setInsGwpPolicyTp(rs.getDouble(2));
+	 * res.setInsGwpPolicyOthers(rs.getDouble(3));
+	 * res.setInsGwpOdPolicyComprehensive(rs.getDouble(4));
+	 * res.setInsGwpOdPolicyTp(rs.getDouble(5));
+	 * res.setInsGwpOdPolicyOthers(rs.getDouble(6));
+	 * res.setInsGwpTpPolicyComprehensive(rs.getDouble(7));
+	 * res.setInsGwpTpPolicyTp(rs.getDouble(8));
+	 * res.setInsGwpTpPolicyOthers(rs.getDouble(9));
+	 * res.setInsGwpDiscountPolicyComprehensive(rs.getDouble(10));
+	 * res.setInsGwpDiscountPolicyTp(rs.getDouble(11));
+	 * res.setInsGwpDiscountPolicyOthers(rs.getDouble(12));
+	 * 
+	 * res.setInsNwpPolicyComprehensive(rs.getDouble(13));
+	 * res.setInsNwpPolicyTp(rs.getDouble(14));
+	 * res.setInsNwpPolicyOthers(rs.getDouble(5));
+	 * res.setInsNwpOdPolicyComprehensive(rs.getDouble(16));
+	 * res.setInsNwpOdPolicyTp(rs.getDouble(17));
+	 * res.setInsNwpOdPolicyOthers(rs.getDouble(18));
+	 * res.setInsNwpTpPolicyComprehensive(rs.getDouble(19));
+	 * res.setInsNwpTpPolicyTp(rs.getDouble(20));
+	 * res.setInsNwpTpPolicyOthers(rs.getDouble(21));
+	 * res.setInsNwpDiscountPolicyComprehensive(rs.getDouble(21));
+	 * res.setInsNwpDiscountPolicyTp(rs.getDouble(23));
+	 * res.setInsNwpDiscountPolicyOthers(rs.getDouble(24));
+	 * 
+	 * res.setInsGwpDepPolicyComprehensive(rs.getDouble(25));
+	 * res.setInsGwpDepPolicyTp(rs.getDouble(26));
+	 * res.setInsGwpDepPolicyOthers(rs.getDouble(27));
+	 * res.setInsGwpNcbPolicyComprehensive(rs.getDouble(28));
+	 * res.setInsGwpNcbPolicyTp(rs.getDouble(29));
+	 * res.setInsGwpNcbPolicyOthers(rs.getDouble(30));
+	 * res.setInsGwpOtherAddonPolicyComprehensive(rs.getDouble(31));
+	 * res.setInsGwpOtherAddonPolicyTp(rs.getDouble(32));
+	 * res.setInsGwpOtherAddonPolicyOthers(rs.getDouble(33));
+	 * 
+	 * res.setInsNwpDepPolicyComprehensive(rs.getDouble(34));
+	 * res.setInsNwpDepPolicyTp(rs.getDouble(35));
+	 * res.setInsNwpDepPolicyOthers(rs.getDouble(36));
+	 * res.setInsNwpNcbPolicyComprehensive(rs.getDouble(37));
+	 * res.setInsNwpNcbPolicyTp(rs.getDouble(38));
+	 * res.setInsNwpNcbPolicyOthers(rs.getDouble(39));
+	 * res.setInsNwpOtherAddonPolicyComprehensive(rs.getDouble(40));
+	 * res.setInsNwpOtherAddonPolicyTp(rs.getDouble(41));
+	 * res.setInsNwpOtherAddonPolicyOthers(rs.getDouble(42));
+	 * 
+	 * kpiResponseList.add(res); }
+	 * 
+	 * System.out.println("Query execution time " + (System.currentTimeMillis() -
+	 * startTime)); } catch (Exception e) {
+	 * System.out.println("kylinDataSource initialize error, ex: " + e);
+	 * System.out.println(); e.printStackTrace(); } finally { connection.close(); }
+	 * return kpiResponseList; }
+	 */
 
 
 //@GetMapping("/getUWClaimsCubeDataUpdatedNew")
