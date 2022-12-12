@@ -7896,6 +7896,7 @@ public class KpiUpdatedDataController {
 	}
 
 	/////////////////// ------------------R12 Query
+	/////////////////// --------------------////////////////////////
 
 	@GetMapping("/getR12NewCubeData")
 	@ResponseBody
@@ -7914,15 +7915,13 @@ public class KpiUpdatedDataController {
 			List<ProductMaster> productMasters = productMasterRepository.findAll();
 
 			/*
-			 * String motorProductVals = "'" + productMasters.stream()
-			 * .filter(p ->
+			 * String motorProductVals = "'" + productMasters.stream() .filter(p ->
 			 * p.getProductType().toLowerCase().contains("motor")).map(ProductMaster::
 			 * getProductCode)
 			 * .collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) +
 			 * "'";
 			 * 
-			 * String healthProductVals = "'" + productMasters.stream()
-			 * .filter(p ->
+			 * String healthProductVals = "'" + productMasters.stream() .filter(p ->
 			 * p.getProductType().toLowerCase().contains("health")).map(ProductMaster::
 			 * getProductCode)
 			 * .collect(Collectors.toSet()).stream().collect(Collectors.joining("','")) +
@@ -8085,7 +8084,9 @@ public class KpiUpdatedDataController {
 					+ " ((SUM(CAT_GIC)+SUM(THEFT_GIC)+SUM(OTHER_GIC)+SUM(GIC_TPULR))/(SUM(GEP_OD)+SUM(GEP_TP)))*100 AS LOSS_RATIO,"
 					+ " ((SUM(CAT_GIC)+SUM(THEFT_GIC)+SUM(OTHER_GIC))/(SUM(GEP_OD)))*100 AS OD_LOSS_RATIO,"
 					+ " ((SUM(GIC_TPULR))/(SUM(GEP_TP)))*100 AS TPulr_LOSS_RATIO,"
-					+ " ((SUM(GIC_TP))/(SUM(GEP_TP)))*100 AS TP_LOSS_RATIO"
+					+ " ((SUM(GIC_TP))/(SUM(GEP_TP)))*100 AS TP_LOSS_RATIO,"
+					+ " SUM(ESTIMATED_TPULR_GIC) AS ESTIMATED_TPULR_GIC,"
+					+ " SUM(ESTIMATED_ADDON_TPULR_GIC) AS ESTIMATED_ADDON_TPULR_GIC"
 					+ " FROM RSDB.POLICY_GROUP_LEVEL_FACT_TABLE as POLICY_GROUP_LEVEL_FACT_TABLE"
 					+ " LEFT JOIN RSDB.KPI_PRODUCT_MASTER as KPI_PRODUCT_MASTER"
 					+ " ON POLICY_GROUP_LEVEL_FACT_TABLE.PRODUCT_CODE = KPI_PRODUCT_MASTER.PRODUCT_CODE"
@@ -8118,72 +8119,56 @@ public class KpiUpdatedDataController {
 			// vals + ")";
 			// }
 
-			if (filterRequest != null && filterRequest.getPolicyTypeNew() != null
-					&& !filterRequest.getPolicyTypeNew().isEmpty()) {
-
-				String vals = "";
-				for (int i = 0; i < filterRequest.getPolicyTypeNew().size(); i++) {
-					vals += "'" + filterRequest.getPolicyTypeNew().get(i).trim() + "'";
-					if (i != filterRequest.getPolicyTypeNew().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.POLICY_TYPE_NEW) in  (" + vals + ")";
-
-			}
-
-			if (filterRequest != null && filterRequest.getChannelNew() != null
-					&& !filterRequest.getChannelNew().isEmpty()) {
-
-				String vals = "";
-				for (int i = 0; i < filterRequest.getChannelNew().size(); i++) {
-					vals += "'" + filterRequest.getChannelNew().get(i).trim() + "'";
-					if (i != filterRequest.getChannelNew().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.CHANNEL_NEW) in  (" + vals + ")";
-
-			}
-
-			if (filterRequest != null && filterRequest.getCategorisation() != null
-					&& !filterRequest.getCategorisation().isEmpty()) {
-
-				String vals = "";
-				for (int i = 0; i < filterRequest.getCategorisation().size(); i++) {
-					vals += "'" + filterRequest.getCategorisation().get(i).trim() + "'";
-					if (i != filterRequest.getCategorisation().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.CATEGORISATION) in(" + vals + ")";
-
-			}
-
-			if (filterRequest != null && filterRequest.getEngineCapacity() != null
-					&& !filterRequest.getEngineCapacity().isEmpty()) {
-
-				String vals = "";
-				for (int i = 0; i < filterRequest.getEngineCapacity().size(); i++) {
-					vals += "'" + filterRequest.getEngineCapacity().get(i).trim() + "'";
-					if (i != filterRequest.getEngineCapacity().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += " and (POLICY_GROUP_LEVEL_FACT_TABLE.ENGINECAPACITY) in (" + vals + ")";
-
-			}
-			if (filterRequest != null && filterRequest.getVehicleAge() != null
-					&& !filterRequest.getVehicleAge().isEmpty()) {
-				String vals = "";
-				for (int i = 0; i < filterRequest.getVehicleAge().size(); i++) {
-					vals += "'" + filterRequest.getVehicleAge().get(i).trim() + "'";
-					if (i != filterRequest.getVehicleAge().size() - 1) {
-						vals += ",";
-					}
-				}
-				queryStr += "and (POLICY_GROUP_LEVEL_FACT_TABLE.VEHICLEAGE) in (" + vals + ")";
-			}
+			// have to uncomment these filters
+			/*
+			 * if(filterRequest != null && filterRequest.getPolicyTypeNew() != null &&
+			 * !filterRequest.getPolicyTypeNew().isEmpty()){
+			 * 
+			 * String vals = ""; for (int i = 0; i <
+			 * filterRequest.getPolicyTypeNew().size(); i++) { vals += "'" +
+			 * filterRequest.getPolicyTypeNew().get(i).trim() + "'"; if (i !=
+			 * filterRequest.getPolicyTypeNew().size() - 1) { vals += ","; } } queryStr +=
+			 * "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.POLICY_TYPE_NEW) in  (" + vals + ")";
+			 * 
+			 * }
+			 * 
+			 * if(filterRequest != null && filterRequest.getChannelNew() != null &&
+			 * !filterRequest.getChannelNew().isEmpty()){
+			 * 
+			 * String vals = ""; for (int i = 0; i < filterRequest.getChannelNew().size();
+			 * i++) { vals += "'" + filterRequest.getChannelNew().get(i).trim() + "'"; if (i
+			 * != filterRequest.getChannelNew().size() - 1) { vals += ","; } } queryStr +=
+			 * " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.CHANNEL_NEW) in  (" + vals + ")";
+			 * 
+			 * }
+			 * 
+			 * if(filterRequest != null && filterRequest.getCategorisation() != null &&
+			 * !filterRequest.getCategorisation().isEmpty()){
+			 * 
+			 * String vals = ""; for (int i = 0; i <
+			 * filterRequest.getCategorisation().size(); i++) { vals += "'" +
+			 * filterRequest.getCategorisation().get(i).trim() + "'"; if (i !=
+			 * filterRequest.getCategorisation().size() - 1) { vals += ","; } } queryStr +=
+			 * "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.CATEGORISATION) in(" + vals + ")";
+			 * 
+			 * }
+			 * 
+			 * if(filterRequest != null && filterRequest.getEngineCapacity() != null &&
+			 * !filterRequest.getEngineCapacity().isEmpty()){
+			 * 
+			 * String vals = ""; for (int i = 0; i <
+			 * filterRequest.getEngineCapacity().size(); i++) { vals += "'" +
+			 * filterRequest.getEngineCapacity().get(i).trim() + "'"; if (i !=
+			 * filterRequest.getEngineCapacity().size() - 1) { vals += ","; } } queryStr +=
+			 * " and (POLICY_GROUP_LEVEL_FACT_TABLE.ENGINECAPACITY) in (" + vals + ")";
+			 * 
+			 * } if (filterRequest != null && filterRequest.getVehicleAge() != null &&
+			 * !filterRequest.getVehicleAge().isEmpty()) { String vals = ""; for (int i = 0;
+			 * i < filterRequest.getVehicleAge().size(); i++) { vals += "'" +
+			 * filterRequest.getVehicleAge().get(i).trim() + "'"; if (i !=
+			 * filterRequest.getVehicleAge().size() - 1) { vals += ","; } } queryStr +=
+			 * "and (POLICY_GROUP_LEVEL_FACT_TABLE.VEHICLEAGE) in (" + vals + ")"; }
+			 */
 
 			if (filterRequest != null && filterRequest.getBTypeNow() != null
 					&& !filterRequest.getBTypeNow().isEmpty()) {
@@ -8218,8 +8203,7 @@ public class KpiUpdatedDataController {
 				}
 				queryStr += " and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.SUB_CHANNEL) in  (" + vals + ")";
 			}
-			if (filterRequest != null && filterRequest.getMakeNow() != null
-					&& !filterRequest.getMakeNow().isEmpty()) {
+			if (filterRequest != null && filterRequest.getMakeNow() != null && !filterRequest.getMakeNow().isEmpty()) {
 				String vals = "";
 				for (int i = 0; i < filterRequest.getMakeNow().size(); i++) {
 					vals += "'" + filterRequest.getMakeNow().get(i).trim() + "'";
@@ -8263,8 +8247,7 @@ public class KpiUpdatedDataController {
 				queryStr += "and TRIM(POLICY_GROUP_LEVEL_FACT_TABLE.STATE_GROUPING) in (" + vals + ")";
 			}
 
-			if (filterRequest != null && filterRequest.getNcbNow() != null
-					&& !filterRequest.getNcbNow().isEmpty()) {
+			if (filterRequest != null && filterRequest.getNcbNow() != null && !filterRequest.getNcbNow().isEmpty()) {
 				String vals = "";
 				for (int i = 0; i < filterRequest.getNcbNow().size(); i++) {
 					vals += "'" + filterRequest.getNcbNow().get(i).trim() + "'";
@@ -8277,24 +8260,19 @@ public class KpiUpdatedDataController {
 
 			/* latest */
 			/*
-			 * if (filterRequest != null && filterRequest.getNcbNow() != null
-			 * && !filterRequest.getNcbNow().isEmpty()) {
+			 * if (filterRequest != null && filterRequest.getNcbNow() != null &&
+			 * !filterRequest.getNcbNow().isEmpty()) {
 			 * 
 			 * 
-			 * String Nvals = "and (RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_PREM)= '0'";
-			 * String Yvals = "and (RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_PREM)<> '0'";
-			 * int cvalcounter = 0,cvalNcounter = 0;
-			 * for (int i = 0; i < filterRequest.getNcbNow().size(); i++) {
+			 * String Nvals = "and (RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_PREM)= '0'"; String
+			 * Yvals = "and (RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_PREM)<> '0'"; int cvalcounter
+			 * = 0,cvalNcounter = 0; for (int i = 0; i < filterRequest.getNcbNow().size();
+			 * i++) {
 			 * 
-			 * if(filterRequest.getNcbNow().get(i).trim().contains("N")){
-			 * if(cvalcounter==0)
-			 * queryStr += Nvals;
-			 * cvalcounter++;
-			 * }else if(filterRequest.getNcbNow().get(i).trim().contains("Y")){
-			 * if(cvalNcounter==0)
-			 * queryStr += Yvals;
-			 * cvalNcounter++;
-			 * }
+			 * if(filterRequest.getNcbNow().get(i).trim().contains("N")){ if(cvalcounter==0)
+			 * queryStr += Nvals; cvalcounter++; }else
+			 * if(filterRequest.getNcbNow().get(i).trim().contains("Y")){
+			 * if(cvalNcounter==0) queryStr += Yvals; cvalNcounter++; }
 			 * 
 			 * System.out.println("NCB NEW POLICY query------------------------------ " +
 			 * queryStr);
@@ -8307,15 +8285,10 @@ public class KpiUpdatedDataController {
 			 */
 
 			/*
-			 * String vals = "";
-			 * for (int i = 0; i < filterRequest.getMotorNcbFlag().size(); i++) {
-			 * vals += "'" + filterRequest.getMotorNcbFlag().get(i).trim() + "'";
-			 * if (i != filterRequest.getMotorNcbFlag().size() - 1) {
-			 * vals += ",";
-			 * }
-			 * }
-			 * queryStr += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_FLAG) in (" + vals +
-			 * ")";
+			 * String vals = ""; for (int i = 0; i < filterRequest.getMotorNcbFlag().size();
+			 * i++) { vals += "'" + filterRequest.getMotorNcbFlag().get(i).trim() + "'"; if
+			 * (i != filterRequest.getMotorNcbFlag().size() - 1) { vals += ","; } } queryStr
+			 * += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_FLAG) in (" + vals + ")";
 			 * 
 			 * 
 			 * queryStr += "  ";
@@ -8445,24 +8418,19 @@ public class KpiUpdatedDataController {
 			// }
 
 			/*
-			 * if (filterRequest != null && filterRequest.getMotorNcbFlag() != null
-			 * && !filterRequest.getMotorNcbFlag().isEmpty()) {
+			 * if (filterRequest != null && filterRequest.getMotorNcbFlag() != null &&
+			 * !filterRequest.getMotorNcbFlag().isEmpty()) {
 			 * 
 			 * 
-			 * String Nvals = "and (RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_PREM)= '0'";
-			 * String Yvals = "and (RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_PREM)<> '0'";
-			 * int cvalcounter = 0,cvalNcounter = 0;
-			 * for (int i = 0; i < filterRequest.getMotorNcbFlag().size(); i++) {
+			 * String Nvals = "and (RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_PREM)= '0'"; String
+			 * Yvals = "and (RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_PREM)<> '0'"; int cvalcounter
+			 * = 0,cvalNcounter = 0; for (int i = 0; i <
+			 * filterRequest.getMotorNcbFlag().size(); i++) {
 			 * 
 			 * if(filterRequest.getMotorNcbFlag().get(i).trim().contains("N")){
-			 * if(cvalcounter==0)
-			 * queryStr += Nvals;
-			 * cvalcounter++;
-			 * }else if(filterRequest.getMotorNcbFlag().get(i).trim().contains("Y")){
-			 * if(cvalNcounter==0)
-			 * queryStr += Yvals;
-			 * cvalNcounter++;
-			 * }
+			 * if(cvalcounter==0) queryStr += Nvals; cvalcounter++; }else
+			 * if(filterRequest.getMotorNcbFlag().get(i).trim().contains("Y")){
+			 * if(cvalNcounter==0) queryStr += Yvals; cvalNcounter++; }
 			 * 
 			 * System.out.println("NCB NEW POLICY query------------------------------ " +
 			 * queryStr);
@@ -8473,15 +8441,10 @@ public class KpiUpdatedDataController {
 			 */
 
 			/*
-			 * String vals = "";
-			 * for (int i = 0; i < filterRequest.getMotorNcbFlag().size(); i++) {
-			 * vals += "'" + filterRequest.getMotorNcbFlag().get(i).trim() + "'";
-			 * if (i != filterRequest.getMotorNcbFlag().size() - 1) {
-			 * vals += ",";
-			 * }
-			 * }
-			 * queryStr += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_FLAG) in (" + vals +
-			 * ")";
+			 * String vals = ""; for (int i = 0; i < filterRequest.getMotorNcbFlag().size();
+			 * i++) { vals += "'" + filterRequest.getMotorNcbFlag().get(i).trim() + "'"; if
+			 * (i != filterRequest.getMotorNcbFlag().size() - 1) { vals += ","; } } queryStr
+			 * += " and TRIM(RSA_KPI_FACT_POLICY_FINAL_NOW.NCB_FLAG) in (" + vals + ")";
 			 * 
 			 * 
 			 * queryStr += "  ";
@@ -8533,7 +8496,6 @@ public class KpiUpdatedDataController {
 				res.setNepTp(rs.getDouble(4));
 				res.setDiscountGepOd(rs.getDouble(5));
 				res.setDiscountNepOd(rs.getDouble(6));
-				;
 				res.setGepDepOd(rs.getDouble(7));
 				res.setGepDepTp(rs.getDouble(8));
 				res.setGepNcbOd(rs.getDouble(9));
@@ -8558,31 +8520,31 @@ public class KpiUpdatedDataController {
 				res.setNicTpUlrDep(rs.getDouble(28));
 				res.setNicTpUlrNcb(rs.getDouble(29));
 				res.setNicTpUlrOtherAddon(rs.getDouble(29));
-				res.setGwpOd(rs.getDouble(30));
-				res.setGwpTp(rs.getDouble(31));
-				res.setNwpOd(rs.getDouble(32));
-				res.setNwpTp(rs.getDouble(33));
-				res.setGwpDepOd(rs.getDouble(34));
-				res.setGwpDepTp(rs.getDouble(35));
-				res.setGwpNcbOd(rs.getDouble(36));
-				res.setGwpNcbTp(rs.getDouble(37));
-				res.setGwpOtherAddonOd(rs.getDouble(38));
-				res.setGwpOtherAddonTp(rs.getDouble(39));
-				res.setNwpDepOd(rs.getDouble(40));
-				res.setNwpDepTp(rs.getDouble(41));
-				res.setNwpNcbOd(rs.getDouble(42));
-				res.setNwpNcbTp(rs.getDouble(43));
-				res.setNwpOtherAddonOd(rs.getDouble(44));
-				res.setNwpOtherAddonTp(rs.getDouble(45));
-				res.setPolicyCountTp(rs.getDouble(46));
-				res.setPolicyCountOd(rs.getDouble(47));
-				res.setPolicyCountOthers(rs.getDouble(48));
-				res.setAddonPolicyCountTp(rs.getDouble(49));
-				res.setAddonPolicyCountOd(rs.getDouble(50));
-				res.setAddonPolicyCountOthers(rs.getDouble(51));
-				res.setAcqCostOd(rs.getDouble(52));
+				res.setInsGwpPolicyComprehensive(rs.getDouble(30));
+				res.setInsGwpPolicyTp(rs.getDouble(31));
+				res.setInsNwpPolicyComprehensive(rs.getDouble(32));
+				res.setInsNwpPolicyTp(rs.getDouble(33));
+				res.setInsGwpDepPolicyComprehensive(rs.getDouble(34));
+				res.setInsGwpDepPolicyTp(rs.getDouble(35));
+				res.setInsGwpNcbPolicyComprehensive(rs.getDouble(36));
+				res.setInsGwpNcbPolicyTp(rs.getDouble(37));
+				res.setInsGwpOtherAddonPolicyComprehensive(rs.getDouble(38));
+				res.setInsGwpOtherAddonPolicyTp(rs.getDouble(39));
+				res.setInsNwpDepPolicyComprehensive(rs.getDouble(40));
+				res.setInsNwpDepPolicyTp(rs.getDouble(41));
+				res.setInsNwpNcbPolicyComprehensive(rs.getDouble(42));
+				res.setInsNwpNcbPolicyTp(rs.getDouble(43));
+				res.setInsNwpOtherAddonPolicyComprehensive(rs.getDouble(44));
+				res.setInsNwpOtherAddonPolicyTp(rs.getDouble(45));
+				res.setWrittenPoliciesTp(rs.getDouble(46));
+				res.setWrittenPoliciesComprehensive(rs.getDouble(47));
+				res.setWrittenPoliciesOthers(rs.getDouble(48));
+				res.setAddonWrittenPoliciesComprehensive(rs.getDouble(49));
+				res.setAddonWrittenPoliciesTp(rs.getDouble(50));
+				res.setAddonWrittenPoliciesOthers(rs.getDouble(51));
+				res.setAcqCostComprehensive(rs.getDouble(52));
 				res.setAcqCostTp(rs.getDouble(53));
-				res.setAddonAcqCostOd(rs.getDouble(54));
+				res.setAddonAcqCostComprehensive(rs.getDouble(54));
 				res.setAddonAcqCostTp(rs.getDouble(55));
 				res.setCatClaimCount(rs.getDouble(56));
 				res.setTheftClaimCount(rs.getDouble(57));
@@ -8665,6 +8627,9 @@ public class KpiUpdatedDataController {
 				res.setOdLossRatio(rs.getDouble(134));
 				res.setTpUlrLossRatio(rs.getDouble(135));
 				res.setTpLossRatio(rs.getDouble(136));
+				res.setEstimatedTpulrGic(rs.getDouble(137));
+				res.setEstimatedAddonTpulrGic(rs.getDouble(138));
+
 				kpiResponseList.add(res);
 
 			}

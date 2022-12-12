@@ -283,7 +283,7 @@
 </head>
 
 <body>
-	<div class="page-master-container"  >
+	<div class="page-master-container">
 		<!-- Main Header -->
 		<div id="header">
 			<nav class="fixed-top">
@@ -601,18 +601,18 @@
 												<div class="row">
 													<div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
 														<div class="master-control">
-															<!-- <select id="iTest" multiple="multiple"></select> -->
+															<select id="iTest" multiple="multiple"></select>
 
-															<select class="form-control select2 full-width"
+															<!-- <select class="form-control select2 full-width"
 																name="motorIntermediaryCode" multiple="multiple">
 																<option value="">Intermediary Code</option>
 																<!-- <option th:each="item : ${intermediaries}"
 																	th:text="${item.intermediaryName}"
-																	th:value="${item.intermediaryName}"> -->
+																	th:value="${item.intermediaryName}">
 																<option th:each="item : ${intermediaries}"
 																	th:text="${item.intermediaryCode}"
 																	th:value="${item.intermediaryCode}">
-															</select>
+															</select> -->
 														</div>
 													</div>
 													<div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
@@ -652,7 +652,6 @@
 												<div class="row">
 													<div class="col-12 col-sm-6 col-md-6 col-lg-12 col-xl-12">
 														<div class="master-control">
-															<!-- <select id="iTest" multiple="multiple"></select> -->
 
 															<select class="form-control select2 full-width"
 																name="policyTypeNew" multiple="multiple">
@@ -3668,7 +3667,7 @@
 						margin: 1,
 						filename: 'myfile.pdf',
 						image: { type: 'jpeg', quality: 0.98 },
-						html2canvas: { scale:1},
+						html2canvas: { scale: 1 },
 						jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
 					};
 					html2pdf().set(opt).from(invoice).save();
@@ -4359,29 +4358,36 @@
 		});
 		var t = "";
 
-		/*$.ajax({
-			  url: '/getIntermediaries',
-			  success: function (response) { 
-$.each(response, function(ind, obj){
+		$.ajax({
+			url: '/getIntermediaries',
+			success: function (response) {
+				$.each(response, function (ind, obj) {
 
-t += "<option value="+obj.intermediaryCode+">"+obj.intermediaryCode+"</option>";
-});
-	   $('#iTest').append(t);
-$('#iTest').selectize({
-create: true,
-sortField: 'text'
-}); 
+					t += "<option value=" + obj.intermediaryCode + ">" + obj.intermediaryCode + "</option>";
+				});
+				$('#iTest').append(t);
+				$('#iTest').selectize({
+					create: true,
+					sortField: 'text'
+				});
 
-		   }
-		  });*/
+			}
+		});
 
-		/*  $('#iTest').selectize({
-			  valueField: 'intermediaryCode',
-			  labelField: 'intermediaryCode',
-			  searchField: 'intermediaryCode',
-			  options: [],
-			  load: function(query, callback) {
-				if (!query.length) return callback();
+		$('#iTest').selectize({
+			valueField: 'intermediaryCode',
+			labelField: 'intermediaryCode',
+			searchField: 'intermediaryCode',
+			options: [],
+			closeAfterSelect: true,
+			hideSelected: true,
+			createOnBlur: true,
+			openOnFocus: false,
+			maxOptions: 3,
+			persist: true,
+			plugins: ['remove_button'],
+			load: function (query, callback) {
+				if (!query.length || query.length < 3) return callback();
 				$.ajax({
 					url: '/getIntermediaries',
 					type: 'GET',
@@ -4389,15 +4395,15 @@ sortField: 'text'
 					data: {
 						intermediaryCode: query,
 					},
-					error: function() {
+					error: function () {
 						callback();
 					},
-					success: function(res) {
+					success: function (res) {
 						callback(res);
 					}
 				});
-			  }
-			}); */
+			}
+		});
 
 		var paid = "";
 
@@ -6881,6 +6887,14 @@ sortField: 'text'
 			return (number / 100000).toFixed(3).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
 		}
 
+		function thousandSeperator(x) {
+			x = x.toString();
+			var pattern = /(-?\d+)(\d{3})/;
+			while (pattern.test(x))
+				x = x.replace(pattern, "$1,$2");
+			return x;
+		}
+
 		$(function () {
 			$("#range-slider").slider({
 				range: true,
@@ -7236,7 +7250,186 @@ sortField: 'text'
 			$("#tabs").tabs();
 		});
 
+
+
+		var bindingData = {
+			"finalGwp": 0,
+			"finalGwpOd": 0,
+			"finalGwpTp": 0,
+			"finalNwp": 0,
+			"finalNwpOd": 0,
+			"finalNwpTp": 0,
+			"finalGep": 0,
+			"finalGepOd": 0,
+			"finalGepTp": 0,
+			"finalNep": 0,
+			"finalNepOd": 0,
+			"finalNepTp": 0,
+			"finalNic": 0,
+			"finalNicOd": 0,
+			"finalNicTp": 0,
+			"finalGic": 0,
+			"finalGicCat": 0,
+			"finalGicTheft": 0,
+			"finalGicOthers": 0,
+			"finalGicTp": 0,
+			"finalGicTpulr": 0,
+			"finalEGic": 0,
+			"finalEGicCat": 0,
+			"finalEGicTheft": 0,
+			"finalEGicOthers": 0,
+			"finalEGicTp": 0,
+			"finalEGicTpulr":0,
+			"finalEarnedPolicies": 0,
+			"finalEarnedPoliciesOd": 0,
+			"finalWrittenPolicies": 0,
+			"finalWrittenPoliciesOd": 0,
+			"finalWrittenPoliciesTp": 0,
+			"finalWrittenPoliciesOthers": 0,
+			"finalClaimFreqOd": 0,
+			"finalClaimFreqCat": 0,
+			"finalClaimFreqTheft": 0,
+			"finalClaimFreqOthers": 0,
+			"finalR12ClaimFreqOd": 0,
+			"finalR12ClaimFreqCat": 0,
+			"finalR12ClaimFreqTheft": 0,
+			"finalR12ClaimFreqOthers": 0,
+			"finalClaimSevOd": 0,
+			"finalClaimSevCat": 0,
+			"finalClaimSevTheft": 0,
+			"finalClaimSevOthers": 0,
+			"finalR12ClaimSevOd": 0,
+			"finalR12ClaimSevCat": 0,
+			"finalR12ClaimSevTheft": 0,
+			"finalR12ClaimSevOthers": 0,
+			"finalLRatio": 0,
+			"finalLRatioOd": 0,
+			"finalLRatioTp": 0,
+			"finalR12LRatio": 0,
+			"finalR12LRatioOd": 0,
+			"finalR12LRatioTp": 0,
+			"finalElRatio": 0,
+			"finalElRatioOd": 0,
+			"finalElRatioTp": 0,
+			"finalAcqcost": 0,
+			"finalAcqcostOd": 0,
+			"finalAcqcostTp": 0,
+		};
+
+
+
+		function binding(period) {
+			$(".gwp_r" + period).text(convertToLaksh(parseFloat(bindingData.finalGwp).toFixed("2")));
+			$(".gwpOd_r" + period).text(convertToLaksh(parseFloat(bindingData.finalGwpOd).toFixed("2")));
+			$(".gwpTp_r" + period).text(convertToLaksh(parseFloat(bindingData.finalGwpTp).toFixed("2")));
+			$(".nwp_r" + period).text(convertToLaksh(parseFloat(bindingData.finalNwp).toFixed("2")));
+			$(".nwpOd_r" + period).text(convertToLaksh(parseFloat(bindingData.finalNwpOd).toFixed("2")));
+			$(".nwpTp_r" + period).text(convertToLaksh(parseFloat(bindingData.finalNwpTp).toFixed("2")));
+			$(".gep_r" + period).text(convertToLaksh(parseFloat(bindingData.finalGep).toFixed("2")));
+			$(".gepOd_r" + period).text(convertToLaksh(parseFloat(bindingData.finalGepOd).toFixed("2")));
+			$(".gepTp_r" + period).text(convertToLaksh(parseFloat(bindingData.finalGepTp).toFixed("2")));
+			$(".nep_r" + period).text(convertToLaksh(parseFloat(bindingData.finalNep).toFixed("2")));
+			$(".nepOd_r" + period).text(convertToLaksh(parseFloat(bindingData.finalNepOd).toFixed("2")));
+			$(".nepTp_r" + period).text(convertToLaksh(parseFloat(bindingData.finalNepTp).toFixed("2")));
+			$(".nic_r" + period).text(convertToLaksh(parseFloat(bindingData.finalNic).toFixed("2")));
+			$(".nicOd_r" + period).text(convertToLaksh(parseFloat(bindingData.finalNicOd).toFixed("2")));
+			$(".nicTp_r" + period).text(convertToLaksh(parseFloat(bindingData.finalNicTp).toFixed("2")));
+			$(".gic_r" + period).text(convertToLaksh(parseFloat(bindingData.finalGic).toFixed("2")));
+			$(".gicOdCat_r" + period).text(convertToLaksh(parseFloat(bindingData.finalGicCat).toFixed("2")));
+			$(".gicOdTheft_r" + period).text(convertToLaksh(parseFloat(bindingData.finalGicTheft).toFixed("2")));
+			$(".gicOdOthers_r" + period).text(convertToLaksh(parseFloat(bindingData.finalGicothers).toFixed("2")));
+			$(".gicTp_r" + period).text(convertToLaksh(parseFloat(bindingData.finalGicTp).toFixed("2")));
+			$(".gicTpulr_r" + period).text(convertToLaksh(parseFloat(bindingData.finalGicTpulr).toFixed("2")));
+			$(".eGic_r" + period).text(convertToLaksh(parseFloat(bindingData.finalEGic).toFixed("2")));
+			$(".eGicOdCat_r" + period).text(convertToLaksh(parseFloat(bindingData.finalEGicCat).toFixed("2")));
+			$(".eGicOdTheft_r" + period).text(convertToLaksh(parseFloat(bindingData.finalEGicTheft).toFixed("2")));
+			$(".eGicOdOthers_r" + period).text(convertToLaksh(parseFloat(bindingData.finalEGicothers).toFixed("2")));
+			$(".eGicTp_r" + period).text(convertToLaksh(parseFloat(bindingData.finalEGicTp).toFixed("2")));
+			$(".eGicTpUlr_r" + period).text(convertToLaksh(parseFloat(bindingData.finalEGicTpulr).toFixed("2")));
+			$(".earnedPolicies_r" + period).text(thousandSeperator(parseFloat(bindingData.finalEarnedPolicies).toFixed("0")));
+			$(".earnedPoliciesOd_r" + period).text(thousandSeperator(parseFloat(bindingData.finalEarnedPoliciesOd).toFixed("0")));
+			$(".writtenPolicies_r" + period).text(thousandSeperator(parseFloat(bindingData.finalWrittenPolicies).toFixed("0")));
+			$(".writtenPoliciesOd_r" + period).text(thousandSeperator(parseFloat(bindingData.finalWrittenPoliciesOd).toFixed("0")));
+			$(".writtenPoliciesTp_r" + period).text(thousandSeperator(parseFloat(bindingData.finalWrittenPoliciesTp).toFixed("0")));
+			$(".writtenPoliciesOthers_r" + period).text(thousandSeperator(parseFloat(bindingData.finalWrittenPoliciesOthers).toFixed("0")));
+			$(".claimFreq_r" + period).text((parseFloat(bindingData.finalClaimFreqOd).toFixed("2") || 0) + '%');
+			$(".claimFreqCat_r" + period).text((parseFloat(bindingData.finalClaimFreqCat).toFixed("2") || 0) + '%');
+			$(".claimFreqTheft_r" + period).text((parseFloat(bindingData.finalClaimFreqTheft).toFixed("2") || 0) + '%');
+			$(".claimFreqOthers_r" + period).text((parseFloat(bindingData.finalClaimFreqOthers).toFixed("2") || 0) + '%');
+			$(".r12claimFreq_r" + period).text((parseFloat(bindingData.finalR12ClaimFreqOd).toFixed("2") || 0) + '%');
+			$(".r12claimFreqCat_r" + period).text((parseFloat(bindingData.finalR12ClaimFreqCat).toFixed("2") || 0) + '%');
+			$(".r12claimFreqTheft_r" + period).text((parseFloat(bindingData.finalR12ClaimFreqTheft).toFixed("2") || 0) + '%');
+			$(".r12claimFreqOthers_r" + period).text((parseFloat(bindingData.finalR12ClaimFreqOthers).toFixed("2") || 0) + '%');
+			$(".claimSev_r" + period).text(thousandSeperator(parseFloat(bindingData.finalClaimSevOd).toFixed("2")));
+			$(".claimSevCat_r" + period).text(thousandSeperator(parseFloat(bindingData.finalClaimSevCat).toFixed("2")));
+			$(".claimSevTheft_r" + period).text(thousandSeperator(parseFloat(bindingData.finalClaimSevTheft).toFixed("2")));
+			$(".claimSevOthers_r" + period).text(thousandSeperator(parseFloat(bindingData.finalClaimSevOthers).toFixed("2")));
+			$(".r12claimSev_r" + period).text(thousandSeperator(parseFloat(bindingData.finalR12ClaimSevOd).toFixed("2")));
+			$(".r12claimSevCat_r" + period).text(thousandSeperator(parseFloat(bindingData.finalR12ClaimSevCat).toFixed("2")));
+			$(".r12claimSevTheft_r" + period).text(thousandSeperator(parseFloat(bindingData.finalR12ClaimSevTheft).toFixed("2")));
+			$(".r12claimSevOthers_r" + period).text(thousandSeperator(parseFloat(bindingData.finalR12ClaimSevOthers).toFixed("2")));
+			$(".lossRatio_r" + period).text((parseFloat(bindingData.finalLRatio).toFixed("2"))+ '%');
+			$(".lossRatioOd_r" + period).text((parseFloat(bindingData.finalLRatioOd).toFixed("2"))+ '%');
+			$(".lossRatioTp_r" + period).text((parseFloat(bindingData.finalLRatioTp).toFixed("2"))+ '%')
+			$(".r12lossRatio_r" + period).text((parseFloat(bindingData.finalR12LRatio).toFixed("2"))+ '%');
+			$(".r12lossRatioOd_r" + period).text((parseFloat(bindingData.finalR12LRatioOd).toFixed("2"))+ '%');
+			$(".r12lossRatioTp_r" + period).text((parseFloat(bindingData.finalR12LRatioTp).toFixed("2"))+ '%')
+			$(".elRatio_r" + period).text((parseFloat(bindingData.finalElRatio).toFixed("2"))+ '%');
+			$(".elRatioOd_r" + period).text((parseFloat(bindingData.finalElRatioOd).toFixed("2"))+ '%');
+			$(".elRatioTp_r" + period).text((parseFloat(bindingData.finalElRatioTp).toFixed("2"))+ '%');		
+			$(".acr_r" + period).text((parseFloat(bindingData.finalAcqcost || 0) )+ '%');
+			$(".acrOd_r" + period).text((parseFloat(bindingData.finalAcqcostOd || 0)) + '%');
+			$(".acrTp_r" + period).text((parseFloat(bindingData.finalAcqcostTp || 0)) + '%');
+			jQuery("#pre-loader").remove();
+		}
 			//$('#motorDiv,#healthDiv,#generalDiv').css('width','99.9%');
+
+
+//include comprehensive
+			bindingData.finalEGic = (r12ResData.estimatedCatGic+r12ResData.estimatedTheftGic+r12ResData.estimatedOtherGic)
+			bindingData.finalEGicCat = r12ResData.estimatedCatGic;
+			bindingData.finalEGicTheft = r12ResData.estimatedTheftGic;
+			bindingData.finalEGicOthers = r12ResData.estimatedOtherGic;
+			bindingData.finalR12ClaimFreqOd = (r12ResData.r12CatFreq+r12ResData.r12TheftFreq+r12ResData.r12OthersFreq)*100;
+			bindingData.finalR12ClaimFreqCat = (r12ResData.r12CatFreq)*100;
+			bindingData.finalR12ClaimFreqTheft = (r12ResData.r12TheftFreq)*100;
+			bindingData.finalR12ClaimFreqOthers = (r12ResData.r12OthersFreq)*100;
+			bindingData.finalR12ClaimSevOd = r12ResData.r12CatSeverity+r12ResData.r12TheftSeverity+r12ResData.r12OthersSeverity;
+			bindingData.finalR12ClaimSevCat = r12ResData.r12CatSeverity;
+			bindingData.finalR12ClaimSevTheft = r12ResData.r12TheftSeverity;
+			bindingData.finalR12ClaimSevOthers = r12ResData.r12OthersSeverity;
+			bindingData.finalR12LRatio = (r12ResData.r12OdLossRatio)*100;
+			bindingData.finalR12LRatioOd = (r12ResData.r12OdLossRatio)*100;
+			bindingData.finalElRatio = (((r12ResData.estimatedCatGic+r12ResData.estimatedOtherGic+r12ResData.estimatedTheftGic)/r12ResData.gwpOd)*100);
+			bindingData.finalElRatioOd = (((r12ResData.estimatedCatGic+r12ResData.estimatedOtherGic+r12ResData.estimatedTheftGic)/r12ResData.gwpOd)*100)
+//include  tp
+			bindingData.finalEGic = (r12ResData.estimatedTpGic);
+			bindingData.finalEGicTp = r12ResData.estimatedTpGic;			
+			bindingData.finalR12LRatio = (r12ResData.r12TpUlrLossRatio)*100;
+			bindingData.finalR12LRatioTp = (r12ResData.r12TpUlrLossRatio)*100;
+			bindingData.finalElRatio = ((r12ResData.r12TpUlrLossRatio)/r12ResData.gwpTp)*100;
+			bindingData.finalElRatioTp = ((r12ResData.r12TpUlrLossRatio)/r12ResData.gwpTp)*100;
+//include all
+			bindingData.finalEGic = (r12ResData.estimatedCatGic+r12ResData.estimatedTheftGic+r12ResData.estimatedOtherGic+r12ResData.estimatedTpGic);
+			bindingData.finalEGicCat = r12ResData.estimatedCatGic;
+			bindingData.finalEGicTheft = r12ResData.estimatedTheftGic;
+			bindingData.finalEGicOthers = r12ResData.estimatedOtherGic;
+			bindingData.finalEGicTp = r12ResData.estimatedTpGic;			
+			bindingData.finalR12ClaimFreqOd = (r12ResData.r12CatFreq+r12ResData.r12TheftFreq+r12ResData.r12OthersFreq)*100;
+			bindingData.finalR12ClaimFreqCat = (r12ResData.r12CatFreq)*100;
+			bindingData.finalR12ClaimFreqTheft = (r12ResData.r12TheftFreq)*100;
+			bindingData.finalR12ClaimFreqOthers = (r12ResData.r12OthersFreq)*100;
+			bindingData.finalR12ClaimSevOd = r12ResData.r12CatSeverity+r12ResData.r12TheftSeverity+r12ResData.r12OthersSeverity;
+			bindingData.finalR12ClaimSevCat = r12ResData.r12CatSeverity;
+			bindingData.finalR12ClaimSevTheft = r12ResData.r12TheftSeverity;
+			bindingData.finalR12ClaimSevOthers = r12ResData.r12OthersSeverity;
+			bindingData.finalR12LRatio = (r12ResData.r12OdLossRatio + r12ResData.r12TpUlrLossRatio)*100;
+			bindingData.finalR12LRatioOd = (r12ResData.r12OdLossRatio)*100;
+			bindingData.finalR12LRatioTp = (r12ResData.r12TpUlrLossRatio)*100;
+			bindingData.finalElRatio = (((r12ResData.estimatedCatGic+r12ResData.estimatedOtherGic+r12ResData.estimatedTheftGic)/(r12ResData.gwpOd+r12ResData.gwpTp)*100));
+			bindingData.finalElRatioOd = (((r12ResData.estimatedCatGic+r12ResData.estimatedOtherGic+r12ResData.estimatedTheftGic)/r12ResData.gwpOd)*100)
+			bindingData.finalElRatioTp = ((r12ResData.r12TpUlrLossRatio)/r12ResData.gwpTp)*100;
+
 
 	</script>
 </body>
