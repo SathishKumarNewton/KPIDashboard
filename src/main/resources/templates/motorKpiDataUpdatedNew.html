@@ -4327,6 +4327,53 @@ var rslCatGic =200678500.00; var rslTheftGic =200578500.00; var rslOtherGic =205
 							}));
 	        }
 		
+		
+		
+		function callR12NewCube(period, fromDate, toDate) {
+			alert("inside")
+						var report = $('#reports').val();
+						var AddOnNew = getAddOnNew();
+						var PolicyTypeNew = getPolicyTypeNew();
+						var myInput;
+						if (report == 'GENERAL') {
+							myInputs = $('#generalDiv').clone();
+						} else if (report == 'MOTOR') {
+							myInputs = $('#dimensionFilterDiv').clone();
+						} else if (report == 'HEALTH') {
+							myInputs = $('#healthDiv').clone();
+						}
+						var genDiv = $('<form>').append(myInputs).serializeArray();
+						genDiv.push({ name: 'fromDate', value: fromDate });
+						genDiv.push({ name: 'toDate', value: toDate });
+						genDiv.push({ name: 'reportType', value: report });
+						genDiv.push({ name: 'addOnNew', value: AddOnNew });
+						genDiv.push({ name: 'policyTypes', value: PolicyTypeNew });
+						jQuery("body").prepend('<section id="pre-loader"><img src="../../assets/images/Logo_Innerpage.png" alt="CompanyLogo" id="logo"></section>');
+
+						var pApiURL = "";
+						if ($("#r12Btn").css('background-color') != "rgb(255, 255, 255)") {
+							pApiURL = "getR12NewCubeData";
+						}
+						ajaxArray.push($.ajax({
+							type: "GET",
+							contentType: "application/json",
+							url: pApiURL,
+							dataType: 'json',
+							cache: false,
+							timeout: 600000,
+							data: genDiv,
+							success: function (data) {
+
+								callR12ApiAjaxResObj = data[0];
+								console.log('r12 data');
+								console.log(callR12ApiAjaxResObj);
+
+							}
+						
+						}));
+						jQuery("#pre-loader").remove();
+					}
+		
 
 	         
             function getCubeGEPData(period,fromDate,toDate){
@@ -5000,7 +5047,7 @@ var rslCatGic =200678500.00; var rslTheftGic =200578500.00; var rslOtherGic =205
                 		callSingleLineApi(1,from1,to1,"NIC"); */ 
 						if($("#includeBtn").css('background-color') == "rgb(255, 255, 255)"){
 							alert();
-							callReserveSingleLineApi(1,from1,to1);
+							//callReserveSingleLineApi(1,from1,to1);
 							//callReserveSingleLineApi(1,from1,to1,"NIC");
 						}
 					 }
@@ -5012,15 +5059,18 @@ var rslCatGic =200678500.00; var rslTheftGic =200578500.00; var rslOtherGic =205
             			//callSingleLineApi(1,from1,to1);
                 		//callSingleLineApi(1,from1,to1,"NIC");
 						if($("#includeBtn").css('background-color') == "rgb(255, 255, 255)"){
-							callReserveSingleLineApi(1,from1,to1);
+							//callReserveSingleLineApi(1,from1,to1);
 							// callReserveSingleLineApi(1,from1,to1,"NIC");
 						}
             		 }
 					 if ($("#r12Btn").css('background-color')!="rgb(255, 255, 255)"){
-						callgetR12GicNic(1,from1,to1);
+						      alert("12 Btn")
+						    callR12NewCube(1,from1,to1);
+						 /* callgetR12GicNic(1,from1,to1);
 						callR12AcqFunction(1,from1,to1);
 						callR12GwpNwp(1,from1,to1);
-						callR12GepNep(1,from1,to1);
+						callR12GepNep(1,from1,to1);   */
+						
 					 }
             		 
             	 }
@@ -5043,7 +5093,7 @@ var rslCatGic =200678500.00; var rslTheftGic =200578500.00; var rslOtherGic =205
 						callSingleLineApi(2,from2,to2,"GIC");
 						callSingleLineApi(2,from2,to2,"NIC"); */
 						if($("#includeBtn").css('background-color') == "rgb(255, 255, 255)"){
-							callReserveSingleLineApi(2,from2,to2);
+							//callReserveSingleLineApi(2,from2,to2);
 							// callReserveSingleLineApi(2,from2,to2,"NIC");
 						}
 					}
@@ -5055,15 +5105,15 @@ var rslCatGic =200678500.00; var rslTheftGic =200578500.00; var rslOtherGic =205
 						callSingleLineApi(2,from2,to2,"GIC");
 						callSingleLineApi(2,from2,to2,"NIC"); */
 						if($("#includeBtn").css('background-color') == "rgb(255, 255, 255)"){
-							callReserveSingleLineApi(2,from2,to2);
+							//callReserveSingleLineApi(2,from2,to2);
 							// callReserveSingleLineApi(2,from2,to2,"NIC");
 						}
            			}
 					if ($("#r12Btn").css('background-color')!="rgb(255, 255, 255)"){
-						callgetR12GicNic(2,from2,to2);
+						/* callgetR12GicNic(2,from2,to2);
 						callR12AcqFunction(2,from2,to2);
 						callR12GwpNwp(2,from2,to2);
-						callR12GepNep(2,from2,to2);
+						callR12GepNep(2,from2,to2);    */
 					 }
             	 }
             	 
@@ -5085,7 +5135,7 @@ var rslCatGic =200678500.00; var rslTheftGic =200578500.00; var rslOtherGic =205
 						callSingleLineApi(3,from3,to3,"GIC");
 						callSingleLineApi(3,from3,to3,"NIC"); */
 						if($("#includeBtn").css('background-color') == "rgb(255, 255, 255)"){
-							callReserveSingleLineApi(3,from3,to3);
+							//callReserveSingleLineApi(3,from3,to3);
 							// callReserveSingleLineApi(3,from3,to3,"NIC");
 						}
 					}
@@ -5097,15 +5147,15 @@ var rslCatGic =200678500.00; var rslTheftGic =200578500.00; var rslOtherGic =205
 						callSingleLineApi(3,from3,to3,"GIC");
 						callSingleLineApi(3,from3,to3,"NIC"); */
 						if($("#includeBtn").css('background-color') == "rgb(255, 255, 255)"){
-							callReserveSingleLineApi(3,from3,to3);
+							//callReserveSingleLineApi(3,from3,to3);
 							// callReserveSingleLineApi(3,from3,to3,"NIC");
 						}
            			}
 					if ($("#r12Btn").css('background-color')!="rgb(255, 255, 255)"){
-						callgetR12GicNic(3,from3,to3);
+						/* callgetR12GicNic(3,from3,to3);
 						callR12AcqFunction(3,from3,to3);
 						callR12GwpNwp(3,from3,to3);
-						callR12GepNep(3,from3,to3);
+						callR12GepNep(3,from3,to3); */
 					}
 				}
 				
