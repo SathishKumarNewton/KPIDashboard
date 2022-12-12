@@ -1807,6 +1807,40 @@
 													<td class="gicTpulr_r2"></td>
 													<td class="gicTpulr_r3"></td>
 												</tr>
+												
+												
+												<tr href="#" id="show_6a">
+													<td>ESTIMATED GIC <span style="float:right;">(In lakhs)</span></td>
+													<td class="egic_r1"></td>
+													<td class="egic_r2"></td>
+													<td class="egic_r3"></td>
+												</tr>
+												<tr class="hiddenRow extra_6a">
+													<td class="sub-sub">ESTIMATED GIC CAT</td>
+													<td class="egicOdCat_r1"></td>
+													<td class="egicOdCat_r2"></td>
+													<td class="egicOdCat_r3"></td>
+												</tr>
+												<tr class="hiddenRow extra_6a">
+													<td class="sub-sub">ESTIMATED GIC THEFT</td>
+													<td class="egicOdTheft_r1"></td>
+													<td class="egicOdTheft_r2"></td>
+													<td class="egicOdTheft_r3"></td>
+												</tr>
+												<tr class="hiddenRow extra_6a">
+													<td class="sub-sub">ESTIMATED GIC OTHERS</td>
+													<td class="egicOdOthers_r1"></td>
+													<td class="egicOdOthers_r2"></td>
+													<td class="egicOdOthers_r3"></td>
+												</tr>
+												<tr class="hiddenRow extra_6a">
+													<td class="sub-sub">ESTIMATED GIC TP</td>
+													<td class="egicTp_r1"></td>
+													<td class="egicTp_r2"></td>
+													<td class="egicTp_r3"></td>
+												</tr>
+												
+												
 												<!-- <tr><td class="sub-sub">ACTUAL GIC TP</td><td class="actualGicTp_r1"></td><td class="actualGicTp_r2"></td><td class="actualGicTp_r3"></td></tr>
 									<tr><td class="sub-sub">ULR GIC TP</td><td id="ulrGicTp_r1"></td><td id="ulrGicTp_r2"></td><td id="ulrGicTp_r3"></td></tr>
 									<tr><td class="sub-sub">IBNER GIC TP</td><td id="ibnerGicTp_r1"></td><td id="ibnerGicTp_r2"></td><td id="ibnerGicTp_r3"></td></tr>
@@ -3156,6 +3190,7 @@
 			$("#show_11r").hide("fast")
 			$("#show_12r").hide("fast")
 			$("#show_14").hide("fast")
+			$("#show_6a").hide("fast")
 
 			$("#r12Btn").click(function () {
 				$("#show_10r").show("fast")
@@ -3165,7 +3200,8 @@
 				$("#show_12r").show("fast")
 				//$(".extra_12r").show("fast")
 				$("#show_14").show("fast")
-				//$(".extra_14").show("fast")
+				//$(".extra_14").show("fast")show_6a
+				$("#show_6a").show("fast")
 
 			});
 			$("#uwYearBtn").click(function () {
@@ -3177,6 +3213,8 @@
 				$(".extra_12r").hide("fast")
 				$("#show_14").hide("fast")
 				$(".extra_14").hide("fast")
+				$("#show_6a").hide("fast")
+				$(".extra_6a").hide("fast")
 
 			});
 			$("#periodBasedBtn").click(function () {
@@ -3188,6 +3226,8 @@
 				$(".extra_12r").hide("fast")
 				$("#show_14").hide("fast")
 				$(".extra_14").hide("fast")
+				$("#show_6a").hide("fast")
+				$(".extra_6a").hide("fast")
 
 			});
 
@@ -4442,56 +4482,65 @@ sortField: 'text'
 		var isClaimDataFetched = false;
 		var isReserveSingleDataFetched = false;
 		var isSingleDataFetched = false;
+		var isR12DataFetched = false;
 
-		var bindingData = { 
-		"gwp":0,
-		"gwpOd":0,
-		"gwpTp":0,
-		"nwp":0,
-		"nwpOd":0,
-		"NwpTp":0,
-		"gep":0,
-		"gepOd":0,
-		"gepTp":0,
-		"nep":0,
-		"nepOd":0,
-		"nepTp":0,
-		"nic":0,
-		"nicOd":0,
-		"nicTp":0,
-		"gic":0,
-		"gicCat":0,
-		"gicTheft":0,
-		"gicothers":0,
-		"gicTp":0,
-		"gicTpulr":0,
-		"earnedPolicies":0,
-		"earnedPoliciesOd":0,
-		"writtenPolicies":0,
-		"writtenPoliciesOd":0,
-		"writtenPoliciesTp":0,
-		"writtenPoliciesOthers":0,
-		"claimFreqOd":0,
-		"claimFreqCat":0,
-		"claimFreqTheft":0,
-		"claimFreqOthers":0,
-		"claimSevOd":0,
-		"claimSevCat":0,
-		"claimSevTheft":0,
-		"claimSevOthers":0,
-		"lRatio":0,
-		"lRatioOd":0,
-		"lRatioTp":0,
-		"acqcost":0,
-		"acqcostOd":0,
-		"acqcostTp":0,
-	};		
-		// var inputBinding = { /// all api parameters should be here (Note: R12 also added)
-		// 	"writtenPoliciesComprehensive": 0,
-		// 	"writtenPoliciesTp": 0,
-		// 	"writtenPoliciesOthers": 0,
-		// 	"writtenPolicies": 0,
-		// }
+		var bindingData = {
+			"finalGwp": 0,
+			"finalGwpOd": 0,
+			"finalGwpTp": 0,
+			"finalNwp": 0,
+			"finalNwpOd": 0,
+			"finalNwpTp": 0,
+			"finalGep": 0,
+			"finalGepOd": 0,
+			"finalGepTp": 0,
+			"finalNep": 0,
+			"finalNepOd": 0,
+			"finalNepTp": 0,
+			"finalNic": 0,
+			"finalNicOd": 0,
+			"finalNicTp": 0,
+			"finalGic": 0,
+			"finalGicCat": 0,
+			"finalGicTheft": 0,
+			"finalGicothers": 0,
+			"finalGicTp": 0,
+			"finalGicTpulr": 0,
+			"finalEarnedPolicies": 0,
+			"finalEarnedPoliciesOd": 0,
+			"finalWrittenPolicies": 0,
+			"finalWrittenPoliciesOd": 0,
+			"finalWrittenPoliciesTp": 0,
+			"finalWrittenPoliciesOthers": 0,
+			"finalClaimFreqOd": 0,
+			"finalClaimFreqCat": 0,
+			"finalClaimFreqTheft": 0,
+			"finalClaimFreqOthers": 0,
+			"finalR12ClaimFreqOd": 0,
+			"finalR12ClaimFreqCat": 0,
+			"finalR12ClaimFreqTheft": 0,
+			"finalR12ClaimFreqOthers": 0,
+			"finalClaimSevOd": 0,
+			"finalClaimSevCat": 0,
+			"finalClaimSevTheft": 0,
+			"finalClaimSevOthers": 0,
+			"finalR12ClaimSevOd": 0,
+			"finalR12ClaimSevCat": 0,
+			"finalR12ClaimSevTheft": 0,
+			"finalR12ClaimSevOthers": 0,
+			"finalLRatio": 0,
+			"finalLRatioOd": 0,
+			"finalLRatioTp": 0,
+			"finalR12LRatio": 0,
+			"finalR12LRatioOd": 0,
+			"finalR12LRatioTp": 0,
+			"finalElRatio": 0,
+			"finalElRatioOd": 0,
+			"finalElRatioTp": 0,
+			"finalAcqcost": 0,
+			"finalAcqcostOd": 0,
+			"finalAcqcostTp": 0,
+		};		
 
 		var policyResData = {
 			"writtenPoliciesComprehensive": 0,
@@ -4928,8 +4977,6 @@ sortField: 'text'
 				cApiURL = "getClaimsNewCubeDataForUW";
 			} else if ($("#periodBasedBtn").css('background-color') !== "rgb(255, 255, 255)") {
 				cApiURL = "getClaimsNewCubeDataForFIN";
-			} else if ($("#r12Btn").css('background-color') !== "rgb(255, 255, 255)") {
-				cApiURL = "";
 			}
 
 			ajaxArray.push($.ajax({
@@ -4959,12 +5006,197 @@ sortField: 'text'
 			}));
 		}
 
+		var r12ResData = {
+				"acqCostOd": 0,
+				"acqCostTp": 0,
+				"addonAcqCostOd": 0,
+				"addonAcqCostTp": 0,
+				"addonCatCount": 0,
+				"addonCatGic": 0,
+				"addonCatNic": 0,
+				"addonClaimCountTp": 0,
+				"addonEarnedPoliciesOd": 0,
+				"addonEarnedPoliciesTp": 0,
+				"addonGicTp": 0,
+				"addonNicTp": 0,
+				"addonOtherCount": 0,
+				"addonOtherGic": 0,
+				"addonOtherNic": 0,
+				"addonPolicyCountOd": 0,
+				"addonPolicyCountOthers": 0,
+				"addonPolicyCountTp": 0,
+				"addonTheftCount": 0,
+				"addonTheftGic": 0,
+				"addonTheftNic": 0,
+				"catClaimCount": 0,
+				"catFreq": 0,
+				"catGic": 0,
+				"catNic": 0,
+				"catSeverity": 0,
+				"discountGepOd": 0,
+				"discountNepOd": 0,
+				"earnedPoliciesOd": 0,
+				"earnedPoliciesTp": 0,
+				"estimatedAddonCatGic": 0,
+				"estimatedAddonGic": 0,
+				"estimatedAddonLossRatio": 0,
+				"estimatedAddonOdLossRatio": 0,
+				"estimatedAddonOtherGic": 0,
+				"estimatedAddonTheftGic": 0,
+				"estimatedAddonTpGic": 0,
+				"estimatedAddonTpLossRatio": 0,
+				"estimatedAddonTpUlrLossRatio": 0,
+				"estimatedCatGic": 0,
+				"estimatedGic": 0,
+				"estimatedLossRatio": 0,
+				"estimatedOdLossRatio": 0,
+				"estimatedOtherGic": 0,
+				"estimatedTheftGic": 0,
+				"estimatedTpGic": 0,
+				"estimatedTpLossRatio": 0,
+				"estimatedTpUlrLossRatio": 0,
+				"freq": 0,
+				"gepDepOd": 0,
+				"gepDepTp": 0,
+				"gepNcbOd": 0,
+				"gepNcbTp": 0,
+				"gepOd": 0,
+				"gepOtherAddonOd": 0,
+				"gepOtherAddonTp": 0,
+				"gepTp": 0,
+				"gicTp": 0,
+				"gicTpUlr": 0,
+				"gicTpUlrDep": 0,
+				"gicTpUlrNcb": 0,
+				"gicTpUlrOtherAddon": 0,
+				"gwpDepOd": 0,
+				"gwpDepTp": 0,
+				"gwpNcbOd": 0,
+				"gwpNcbTp": 0,
+				"gwpOd": 0,
+				"gwpOtherAddonOd": 0,
+				"gwpOtherAddonTp": 0,
+				"gwpTp": 0,
+				"lossRatio": 0,
+				"nepDepOd": 0,
+				"nepDepTp": 0,
+				"nepNcbOd": 0,
+				"nepNcbTp": 0,
+				"nepOd": 0,
+				"nepOtherAddonOd": 0,
+				"nepOtherAddonTp": 0,
+				"nepTp": 0,
+				"nicTp": 0,
+				"nicTpUlr": 0,
+				"nicTpUlrDep": 0,
+				"nicTpUlrNcb": 0,
+				"nicTpUlrOtherAddon": 0,
+				"nwpDepOd": 0,
+				"nwpDepTp": 0,
+				"nwpNcbOd": 0,
+				"nwpNcbTp": 0,
+				"nwpOd": 0,
+				"nwpOtherAddonOd": 0,
+				"nwpOtherAddonTp": 0,
+				"nwpTp": 0,
+				"odLossRatio": 0,
+				"otherClaimCount": 0,
+				"otherFreq": 0,
+				"otherGic": 0,
+				"otherNic": 0,
+				"otherSeverity": 0,
+				"policyCountOd": 0,
+				"policyCountOthers": 0,
+				"policyCountTp": 0,
+				"r12AddonCatFreq": 0,
+				"r12AddonCatSeverity": 0,
+				"r12AddonFreq": 0,
+				"r12AddonLossRatio": 0,
+				"r12AddonOdLossRatio": 0,
+				"r12AddonOthersFreq": 0,
+				"r12AddonOthersSeverity": 0,
+				"r12AddonSeverity": 0,
+				"r12AddonTheftFreq": 0,
+				"r12AddonTheftSeverity": 0,
+				"r12AddonTpFreq": 0,
+				"r12AddonTpLossRatio": 0,
+				"r12AddonTpSeverity": 0,
+				"r12AddonTpUlrLossRatio": 0,
+				"r12CatFreq": 0,
+				"r12CatSeverity": 0,
+				"r12Freq": 0,
+				"r12LossRatio": 0,
+				"r12OdLossRatio": 0,
+				"r12OthersFreq": 0,
+				"r12OthersSeverity": 0,
+				"r12Severity": 0,
+				"r12TheftFreq": 0,
+				"r12TheftSeverity": 0,
+				"r12TpFreq": 0,
+				"r12TpLossRatio": 0,
+				"r12TpSeverity": 0,
+				"r12TpUlrLossRatio": 0,
+				"severity": 0,
+				"theftClaimCount": 0,
+				"theftFreq": 0,
+				"theftGic": 0,
+				"theftNic": 0,
+				"theftSeverity": 0,
+				"tpLossRatio": 0,
+				"tpUlrLossRatio": 0
+			}
+		
+		function callR12NewCube(period, fromDate, toDate) {
+			
+			alert("r12")
+			var report = $('#reports').val();
+			var AddOnNew = getAddOnNew();
+			var PolicyTypeNew = getPolicyTypeNew();
+			var myInput;
+			if (report == 'GENERAL') {
+				myInputs = $('#generalDiv').clone();
+			} else if (report == 'MOTOR') {
+				myInputs = $('#dimensionFilterDiv').clone();
+			} else if (report == 'HEALTH') {
+				myInputs = $('#healthDiv').clone();
+			}
+			var genDiv = $('<form>').append(myInputs).serializeArray();
+			genDiv.push({ name: 'fromDate', value: fromDate });
+			genDiv.push({ name: 'toDate', value: toDate });
+			genDiv.push({ name: 'reportType', value: report });
+			genDiv.push({ name: 'addOnNew', value: AddOnNew });
+			genDiv.push({ name: 'policyTypes', value: PolicyTypeNew });
+			jQuery("body").prepend('<section id="pre-loader"><img src="../../assets/images/Logo_Innerpage.png" alt="CompanyLogo" id="logo"></section>');
+
+			var pApiURL = "";
+			if ($("#r12Btn").css('background-color') != "rgb(255, 255, 255)") {
+				pApiURL = "getR12NewCubeData";
+			}
+			ajaxArray.push($.ajax({
+				type: "GET",
+				contentType: "application/json",
+				url: pApiURL,
+				dataType: 'json',
+				cache: false,
+				timeout: 600000,
+				data: genDiv,
+				success: function (data) {
+
+					isR12DataFetched = true;
+					Object.assign(r12ResData, data[0]);
+					console.log("r12");
+					console.log(r12ResData);
+					calculation(period);
+
+				}
+			}));
+		}
 
 		function calculation(period) {
 
-			alert("hi inside cal " + isGepNepDataFetched + isGwpNwpDataFetched + isPolicyDataFetched + isClaimDataFetched + isSingleDataFetched + isReserveSingleDataFetched);
+			alert("hi inside cal " + isGepNepDataFetched + isGwpNwpDataFetched + isPolicyDataFetched + isClaimDataFetched + isSingleDataFetched + isReserveSingleDataFetched + isR12DataFetched);
 			//debugger;
-			if (isGepNepDataFetched && isGwpNwpDataFetched && isPolicyDataFetched && isClaimDataFetched && isSingleDataFetched && isReserveSingleDataFetched) {
+			if (isGepNepDataFetched && isGwpNwpDataFetched && isPolicyDataFetched && isClaimDataFetched && isSingleDataFetched && isReserveSingleDataFetched && isR12DataFetched) {
 				alert("after all")
 				if ($("#includeBtn").css('background-color') != "rgb(255, 255, 255)") {
 					alert("include")
@@ -4989,124 +5221,125 @@ sortField: 'text'
 		function include(period){
 			
 			if ($("#comprehensiveBtn").css('background-color') != "rgb(255, 255, 255)") {
-				alert("c");
-				bindingData.gwp = gwpNwpResData.insGwpPolicyComprehensive;
-				bindingData.gwpOd = gwpNwpResData.insGwpPolicyComprehensive;
-				bindingData.nwp = gwpNwpResData.insNwpPolicyComprehensive;
-				bindingData.nwpOd = gwpNwpResData.insNwpPolicyComprehensive;
 
-				bindingData.gep = gepNepResData.gepOd;
-				bindingData.gepOd = gepNepResData.gepOd;
-				bindingData.nep = gepNepResData.nepOd;
-				bindingData.nepOd = gepNepResData.nepOd;
+				bindingData.finalGwp = gwpNwpResData.insGwpPolicyComprehensive;
+				bindingData.finalGwpOd = gwpNwpResData.insGwpPolicyComprehensive;
+				bindingData.finalnwp = gwpNwpResData.insNwpPolicyComprehensive;
+				bindingData.finalnwpOd = gwpNwpResData.insNwpPolicyComprehensive;
 
-				bindingData.nic = cslResData.cslCatNic + cslResData.cslTheftNic + cslResData.cslOtherNic;
-				bindingData.nicOd = cslResData.cslCatNic + cslResData.cslTheftNic + cslResData.cslOtherNic;
-				bindingData.gic = cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic;
-				bindingData.gicCat = cslResData.cslCatGic;
-				bindingData.gicTheft = cslResData.cslTheftGic;
-				bindingData.gicothers = cslResData.cslOtherGic;
+				bindingData.finalGep = gepNepResData.gepOd;
+				bindingData.finalGepOd = gepNepResData.gepOd;
+				bindingData.finalnep = gepNepResData.nepOd;
+				bindingData.finalnepOd = gepNepResData.nepOd;
 
-				bindingData.earnedPolicies = policyResData.earnedPoliciesOd;
-				bindingData.earnedPoliciesOd = policyResData.earnedPoliciesOd;
-				bindingData.writtenPolicies = policyResData.policyodcount;
-				bindingData.writtenPoliciesOd = policyResData.policyodcount;
+				bindingData.finalNic = cslResData.cslCatNic + cslResData.cslTheftNic + cslResData.cslOtherNic;
+				bindingData.finalNicOd = cslResData.cslCatNic + cslResData.cslTheftNic + cslResData.cslOtherNic;
+				bindingData.finalGic = cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic;
+				bindingData.finalGicCat = cslResData.cslCatGic;
+				bindingData.finalGicTheft = cslResData.cslTheftGic;
+				bindingData.finalGicOthers = cslResData.cslOtherGic;
 
-				bindingData.claimFreqOd = ((claimResData.catClaimCount + claimResData.theftClaimCount + claimResData.otherClaimCount)/(policyResData.policyodcount))*100;
-				bindingData.claimFreqCat = ((claimResData.catClaimCount)/(policyResData.policyodcount))*100;
-				bindingData.claimFreqTheft = ((claimResData.theftClaimCount)/(policyResData.policyodcount))*100;
-				bindingData.claimFreqTheft = ((claimResData.otherClaimCount)/(policyResData.policyodcount))*100;
+				bindingData.finalEarnedPolicies = gepNepResData.earnedPoliciesOd;
+				bindingData.finalEarnedPoliciesOd = gepNepResData.earnedPoliciesOd;
 
-				bindingData.claimSevOd = (cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic) / (claimResData.catClaimCount + claimResData.theftClaimCount + claimResData.otherClaimCount);
-				bindingData.claimSevCat = cslResData.cslCatGic / claimResData.catClaimCount;
-				bindingData.claimSevTheft = cslResData.cslTheftGic / claimResData.theftClaimCount;
-				bindingData.claimSevOthers = cslResData.cslOtherGic / claimResData.otherClaimCount;
+				bindingData.finalWrittenPolicies = policyResData.writtenPoliciesComprehensive;
+				bindingData.finalWrittenPoliciesOd = policyResData.writtenPoliciesComprehensive;
 
-				bindingData.lRatio = ((cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic ) / (gepNepResData.gepOd) )*100;
-				bindingData.lRatioOd = ((cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic ) / (gepNepResData.gepOd) )*100;
+				bindingData.finalClaimFreqOd = ((claimResData.catClaimCount + claimResData.theftClaimCount + claimResData.otherClaimCount)/(policyResData.writtenPoliciesComprehensive))*100;
+				bindingData.finalClaimFreqCat = ((claimResData.catClaimCount)/(policyResData.writtenPoliciesComprehensive))*100;
+				bindingData.finalClaimFreqTheft = ((claimResData.theftClaimCount)/(policyResData.writtenPoliciesComprehensive))*100;
+				bindingData.finalClaimFreqOthers = ((claimResData.otherClaimCount)/(policyResData.writtenPoliciesComprehensive))*100;
 
-				bindingData.acqcost = (policyResData.acqCostComprehensive / gwpNwpResData.insGwpPolicyComprehensive)*100;
-				bindingData.acqcostOd = (policyResData.acqCostComprehensive / gwpNwpResData.insGwpPolicyComprehensive)*100;
+				bindingData.finalClaimSevOd = (cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic) / (claimResData.catClaimCount + claimResData.theftClaimCount + claimResData.otherClaimCount);
+				bindingData.finalClaimSevCat = cslResData.cslCatGic / claimResData.catClaimCount;
+				bindingData.finalClaimSevTheft = cslResData.cslTheftGic / claimResData.theftClaimCount;
+				bindingData.finalClaimSevOthers = cslResData.cslOtherGic / claimResData.otherClaimCount;
+
+				bindingData.finalLRatio = ((cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic ) / (gepNepResData.gepOd) )*100;
+				bindingData.finalLRatioOd = ((cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic ) / (gepNepResData.gepOd) )*100;
+
+				bindingData.finalAcqcost = (policyResData.acqCostComprehensive / gwpNwpResData.insGwpPolicyComprehensive)*100;
+				bindingData.finalAcqcostOd = (policyResData.acqCostComprehensive / gwpNwpResData.insGwpPolicyComprehensive)*100;
 
 			} else if ($("#tpBtn").css('background-color') != "rgb(255, 255, 255)") {
-				alert("t")
-				bindingData.gwp = gwpNwpResData.insGwpPolicyTp;
-				bindingData.gwpTp = gwpNwpResData.insGwpPolicyTp;
-				bindingData.nwp = gwpNwpResData.insNwpPolicyTp;
-				bindingData.nwpTp = gwpNwpResData.insNwpPolicyTp;
 
-				bindingData.gep = gepNepResData.gepTp;
-				bindingData.gepTp = gepNepResData.gepTp;
-				bindingData.nep = gepNepResData.nepTp;
-				bindingData.nepTp = gepNepResData.nepTp;
+				bindingData.finalgwp = gwpNwpResData.insGwpPolicyTp;
+				bindingData.finalgwpTp = gwpNwpResData.insGwpPolicyTp;
+				bindingData.finalNwp = gwpNwpResData.insNwpPolicyTp;
+				bindingData.finalNwpTp = gwpNwpResData.insNwpPolicyTp;
 
-				bindingData.nic = gepNepResData.nicTpulr;
-				bindingData.nicTp = gepNepResData.nicTpulr;
-				bindingData.gic = cslResData.gicTp;
-				bindingData.gicTp = cslResData.cslTpGic;
-				bindingData.gicTpulr = gepNepResData.gicTpulr;
+				bindingData.finalGep = gepNepResData.gepTp;
+				bindingData.finalGepTp = gepNepResData.gepTp;
+				bindingData.finalNep = gepNepResData.nepTp;
+				bindingData.finalNepTp = gepNepResData.nepTp;
 
-				bindingData.writtenPolicies = policyResData.policytpcount;
-				bindingData.writtenPoliciesTp = policyResData.policytpcount;
+				bindingData.finalNic = gepNepResData.nicTpulr;
+				bindingData.finalNicTp = gepNepResData.nicTpulr;
+				bindingData.finalGic = cslResData.cslTpGic;
+				bindingData.finalGicTp = cslResData.cslTpGic;
+				bindingData.finalGicTpulr = gepNepResData.gicTpulr;
 
-				bindingData.lRatio =  (gepNepResData.gicTpulr/gepNepResData.gepTp)*100;
-				bindingData.lRatioTp = (gepNepResData.gicTpulr/gepNepResData.gepTp)*100;
+				bindingData.finalWrittenPolicies = policyResData.writtenPoliciesTp;
+				bindingData.finalWrittenPoliciesTp = policyResData.writtenPoliciesTp;
 
-				bindingData.acqcost = (policyResData.acqCostTp / gwpNwpResData.insGwpPolicyTp)*100;
-				bindingData.acqcostTp = (policyResData.acqCostTp / gwpNwpResData.insGwpPolicyTp)*100;
+				bindingData.finalLRatio =  (gepNepResData.gicTpulr/gepNepResData.gepTp)*100;
+				bindingData.finalLRatioTp = (gepNepResData.gicTpulr/gepNepResData.gepTp)*100;
+
+				bindingData.finalAcqcost = (policyResData.acqCostTp / gwpNwpResData.insGwpPolicyTp)*100;
+				bindingData.finalAcqcostTp = (policyResData.acqCostTp / gwpNwpResData.insGwpPolicyTp)*100;
 				
 
 			} else if ($("#allPolicyTypeBtn").css('background-color') != "rgb(255, 255, 255)"){
-				alert("a")
-				bindingData.gwp = gwpNwpResData.insGwpPolicyComprehensive + gwpNwpResData.insGwpPolicyTp;
-				bindingData.gwpOd = gwpNwpResData.insGwpPolicyComprehensive;
-				bindingData.gwpTp = gwpNwpResData.insGwpPolicyTp;
-				bindingData.nwp = gwpNwpResData.insNwpPolicyComprehensive + gwpNwpResData.insNwpPolicyTp;
-				bindingData.nwpOd = gwpNwpResData.insNwpPolicyComprehensive;
-				bindingData.nwpTp = gwpNwpResData.insNwpPolicyTp;
 
-				bindingData.gep = gepNepResData.gepOd + gepNepResData.gepTp;
-				bindingData.gepOd = gepNepResData.gepOd;
-				bindingData.gepTp = gepNepResData.gepTp;
-				bindingData.nep = gepNepResData.nepOd + gepNepResData.nepTp;
-				bindingData.nepOd = gepNepResData.nepOd;
-				bindingData.nepTp = gepNepResData.nepTp;
+				bindingData.finalGwp = gwpNwpResData.insGwpPolicyComprehensive + gwpNwpResData.insGwpPolicyTp;
+				bindingData.finalGwpOd = gwpNwpResData.insGwpPolicyComprehensive;
+				bindingData.finalGwpTp = gwpNwpResData.insGwpPolicyTp;
+				bindingData.finalNwp = gwpNwpResData.insNwpPolicyComprehensive + gwpNwpResData.insNwpPolicyTp;
+				bindingData.finalNwpOd = gwpNwpResData.insNwpPolicyComprehensive;
+				bindingData.finalNwpTp = gwpNwpResData.insNwpPolicyTp;
 
-				bindingData.nic = cslResData.cslCatNic + cslResData.cslTheftNic + cslResData.cslOtherNic + gepNepResData.nicTpulr;
-				bindingData.nicOd = cslResData.cslCatNic + cslResData.cslTheftNic + cslResData.cslOtherNic;
-				bindingData.nicTp = gepNepResData.nicTpulr;
-				bindingData.gic = cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic + cslResData.cslTpGic;
-				bindingData.gicCat = cslResData.cslCatGic;
-				bindingData.gicTheft = cslResData.cslTheftGic;
-				bindingData.gicothers = cslResData.cslOtherGic;
-				bindingData.gicTp = cslResData.cslTpGic;
-				bindingData.gicTpulr = gepNepResData.gicTpulr;
+				bindingData.finalGep = gepNepResData.gepOd + gepNepResData.gepTp;
+				bindingData.finalGepOd = gepNepResData.gepOd;
+				bindingData.finalGepTp = gepNepResData.gepTp;
+				bindingData.finalNep = gepNepResData.nepOd + gepNepResData.nepTp;
+				bindingData.finalNepOd = gepNepResData.nepOd;
+				bindingData.finalNepTp = gepNepResData.nepTp;
 
-				bindingData.earnedPolicies = policyResData.earnedPoliciesOd;
-				bindingData.earnedPoliciesOd = policyResData.earnedPoliciesOd;
+				bindingData.finalNic = cslResData.cslCatNic + cslResData.cslTheftNic + cslResData.cslOtherNic + gepNepResData.nicTpulr;
+				bindingData.finalNicOd = cslResData.cslCatNic + cslResData.cslTheftNic + cslResData.cslOtherNic;
+				bindingData.finalNicTp = gepNepResData.nicTpulr;
+				bindingData.finalGic = cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic + cslResData.cslTpGic;
+				bindingData.finalGicCat = cslResData.cslCatGic;
+				bindingData.finalGicTheft = cslResData.cslTheftGic;
+				bindingData.finalGicOthers = cslResData.cslOtherGic;
+				bindingData.finalGicTp = cslResData.cslTpGic;
+				bindingData.finalGicTpulr = gepNepResData.gicTpulr;
 
-				bindingData.writtenPolicies = policyResData.policyodcount + policyResData.policytpcount + policyResData.policyothercount;
-				bindingData.writtenPoliciesOd = policyResData.policyodcount;
-				bindingData.writtenPoliciesTp = policyResData.policytpcount;
-				bindingData.writtenPoliciesOthers = policyResData.policyothercount;
+				bindingData.finalEarnedPolicies = gepNepResData.earnedPoliciesOd;
+				bindingData.finalEarnedPoliciesOd = gepNepResData.earnedPoliciesOd;
 
-				bindingData.claimFreqOd = ((claimResData.catClaimCount + claimResData.theftClaimCount + claimResData.otherClaimCount)/(policyResData.policyodcount))*100;
-				bindingData.claimFreqCat = ((claimResData.catClaimCount)/(policyResData.policyodcount))*100;
-				bindingData.claimFreqTheft = ((claimResData.theftClaimCount)/(policyResData.policyodcount))*100;
-				bindingData.claimFreqTheft = ((claimResData.otherClaimCount)/(policyResData.policyodcount))*100;
+				bindingData.finalWrittenPolicies = policyResData.writtenPoliciesComprehensive + policyResData.writtenPoliciesTp + policyResData.writtenPoliciesOthers;
+				bindingData.finalWrittenPoliciesOd = policyResData.writtenPoliciesComprehensive;
+				bindingData.finalWrittenPoliciesTp = policyResData.writtenPoliciesTp;
+				bindingData.finalWrittenPoliciesOthers = policyResData.writtenPoliciesOthers;
 
-				bindingData.claimSevOd = (cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic) / (claimResData.catClaimCount + claimResData.theftClaimCount + claimResData.otherClaimCount);
-				bindingData.claimSevCat = cslResData.cslCatGic / claimResData.catClaimCount;
-				bindingData.claimSevTheft = cslResData.cslTheftGic / claimResData.theftClaimCount;
-				bindingData.claimSevOthers = cslResData.cslOtherGic / claimResData.otherClaimCount;
+				bindingData.finalClaimFreqOd = ((claimResData.catClaimCount + claimResData.theftClaimCount + claimResData.otherClaimCount)/(policyResData.writtenPoliciesComprehensive))*100;
+				bindingData.finalClaimFreqCat = ((claimResData.catClaimCount)/(policyResData.writtenPoliciesComprehensive))*100;
+				bindingData.finalClaimFreqTheft = ((claimResData.theftClaimCount)/(policyResData.writtenPoliciesComprehensive))*100;
+				bindingData.finalClaimFreqOthers = ((claimResData.otherClaimCount)/(policyResData.writtenPoliciesComprehensive))*100;
 
-				bindingData.lRatio = ((cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic + gepNepResData.gicTpulr ) / (gepNepResData.gepOd + gepNepResData.gepTp) )*100;
-				bindingData.lRatioOd = ((cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic ) / (gepNepResData.gepOd) )*100;
-				bindingData.lRatioTp = (gepNepResData.gicTpulr/gepNepResData.gepTp)*100;
+				bindingData.finalClaimSevOd = (cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic) / (claimResData.catClaimCount + claimResData.theftClaimCount + claimResData.otherClaimCount);
+				bindingData.finalClaimSevCat = cslResData.cslCatGic / claimResData.catClaimCount;
+				bindingData.finalClaimSevTheft = cslResData.cslTheftGic / claimResData.theftClaimCount;
+				bindingData.finalClaimSevOthers = cslResData.cslOtherGic / claimResData.otherClaimCount;
 
-				bindingData.acqcost = (policyResData.acqCostComprehensive + policyResData.acqCostTp / gwpNwpResData.insGwpPolicyComprehensive + gwpNwpResData.insGwpPolicyTp)*100;
-				bindingData.acqcostOd = (policyResData.acqCostComprehensive / gwpNwpResData.insGwpPolicyComprehensive )*100;
-				bindingData.acqcostTp = (policyResData.acqCostTp / gwpNwpResData.insGwpPolicyTp)*100;
+				bindingData.finalLRatio = ((cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic + gepNepResData.gicTpulr ) / (gepNepResData.gepOd + gepNepResData.gepTp) )*100;
+				bindingData.finalLRatioOd = ((cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic ) / (gepNepResData.gepOd) )*100;
+				bindingData.finalLRatioTp = (gepNepResData.gicTpulr/gepNepResData.gepTp)*100;
+
+				bindingData.finalAcqcost = (policyResData.acqCostComprehensive + policyResData.acqCostTp / gwpNwpResData.insGwpPolicyComprehensive + gwpNwpResData.insGwpPolicyTp)*100;
+				bindingData.finalAcqcostOd = (policyResData.acqCostComprehensive / gwpNwpResData.insGwpPolicyComprehensive )*100;
+				bindingData.finalAcqcostTp = (policyResData.acqCostTp / gwpNwpResData.insGwpPolicyTp)*100;
 
 			}else{
 
@@ -5118,6 +5351,132 @@ sortField: 'text'
 
 		function exclude(period){
 
+			if ($("#comprehensiveBtn").css('background-color') != "rgb(255, 255, 255)") {
+				
+				bindingData.finalGwp = (gwpNwpResData.insGwpPolicyComprehensive)-(gwpNwpResData.insGwpDepPolicyComprehensive + gwpNwpResData.insGwpNcbPolicyComprehensive + gwpNwpResData.insGwpOtherAddonPolicyComprehensive);
+				bindingData.finalGwpOd = (gwpNwpResData.insGwpPolicyComprehensive)-(gwpNwpResData.insGwpDepPolicyComprehensive + gwpNwpResData.insGwpNcbPolicyComprehensive + gwpNwpResData.insGwpOtherAddonPolicyComprehensive);
+				bindingData.finalNwp = (gwpNwpResData.insNwpPolicyComprehensive)-(gwpNwpResData.insNwpDepPolicyComprehensive + gwpNwpResData.insNwpNcbPolicyComprehensive + gwpNwpResData.insNwpOtherAddonPolicyComprehensive);
+				bindingData.finalNwpOd = (gwpNwpResData.insNwpPolicyComprehensive)-(gwpNwpResData.insNwpDepPolicyComprehensive + gwpNwpResData.insNwpNcbPolicyComprehensive + gwpNwpResData.insNwpOtherAddonPolicyComprehensive);
+
+				bindingData.finalGep = (gepNepResData.gepOd) - (gepNepResData.gepDepOd + gepNepResData.gepNcbOd + gepNepResData.gepOtherAddonOd);
+				bindingData.finalGepOd = (gepNepResData.gepOd) - (gepNepResData.gepDepOd + gepNepResData.gepNcbOd + gepNepResData.gepOtherAddonOd);
+				bindingData.finalNep = (gepNepResData.nepOd) - (gepNepResData.nepDepOd + gepNepResData.nepNcbOd + gepNepResData.nepOtherAddonOd);
+				bindingData.finalNepOd = (gepNepResData.nepOd) - (gepNepResData.nepDepOd + gepNepResData.nepNcbOd + gepNepResData.nepOtherAddonOd);
+
+				bindingData.finalNic = (cslResData.cslCatNic + cslResData.cslTheftNic + cslResData.cslOtherNic) - (rslResData.rslCatNic + rslResData.rslTheftNic + rslResData.rslOtherNic);  
+				bindingData.finalNicOd = (cslResData.cslCatNic + cslResData.cslTheftNic + cslResData.cslOtherNic) - (rslResData.rslCatNic + rslResData.rslTheftNic + rslResData.rslOtherNic);  
+				bindingData.finalGic = (cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic) - (rslResData.rslCatGic + rslResData.rslTheftGic + rslResData.rslOtherGic) ;
+				bindingData.finalGicCat = cslResData.cslCatGic - rslResData.rslCatGic ;
+				bindingData.finalGicTheft = cslResData.cslTheftGic - rslResData.rslTheftGic ;
+				bindingData.finalGicOthers = cslResData.cslOtherGic - rslResData.rslOtherGic;
+
+				bindingData.earnedPolicies = gepNepResData.earnedPoliciesOd - gepNepResData.addonEarnedPoliciesOd;
+				bindingData.earnedPoliciesOd = gepNepResData.earnedPoliciesOd - gepNepResData.addonEarnedPoliciesOd;
+				bindingData.writtenPolicies = policyResData.writtenPoliciesComprehensive - policyResData.addonWrittenPoliciesComprehensive;
+				bindingData.writtenPoliciesOd = policyResData.writtenPoliciesComprehensive - policyResData.addonWrittenPoliciesComprehensive;
+
+				bindingData.finalClaimFreqOd = ((claimResData.catClaimCount + claimResData.theftClaimCount + claimResData.otherClaimCount - claimResData.addonCatClaimCount-claimResData.addonTheftClaimCount-claimResData.addonOtherClaimCount)/(policyResData.writtenPoliciesComprehensive - policyResData.addonWrittenPoliciesComprehensive))*100;
+				bindingData.finalClaimFreqCat = ((claimResData.catClaimCount - claimResData.addonCatClaimCount)/(policyResData.writtenPoliciesComprehensive - policyResData.addonWrittenPoliciesComprehensive))*100;
+				bindingData.finalClaimFreqTheft = ((claimResData.theftClaimCount - claimResData.addonTheftClaimCount)/(policyResData.writtenPoliciesComprehensive - policyResData.addonWrittenPoliciesComprehensive))*100;
+				bindingData.finalClaimFreqOthers = ((claimResData.otherClaimCount - claimResData.addonOtherClaimCount)/(policyResData.writtenPoliciesComprehensive - policyResData.addonWrittenPoliciesComprehensive))*100;
+
+				bindingData.finalClaimSevOd = (cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic - rslResData.rslCatGic - rslResData.rslTheftGic - rslResData.rslOtherGic) / (claimResData.catClaimCount + claimResData.theftClaimCount + claimResData.otherClaimCount - claimResData.addonCatClaimCount - claimResData.addonTheftClaimCount - claimResData.addonOtherClaimCount );
+				bindingData.finalClaimSevCat = cslResData.cslCatGic - rslResData.rslCatGic / claimResData.catClaimCount - claimResData.addonCatClaimCount;
+				bindingData.finalClaimSevTheft = cslResData.cslTheftGic - rslResData.rslTheftGic / claimResData.theftClaimCount - claimResData.addonTheftClaimCount;
+				bindingData.finalClaimSevOthers = cslResData.cslOtherGic - rslResData.rslOtherGic / claimResData.otherClaimCount - claimResData.addonOtherClaimCount;
+
+				bindingData.finalLRatio = ((cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic - rslResData.rslCatGic - rslResData.rslTheftGic - rslResData.rslOtherGic ) / (gepNepResData.gepOd - gepNepResData.gepDepOd - gepNepResData.gepNcbOd - gepNepResData.gepOtherAddonOd) )*100;
+				bindingData.finalLRatioOd = ((cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic - rslResData.rslCatGic - rslResData.rslTheftGic - rslResData.rslOtherGic ) / (gepNepResData.gepOd - gepNepResData.gepDepOd - gepNepResData.gepNcbOd - gepNepResData.gepOtherAddonOd) )*100;
+
+				bindingData.finalAcqcost = (policyResData.acqCostComprehensive - policyResData.addonAcqCostComprehensive / gwpNwpResData.insGwpPolicyComprehensive - gwpNwpResData.insGwpDepPolicyComprehensive - gwpNwpResData.insGwpNcbPolicyComprehensive - gwpNwpResData.insGwpOtherAddonPolicyComprehensive)*100;
+				bindingData.finalAcqcostOd = (policyResData.acqCostComprehensive - policyResData.addonAcqCostComprehensive / gwpNwpResData.insGwpPolicyComprehensive - gwpNwpResData.insGwpDepPolicyComprehensive - gwpNwpResData.insGwpNcbPolicyComprehensive - gwpNwpResData.insGwpOtherAddonPolicyComprehensive)*100;
+
+
+			}
+			else if ($("#tpBtn").css('background-color') != "rgb(255, 255, 255)") {
+			
+				bindingData.finalGwp = gwpNwpResData.insGwpPolicyTp - ( gwpNwpResData.insGwpDepPolicyTp + gwpNwpResData.insGwpNcbPolicyTp - gwpNwpResData.insGwpOtherAddonPolicyTp);
+				bindingData.finalGwpTp = gwpNwpResData.insGwpPolicyTp - ( gwpNwpResData.insGwpDepPolicyTp + gwpNwpResData.insGwpNcbPolicyTp - gwpNwpResData.insGwpOtherAddonPolicyTp);
+				bindingData.finalNwp = gwpNwpResData.insNwpPolicyTp - ( gwpNwpResData.insNwpDepPolicyTp + gwpNwpResData.insNwpNcbPolicyTp - gwpNwpResData.insNwpOtherAddonPolicyTp);
+				bindingData.finalNwpTp = gwpNwpResData.insNwpPolicyTp - ( gwpNwpResData.insNwpDepPolicyTp + gwpNwpResData.insNwpNcbPolicyTp - gwpNwpResData.insNwpOtherAddonPolicyTp);
+
+				bindingData.finalGep = gepNepResData.gepTp - (gepNepResData.gepDepTp + gepNepResData.gepNcbTp + gepNepResData.gepOtherAddonTp);
+				bindingData.finalGepTp = gepNepResData.gepTp - (gepNepResData.gepDepTp + gepNepResData.gepNcbTp + gepNepResData.gepOtherAddonTp);
+				bindingData.finalNep = gepNepResData.nepTp - (gepNepResData.nepDepTp + gepNepResData.nepNcbTp + gepNepResData.nepOtherAddonTp);
+				bindingData.finalNepTp = gepNepResData.nepTp - (gepNepResData.nepDepTp + gepNepResData.nepNcbTp + gepNepResData.nepOtherAddonTp);
+
+				bindingData.finalNic = gepNepResData.nicTpulr - ( gepNepResData.nicTpulrDep + gepNepResData.nicTpulrNcb + gepNepResData.nicTpulrOtherAddon );
+				bindingData.finalNicTp = gepNepResData.nicTpulr - ( gepNepResData.nicTpulrDep + gepNepResData.nicTpulrNcb + gepNepResData.nicTpulrOtherAddon );
+				bindingData.finalGic = cslResData.cslTpGic - rslResData.rslTpGic;
+				bindingData.finalGicTp = cslResData.cslTpGic - rslResData.rslTpGic;
+				bindingData.finalGicTpulr = gepNepResData.gicTpulr - (gepNepResData.gicTpulrDep + gepNepResData.gicTpulrNcb + gepNepResData.gicTpulrOtherAddon);
+
+				bindingData.finalWrittenPolicies = policyResData.writtenPoliciesTp - policyResData.addonWrittenPoliciesTp;
+				bindingData.finalWrittenPoliciesTp = policyResData.writtenPoliciesTp - policyResData.addonWrittenPoliciesTp;
+
+				bindingData.finalLRatio =  (gepNepResData.gicTpulr - gepNepResData.gicTpulrDep - gepNepResData.gicTpulrNcb - gepNepResData.gicTpulrOtherAddon /gepNepResData.gepTp - gepNepResData.gepDepTp - gepNepResData.gepNcbTp - gepNepResData.gepOtherAddonTp)*100;
+				bindingData.finalLRatioTp = (gepNepResData.gicTpulr - gepNepResData.gicTpulrDep - gepNepResData.gicTpulrNcb - gepNepResData.gicTpulrOtherAddon /gepNepResData.gepTp - gepNepResData.gepDepTp - gepNepResData.gepNcbTp - gepNepResData.gepOtherAddonTp)*100;
+
+				bindingData.finalAcqcost = (policyResData.acqCostTp - policyResData.addonAcqCostTp / gwpNwpResData.insGwpPolicyTp - gwpNwpResData.insGwpDepPolicyTp - gwpNwpResData.insGwpNcbPolicyTp - gwpNwpResData.insGwpOtherAddonPolicyTp)*100;
+				bindingData.finalAcqcostTp = (policyResData.acqCostTp - policyResData.addonAcqCostTp / gwpNwpResData.insGwpPolicyTp - gwpNwpResData.insGwpDepPolicyTp - gwpNwpResData.insGwpNcbPolicyTp - gwpNwpResData.insGwpOtherAddonPolicyTp)*100;
+
+			}
+			else if ($("#allPolicyTypeBtn").css('background-color') != "rgb(255, 255, 255)"){
+			
+				bindingData.finalGwp = (gwpNwpResData.insGwpPolicyComprehensive + gwpNwpResData.insGwpPolicyTp)-(gwpNwpResData.insGwpDepPolicyComprehensive + gwpNwpResData.insGwpDepPolicyTp + gwpNwpResData.insGwpNcbPolicyComprehensive + gwpNwpResData.insGwpNcbPolicyTp + gwpNwpResData.insGwpOtherAddonPolicyComprehensive + gwpNwpResData.insGwpOtherAddonPolicyTp);
+				bindingData.finalGwpOd = (gwpNwpResData.insGwpPolicyComprehensive)-(gwpNwpResData.insGwpDepPolicyComprehensive + gwpNwpResData.insGwpNcbPolicyComprehensive + gwpNwpResData.insGwpOtherAddonPolicyComprehensive);
+				bindingData.finalGwpTp = gwpNwpResData.insGwpPolicyTp - ( gwpNwpResData.insGwpDepPolicyTp + gwpNwpResData.insGwpNcbPolicyTp - gwpNwpResData.insGwpOtherAddonPolicyTp);
+				bindingData.finalNwp = (gwpNwpResData.insNwpPolicyComprehensive + gwpNwpResData.insNwpPolicyTp)-(gwpNwpResData.insNwpDepPolicyComprehensive + gwpNwpResData.insNwpDepPolicyTp + gwpNwpResData.insNwpNcbPolicyComprehensive + gwpNwpResData.insNwpNcbPolicyTp + gwpNwpResData.insNwpOtherAddonPolicyComprehensive + gwpNwpResData.insNwpOtherAddonPolicyTp);
+				bindingData.finalNwpOd = (gwpNwpResData.insNwpPolicyComprehensive)-(gwpNwpResData.insNwpDepPolicyComprehensive + gwpNwpResData.insNwpNcbPolicyComprehensive + gwpNwpResData.insNwpOtherAddonPolicyComprehensive);
+				bindingData.finalNwpTp = gwpNwpResData.insNwpPolicyTp - ( gwpNwpResData.insNwpDepPolicyTp + gwpNwpResData.insNwpNcbPolicyTp - gwpNwpResData.insNwpOtherAddonPolicyTp);
+
+				bindingData.finalGep = (gepNepResData.gepOd + gepNepResData.gepTp ) - (gepNepResData.gepDepOd + gepNepResData.gepDepTp + gepNepResData.gepNcbOd + gepNepResData.gepNcbTp + gepNepResData.gepOtherAddonOd + gepNepResData.gepOtherAddonTp);
+				bindingData.finalGepOd = (gepNepResData.gepOd) - (gepNepResData.gepDepOd + gepNepResData.gepNcbOd + gepNepResData.gepOtherAddonOd);
+				bindingData.finalGepTp = gepNepResData.gepTp - (gepNepResData.gepDepTp + gepNepResData.gepNcbTp + gepNepResData.gepOtherAddonTp);
+				bindingData.finalNep = (gepNepResData.nepOd + gepNepResData.nepTp ) - (gepNepResData.nepDepOd + gepNepResData.nepDepTp + gepNepResData.nepNcbOd + gepNepResData.nepNcbTp + gepNepResData.nepOtherAddonOd + gepNepResData.nepOtherAddonTp);
+				bindingData.finalNepOd = (gepNepResData.nepOd) - (gepNepResData.nepDepOd + gepNepResData.nepNcbOd + gepNepResData.nepOtherAddonOd);
+				bindingData.finalNepTp = gepNepResData.nepTp - (gepNepResData.nepDepTp + gepNepResData.nepNcbTp + gepNepResData.nepOtherAddonTp);
+
+				bindingData.finalNic = (cslResData.cslCatNic + cslResData.cslTheftNic + cslResData.cslOtherNic + gepNepResData.nicTpulr) - (rslResData.rslCatNic + rslResData.rslTheftNic + rslResData.rslOtherNic + gepNepResData.nicTpulrDep + gepNepResData.nicTpulrNcb + gepNepResData.nicTpulrOtherAddon);  
+				bindingData.finalNicOd = (cslResData.cslCatNic + cslResData.cslTheftNic + cslResData.cslOtherNic) - (rslResData.rslCatNic + rslResData.rslTheftNic + rslResData.rslOtherNic);  
+				bindingData.finalNicTp = gepNepResData.nicTpulr - ( gepNepResData.nicTpulrDep + gepNepResData.nicTpulrNcb + gepNepResData.nicTpulrOtherAddon );
+				bindingData.finalGic = (cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic + cslResData.cslTpGic ) - (rslResData.rslCatGic + rslResData.rslTheftGic + rslResData.rslOtherGic + rslResData.rslTpGic) ;
+				bindingData.finalGicCat = cslResData.cslCatGic - rslResData.rslCatGic ;
+				bindingData.finalGicTheft = cslResData.cslTheftGic - rslResData.rslTheftGic ;
+				bindingData.finalGicOthers = cslResData.cslOtherGic - rslResData.rslOtherGic;
+				bindingData.finalGicTp = cslResData.cslTpGic - rslResData.rslTpGic;
+				bindingData.finalGicTpulr = gepNepResData.gicTpulr - (gepNepResData.gicTpulrDep + gepNepResData.gicTpulrNcb + gepNepResData.gicTpulrOtherAddon);
+
+				bindingData.finalEarnedPolicies = gepNepResData.earnedPoliciesOd - gepNepResData.addonEarnedPoliciesOd;
+				bindingData.finalEarnedPoliciesOd = gepNepResData.earnedPoliciesOd - gepNepResData.addonEarnedPoliciesOd;
+				bindingData.finalWrittenPolicies = (policyResData.writtenPoliciesComprehensive + policyResData.writtenPoliciesTp + policyResData.writtenPoliciesOthers) - (policyResData.addonWrittenPoliciesComprehensive + policyResData.addonWrittenPoliciesTp + policyResData.addonWrittenPoliciesOthers);
+				bindingData.finalWrittenPoliciesOd = policyResData.writtenPoliciesComprehensive - policyResData.addonWrittenPoliciesComprehensive;
+				bindingData.finalWrittenPoliciesTp = policyResData.writtenPoliciesTp - policyResData.addonWrittenPoliciesTp;
+				bindingData.finalWrittenPoliciesOthers = policyResData.writtenPoliciesOthers - policyResData.addonWrittenPoliciesOthers;
+
+				bindingData.finalClaimFreqOd = ((claimResData.catClaimCount + claimResData.theftClaimCount + claimResData.otherClaimCount - claimResData.addonCatClaimCount-claimResData.addonTheftClaimCount-claimResData.addonOtherClaimCount)/(policyResData.writtenPoliciesComprehensive - policyResData.addonWrittenPoliciesComprehensive))*100;
+				bindingData.finalClaimFreqCat = ((claimResData.catClaimCount - claimResData.addonCatClaimCount)/(policyResData.writtenPoliciesComprehensive - policyResData.addonWrittenPoliciesComprehensive))*100;
+				bindingData.finalClaimFreqTheft = ((claimResData.theftClaimCount - claimResData.addonTheftClaimCount)/(policyResData.writtenPoliciesComprehensive - policyResData.addonWrittenPoliciesComprehensive))*100;
+				bindingData.finalClaimFreqOthers = ((claimResData.otherClaimCount - claimResData.addonOtherClaimCount)/(policyResData.writtenPoliciesComprehensive - policyResData.addonWrittenPoliciesComprehensive))*100;
+
+				bindingData.finalClaimSevOd = (cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic - rslResData.rslCatGic - rslResData.rslTheftGic - rslResData.rslOtherGic) / (claimResData.catClaimCount + claimResData.theftClaimCount + claimResData.otherClaimCount - claimResData.addonCatClaimCount - claimResData.addonTheftClaimCount - claimResData.addonOtherClaimCount );
+				bindingData.finalClaimSevCat = cslResData.cslCatGic - rslResData.rslCatGic / claimResData.catClaimCount - claimResData.addonCatClaimCount;
+				bindingData.finalClaimSevTheft = cslResData.cslTheftGic - rslResData.rslTheftGic / claimResData.theftClaimCount - claimResData.addonTheftClaimCount;
+				bindingData.finalClaimSevOthers = cslResData.cslOtherGic - rslResData.rslOtherGic / claimResData.otherClaimCount - claimResData.addonOtherClaimCount;
+
+				bindingData.finalLRatio = ((cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic + gepNepResData.gicTpulr - rslResData.rslCatGic - rslResData.rslTheftGic - rslResData.rslOtherGic - gepNepResData.gicTpulrDep - gepNepResData.gicTpulrNcb - gepNepResData.gicTpulrOtherAddon ) / (gepNepResData.gepOd + gepNepResData.gepTp - gepNepResData.gepDepOd - gepNepResData.gepDepTp - gepNepResData.gepNcbOd - gepNepResData.gepNcbTp - gepNepResData.gepOtherAddonOd - gepNepResData.gepOtherAddonTp) )*100;
+				bindingData.finalLRatioOd = ((cslResData.cslCatGic + cslResData.cslTheftGic + cslResData.cslOtherGic - rslResData.rslCatGic - rslResData.rslTheftGic - rslResData.rslOtherGic ) / (gepNepResData.gepOd - gepNepResData.gepDepOd - gepNepResData.gepNcbOd - gepNepResData.gepOtherAddonOd) )*100;
+				bindingData.finalLRatioTp = (gepNepResData.gicTpulr - gepNepResData.gicTpulrDep - gepNepResData.gicTpulrNcb - gepNepResData.gicTpulrOtherAddon /gepNepResData.gepTp - gepNepResData.gepDepTp - gepNepResData.gepNcbTp - gepNepResData.gepOtherAddonTp)*100;
+
+				bindingData.finalAcqcost = (policyResData.acqCostComprehensive + policyResData.acqCostTp - policyResData.addonAcqCostComprehensive - policyResData.addonAcqCostTp / gwpNwpResData.insGwpPolicyComprehensive + gwpNwpResData.insGwpPolicyTp - gwpNwpResData.insGwpDepPolicyComprehensive - gwpNwpResData.insGwpDepPolicyTp - gwpNwpResData.insGwpNcbPolicyComprehensive - gwpNwpResData.insGwpNcbPolicyTp - gwpNwpResData.insGwpOtherAddonPolicyComprehensive - gwpNwpResData.insGwpOtherAddonPolicyTp)*100;
+				bindingData.finalAcqcostOd = (policyResData.acqCostComprehensive - policyResData.addonAcqCostComprehensive / gwpNwpResData.insGwpPolicyComprehensive - gwpNwpResData.insGwpDepPolicyComprehensive - gwpNwpResData.insGwpNcbPolicyComprehensive - gwpNwpResData.insGwpOtherAddonPolicyComprehensive)*100;
+				bindingData.finalAcqcostTp = (policyResData.acqCostTp - policyResData.addonAcqCostTp / gwpNwpResData.insGwpPolicyTp - gwpNwpResData.insGwpDepPolicyTp - gwpNwpResData.insGwpNcbPolicyTp - gwpNwpResData.insGwpOtherAddonPolicyTp)*100;
+
+			}
+			else{
+
+			}
+			binding(bindingData,period);
 		}
 
 		function onlyAddon(period){
@@ -5127,7 +5486,7 @@ sortField: 'text'
 
 		function binding(out,period){
 			
-			alert("hijore");
+			alert("hijore"+out);
 			$(".nic_r" + period).text(out.nic);
 			jQuery("#pre-loader").remove();
 		
@@ -5627,10 +5986,7 @@ sortField: 'text'
 			if ($("#periodBasedBtn").css('background-color') != "rgb(255, 255, 255)") {
 				apiURL = "/getGepNewCubeMonthAscolumnDataFIN";
 				callGepApi(period, fromDate, toDate, apiURL);
-			} else if ($("#r12Btn").css('background-color') != "rgb(255, 255, 255)") {
-				/*Basic*/
-				apiURL = "/getGepNewCubeMonthAscolumnDataFIN";
-				// callGepApi(period, fromDate, toDate, apiURL);
+
 			} else if ($("#uwYearBtn").css('background-color') != "rgb(255, 255, 255)") {
 
 				apiURL = "/getGepNewCubeMonthAscolumnDataUW";
@@ -6264,11 +6620,9 @@ sortField: 'text'
 					callPolicyApi(1, from1, to1);
 					callClaimApi(1, from1, to1);
 					callSingleLineApi(1, from1, to1);
-					callReserveSingleLineApi(1, from1, to1);
-					// if ($("#includeBtn").css('background-color') == "rgb(255, 255, 255)") {
-					// 	callReserveSingleLineApi(1, from1, to1, "GIC");
-					// 	callReserveSingleLineApi(1, from1, to1, "NIC");
-					// }
+					if ($("#includeBtn").css('background-color') == "rgb(255, 255, 255)") {
+						callReserveSingleLineApi(1, from1, to1);
+					}
 				}
 				if ($("#periodBasedBtn").css('background-color') != "rgb(255, 255, 255)") {
 					getCubeGEPData(1, from1, to1);
@@ -6276,17 +6630,13 @@ sortField: 'text'
 					callPolicyApi(1, from1, to1);
 					callClaimApi(1, from1, to1);
 					callSingleLineApi(1, from1, to1);
-					callReserveSingleLineApi(1, from1, to1);
-					// if ($("#includeBtn").css('background-color') == "rgb(255, 255, 255)") {
-					// 	callReserveSingleLineApi(1, from1, to1, "GIC");
-					// 	callReserveSingleLineApi(1, from1, to1, "NIC");
-					// }
+					if ($("#includeBtn").css('background-color') == "rgb(255, 255, 255)") {
+						callReserveSingleLineApi(1, from1, to1);
+					}
 				}
 				if ($("#r12Btn").css('background-color') != "rgb(255, 255, 255)") {
-					callgetR12GicNic(1, from1, to1);
-					callR12AcqFunction(1, from1, to1);
-					callR12GwpNwp(1, from1, to1);
-					callR12GepNep(1, from1, to1);
+					callR12NewCube(1,from1,to1);
+
 				}
 
 			}
@@ -6306,11 +6656,9 @@ sortField: 'text'
 					callInsApi(2, from2, to2);
 					callPolicyApi(2, from2, to2);
 					callClaimApi(2, from2, to2);
-					callSingleLineApi(2, from2, to2, "GIC");
-					callSingleLineApi(2, from2, to2, "NIC");
+					callSingleLineApi(2, from1, to1);
 					if ($("#includeBtn").css('background-color') == "rgb(255, 255, 255)") {
-						callReserveSingleLineApi(2, from2, to2, "GIC");
-						callReserveSingleLineApi(2, from2, to2, "NIC");
+						callReserveSingleLineApi(2, from1, to1);
 					}
 				}
 				if ($("#periodBasedBtn").css('background-color') != "rgb(255, 255, 255)") {
@@ -6318,18 +6666,14 @@ sortField: 'text'
 					callInsApi(2, from2, to2);
 					callPolicyApi(2, from2, to2);
 					callClaimApi(2, from2, to2);
-					callSingleLineApi(2, from2, to2, "GIC");
-					callSingleLineApi(2, from2, to2, "NIC");
+					callSingleLineApi(2, from2, to2);
 					if ($("#includeBtn").css('background-color') == "rgb(255, 255, 255)") {
-						callReserveSingleLineApi(2, from2, to2, "GIC");
-						callReserveSingleLineApi(2, from2, to2, "NIC");
+						callReserveSingleLineApi(2, from2, to2);
 					}
 				}
 				if ($("#r12Btn").css('background-color') != "rgb(255, 255, 255)") {
-					callgetR12GicNic(2, from2, to2);
-					callR12AcqFunction(2, from2, to2);
-					callR12GwpNwp(2, from2, to2);
-					callR12GepNep(2, from2, to2);
+					callR12NewCube(2,from2,to2);
+
 				}
 			}
 
@@ -6338,21 +6682,13 @@ sortField: 'text'
 				$('#uwMotorTable > tbody > tr > td:nth-child(4)').text('0.00');
 				$('#uwHealthTable > tbody > tr > td:nth-child(4)').text('0.00');
 				if ($("#uwYearBtn").css('background-color') != "rgb(255, 255, 255)") {
-					/*getCubeGEPData(3,from3,to3);
-					callInsApi(3,from3,to3);
-					callPolicyApi(3,from3,to3);
-					callClaimApi(3,from3,to3);
-					callSingleLineApi(3,from3,to3,"GIC");
-					callSingleLineApi(3,from3,to3,"NIC");*/
 					getCubeGEPData(3, from3, to3);
 					callInsApi(3, from3, to3);
 					callPolicyApi(3, from3, to3);
 					callClaimApi(3, from3, to3);
-					callSingleLineApi(3, from3, to3, "GIC");
-					callSingleLineApi(3, from3, to3, "NIC");
+					callSingleLineApi(3, from3,to3);
 					if ($("#includeBtn").css('background-color') == "rgb(255, 255, 255)") {
-						callReserveSingleLineApi(3, from3, to3, "GIC");
-						callReserveSingleLineApi(3, from3, to3, "NIC");
+						callReserveSingleLineApi(3, from3, to3);
 					}
 				}
 				if ($("#periodBasedBtn").css('background-color') != "rgb(255, 255, 255)") {
@@ -6360,18 +6696,13 @@ sortField: 'text'
 					callInsApi(3, from3, to3);
 					callPolicyApi(3, from3, to3);
 					callClaimApi(3, from3, to3);
-					callSingleLineApi(3, from3, to3, "GIC");
-					callSingleLineApi(3, from3, to3, "NIC");
+					callSingleLineApi(3, from3, to3);
 					if ($("#includeBtn").css('background-color') == "rgb(255, 255, 255)") {
-						callReserveSingleLineApi(3, from3, to3, "GIC");
-						callReserveSingleLineApi(3, from3, to3, "NIC");
+						callReserveSingleLineApi(3, from3, to3);
 					}
 				}
 				if ($("#r12Btn").css('background-color') != "rgb(255, 255, 255)") {
-					callgetR12GicNic(3, from3, to3);
-					callR12AcqFunction(3, from3, to3);
-					callR12GwpNwp(3, from3, to3);
-					callR12GepNep(3, from3, to3);
+					callR12NewCube(3,from3,to3);
 				}
 			}
 
