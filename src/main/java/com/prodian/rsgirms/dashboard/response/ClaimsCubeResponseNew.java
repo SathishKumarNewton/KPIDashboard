@@ -25,19 +25,19 @@ public class ClaimsCubeResponseNew {
 	
 	//Newly added
 	private double claimCount;
-	private double addOnClaimCount;
+	private double addonClaimCount;
 	
 	private double catClaimCount;
-	private double addOnCatClaimCount;
+	private double addonCatClaimCount;
 	
 	private double theftClaimCount;
-	private double addOnTheftClaimCount;
+	private double addonTheftClaimCount;
 	
 	private double otherClaimCount;
-	private double addOnOtherClaimCount;
+	private double addonOtherClaimCount;
 	
 	private double claimCountTp;
-	private double addOnClaimCountTp;
+	private double addonClaimCountTp;
 	
 	
 }

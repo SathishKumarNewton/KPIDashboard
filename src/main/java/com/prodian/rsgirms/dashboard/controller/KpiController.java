@@ -1881,58 +1881,59 @@ public class KpiController {
 
 			// jsArray = convertToJSON(rs);
 
-			while (rs.next()) {
-
-				InsCubeResponseNew res = new InsCubeResponseNew();
-
-				res.setInsGwpPolicyComprehensive(rs.getDouble(1));
-				res.setInsGwpPolicyTp(rs.getDouble(2));
-				res.setInsGwpPolicyOthers(rs.getDouble(3));
-				res.setInsGwpOdPolicyComprehensive(rs.getDouble(4));
-				res.setInsGwpOdPolicyTp(rs.getDouble(5));
-				res.setInsGwpOdPolicyOthers(rs.getDouble(6));
-				res.setInsGwpTpPolicyComprehensive(rs.getDouble(7));
-				res.setInsGwpTpPolicyTp(rs.getDouble(8));
-				res.setInsGwpTpPolicyOthers(rs.getDouble(9));
-				res.setInsGwpDiscountPolicyComprehensive(rs.getDouble(10));
-				res.setInsGwpDiscountPolicyTp(rs.getDouble(11));
-				res.setInsGwpDiscountPolicyOthers(rs.getDouble(12));
-
-				res.setInsNwpPolicyComprehensive(rs.getDouble(13));
-				res.setInsNwpPolicyTp(rs.getDouble(14));
-				res.setInsNwpPolicyOthers(rs.getDouble(5));
-				res.setInsNwpOdPolicyComprehensive(rs.getDouble(16));
-				res.setInsNwpOdPolicyTp(rs.getDouble(17));
-				res.setInsNwpOdPolicyOthers(rs.getDouble(18));
-				res.setInsNwpTpPolicyComprehensive(rs.getDouble(19));
-				res.setInsNwpTpPolicyTp(rs.getDouble(20));
-				res.setInsNwpTpPolicyOthers(rs.getDouble(21));
-				res.setInsNwpDiscountPolicyComprehensive(rs.getDouble(21));
-				res.setInsNwpDiscountPolicyTp(rs.getDouble(23));
-				res.setInsNwpDiscountPolicyOthers(rs.getDouble(24));
-
-				res.setInsGwpDepPolicyComprehensive(rs.getDouble(25));
-				res.setInsGwpDepPolicyTp(rs.getDouble(26));
-				res.setInsGwpDepPolicyOthers(rs.getDouble(27));
-				res.setInsGwpNcbPolicyComprehensive(rs.getDouble(28));
-				res.setInsGwpNcbPolicyTp(rs.getDouble(29));
-				res.setInsGwpNcbPolicyOthers(rs.getDouble(30));
-				res.setInsGwpOtherAddonPolicyComprehensive(rs.getDouble(31));
-				res.setInsGwpOtherAddonPolicyTp(rs.getDouble(32));
-				res.setInsGwpOtherAddonPolicyOthers(rs.getDouble(33));
-
-				res.setInsNwpDepPolicyComprehensive(rs.getDouble(34));
-				res.setInsNwpDepPolicyTp(rs.getDouble(35));
-				res.setInsNwpDepPolicyOthers(rs.getDouble(36));
-				res.setInsNwpNcbPolicyComprehensive(rs.getDouble(37));
-				res.setInsNwpNcbPolicyTp(rs.getDouble(38));
-				res.setInsNwpNcbPolicyOthers(rs.getDouble(39));
-				res.setInsNwpOtherAddonPolicyComprehensive(rs.getDouble(40));
-				res.setInsNwpOtherAddonPolicyTp(rs.getDouble(41));
-				res.setInsNwpOtherAddonPolicyOthers(rs.getDouble(42));
-
-				kpiResponseList.add(res);
-			}
+			/*
+			 * while (rs.next()) {
+			 * 
+			 * InsCubeResponseNew res = new InsCubeResponseNew();
+			 * 
+			 * res.setInsGwpPolicyComprehensive(rs.getDouble(1));
+			 * res.setInsGwpPolicyTp(rs.getDouble(2));
+			 * res.setInsGwpPolicyOthers(rs.getDouble(3));
+			 * res.setInsGwpOdPolicyComprehensive(rs.getDouble(4));
+			 * res.setInsGwpOdPolicyTp(rs.getDouble(5));
+			 * res.setInsGwpOdPolicyOthers(rs.getDouble(6));
+			 * res.setInsGwpTpPolicyComprehensive(rs.getDouble(7));
+			 * res.setInsGwpTpPolicyTp(rs.getDouble(8));
+			 * res.setInsGwpTpPolicyOthers(rs.getDouble(9));
+			 * res.setInsGwpDiscountPolicyComprehensive(rs.getDouble(10));
+			 * res.setInsGwpDiscountPolicyTp(rs.getDouble(11));
+			 * res.setInsGwpDiscountPolicyOthers(rs.getDouble(12));
+			 * 
+			 * res.setInsNwpPolicyComprehensive(rs.getDouble(13));
+			 * res.setInsNwpPolicyTp(rs.getDouble(14));
+			 * res.setInsNwpPolicyOthers(rs.getDouble(5));
+			 * res.setInsNwpOdPolicyComprehensive(rs.getDouble(16));
+			 * res.setInsNwpOdPolicyTp(rs.getDouble(17));
+			 * res.setInsNwpOdPolicyOthers(rs.getDouble(18));
+			 * res.setInsNwpTpPolicyComprehensive(rs.getDouble(19));
+			 * res.setInsNwpTpPolicyTp(rs.getDouble(20));
+			 * res.setInsNwpTpPolicyOthers(rs.getDouble(21));
+			 * res.setInsNwpDiscountPolicyComprehensive(rs.getDouble(21));
+			 * res.setInsNwpDiscountPolicyTp(rs.getDouble(23));
+			 * res.setInsNwpDiscountPolicyOthers(rs.getDouble(24));
+			 * 
+			 * res.setInsGwpDepPolicyComprehensive(rs.getDouble(25));
+			 * res.setInsGwpDepPolicyTp(rs.getDouble(26));
+			 * res.setInsGwpDepPolicyOthers(rs.getDouble(27));
+			 * res.setInsGwpNcbPolicyComprehensive(rs.getDouble(28));
+			 * res.setInsGwpNcbPolicyTp(rs.getDouble(29));
+			 * res.setInsGwpNcbPolicyOthers(rs.getDouble(30));
+			 * res.setInsGwpOtherAddonPolicyComprehensive(rs.getDouble(31));
+			 * res.setInsGwpOtherAddonPolicyTp(rs.getDouble(32));
+			 * res.setInsGwpOtherAddonPolicyOthers(rs.getDouble(33));
+			 * 
+			 * res.setInsNwpDepPolicyComprehensive(rs.getDouble(34));
+			 * res.setInsNwpDepPolicyTp(rs.getDouble(35));
+			 * res.setInsNwpDepPolicyOthers(rs.getDouble(36));
+			 * res.setInsNwpNcbPolicyComprehensive(rs.getDouble(37));
+			 * res.setInsNwpNcbPolicyTp(rs.getDouble(38));
+			 * res.setInsNwpNcbPolicyOthers(rs.getDouble(39));
+			 * res.setInsNwpOtherAddonPolicyComprehensive(rs.getDouble(40));
+			 * res.setInsNwpOtherAddonPolicyTp(rs.getDouble(41));
+			 * res.setInsNwpOtherAddonPolicyOthers(rs.getDouble(42));
+			 * 
+			 * kpiResponseList.add(res); }
+			 */
 
 			System.out.println("Query execution time " + (System.currentTimeMillis() - startTime));
 		} catch (Exception e) {
