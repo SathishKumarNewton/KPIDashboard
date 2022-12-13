@@ -6520,10 +6520,8 @@ sortField: 'text'
 				bindingData.finalR12ClaimSevTheft = r12ResData.r12AddonTheftSeverity;
 				bindingData.finalR12ClaimSevOthers = r12ResData.r12AddonOthersSeverity;
 				
-				if (r12ResData.gepDepOd + r12ResData.gepNcbOd + r12ResData.gepOtherAddonOd != 0) {
-					bindingData.finalLRatio = ((r12ResData.catGic + r12ResData.theftGic + r12ResData.otherGic) / (r12ResData.gepDepOd + r12ResData.gepNcbOd + r12ResData.gepOtherAddonOd)) * 100;
-					bindingData.finalLRatioOd = ((r12ResData.catGic + r12ResData.theftGic + r12ResData.otherGic) / (r12ResData.gepDepOd + r12ResData.gepNcbOd + r12ResData.gepOtherAddonOd)) * 100;
-				}
+				bindingData.finalLRatio = ((r12ResData.catGic + r12ResData.theftGic + r12ResData.otherGic) / (r12ResData.gepDepOd + r12ResData.gepNcbOd + r12ResData.gepOtherAddonOd)) * 100;
+				bindingData.finalLRatioOd = ((r12ResData.catGic + r12ResData.theftGic + r12ResData.otherGic) / (r12ResData.gepDepOd + r12ResData.gepNcbOd + r12ResData.gepOtherAddonOd)) * 100;
 				
 				bindingData.finalR12LRatio = r12ResData.r12AddonOdLossRatio*100;
 				bindingData.finalR12LRatioOd = r12ResData.r12AddonOdLossRatio*100;
@@ -6536,9 +6534,6 @@ sortField: 'text'
 				bindingData.finalElRatioOd = ((r12ResData.estimatedAddonCatGic + r12ResData.estimatedAddonTheftGic + r12ResData.estimatedAddonOtherGic)
 											/( r12ResData.insGwpDepPolicyComprehensive + r12ResData.insGwpNcbPolicyComprehensive + r12ResData.insGwpOtherAddonPolicyComprehensive))*100;
 				
-				console.log("written policies: ", bindingData.writtenPolicies);
-				console.log("period : ", period);
-				//Binding(period);
 			}
 			else if ($("#tpBtn").css('background-color') != "rgb(255, 255, 255)") {
 				bindingData.finalGwp = r12ResData.insGwpDepPolicyTp + r12ResData.insGwpNcbPolicyTp + r12ResData.insGwpOtherAddonPolicyTp;
@@ -6561,12 +6556,10 @@ sortField: 'text'
 				
 				bindingData.finalWrittenPolicies = r12ResData.addonWrittenPoliciesTp;
 				bindingData.finalWrittenPoliciesTp = r12ResData.addonWrittenPoliciesTp;
-				if(r12ResData.gepDepTp + r12ResData.gepNcbTp + r12ResData.gepOtherAddonTp != 0){
-					bindingData.finalLRatio = ((r12ResData.gicTpUlrDep + r12ResData.gicTpUlrNcb + r12ResData.gicTpUlrOtherAddon)
+				bindingData.finalLRatio = ((r12ResData.gicTpUlrDep + r12ResData.gicTpUlrNcb + r12ResData.gicTpUlrOtherAddon)
 												/ (r12ResData.gepDepTp + r12ResData.gepNcbTp + r12ResData.gepOtherAddonTp)) * 100;
-					bindingData.finalLRatioTp = ((r12ResData.gicTpUlrDep + r12ResData.gicTpUlrNcb + r12ResData.gicTpUlrOtherAddon)
+				bindingData.finalLRatioTp = ((r12ResData.gicTpUlrDep + r12ResData.gicTpUlrNcb + r12ResData.gicTpUlrOtherAddon)
 												/ (r12ResData.gepDepTp + r12ResData.gepNcbTp + r12ResData.gepOtherAddonTp)) * 100;
-				}
 				bindingData.finalAcqcost = (r12ResData.addonAcqCostTp / (r12ResData.insGwpDepPolicyTp + r12ResData.insGwpNcbPolicyTp + r12ResData.insGwpOtherAddonPolicyTp)) * 100;
 				bindingData.finalAcqcostTp = (r12ResData.addonAcqCostTp / (r12ResData.insGwpDepPolicyTp + r12ResData.insGwpNcbPolicyTp + r12ResData.insGwpOtherAddonPolicyTp)) * 100;
 				
@@ -6598,7 +6591,6 @@ sortField: 'text'
 
 				bindingData.finalNic = r12ResData.catNic + r12ResData.theftNic + r12ResData.otherNic + r12ResData.nicTpUlrDep + r12ResData.nicTpUlrNcb + r12ResData.nicTpUlrOtherAddon;
 				bindingData.finalNicOd = r12ResData.catNic + r12ResData.theftNic + r12ResData.otherNic;
-				$(".gwp_r" + period).text((isNaN(convertToLaksh(parseFloat(bindingData.finalNicOd).toFixed("2")))||(convertToLaksh(parseFloat(bindingData.finalNicOd).toFixed("2")))== "Infinity")? 1 : (convertToLaksh(parseFloat(bindingData.finalNicOd).toFixed("2"))));
 				bindingData.finalNicTp = r12ResData.nicTpUlrDep + r12ResData.nicTpUlrNcb + r12ResData.nicTpUlrOtherAddon;
 
 				bindingData.finalGic = r12ResData.catGic + r12ResData.theftGic + r12ResData.gicTp;
@@ -6615,27 +6607,20 @@ sortField: 'text'
 				bindingData.finalWrittenPoliciesTp = r12ResData.addonWrittenPoliciesTp;
 				bindingData.finalWrittenPoliciesOthers = r12ResData.addonWrittenPoliciesOthers;
 
-				if(r12ResData.addonWrittenPoliciesComprehensive != 0){
-					bindingData.finalClaimFreqOd = ((r12ResData.addonCatClaimCount + r12ResData.addonTheftClaimCount + r12ResData.addonOtherClaimCount)
+				bindingData.finalClaimFreqOd = ((r12ResData.addonCatClaimCount + r12ResData.addonTheftClaimCount + r12ResData.addonOtherClaimCount)
 													/ r12ResData.addonWrittenPoliciesComprehensive) * 100;
-					bindingData.finalClaimFreqCat = (r12ResData.addonCatClaimCount / r12ResData.addonWrittenPoliciesComprehensive) * 100;
-					bindingData.finalClaimFreqTheft = (r12ResData.addonTheftClaimCount / r12ResData.addonWrittenPoliciesComprehensive) * 100;
-					bindingData.finalClaimFreqOthers = (r12ResData.addonOtherClaimCount / r12ResData.addonWrittenPoliciesComprehensive) * 100;
-				}
+				bindingData.finalClaimFreqCat = (r12ResData.addonCatClaimCount / r12ResData.addonWrittenPoliciesComprehensive) * 100;
+				bindingData.finalClaimFreqTheft = (r12ResData.addonTheftClaimCount / r12ResData.addonWrittenPoliciesComprehensive) * 100;
+				bindingData.finalClaimFreqOthers = (r12ResData.addonOtherClaimCount / r12ResData.addonWrittenPoliciesComprehensive) * 100;
 
 				bindingData.finalClaimSevOd = (r12ResData.catGic + r12ResData.theftGic + r12ResData.otherGic)
 					/ (r12ResData.addonCatClaimCount + r12ResData.addonTheftClaimCount + r12ResData.addonOtherClaimCount);
 				bindingData.finalClaimSevCat = r12ResData.catGic / r12ResData.addonCatClaimCount;
-				if (r12ResData.addonTheftClaimCount != 0)
-					bindingData.finalClaimSevTheft = r12ResData.theftGic / r12ResData.addonTheftClaimCount;
-				if (r12ResData.addonOtherClaimCount != 0)
-					bindingData.finalClaimSevOthers = r12ResData.otherGic / r12ResData.addonOtherClaimCount;
-				if (r12ResData.gepDepOd + r12ResData.gepDepTp + r12ResData.gepNcbOd + r12ResData.gepNcbTp + r12ResData.gepOtherAddonOd + r12ResData.gepOtherAddonTp != 0)
-					bindingData.finalLRatio = ((r12ResData.catGic + r12ResData.theftGic + r12ResData.otherGic + r12ResData.gicTpUlrDep + r12ResData.gicTpUlrNcb + r12ResData.gicTpUlrOtherAddon) / (r12ResData.gepDepOd + r12ResData.gepDepTp + r12ResData.gepNcbOd + r12ResData.gepNcbTp + r12ResData.gepOtherAddonOd + r12ResData.gepOtherAddonTp)) * 100;
-				if (r12ResData.gepDepOd + r12ResData.gepNcbOd + r12ResData.gepOtherAddonOd != 0)
-					bindingData.finalLRatioOd = ((r12ResData.catGic + r12ResData.theftGic + r12ResData.otherGic) / (r12ResData.gepDepOd + r12ResData.gepNcbOd + r12ResData.gepOtherAddonOd)) * 100;
-				if ((r12ResData.gepDepTp + r12ResData.gepNcbTp + r12ResData.gepOtherAddonTp) != 0)
-					bindingData.finalLRatioTp = ((r12ResData.gicTpUlrDep + r12ResData.gicTpUlrNcb + r12ResData.gicTpUlrOtherAddon) / (r12ResData.gepDepTp + r12ResData.gepNcbTp + r12ResData.gepOtherAddonTp)) * 100;
+				bindingData.finalClaimSevTheft = r12ResData.theftGic / r12ResData.addonTheftClaimCount;
+				bindingData.finalClaimSevOthers = r12ResData.otherGic / r12ResData.addonOtherClaimCount;
+				bindingData.finalLRatio = ((r12ResData.catGic + r12ResData.theftGic + r12ResData.otherGic + r12ResData.gicTpUlrDep + r12ResData.gicTpUlrNcb + r12ResData.gicTpUlrOtherAddon) / (r12ResData.gepDepOd + r12ResData.gepDepTp + r12ResData.gepNcbOd + r12ResData.gepNcbTp + r12ResData.gepOtherAddonOd + r12ResData.gepOtherAddonTp)) * 100;
+				bindingData.finalLRatioOd = ((r12ResData.catGic + r12ResData.theftGic + r12ResData.otherGic) / (r12ResData.gepDepOd + r12ResData.gepNcbOd + r12ResData.gepOtherAddonOd)) * 100;
+				bindingData.finalLRatioTp = ((r12ResData.gicTpUlrDep + r12ResData.gicTpUlrNcb + r12ResData.gicTpUlrOtherAddon) / (r12ResData.gepDepTp + r12ResData.gepNcbTp + r12ResData.gepOtherAddonTp)) * 100;
 				bindingData.finalAcqcost = ((r12ResData.addonAcqCostComprehensive + r12ResData.addonAcqCostTp) / (r12ResData.insGwpDepPolicyComprehensive + r12ResData.insGwpNcbPolicyComprehensive + r12ResData.insGwpOtherAddonPolicyComprehensive + r12ResData.insGwpDepPolicyTp + r12ResData.insGwpNcbPolicyTp + r12ResData.insGwpOtherAddonPolicyTp)) * 100;
 				bindingData.finalAcqcostOd = ((r12ResData.addonAcqCostComprehensive) / (r12ResData.insGwpDepPolicyComprehensive + r12ResData.insGwpNcbPolicyComprehensive + r12ResData.insGwpOtherAddonPolicyComprehensive)) * 100;
 				bindingData.finalAcqcostTp = (r12ResData.addonAcqCostTp / (r12ResData.insGwpDepPolicyTp + r12ResData.insGwpNcbPolicyTp + r12ResData.insGwpOtherAddonPolicyTp)) * 100;
@@ -6653,7 +6638,6 @@ sortField: 'text'
 				bindingData.finalAcqcostTp = r12ResData.addonAcqCostTp / (r12ResData.insGwpDepPolicyTp + r12ResData.insGwpNcbPolicyTp + r12ResData.insGwpOtherAddonPolicyTp);
 				bindingData.finalClaimFreqOd = ((r12ResData.addonCatClaimCount + r12ResData.addonTheftClaimCount + r12ResData.addonOtherClaimCount) / r12ResData.addonWrittenPoliciesComprehensive)*100;
 				bindingData.finalClaimFreqCat = (r12ResData.addonCatClaimCount / r12ResData.addonWrittenPoliciesComprehensive) * 100;
-				$(".nwp_r" + period).text((isNaN(convertToLaksh(parseFloat(bindingData.finalClaimFreqCat).toFixed("2")))||(convertToLaksh(parseFloat(bindingData.finalClaimFreqCat).toFixed("2")))== "Infinity")? 0.25 : (convertToLaksh(parseFloat(bindingData.finalClaimFreqCat).toFixed("2"))));
 				bindingData.finalClaimFreqTheft = (r12ResData.addonTheftClaimCount / r12ResData.addonWrittenPoliciesComprehensive) * 100;
 				bindingData.finalClaimFreqOthers = (r12ResData.addonOtherClaimCount / r12ResData.addonWrittenPoliciesComprehensive) * 100;
 
@@ -6679,9 +6663,7 @@ sortField: 'text'
 				bindingData.finalElRatioTp =( r12ResData.estimatedAddonTpulrGic / (r12ResData.insGwpDepPolicyTp + r12ResData.insGwpNcbPolicyTp + r12ResData.insGwpOtherAddonPolicyTp)) * 100;
 
 			}
-			console.log("bindingData = ")
-			console.log(bindingData);
-
+			binding(period);
 		}
 		function calculation(period) {
 
@@ -6703,11 +6685,9 @@ sortField: 'text'
 				console.log(rslResData);
 				onlyAddon(period);//Call OnlyAddonFunction-------------------
 			}
-			jQuery("#pre-loader").remove();
+			
 		}
 		function onlyAddon(period) {
-
-			console.log("onlyAddon");
 
 			if ($("#comprehensiveBtn").css('background-color') != "rgb(255, 255, 255)") {
 				bindingData.finalGwp = gwpNwpResData.insGwpDepPolicyComprehensive + gwpNwpResData.insGwpNcbPolicyComprehensive + gwpNwpResData.insGwpOtherAddonPolicyComprehensive;
@@ -6731,22 +6711,17 @@ sortField: 'text'
 				bindingData.finalClaimFreqTheft = (claimResData.addonTheftClaimCount / policyResData.addonWrittenPoliciesComprehensive) * 100;
 				bindingData.finalClaimFreqOthers = (claimResData.addonOtherClaimCount / policyResData.addonWrittenPoliciesComprehensive) * 100;
 				bindingData.finalClaimFreqOd = ((claimResData.addonCatClaimCount + claimResData.addonTheftClaimCount + claimResData.addonOtherClaimCount)
-					/ policyResData.addonWrittenPoliciesComprehensive) * 100;
+												/ policyResData.addonWrittenPoliciesComprehensive) * 100;
 				bindingData.finalClaimSevOd = (rslResData.rslCatGic + rslResData.rslTheftGic + rslResData.rslOtherGic)
-					/ (claimResData.addonCatClaimCount + claimResData.addonTheftClaimCount + claimResData.addonOtherClaimCount);
+												/ (claimResData.addonCatClaimCount + claimResData.addonTheftClaimCount + claimResData.addonOtherClaimCount);
 				bindingData.finalClaimSevCat = rslResData.rslCatGic / claimResData.addonCatClaimCount;
 				bindingData.finalClaimSevTheft = rslResData.rslTheftGic / claimResData.addonTheftClaimCount;
 				bindingData.finalClaimSevOthers = rslResData.rslOtherGic / claimResData.addonOtherClaimCount;
-				if (gepNepResData.gepDepOd + gepNepResData.gepNcbOd + gepNepResData.gepOtherAddonOd != 0) {
-					bindingData.finalLRatio = ((rslResData.rslCatGic + rslResData.rslTheftGic + rslResData.rslOtherGic) / (gepNepResData.gepDepOd + gepNepResData.gepNcbOd + gepNepResData.gepOtherAddonOd)) * 100;
-					bindingData.finalLRatioOd = ((rslResData.rslCatGic + rslResData.rslTheftGic + rslResData.rslOtherGic) / (gepNepResData.gepDepOd + gepNepResData.gepNcbOd + gepNepResData.gepOtherAddonOd)) * 100;
-				}
+				bindingData.finalLRatio = ((rslResData.rslCatGic + rslResData.rslTheftGic + rslResData.rslOtherGic) / (gepNepResData.gepDepOd + gepNepResData.gepNcbOd + gepNepResData.gepOtherAddonOd)) * 100;
+				bindingData.finalLRatioOd = ((rslResData.rslCatGic + rslResData.rslTheftGic + rslResData.rslOtherGic) / (gepNepResData.gepDepOd + gepNepResData.gepNcbOd + gepNepResData.gepOtherAddonOd)) * 100;
 				bindingData.finalAcqcost = ((policyResData.addonAcqCostComprehensive) / (gwpNwpResData.insGwpDepPolicyComprehensive + gwpNwpResData.insGwpNcbPolicyComprehensive + gwpNwpResData.insGwpOtherAddonPolicyComprehensive)) * 100;
 				bindingData.finalAcqcostOd = ((policyResData.addonAcqCostComprehensive) / (gwpNwpResData.insGwpDepPolicyComprehensive + gwpNwpResData.insGwpNcbPolicyComprehensive + gwpNwpResData.insGwpOtherAddonPolicyComprehensive)) * 100;
 
-				console.log("written policies: ", bindingData.writtenPolicies);
-				console.log("period : ", period);
-				//Binding(period);
 			}
 			else if ($("#tpBtn").css('background-color') != "rgb(255, 255, 255)") {
 				bindingData.finalGwp = gwpNwpResData.insGwpDepPolicyTp + gwpNwpResData.insGwpNcbPolicyTp + gwpNwpResData.insGwpOtherAddonPolicyTp;
@@ -6764,12 +6739,10 @@ sortField: 'text'
 				bindingData.finalGicTpulr = gepNepResData.gicTpulrDep + gepNepResData.gicTpulrNcb + gepNepResData.gicTpulrOtherAddon;
 				bindingData.finalWrittenPolicies = policyResData.addonWrittenPoliciesTp;
 				bindingData.finalWrittenPoliciesTp = policyResData.addonWrittenPoliciesTp;
-				if (gepNepResData.gepDepTp + gepNepResData.gepNcbTp + gepNepResData.gepOtherAddonTp != 0) {
-					bindingData.finalLRatio = ((gepNepResData.gicTpulrDep + gepNepResData.gicTpulrNcb + gepNepResData.gicTpulrOtherAddon)
-						/ (gepNepResData.gepDepTp + gepNepResData.gepNcbTp + gepNepResData.gepOtherAddonTp)) * 100;
-					bindingData.finalLRatioTp = ((gepNepResData.gicTpulrDep + gepNepResData.gicTpulrNcb + gepNepResData.gicTpulrOtherAddon)
-						/ (gepNepResData.gepDepTp + gepNepResData.gepNcbTp + gepNepResData.gepOtherAddonTp)) * 100;
-				}
+				bindingData.finalLRatio = ((gepNepResData.gicTpulrDep + gepNepResData.gicTpulrNcb + gepNepResData.gicTpulrOtherAddon)
+											/ (gepNepResData.gepDepTp + gepNepResData.gepNcbTp + gepNepResData.gepOtherAddonTp)) * 100;
+				bindingData.finalLRatioTp = ((gepNepResData.gicTpulrDep + gepNepResData.gicTpulrNcb + gepNepResData.gicTpulrOtherAddon)
+											/ (gepNepResData.gepDepTp + gepNepResData.gepNcbTp + gepNepResData.gepOtherAddonTp)) * 100;
 				bindingData.finalAcqcost = (policyResData.addonAcqCostTp / (gwpNwpResData.insGwpDepPolicyTp + gwpNwpResData.insGwpNcbPolicyTp + gwpNwpResData.insGwpOtherAddonPolicyTp)) * 100;
 				bindingData.finalAcqcostTp = (policyResData.addonAcqCostTp / (gwpNwpResData.insGwpDepPolicyTp + gwpNwpResData.insGwpNcbPolicyTp + gwpNwpResData.insGwpOtherAddonPolicyTp)) * 100;
 
@@ -6819,23 +6792,16 @@ sortField: 'text'
 				bindingData.finalClaimSevOd = (rslResData.rslCatGic + rslResData.rslTheftGic + rslResData.rslOtherGic)
 					/ (claimResData.addonCatClaimCount + claimResData.addonTheftClaimCount + claimResData.addonOtherClaimCount);
 				bindingData.finalClaimSevCat = rslResData.rslCatGic / claimResData.addonCatClaimCount;
-				if (claimResData.addonTheftClaimCount != 0)
-					bindingData.finalClaimSevTheft = rslResData.rslTheftGic / claimResData.addonTheftClaimCount;
-				if (claimResData.addonOtherClaimCount != 0)
-					bindingData.finalClaimSevOthers = rslResData.rslOtherGic / claimResData.addonOtherClaimCount;
-				if (gepNepResData.gepDepOd + gepNepResData.gepDepTp + gepNepResData.gepNcbOd + gepNepResData.gepNcbTp + gepNepResData.gepOtherAddonOd + gepNepResData.gepOtherAddonTp != 0)
-					bindingData.finalLRatio = ((rslResData.rslCatGic + rslResData.rslTheftGic + rslResData.rslOtherGic + gepNepResData.gicTpulrDep + gepNepResData.gicTpulrNcb + gepNepResData.gicTpulrOtherAddon) / (gepNepResData.gepDepOd + gepNepResData.gepDepTp + gepNepResData.gepNcbOd + gepNepResData.gepNcbTp + gepNepResData.gepOtherAddonOd + gepNepResData.gepOtherAddonTp)) * 100;
-				if (gepNepResData.gepDepOd + gepNepResData.gepNcbOd + gepNepResData.gepOtherAddonOd != 0)
-					bindingData.finalLRatioOd = ((rslResData.rslCatGic + rslResData.rslTheftGic + rslResData.rslOtherGic) / (gepNepResData.gepDepOd + gepNepResData.gepNcbOd + gepNepResData.gepOtherAddonOd)) * 100;
-				if (gepNepResData.gepDepTp + gepNepResData.gepNcbTp + gepNepResData.gepOtherAddonTp != 0)
-					bindingData.finalLRatioTp = ((gepNepResData.gicTpulrDep + gepNepResData.gicTpulrNcb + gepNepResData.gicTpulrOtherAddon) / (gepNepResData.gepDepTp + gepNepResData.gepNcbTp + gepNepResData.gepOtherAddonTp)) * 100;
+				bindingData.finalClaimSevTheft = rslResData.rslTheftGic / claimResData.addonTheftClaimCount;
+				bindingData.finalClaimSevOthers = rslResData.rslOtherGic / claimResData.addonOtherClaimCount;
+				bindingData.finalLRatio = ((rslResData.rslCatGic + rslResData.rslTheftGic + rslResData.rslOtherGic + gepNepResData.gicTpulrDep + gepNepResData.gicTpulrNcb + gepNepResData.gicTpulrOtherAddon) / (gepNepResData.gepDepOd + gepNepResData.gepDepTp + gepNepResData.gepNcbOd + gepNepResData.gepNcbTp + gepNepResData.gepOtherAddonOd + gepNepResData.gepOtherAddonTp)) * 100;
+				bindingData.finalLRatioOd = ((rslResData.rslCatGic + rslResData.rslTheftGic + rslResData.rslOtherGic) / (gepNepResData.gepDepOd + gepNepResData.gepNcbOd + gepNepResData.gepOtherAddonOd)) * 100;
+				bindingData.finalLRatioTp = ((gepNepResData.gicTpulrDep + gepNepResData.gicTpulrNcb + gepNepResData.gicTpulrOtherAddon) / (gepNepResData.gepDepTp + gepNepResData.gepNcbTp + gepNepResData.gepOtherAddonTp)) * 100;
 				bindingData.finalAcqcost = ((policyResData.addonAcqCostComprehensive + policyResData.addonAcqCostTp) / (gwpNwpResData.insGwpDepPolicyComprehensive + gwpNwpResData.insGwpNcbPolicyComprehensive + gwpNwpResData.insGwpOtherAddonPolicyComprehensive + gwpNwpResData.insGwpDepPolicyTp + gwpNwpResData.insGwpNcbPolicyTp + gwpNwpResData.insGwpOtherAddonPolicyTp)) * 100;
 				bindingData.finalAcqcostOd = ((policyResData.addonAcqCostComprehensive) / (gwpNwpResData.insGwpDepPolicyComprehensive + gwpNwpResData.insGwpNcbPolicyComprehensive + gwpNwpResData.insGwpOtherAddonPolicyComprehensive)) * 100;
 				bindingData.finalAcqcostTp = (policyResData.addonAcqCostTp / (gwpNwpResData.insGwpDepPolicyTp + gwpNwpResData.insGwpNcbPolicyTp + gwpNwpResData.insGwpOtherAddonPolicyTp)) * 100;
 			}
-			console.log("bindingData = ")
-			console.log(bindingData);
-
+			binding(period);
 		}
 		function applyFilter() {
 			isClaimsDataFetched = "N";
