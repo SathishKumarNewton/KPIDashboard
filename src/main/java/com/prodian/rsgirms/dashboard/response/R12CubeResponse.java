@@ -74,9 +74,9 @@ public class R12CubeResponse {
     private double catClaimCount;
     private double theftClaimCount;
     private double otherClaimCount;
-    private double addonCatCount;
-    private double addonTheftCount;
-    private double addonOtherCount;
+    private double addonCatClaimCount;
+    private double addonTheftClaimCount;
+    private double addonOtherClaimCount;
     private double addonClaimCountTp;
     private double catGic;
     private double theftGic;

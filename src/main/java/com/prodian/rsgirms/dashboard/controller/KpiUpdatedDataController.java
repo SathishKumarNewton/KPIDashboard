@@ -202,6 +202,14 @@ public class KpiUpdatedDataController {
 			model.addObject("businessTypesNow", res.getBusinessTypeMastersNow());
 			model.addObject("fuelTypesNow", res.getFuelTypeMastersNow());
 			model.addObject("stateGroupsNow", res.getStateGroupMastersNow());
+			model.addObject("channelMasterNews", res.getChannelMasterNews());
+			model.addObject("categorisationMasters", res.getCategorisationMasters());
+			model.addObject("policyTypeNews", res.getPolicyTypeNews());
+			model.addObject("engineCapacityMasters", res.getEngineCapacityMasters());
+			model.addObject("vehicleAgeMasters", res.getVehicleAgeMasters());
+			System.out.println("policy-------------->"+res.getPolicyTypeNews().size());
+			System.out.println("engine-------------->"+res.getEngineCapacityMasters().size());
+
 
 			/* uncommneted for local */
 			/*
@@ -8549,9 +8557,9 @@ public class KpiUpdatedDataController {
 				res.setCatClaimCount(rs.getDouble(56));
 				res.setTheftClaimCount(rs.getDouble(57));
 				res.setOtherClaimCount(rs.getDouble(58));
-				res.setAddonCatCount(rs.getDouble(59));
-				res.setAddonTheftCount(rs.getDouble(60));
-				res.setAddonOtherCount(rs.getDouble(61));
+				res.setAddonCatClaimCount(rs.getDouble(59));
+				res.setAddonTheftClaimCount(rs.getDouble(60));
+				res.setAddonOtherClaimCount(rs.getDouble(61));
 				res.setAddonClaimCountTp(rs.getDouble(62));
 				res.setCatGic(rs.getDouble(63));
 				res.setTheftGic(rs.getDouble(64));
